@@ -1,0 +1,48 @@
+name: Supabase Backup (nightly)
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # midnight UTC
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link to Supabase project
+        run: echo "$SUPABASE_DB_PASSWORD" | supabase link --project-ref "$PROJECT_ID"
+
+      - name: Backup roles
+        run: |
+          echo "Starting roles backup..."
+          supabase db dump -f supabase/backups/roles.sql --role-only
+
+      - name: Backup schema
+        run: |
+          echo "Starting schema backup..."
+          supabase db dump -f supabase/backups/schema.sql
+
+      - name: Backup data
+        run: |
+          echo "Starting data backup..."
+          supabase db dump -f supabase/backups/data.sql --data-only --use-copy
+
+      - name: Commit backup files
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'backup: Supabase Backup'
+          file_pattern: 'supabase/backups/*.sql'
+          commit_user_name: 'Supabase Backup Bot'
+          commit_user_email: 'backup@dineeasy.ch'

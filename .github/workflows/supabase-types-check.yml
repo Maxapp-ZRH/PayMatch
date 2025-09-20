@@ -1,0 +1,64 @@
+name: Database Types Check
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start local database
+        run: supabase db start
+
+      - name: Apply migrations
+        run: supabase db reset --no-seed
+
+      - name: Generate types from current schema
+        run: supabase gen types typescript --local --schema public --schema storage > generated-types.ts
+
+      - name: Check for type drift
+        run: |
+          echo "🔍 Checking for type drift between database schema and committed types..."
+          echo ""
+
+          # Compare generated types with committed types
+          if ! diff -B -w --ignore-blank-lines generated-types.ts src/types/database.ts; then
+            echo "❌ TYPE DRIFT DETECTED!"
+            echo ""
+            echo "Your database schema has changed but the types haven't been updated."
+            echo "This means your app code is out of sync with your database."
+            echo ""
+            echo "📋 To fix this:"
+            echo "1. Run: npm run types:db:local"
+            echo "2. Commit the updated types file"
+            echo "3. Update your code to use the new types"
+            echo ""
+            echo "📊 Generated types preview (current schema):"
+            echo "----------------------------------------"
+            head -20 generated-types.ts
+            echo "..."
+            echo ""
+            echo "📊 Committed types preview:"
+            echo "----------------------------------------"
+            head -20 src/types/database.ts
+            echo "..."
+            echo ""
+            echo "🔍 Full diff:"
+            echo "----------------------------------------"
+            diff -B -w --ignore-blank-lines generated-types.ts src/types/database.ts
+            exit 1
+          else
+            echo "✅ No type drift detected. Types are up-to-date!"
+            echo "🎉 Your database schema and TypeScript types are in sync."
+          fi
+
+      - name: Cleanup
+        run: rm -f generated-types.ts
