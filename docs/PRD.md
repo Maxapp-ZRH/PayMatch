@@ -154,23 +154,30 @@ Since **September 2022**, QR-bills are mandatory in Switzerland, replacing old p
 
 ## 8.6. Payment Processing Strategy
 
-**Stripe Integration Strategy:**
+**Dual Payment Architecture:**
 
-- **Stripe Invoicing:** Complete invoice creation, sending, and management
-- **Stripe Tax:** Automatic tax calculations and compliance for Swiss market
-- **Stripe Payments:** Multi-currency payment processing (CHF, EUR)
-- **Swiss QR-Bill Integration:** QR-bill contains Stripe payment link for seamless experience
+### Subscription Billing (Stripe)
+
+- **Stripe Billing:** Subscription management for Freelancer (CHF 5/month) and Enterprise (CHF 50/month) plans
+- **Stripe Customer Portal:** Self-service subscription management
+- **Stripe Webhooks:** Real-time subscription events (created, updated, cancelled)
+- **Multi-currency Support:** CHF and EUR for subscription billing
+
+### Invoice Payments (Swiss QR-Bill)
+
+- **Swiss QR-Bill Generation:** Compliant invoice creation with QR-codes
+- **Direct Bank Transfers:** Customers pay via their Swiss bank app
+- **Bank Reconciliation:** Import CAMT.053 files for payment matching
 - **Resend Email Service:** All transactional emails (auth, invoices, reminders, notifications)
-- **Automatic Reconciliation:** Stripe webhooks update invoice status in real-time
-- **Fraud Protection:** Built-in Stripe fraud detection and 3D Secure authentication
+- **Manual Reconciliation:** Users upload bank statements to match payments
 
 **Simplified Payment Flow:**
 
-1. **Invoice Creation:** Stripe Invoicing creates invoice with Swiss QR-bill
+1. **Invoice Creation:** PayMatch generates Swiss QR-bill compliant invoice
 2. **Email Delivery:** Resend sends branded invoice email to client
-3. **Payment Processing:** Client pays via Stripe (any currency)
-4. **Automatic Updates:** Stripe webhooks update PayMatch dashboard
-5. **Tax Compliance:** Stripe Tax handles all tax calculations and reporting
+3. **Payment Processing:** Client pays via Swiss QR-bill (direct bank transfer)
+4. **Bank Reconciliation:** User uploads CAMT.053 file to match payments
+5. **Dashboard Updates:** Manual reconciliation updates invoice status
 
 ---
 
@@ -182,7 +189,8 @@ Since **September 2022**, QR-bills are mandatory in Switzerland, replacing old p
 - **Form Validation:** Zod for type-safe validation
 - **Database:** Supabase (PostgreSQL) with real-time subscriptions
 - **Authentication:** Supabase Auth with RLS policies
-- **Invoicing & Payments:** Stripe Invoicing + Stripe Payments + Stripe Tax
+- **Subscription Billing:** Stripe Billing for plan management
+- **Invoice Payments:** Swiss QR-bill for direct bank transfers
 - **Email Service:** Resend for all transactional emails (auth, invoices, reminders)
 - **QR-bill:** `node-swiss-qr-bill` for Swiss compliance integration
 - **Bank Integration:** ISO 20022 (CAMT.053), later EBICS/OpenBanking
