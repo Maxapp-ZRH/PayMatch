@@ -11,7 +11,8 @@ PayMatch uses a **dual payment architecture** that separates subscription billin
 **Purpose**: Manage PayMatch subscription plans only
 
 - Freelancer Plan: CHF 5/month
-- Enterprise Plan: CHF 50/month
+- Business Plan: CHF 50/month
+- Enterprise Plan: CHF 150/month
 
 **Stripe Products Used**:
 
