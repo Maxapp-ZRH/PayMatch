@@ -173,8 +173,6 @@ paymatch/
 │   └── config.toml        # Supabase configuration
 ├── docs/                  # Documentation
 │   ├── PRD.md            # Product Requirements
-│   ├── GitHub-Workflows.md
-│   └── Global-Expansion.md
 └── .github/workflows/     # GitHub Actions
 ```
 
