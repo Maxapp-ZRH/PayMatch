@@ -24,25 +24,39 @@ jobs:
       - name: Link to Supabase project
         run: echo "$SUPABASE_DB_PASSWORD" | supabase link --project-ref "$PROJECT_ID"
 
-      - name: Backup roles
-        run: |
-          echo "Starting roles backup..."
-          supabase db dump -f supabase/backups/roles.sql --role-only
+      - name: Create backup directory
+        run: mkdir -p supabase/backups
 
-      - name: Backup schema
+      - name: Create comprehensive backup
         run: |
-          echo "Starting schema backup..."
-          supabase db dump -f supabase/backups/schema.sql
+          echo "🔄 Creating comprehensive Supabase backup..."
+          TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+          BACKUP_FILE="supabase/backups/backup_${TIMESTAMP}.sql"
 
-      - name: Backup data
+          # Create a complete backup including schema, data, and all objects
+          # Note: --use-copy requires --data-only, so we create a full backup without it
+          supabase db dump -f "$BACKUP_FILE"
+
+          echo "✅ Backup created: $BACKUP_FILE"
+          echo "📊 Backup size: $(du -h "$BACKUP_FILE" | cut -f1)"
+
+      - name: Create latest backup symlink
         run: |
-          echo "Starting data backup..."
-          supabase db dump -f supabase/backups/data.sql --data-only --use-copy
+          echo "🔗 Creating latest backup symlink..."
+          LATEST_BACKUP=$(ls -t supabase/backups/backup_*.sql | head -n1)
+          ln -sf "$(basename "$LATEST_BACKUP")" supabase/backups/latest.sql
+          echo "✅ Latest backup: $(basename "$LATEST_BACKUP")"
+
+      - name: Cleanup old backups (keep last 30 days)
+        run: |
+          echo "🧹 Cleaning up old backups..."
+          find supabase/backups -name "backup_*.sql" -type f -mtime +30 -delete
+          echo "✅ Old backups cleaned up"
 
       - name: Commit backup files
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: 'backup: Supabase Backup'
+          commit_message: 'backup: Supabase comprehensive backup $(date +"%Y-%m-%d %H:%M")'
           file_pattern: 'supabase/backups/*.sql'
           commit_user_name: 'Supabase Backup Bot'
-          commit_user_email: 'backup@dineeasy.ch'
+          commit_user_email: 'backup@paymatch.ch'
