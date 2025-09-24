@@ -13,7 +13,10 @@
     "typecheck": "tsc --noEmit",
     "prepare": "husky",
     "types:db:local": "supabase gen types typescript --local --schema public --schema storage > src/types/database.ts",
-    "types:db:cloud": "supabase gen types typescript --linked --schema public --schema storage > src/types/database.ts"
+    "types:db:cloud": "supabase gen types typescript --linked --schema public --schema storage > src/types/database.ts",
+    "functions:serve": "supabase functions serve",
+    "functions:deploy": "supabase functions deploy",
+    "functions:deploy:all": "supabase functions deploy --no-verify-jwt"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
