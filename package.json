@@ -11,7 +11,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "types:db:local": "supabase gen types typescript --local --schema public --schema storage > src/types/database.ts",
+    "types:db:cloud": "supabase gen types typescript --linked --schema public --schema storage > src/types/database.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
