@@ -217,28 +217,29 @@ export function QRBillPreview({ data }: { data: SwissQRBillData }) {
 
 ## Integration with PayMatch Features
 
-### 1. Stripe Integration
+### 1. Direct QR-Bill Generation
 
 ```typescript
-// src/lib/swiss-qr-bill/stripe-integration.ts
+// src/lib/swiss-qr-bill/qr-bill-generator.ts
 import { SwissQRBill } from 'swissqrbill/pdf';
 import type { Invoice } from '@/types/database';
 
-export function createQRBillFromStripeInvoice(
-  stripeInvoice: any,
-  clientData: any
+export function createQRBillFromInvoice(
+  invoice: Invoice,
+  clientData: any,
+  companyData: any
 ) {
   return {
-    amount: stripeInvoice.amount_due / 100, // Convert from cents
-    currency: stripeInvoice.currency.toUpperCase(),
+    amount: invoice.amount_total,
+    currency: invoice.currency,
     creditor: {
-      account: process.env.COMPANY_IBAN!,
-      address: process.env.COMPANY_ADDRESS!,
-      buildingNumber: parseInt(process.env.COMPANY_BUILDING_NUMBER!),
-      city: process.env.COMPANY_CITY!,
-      country: 'CH',
-      name: process.env.COMPANY_NAME!,
-      zip: parseInt(process.env.COMPANY_ZIP!),
+      account: companyData.iban,
+      address: companyData.address,
+      buildingNumber: companyData.buildingNumber,
+      city: companyData.city,
+      country: companyData.country,
+      name: companyData.name,
+      zip: companyData.zip,
     },
     debtor: {
       address: clientData.address,
@@ -248,21 +249,18 @@ export function createQRBillFromStripeInvoice(
       name: clientData.name,
       zip: clientData.zip,
     },
-    reference: generatePaymentReference(stripeInvoice.id),
-    additionalInformation: `Invoice #${stripeInvoice.number}`,
+    reference: generatePaymentReference(invoice.id),
+    additionalInformation: `Invoice #${invoice.invoice_number}`,
     message: 'Thank you for your business!',
   };
 }
 
-function generatePaymentReference(stripeInvoiceId: string): string {
+function generatePaymentReference(invoiceId: string): string {
   // Generate Swiss QR-IBAN compatible reference
   // Format: 21 00000 00003 13947 14300 09017
   const prefix = '21';
   const middle = '00000';
-  const suffix = stripeInvoiceId
-    .replace(/\D/g, '')
-    .slice(-15)
-    .padStart(15, '0');
+  const suffix = invoiceId.replace(/\D/g, '').slice(-15).padStart(15, '0');
 
   return `${prefix} ${middle} ${suffix.slice(0, 5)} ${suffix.slice(5, 10)} ${suffix.slice(10, 15)}`;
 }

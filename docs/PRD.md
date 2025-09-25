@@ -29,23 +29,23 @@ Since **September 2022**, QR-bills are mandatory in Switzerland, replacing old p
 **PayMatch** offers a **dead-simple, affordable, and compliant SaaS**:
 
 1. **Invoice Creation & Sending**
-   - **Stripe Invoicing** for invoice creation, sending, and management.
-   - **Swiss QR-bill integration** with Stripe payment links.
+   - **Swiss QR-bill generation** for compliant invoice creation and management.
+   - **PDF generation** with integrated Swiss QR-bill codes.
    - Branded invoices in DE/FR/IT/EN.
    - Recurring invoices for rent, subscriptions, or member fees.
-   - **Stripe Tax** for automatic tax calculations and compliance.
+   - **Swiss tax calculations** for automatic compliance.
 
 2. **Payment Reconciliation**
-   - **Stripe webhooks** for automatic payment status updates.
-   - Import ISO 20022 CAMT.053 files for additional bank reconciliation.
+   - **CAMT.053 import** for bank reconciliation and payment matching.
+   - Manual payment matching algorithms for Swiss banking.
    - Real-time dashboard: "Paid / Pending / Overdue".
-   - **Stripe Tax** integration for tax reporting and compliance.
+   - **Swiss compliance** for tax reporting and regulations.
 
 3. **Business Features**
    - Client & project tracking.
    - Multi-currency support (CHF, EUR).
    - **Resend** for all email communications (auth, invoices, reminders).
-   - **Stripe Invoicing** for complete invoice lifecycle management.
+   - **Swiss QR-bill** for complete invoice lifecycle management.
 
 ---
 
@@ -621,7 +621,7 @@ Features communicate through:
 
 ### Subscription Billing (Stripe)
 
-- **Stripe Billing:** Subscription management for Freelancer (CHF 5/month) and Enterprise (CHF 50/month) plans
+- **Stripe Billing:** Subscription management for Freelancer (CHF 5/month), Business (CHF 50/month), and Enterprise (CHF 150/month) plans
 - **Stripe Customer Portal:** Self-service subscription management
 - **Stripe Webhooks:** Real-time subscription events (created, updated, cancelled)
 - **Multi-currency Support:** CHF and EUR for subscription billing
