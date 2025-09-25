@@ -1,0 +1,579 @@
+---
+description: Edge Functions optimization guidelines and best practices
+alwaysApply: true
+---
+
+# Edge Functions Optimization Rules
+
+## When to Use Edge Functions
+
+### ✅ USE Edge Functions for:
+
+- **Complex Business Logic** - Multi-step operations with external API calls
+- **File Processing** - CAMT.053 parsing, PDF generation, image processing
+- **External Integrations** - Stripe webhooks, Resend emails, bank APIs
+- **Heavy Calculations** - Dashboard KPIs, reporting, analytics
+- **Error-Prone Operations** - Operations that need retry logic and detailed error handling
+- **Real-time Processing** - Operations that need immediate response
+- **Webhook Handlers** - Stripe, Resend, bank notifications
+- **Email/Notification Systems** - All transactional communications
+- **Payment Processing** - Payment matching, reconciliation algorithms
+- **Swiss QR-Bill Generation** - Complex QR-bill creation and validation
+
+### ❌ DON'T USE Edge Functions for:
+
+- **Simple CRUD Operations** - Basic database queries and updates
+- **Data Validation** - Use database constraints and Zod schemas
+- **Authentication** - Use Supabase Auth directly
+- **Real-time Subscriptions** - Use Supabase Realtime directly
+- **File Storage** - Use Supabase Storage directly
+- **Basic Calculations** - Simple math operations in database
+- **RLS Policies** - Keep in database for security
+
+## Edge Functions Architecture
+
+### Function Organization
+
+```
+supabase/functions/
+├── core/                    # Core business operations
+│   ├── process-invoice/     # Invoice creation & processing
+│   ├── reconcile-payments/  # Payment matching & reconciliation
+│   ├── generate-qr-bill/    # Swiss QR-bill generation
+│   └── process-camt-file/   # CAMT.053 file processing
+├── integrations/            # External service integrations
+│   ├── stripe-webhook/      # Stripe event processing
+│   ├── resend-email/        # Email sending service
+│   ├── bank-api-sync/       # Bank API integration
+│   └── tax-calculation/     # Stripe Tax integration
+├── management/              # Admin and management functions
+│   ├── dashboard-data/      # Dashboard KPIs & reports
+│   ├── manage-countries/    # Country management
+│   ├── user-onboarding/     # Onboarding flow
+│   └── audit-logging/       # Audit trail management
+└── notifications/           # Communication functions
+    ├── send-reminders/      # Payment reminders
+    ├── overdue-notifications/ # Overdue invoice alerts
+    └── welcome-emails/      # User onboarding emails
+```
+
+### Function Naming Conventions
+
+- **kebab-case** for function names: `process-invoice`, `reconcile-payments`
+- **Descriptive names** that clearly indicate purpose
+- **Group by domain** in subdirectories
+- **Consistent prefixes** for similar functions
+
+## Edge Functions Development Standards
+
+### Function Structure
+
+```typescript
+// Standard Edge Function template
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
+};
+
+serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  try {
+    // 1. Initialize Supabase client with service role
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // 2. Validate request
+    const { data, error } = await validateRequest(req);
+    if (error) throw new Error(error);
+
+    // 3. Process business logic
+    const result = await processBusinessLogic(data, supabaseClient);
+
+    // 4. Return success response
+    return new Response(JSON.stringify(result), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    });
+  } catch (error) {
+    console.error('Function error:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 400,
+    });
+  }
+});
+```
+
+### Error Handling Standards
+
+```typescript
+// Comprehensive error handling
+try {
+  // Business logic
+} catch (error) {
+  // Log error with context
+  console.error('Function error:', {
+    function: 'process-invoice',
+    error: error.message,
+    stack: error.stack,
+    timestamp: new Date().toISOString(),
+    requestId: req.headers.get('x-request-id'),
+  });
+
+  // Return user-friendly error
+  return new Response(
+    JSON.stringify({
+      error: 'Processing failed',
+      message: error.message,
+      code: 'PROCESSING_ERROR',
+    }),
+    {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 400,
+    }
+  );
+}
+```
+
+### Database Operations
+
+```typescript
+// Always use service role for Edge Functions
+const supabaseClient = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+);
+
+// Use transactions for complex operations
+const { data, error } = await supabaseClient.rpc('begin_transaction');
+if (error) throw new Error('Failed to begin transaction');
+
+try {
+  // Multiple database operations
+  const result1 = await supabaseClient.from('invoices').insert(invoiceData);
+  const result2 = await supabaseClient.from('payments').update(paymentData);
+
+  // Commit transaction
+  await supabaseClient.rpc('commit_transaction');
+} catch (error) {
+  // Rollback on error
+  await supabaseClient.rpc('rollback_transaction');
+  throw error;
+}
+```
+
+### External API Integration
+
+```typescript
+// Stripe integration example
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
+  apiVersion: '2023-10-16',
+});
+
+// Resend integration example
+const resend = new Resend(Deno.env.get('RESEND_API_KEY') ?? '');
+
+// Swiss QR-Bill integration
+import { SwissQRBill } from 'https://esm.sh/swissqrbill@4.2.0/pdf';
+```
+
+## Performance Optimization
+
+### Caching Strategy
+
+```typescript
+// Cache frequently accessed data
+const cache = new Map();
+
+async function getCachedData(key: string, fetcher: () => Promise<any>) {
+  if (cache.has(key)) {
+    return cache.get(key);
+  }
+
+  const data = await fetcher();
+  cache.set(key, data);
+  return data;
+}
+```
+
+### Batch Operations
+
+```typescript
+// Process multiple items in batches
+async function processBatch(items: any[], batchSize = 10) {
+  const results = [];
+
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize);
+    const batchResults = await Promise.all(
+      batch.map((item) => processItem(item))
+    );
+    results.push(...batchResults);
+  }
+
+  return results;
+}
+```
+
+### Timeout Handling
+
+```typescript
+// Set appropriate timeouts
+const timeout = 30000; // 30 seconds
+
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+try {
+  const response = await fetch(url, {
+    signal: controller.signal,
+  });
+  clearTimeout(timeoutId);
+  return response;
+} catch (error) {
+  clearTimeout(timeoutId);
+  if (error.name === 'AbortError') {
+    throw new Error('Request timeout');
+  }
+  throw error;
+}
+```
+
+## Security Standards
+
+### Input Validation
+
+```typescript
+// Always validate input with Zod
+import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
+
+const invoiceSchema = z.object({
+  orgId: z.string().uuid(),
+  clientId: z.string().uuid(),
+  amount: z.number().positive(),
+  currency: z.enum(['CHF', 'EUR']),
+  dueDate: z.string().datetime(),
+});
+
+const { data, error } = invoiceSchema.safeParse(await req.json());
+if (error) {
+  throw new Error(`Validation error: ${error.message}`);
+}
+```
+
+### Authentication & Authorization
+
+```typescript
+// Verify JWT token
+const authHeader = req.headers.get('Authorization');
+if (!authHeader?.startsWith('Bearer ')) {
+  throw new Error('Missing or invalid authorization header');
+}
+
+const token = authHeader.split(' ')[1];
+const {
+  data: { user },
+  error,
+} = await supabaseClient.auth.getUser(token);
+if (error || !user) {
+  throw new Error('Invalid or expired token');
+}
+```
+
+### Rate Limiting
+
+```typescript
+// Implement rate limiting
+const rateLimit = new Map();
+
+function checkRateLimit(identifier: string, limit = 100, window = 60000) {
+  const now = Date.now();
+  const windowStart = now - window;
+
+  if (!rateLimit.has(identifier)) {
+    rateLimit.set(identifier, []);
+  }
+
+  const requests = rateLimit.get(identifier);
+  const recentRequests = requests.filter((time: number) => time > windowStart);
+
+  if (recentRequests.length >= limit) {
+    throw new Error('Rate limit exceeded');
+  }
+
+  recentRequests.push(now);
+  rateLimit.set(identifier, recentRequests);
+}
+```
+
+## Testing Standards
+
+### Unit Testing
+
+```typescript
+// Test individual functions
+import { assertEquals } from 'https://deno.land/std@0.168.0/testing/asserts.ts';
+
+Deno.test('process-invoice function', async () => {
+  const mockData = {
+    orgId: 'test-org-id',
+    clientId: 'test-client-id',
+    amount: 1000,
+    currency: 'CHF',
+  };
+
+  const result = await processInvoice(mockData);
+  assertEquals(result.success, true);
+  assertEquals(result.invoiceNumber, expect.stringMatching(/^\d{4}-\d{4}$/));
+});
+```
+
+### Integration Testing
+
+```typescript
+// Test with real Supabase instance
+Deno.test('integration: invoice creation', async () => {
+  const supabaseClient = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  );
+
+  const result = await supabaseClient.functions.invoke('process-invoice', {
+    body: { orgId: 'test-org', clientId: 'test-client' },
+  });
+
+  assertEquals(result.data.success, true);
+});
+```
+
+## Monitoring & Logging
+
+### Structured Logging
+
+```typescript
+// Use structured logging
+function logEvent(
+  level: 'info' | 'warn' | 'error',
+  message: string,
+  context: any
+) {
+  console.log(
+    JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level,
+      message,
+      function: 'process-invoice',
+      context,
+      requestId: context.requestId,
+    })
+  );
+}
+```
+
+### Performance Monitoring
+
+```typescript
+// Track function performance
+const startTime = performance.now();
+
+try {
+  // Function logic
+  const result = await processData();
+
+  const duration = performance.now() - startTime;
+  logEvent('info', 'Function completed successfully', {
+    duration,
+    resultSize: JSON.stringify(result).length,
+  });
+
+  return result;
+} catch (error) {
+  const duration = performance.now() - startTime;
+  logEvent('error', 'Function failed', {
+    duration,
+    error: error.message,
+  });
+  throw error;
+}
+```
+
+## Deployment Standards
+
+### Environment Variables
+
+```typescript
+// Required environment variables for all functions
+const requiredEnvVars = [
+  'SUPABASE_URL',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'STRIPE_SECRET_KEY',
+  'RESEND_API_KEY',
+];
+
+// Validate environment variables
+for (const envVar of requiredEnvVars) {
+  if (!Deno.env.get(envVar)) {
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
+```
+
+### Function Configuration
+
+```typescript
+// Function-specific configuration
+const config = {
+  timeout: 30000,
+  memory: '256MB',
+  concurrency: 10,
+  retries: 3,
+};
+```
+
+## Migration Strategy
+
+### Phase 1: Critical Operations
+
+1. Move invoice processing to Edge Functions
+2. Implement Stripe webhook handler
+3. Create email notification system
+4. Set up payment reconciliation
+
+### Phase 2: Performance Optimization
+
+1. Move dashboard calculations to Edge Functions
+2. Implement file processing functions
+3. Add caching and optimization
+4. Set up monitoring and logging
+
+### Phase 3: Advanced Features
+
+1. Country management functions
+2. Advanced reporting functions
+3. User onboarding automation
+4. Performance monitoring
+
+## Best Practices
+
+### Code Organization
+
+- **Single Responsibility** - Each function should do one thing well
+- **Error Handling** - Comprehensive error handling and logging
+- **Input Validation** - Always validate input with Zod schemas
+- **Security First** - Implement proper authentication and authorization
+- **Performance** - Optimize for speed and resource usage
+
+### Documentation
+
+- **Function Comments** - Document purpose, parameters, and return values
+- **API Documentation** - Document all function endpoints
+- **Error Codes** - Standardize error codes and messages
+- **Examples** - Provide usage examples for each function
+
+### Maintenance
+
+- **Version Control** - Use semantic versioning for functions
+- **Backward Compatibility** - Maintain compatibility when possible
+- **Deprecation** - Properly deprecate old functions
+- **Monitoring** - Monitor function performance and errors
+
+## Common Patterns
+
+### Webhook Processing
+
+```typescript
+// Standard webhook handler pattern
+serve(async (req) => {
+  const signature = req.headers.get('stripe-signature');
+  const payload = await req.text();
+
+  try {
+    const event = stripe.webhooks.constructEvent(
+      payload,
+      signature,
+      webhookSecret
+    );
+
+    switch (event.type) {
+      case 'invoice.payment_succeeded':
+        await handlePaymentSucceeded(event.data.object);
+        break;
+      case 'customer.subscription.updated':
+        await handleSubscriptionUpdated(event.data.object);
+        break;
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
+
+    return new Response(JSON.stringify({ received: true }));
+  } catch (error) {
+    console.error('Webhook error:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+    });
+  }
+});
+```
+
+### Batch Processing
+
+```typescript
+// Process items in batches with error handling
+async function processBatch(
+  items: any[],
+  processItem: (item: any) => Promise<any>
+) {
+  const results = [];
+  const errors = [];
+
+  for (const item of items) {
+    try {
+      const result = await processItem(item);
+      results.push(result);
+    } catch (error) {
+      errors.push({ item, error: error.message });
+    }
+  }
+
+  return { results, errors };
+}
+```
+
+### Retry Logic
+
+```typescript
+// Implement retry logic for external API calls
+async function withRetry<T>(
+  operation: () => Promise<T>,
+  maxRetries = 3,
+  delay = 1000
+): Promise<T> {
+  let lastError: Error;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error as Error;
+
+      if (attempt === maxRetries) {
+        throw lastError;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, delay * attempt));
+    }
+  }
+
+  throw lastError!;
+}
+```
