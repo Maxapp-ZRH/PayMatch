@@ -1,0 +1,399 @@
+---
+description: Comprehensive folder organization and code structure guidelines for PayMatch
+globs:
+  - 'src/**/*.{ts,tsx,js,jsx}'
+  - 'src/app/**'
+  - 'src/features/**'
+  - 'src/components/**'
+  - 'src/lib/**'
+  - 'src/types/**'
+  - 'src/schemas/**'
+  - 'src/server/**'
+  - 'src/config/**'
+  - 'src/utils/**'
+alwaysApply: true
+---
+
+# Folder Organization & Code Structure
+
+## Core Architecture Principles
+
+- **Feature-First Organization** - Group related functionality together
+- **Separation of Concerns** - Clear boundaries between layers
+- **Scalable Structure** - Easy to find and maintain code
+- **Type Safety** - Consistent type definitions and validation
+- **Reusability** - Shared components and utilities
+
+## Folder Structure & Guidelines
+
+### `/src/app/` - Next.js App Router
+
+- **Page Components** - Route-specific page components only
+- **Layouts** - Root and nested layout components
+- **Loading/Error** - Special Next.js files (loading.tsx, error.tsx, not-found.tsx)
+- **API Routes** - Server-side API endpoints (`/api/` subfolder)
+- **Middleware** - Next.js middleware for auth, redirects, etc.
+
+```typescript
+// ✅ CORRECT - Page component in app router
+// src/app/dashboard/invoices/page.tsx
+export default function InvoicesPage() {
+  return <InvoicesFeature />;
+}
+
+// ❌ WRONG - Business logic in page component
+// src/app/dashboard/invoices/page.tsx
+export default function InvoicesPage() {
+  const { data } = useQuery(/* complex logic */);
+  return <div>{/* complex UI */}</div>;
+}
+```
+
+### `/src/features/` - Feature-Based Organization
+
+- **One folder per feature** - Each feature is self-contained
+- **Feature structure** - Components, hooks, types, and utilities per feature
+- **Clear boundaries** - Features should not directly import from other features
+- **Shared features** - Common features like auth, dashboard, settings
+
+```
+src/features/
+├── auth/
+│   ├── components/
+│   ├── hooks/
+│   ├── types/
+│   └── utils/
+├── invoices/
+│   ├── components/
+│   ├── hooks/
+│   ├── types/
+│   └── utils/
+├── clients/
+│   ├── components/
+│   ├── hooks/
+│   ├── types/
+│   └── utils/
+└── dashboard/
+    ├── components/
+    ├── hooks/
+    ├── types/
+    └── utils/
+```
+
+### `/src/components/` - Shared UI Components
+
+- **Reusable components** - Used across multiple features
+- **UI primitives** - Basic building blocks (buttons, inputs, modals)
+- **Layout components** - Headers, sidebars, navigation
+- **Form components** - Reusable form elements and validation
+
+```typescript
+// ✅ CORRECT - Shared component
+// src/components/ui/button.tsx
+export function Button({ variant, size, children, ...props }) {
+  return <button className={cn(buttonVariants({ variant, size }))} {...props}>
+    {children}
+  </button>;
+}
+
+// ❌ WRONG - Feature-specific component in shared folder
+// src/components/invoice-form.tsx (should be in features/invoices/)
+```
+
+### `/src/lib/` - Core Utilities & Integrations
+
+- **Supabase client** - Database and auth configuration
+- **Stripe integration** - Payment and invoicing setup
+- **External services** - Resend, Swiss QR-bill, etc.
+- **Core utilities** - Shared helper functions
+- **Configuration** - Environment and app configuration
+
+```typescript
+// ✅ CORRECT - Core integration
+// src/lib/supabase/server.ts
+export function createSupabaseServerClient() {
+  return createServerClient(/* config */);
+}
+
+// ✅ CORRECT - Core utility
+// src/lib/utils.ts
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+### `/src/types/` - Type Definitions
+
+- **Database types** - Generated from Supabase schema
+- **API types** - Request/response interfaces
+- **Feature types** - Feature-specific type definitions
+- **Shared types** - Common types used across features
+
+```typescript
+// ✅ CORRECT - Database types
+// src/types/database.ts
+export type Database = {
+  public: {
+    Tables: {
+      invoices: {
+        Row: {
+          id: string;
+          amount: number;
+          // ... other fields
+        };
+        // ... other types
+      };
+    };
+  };
+};
+
+// ✅ CORRECT - Feature types
+// src/types/invoice.ts
+export interface InvoiceFormData {
+  clientId: string;
+  amount: number;
+  currency: 'CHF' | 'EUR';
+}
+```
+
+### `/src/schemas/` - Validation Schemas
+
+- **Zod schemas** - Form validation and API validation
+- **Feature schemas** - Feature-specific validation rules
+- **Shared schemas** - Common validation patterns
+- **Database schemas** - Database constraint validation
+
+```typescript
+// ✅ CORRECT - Validation schema
+// src/schemas/invoice.ts
+export const invoiceSchema = z.object({
+  clientId: z.string().uuid(),
+  amount: z.number().positive(),
+  currency: z.enum(['CHF', 'EUR']),
+  dueDate: z.date(),
+});
+
+export type InvoiceFormData = z.infer<typeof invoiceSchema>;
+```
+
+### `/src/server/` - Server-Side Code
+
+- **Server actions** - Next.js server actions
+- **API handlers** - Custom API route handlers
+- **Server utilities** - Server-only helper functions
+- **Webhook handlers** - Stripe, Resend, etc.
+
+```typescript
+// ✅ CORRECT - Server action
+// src/server/actions/invoices.ts
+export async function createInvoice(formData: InvoiceFormData) {
+  const supabase = createSupabaseServerClient();
+  // Server-side logic
+}
+```
+
+### `/src/config/` - Configuration Files
+
+- **Environment config** - Environment-specific settings
+- **Feature flags** - Feature toggle configuration
+- **External service config** - API keys, endpoints, etc.
+- **App constants** - Business rules, limits, etc.
+
+```typescript
+// ✅ CORRECT - Configuration
+// src/config/app.ts
+export const APP_CONFIG = {
+  maxInvoicesFree: 5,
+  currencies: ['CHF', 'EUR'] as const,
+  supportedCountries: ['CH', 'DE', 'FR', 'IT'] as const,
+} as const;
+```
+
+### `/src/utils/` - Utility Functions
+
+- **Pure functions** - No side effects, easily testable
+- **Shared utilities** - Used across multiple features
+- **Helper functions** - Common operations and transformations
+- **Formatting utilities** - Date, currency, text formatting
+
+```typescript
+// ✅ CORRECT - Utility function
+// src/utils/currency.ts
+export function formatCurrency(
+  amount: number,
+  currency: 'CHF' | 'EUR'
+): string {
+  return new Intl.NumberFormat('de-CH', {
+    style: 'currency',
+    currency,
+  }).format(amount / 100);
+}
+```
+
+## Import Guidelines
+
+### Import Order
+
+1. **React imports** - React and Next.js imports first
+2. **External libraries** - Third-party packages
+3. **Internal imports** - Project-specific imports
+4. **Type imports** - Type-only imports last
+
+```typescript
+// ✅ CORRECT - Import order
+import React from 'react';
+import { NextRequest } from 'next/server';
+import { z } from 'zod';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { invoiceSchema } from '@/schemas/invoice';
+import type { Database } from '@/types/database';
+```
+
+### Import Paths
+
+- **Use absolute imports** - `@/` prefix for src folder
+- **Consistent paths** - Same import style throughout project
+- **Avoid relative imports** - Use absolute paths for clarity
+
+```typescript
+// ✅ CORRECT - Absolute imports
+import { Button } from '@/components/ui/button';
+import { useInvoices } from '@/features/invoices/hooks/use-invoices';
+import { formatCurrency } from '@/utils/currency';
+
+// ❌ WRONG - Relative imports
+import { Button } from '../../../components/ui/button';
+```
+
+## File Naming Conventions
+
+### Component Files
+
+- **PascalCase** - `InvoiceForm.tsx`, `ClientCard.tsx`
+- **Descriptive names** - Clear purpose from filename
+- **Consistent suffixes** - `.tsx` for components, `.ts` for utilities
+
+### Hook Files
+
+- **kebab-case** - `use-invoices.ts`, `use-client-form.ts`
+- **use- prefix** - All custom hooks start with `use-`
+- **Descriptive names** - Clear functionality from filename
+
+### Utility Files
+
+- **kebab-case** - `format-currency.ts`, `date-helpers.ts`
+- **Descriptive names** - Clear purpose from filename
+- **Grouped by domain** - Related utilities in same file
+
+### Type Files
+
+- **kebab-case** - `invoice-types.ts`, `api-types.ts`
+- **Descriptive names** - Clear scope from filename
+- **Feature-specific** - Types grouped by feature when possible
+
+## Feature Development Guidelines
+
+### Creating New Features
+
+1. **Create feature folder** - `src/features/feature-name/`
+2. **Add subfolders** - `components/`, `hooks/`, `types/`, `utils/`
+3. **Create index files** - Export public API from each subfolder
+4. **Add to app router** - Create page in `src/app/`
+5. **Update types** - Add feature types to `src/types/`
+
+### Feature Dependencies
+
+- **No direct imports** - Features should not import from other features
+- **Shared components** - Use `/src/components/` for shared UI
+- **Shared utilities** - Use `/src/utils/` for shared logic
+- **Event communication** - Use Zustand store for cross-feature communication
+
+### Feature Testing
+
+- **Feature tests** - Test files alongside feature code
+- **Integration tests** - Test feature interactions
+- **Unit tests** - Test individual components and hooks
+- **E2E tests** - Test complete user flows
+
+## Code Organization Best Practices
+
+### Single Responsibility
+
+- **One purpose per file** - Each file should have a single, clear purpose
+- **Focused components** - Components should do one thing well
+- **Pure functions** - Utilities should be pure and testable
+- **Clear interfaces** - Public APIs should be minimal and clear
+
+### DRY Principle
+
+- **Extract common code** - Move repeated code to shared utilities
+- **Reusable components** - Create components for repeated UI patterns
+- **Shared hooks** - Extract common logic into custom hooks
+- **Consistent patterns** - Use same patterns across features
+
+### Performance Considerations
+
+- **Lazy loading** - Use dynamic imports for large features
+- **Code splitting** - Split code by features and routes
+- **Tree shaking** - Use named exports for better tree shaking
+- **Bundle analysis** - Monitor bundle size and optimize imports
+
+## Examples
+
+### Feature Structure Example
+
+```
+src/features/invoices/
+├── components/
+│   ├── invoice-form.tsx
+│   ├── invoice-list.tsx
+│   ├── invoice-card.tsx
+│   └── index.ts
+├── hooks/
+│   ├── use-invoices.ts
+│   ├── use-invoice-form.ts
+│   └── index.ts
+├── types/
+│   ├── invoice.ts
+│   └── index.ts
+├── utils/
+│   ├── invoice-helpers.ts
+│   └── index.ts
+└── index.ts
+```
+
+### Component Organization Example
+
+```typescript
+// src/features/invoices/components/invoice-form.tsx
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
+import { invoiceSchema } from '@/schemas/invoice';
+import { useInvoiceForm } from '../hooks/use-invoice-form';
+import type { InvoiceFormData } from '../types/invoice';
+
+interface InvoiceFormProps {
+  onSubmit: (data: InvoiceFormData) => void;
+  initialData?: Partial<InvoiceFormData>;
+}
+
+export function InvoiceForm({ onSubmit, initialData }: InvoiceFormProps) {
+  const { handleSubmit, register, formState } = useForm<InvoiceFormData>({
+    resolver: zodResolver(invoiceSchema),
+    defaultValues: initialData,
+  });
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      {/* Form fields */}
+      <Button type="submit" disabled={formState.isSubmitting}>
+        Create Invoice
+      </Button>
+    </form>
+  );
+}
+```
+
+This organization ensures your codebase remains maintainable, scalable, and follows Next.js 15 best practices while supporting your Swiss invoicing platform's growth.

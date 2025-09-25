@@ -1,0 +1,94 @@
+---
+description: Enforce generated Supabase database types usage across the app
+globs:
+  - 'src/**'
+  - 'supabase/migrations/**'
+alwaysApply: true
+---
+
+# Type Consistency & Database Types
+
+## Golden Rules
+
+- **ALWAYS** use generated types from `src/types/database.ts` for all database operations.
+- **NEVER** define ad-hoc DB types or inline table shapes.
+- **ALWAYS** regenerate types after any migration and commit schema + types together.
+- **ONLY** use database types from `src/types/database.ts` - no other database type definitions allowed.
+
+## Type Organization
+
+### Database Types (Single Source of Truth)
+
+- **Location:** `src/types/database.ts`
+- **Purpose:** Generated Supabase types for all database operations
+- **Usage:** Import and use directly in all database queries and operations
+
+### Feature-Specific Types
+
+- **Location:** `src/features/[feature-name]/types/`
+- **Purpose:** Feature-specific business logic types, form data, UI state
+- **Examples:** `InvoiceFormData`, `ClientFormData`, `PaymentMatcherConfig`
+- **Rule:** Must NOT duplicate database types - only business logic types
+
+### Shared Types
+
+- **Location:** `src/types/`
+- **Purpose:** Common types used across multiple features
+- **Examples:** `Currency`, `Language`, `PlanLimits`
+
+## Type Generation
+
+### File Location
+
+- Generate to: `src/types/database.ts` (single source of truth).
+
+### Commands (npm scripts expected)
+
+```bash
+npm run types:db:local   # from local Docker DB
+npm run types:db:cloud   # from linked/cloud project
+```
+
+## Examples
+
+### ✅ CORRECT - Using database types
+
+```typescript
+import type { Database } from '@/types/database';
+
+type Invoice = Database['public']['Tables']['invoices']['Row'];
+type InvoiceInsert = Database['public']['Tables']['invoices']['Insert'];
+type InvoiceUpdate = Database['public']['Tables']['invoices']['Update'];
+```
+
+### ✅ CORRECT - Feature-specific types
+
+```typescript
+// src/features/invoices/types/invoice.ts
+export interface InvoiceFormData {
+  clientId: string;
+  amount: number;
+  currency: 'CHF' | 'EUR';
+  dueDate: Date;
+  lineItems: LineItem[];
+}
+
+export interface LineItem {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  taxRate: number;
+}
+```
+
+### ❌ WRONG - Duplicating database types
+
+```typescript
+// DON'T DO THIS - Database types should come from database.ts
+interface Invoice {
+  id: string;
+  org_id: string;
+  invoice_number: string;
+  // ... other database fields
+}
+```

@@ -1,0 +1,13 @@
+---
+description: Auth emails via Resend + Supabase admin links
+globs:
+  - 'src/app/api/auth/**'
+  - 'src/components/email/**'
+alwaysApply: true
+---
+
+# Resend Auth
+
+- Generate links via `supabaseAdmin.auth.admin.generateLink()` for signup/magic/reset.
+- Send branded emails (React Email) through Resend; routes return 204 (no user enumeration).
+- `/auth/callback` establishes session; `/auth/reset` updates password.

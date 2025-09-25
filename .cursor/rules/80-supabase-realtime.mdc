@@ -1,0 +1,18 @@
+---
+description: Supabase Realtime usage style
+  - 'src/lib/realtime/**'
+  - 'src/hooks/**'
+alwaysApply: true
+---
+
+# Supabase Realtime
+
+## Golden Rule
+
+**Always use Supabase Realtime** instead of custom WebSocket implementations.
+
+- ✅ Built-in authentication (uses Supabase Auth tokens)
+- ✅ RLS enforcement (respects DB security policies)
+- ✅ Scales with Supabase infra (no custom servers)
+- ✅ Type-safe (with generated types)
+- ❌ Do NOT implement custom WebSockets for data sync.

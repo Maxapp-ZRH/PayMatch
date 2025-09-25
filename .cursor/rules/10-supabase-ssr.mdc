@@ -1,0 +1,16 @@
+---
+description: Use @supabase/ssr correctly and never bypass RLS in user flows
+globs:
+  - 'src/lib/supabase/**'
+  - 'src/app/**'
+  - 'src/server/**'
+  - 'src/app/api/**'
+alwaysApply: true
+---
+
+# Supabase SSR
+
+- Server components/actions: `createSupabaseServerClient()` from @lib/supabase/server; get session and enforce RBAC before writes.
+- Client components: `createSupabaseBrowserClient()` from @lib/supabase/client for realtime/UI reads.
+- Admin/service tasks (webhooks, ops): `supabaseAdmin` from @lib/supabase/admin.
+- Never expose service-role key to client.

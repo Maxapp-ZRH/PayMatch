@@ -1,0 +1,22 @@
+---
+description: SQL migrations discipline (db diff vs migration new) + seeds policy
+globs:
+  - 'supabase/migrations/**'
+  - 'supabase/seed/seed.sql'
+alwaysApply: true
+---
+
+# Migrations
+
+- Prefer **empty, hand-written migrations** for planned changes:
+  - `supabase migration new <name>` → edit the file.
+- If you **prototyped directly in local DB** (Studio/psql), generate from state:
+  - `supabase db diff -f "<timestamp>_<name>.sql"`
+- Never edit applied migrations; always add new ones.
+- Apply locally: `supabase db reset` (dev) or `supabase db push`.
+- Seeds are for local/staging only; never seed prod reference data.
+- Index hot paths
+
+# Safety
+
+- Run diffs against your **local dev DB container**, not prod.

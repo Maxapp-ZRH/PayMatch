@@ -1,0 +1,10 @@
+---
+description: Security & quality guardrails
+alwaysApply: true
+---
+
+- No service-role key outside server-only code.
+- Validate all inputs with Zod; never trust client IDs for scope.
+- Receipts immutable: snapshot item/option names and prices in orders.
+- Idempotent, verified webhooks. Audit sensitive actions (role changes, impersonation, printer edits).
+- Realtime is best-effort; fall back to polling gracefully.

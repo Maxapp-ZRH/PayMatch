@@ -1,0 +1,148 @@
+---
+description: Clear and comprehensive code comments for maintainability
+globs:
+  - 'src/**/*.{ts,tsx,js,jsx}'
+  - 'supabase/**/*.sql'
+  - 'docs/**/*.md'
+alwaysApply: true
+---
+
+# Code Comments & Documentation
+
+## File-Level Comments
+
+- **Every file** must have a clear header comment explaining its purpose
+- **Header comment format:** Start with `//` or `/**` and include:
+  - File purpose and functionality
+  - Key concepts or business logic
+  - Usage examples for complex files
+  - Dependencies or requirements
+- **Complex files** should include usage examples and key concepts
+- **API routes** must document endpoints, parameters, and responses
+- **Database functions** must explain business logic and side effects
+
+### Required Header Comment Format
+
+```typescript
+/**
+ * Invoice Management Feature - Components
+ *
+ * This module contains all React components for invoice management including:
+ * - InvoiceList: Displays paginated list of invoices with filtering
+ * - InvoiceForm: Form for creating and editing invoices
+ * - InvoicePreview: Live preview of invoice with QR-bill
+ * - QRBillGenerator: Swiss QR-bill generation component
+ *
+ * Dependencies: @/types/database, @/features/invoices/hooks, @/lib/swiss-qr-bill
+ * Usage: Import components from this module for invoice-related UI
+ */
+```
+
+### Examples by File Type
+
+**Component Files:**
+
+```typescript
+/**
+ * Invoice List Component
+ *
+ * Displays a paginated, filterable list of invoices with actions.
+ * Supports real-time updates via Supabase subscriptions.
+ *
+ * Features:
+ * - Status filtering (draft, pending, paid, overdue)
+ * - Client and date range filtering
+ * - Bulk actions (send, download, delete)
+ * - Responsive design with mobile optimization
+ */
+```
+
+**Hook Files:**
+
+```typescript
+/**
+ * useInvoices Hook
+ *
+ * Custom hook for managing invoice data and operations.
+ * Provides CRUD operations, real-time updates, and optimistic UI updates.
+ *
+ * Returns: { invoices, loading, error, createInvoice, updateInvoice, deleteInvoice }
+ * Dependencies: Supabase client, organization context
+ */
+```
+
+**Utility Files:**
+
+```typescript
+/**
+ * Invoice Helper Functions
+ *
+ * Utility functions for invoice calculations, validation, and formatting.
+ * Includes Swiss QR-bill compliance helpers and currency formatting.
+ *
+ * Functions:
+ * - calculateTotals: Computes subtotal, tax, and grand total
+ * - validateInvoiceData: Validates invoice form data
+ * - formatCurrency: Formats amounts for display
+ */
+```
+
+## Function & Component Comments
+
+- **Public functions** must have JSDoc comments with parameters and return types
+- **Complex business logic** requires inline comments explaining the reasoning
+- **React components** should document props, state, and key behaviors
+- **Database queries** must explain the business purpose and any performance considerations
+
+## Inline Comments
+
+- **Non-obvious code** requires explanatory comments
+- **Business rules** must be documented with context
+- **Temporary workarounds** must be clearly marked with TODO/FIXME
+- **Performance optimizations** should explain why they're necessary
+
+## Comment Standards
+
+- Use **clear, concise language** - avoid jargon
+- **Explain WHY**, not just what the code does
+- **Update comments** when code changes
+- **Remove outdated comments** - don't leave misleading information
+- **Use consistent formatting** - follow JSDoc standards for functions
+
+## Examples
+
+```typescript
+/**
+ * Calculates Swiss VAT for invoices based on country and invoice type
+ * @param amount - Invoice amount in cents
+ * @param countryCode - ISO country code (CH, DE, etc.)
+ * @param invoiceType - Type of invoice (standard, reduced, zero)
+ * @returns VAT amount in cents
+ */
+function calculateSwissVAT(
+  amount: number,
+  countryCode: string,
+  invoiceType: 'standard' | 'reduced' | 'zero'
+): number {
+  // Swiss VAT rates as of 2024
+  const vatRates = {
+    standard: 7.7, // Standard rate for most goods and services
+    reduced: 2.5, // Reduced rate for essential goods (food, books, etc.)
+    zero: 0, // Zero rate for exports and certain services
+  };
+
+  // Only apply Swiss VAT for Swiss invoices
+  if (countryCode !== 'CH') {
+    return 0;
+  }
+
+  return Math.round(amount * (vatRates[invoiceType] / 100));
+}
+```
+
+## Documentation Files
+
+- **README.md** must be comprehensive and up-to-date
+- **API documentation** should be generated from code comments
+- **Database schema** must be documented with table/column purposes
+- **Deployment guides** should include all necessary steps

@@ -1,0 +1,92 @@
+---
+description: Database security and performance optimization rules for RLS policies and functions
+globs:
+  - 'supabase/migrations/**'
+  - 'src/server/**'
+alwaysApply: true
+---
+
+# Database Security & Performance Optimizations
+
+## RLS Policy Rules
+
+### Performance Optimizations
+
+- **Always wrap `auth.uid()` calls**: Use `(SELECT auth.uid())` instead of `auth.uid()` directly
+- **Consolidate policies**: Combine multiple SELECT/ALL policies into single FOR ALL policies with OR conditions
+- **Test thoroughly**: RLS changes can break access control - always test with different user roles
+- **Performance first**: Optimize for query performance while maintaining exact security rules
+
+## Function Security Rules
+
+### Security Settings
+
+- **Always set search_path**: Use `SET search_path = ''` for all custom functions
+- **Use SECURITY DEFINER**: Make functions run with controlled privileges
+- **Explicit permissions**: Grant EXECUTE permissions explicitly to authenticated/service_role
+- **No client exposure**: Never expose service-role keys to client-side code
+
+## Migration Best Practices
+
+### Development Testing
+
+- **Test in development first**: Always use `supabase db reset` for testing
+- **Verify functionality**: Test all CRUD operations with different user roles
+- **Check linter**: Run `supabase db lint` after schema changes
+
+### Production Deployment
+
+- **Production safety**: Use `supabase db push` for production (no seeds)
+- **Monitor after deployment**: Watch for authentication/authorization errors
+- **Have rollback plan**: Be prepared to revert if issues arise
+
+## Performance Monitoring
+
+### Regular Checks
+
+- **Linter verification**: Run `supabase db lint` after schema changes
+- **Query performance**: Monitor slow queries and RLS policy impact
+- **Scale testing**: Test with realistic data volumes
+- **Index optimization**: Ensure foreign keys have proper indexes
+
+### Common Performance Issues
+
+- **RLS policy evaluation**: Check for `auth.uid()` re-evaluation warnings
+- **Multiple policies**: Look for "multiple permissive policies" warnings
+- **Missing indexes**: Ensure foreign keys have covering indexes
+- **Function calls**: Monitor function execution time in RLS policies
+
+## Current Status
+
+✅ **All optimizations have been successfully applied and are now part of your database schema.**
+
+- RLS policies optimized for performance
+- Functions secured with proper search_path and SECURITY DEFINER
+- Foreign key indexes added for performance
+- Table descriptions and documentation added
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Permission Denied**: Check function execute permissions
+2. **RLS Blocking**: Verify policy logic and user roles
+3. **Performance Issues**: Check query execution plans
+4. **Function Errors**: Verify function security settings
+
+### Verification Commands
+
+```bash
+# Check for linter warnings
+supabase db lint
+
+# Verify function permissions
+\df+ public.*
+
+# Check RLS policies
+\dp+ public.table_name
+
+# Test with different user roles
+-- Use different authenticated users to test access control
+
+```

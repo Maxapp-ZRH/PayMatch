@@ -1,0 +1,58 @@
+---
+description: Project foundations, PRD adherence, and tech stack guidelines
+alwaysApply: true
+---
+
+# PayMatch Foundations
+
+## Product Requirements Document (PRD)
+
+- **Follow the PRD** - All development decisions must align with `docs/PRD.md`
+- **Swiss Market Focus** - Built specifically for Swiss SMEs with QR-bill compliance
+- **Freemium Model** - 5 invoices/month free, CHF 5/month Freelancer, CHF 50/month Enterprise
+- **Multi-Currency** - CHF and EUR support only (Switzerland/Germany focus)
+- **Region Locking** - DACH + France/Italy initially, expandable via Supabase configuration
+
+## Tech Stack
+
+### Frontend
+
+- **Next.js 15** with App Router and React 19
+- **Shadcn/ui** components with Tailwind CSS 4
+- **Zustand** for state management
+- **Zod** for validation schemas
+- **TypeScript** with strict mode
+
+### Backend & Database
+
+- **Supabase** - PostgreSQL with real-time subscriptions
+- **Supabase Auth** - Authentication and user management
+- **Row Level Security (RLS)** - Database-level security policies
+- **Edge Functions** - Serverless functions for complex operations
+
+### Payments & Invoicing
+
+- **Stripe Invoicing** - Complete invoice lifecycle management
+- **Stripe Payments** - Multi-currency payment processing (CHF, EUR)
+- **Stripe Tax** - Automatic tax calculations and compliance
+- **Swiss QR-Bill** - Compliance with Swiss invoicing standards
+
+### Email & Communication
+
+- **Resend** - All transactional emails (auth, invoices, reminders)
+- **React Email** - Email template system
+
+### Development & Deployment
+
+- **Vercel** - Frontend hosting and deployment
+- **GitHub Actions** - CI/CD pipeline with automated testing
+- **Husky** - Git hooks for code quality
+- **ESLint & Prettier** - Code formatting and linting
+
+## Core Principles
+
+- **Swiss Compliance First** - QR-bill and Swiss tax regulations are non-negotiable
+- **Database-Driven Configuration** - Country management via Supabase, not code
+- **Type Safety** - Use generated database types, never ad-hoc types
+- **Security by Default** - RLS policies, input validation, secure authentication
+- **Performance Optimized** - Fast builds, efficient queries, real-time updates
