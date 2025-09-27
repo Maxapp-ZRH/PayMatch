@@ -29,20 +29,22 @@ PayMatch uses a **dual payment architecture** that separates subscription billin
 - Swiss QR-bill generation
 - Bank reconciliation
 
-### 2. Invoice Payments (Swiss QR-Bill)
+### 2. Invoice Payments (Swiss QR-Bill + Open Banking)
 
 **Purpose**: Handle actual business invoice payments
 
 - Swiss QR-bill compliant invoices
 - Direct bank transfers
-- CAMT.053 bank reconciliation
+- Open Banking (bLink) integration for automatic reconciliation
+- CAMT.053 bank reconciliation (fallback)
 
 **Components**:
 
 - Swiss QR-bill library (`swissqrbill`)
 - PDF generation (PDFKit)
 - Email delivery (Resend)
-- Bank statement import (CAMT.053)
+- Open Banking (bLink) API integration
+- Bank statement import (CAMT.053) as fallback
 
 ## Detailed Payment Flows
 
@@ -89,9 +91,11 @@ graph TD
     D --> E[Client Receives Invoice]
     E --> F[Client Pays via Bank App]
     F --> G[Bank Processes Payment]
-    G --> H[User Uploads CAMT.053]
-    H --> I[PayMatch Matches Payment]
+    G --> H[Open Banking (bLink) Detects Payment]
+    H --> I[PayMatch Automatically Matches Payment]
     I --> J[Invoice Marked as Paid]
+    K[Manual CAMT.053 Upload] --> L[Fallback Reconciliation]
+    L --> I
 ```
 
 **Implementation**:
@@ -249,16 +253,17 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 
 ### Phase 1 (Current)
 
-- Manual CAMT.053 upload
-- Basic reconciliation matching
+- Open Banking (bLink) integration
+- Real-time payment reconciliation
 - Swiss QR-bill compliance
+- CAMT.053 fallback support
 
 ### Phase 2 (Future)
 
-- Automated bank API integration
-- Real-time payment notifications
-- Advanced reconciliation algorithms
+- Advanced Open Banking features
 - Multi-bank support
+- Enhanced reconciliation algorithms
+- AI-powered payment matching
 
 ### Phase 3 (Advanced)
 

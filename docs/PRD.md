@@ -36,8 +36,9 @@ Since **September 2022**, QR-bills are mandatory in Switzerland, replacing old p
    - **Swiss tax calculations** for automatic compliance.
 
 2. **Payment Reconciliation**
-   - **CAMT.053 import** for bank reconciliation and payment matching.
-   - Manual payment matching algorithms for Swiss banking.
+   - **Open Banking (bLink) integration** for automatic bank reconciliation and payment matching.
+   - **CAMT.053 import** as fallback for manual bank reconciliation.
+   - Real-time payment matching algorithms for Swiss banking.
    - Real-time dashboard: "Paid / Pending / Overdue".
    - **Swiss compliance** for tax reporting and regulations.
 
@@ -54,7 +55,7 @@ Since **September 2022**, QR-bills are mandatory in Switzerland, replacing old p
 - **Swiss-focused:** Built for QR-bills & ISO 20022 compliance.
 - **Simplicity first:** Easy for freelancers; powerful enough for SMEs.
 - **Affordable:** Fraction of ERP costs (CHF 10–30/month).
-- **Bank-ready:** Payment reconciliation across all major Swiss banks.
+- **Bank-ready:** Real-time payment reconciliation via Open Banking (bLink) across all major Swiss banks.
 - **Multilingual:** DE, FR, IT, EN out of the box.
 
 ---
@@ -78,26 +79,26 @@ Since **September 2022**, QR-bills are mandatory in Switzerland, replacing old p
 
 - **Price:** CHF 0/month
 - **Target:** Freelancers, consultants, small businesses
-- **Features:** 5 invoices/month, 3 clients, 1 user, QR-bill invoices, manual CAMT reconciliation, automatic bank sync, basic reminders, reports/export
+- **Features:** 5 invoices/month, 3 clients, 1 user, QR-bill invoices, Open Banking (bLink) integration, automatic bank sync, basic reminders, reports/export
 - **Limitation:** No team features, limited volume
 
 **👤 Freelancer**
 
 - **Price:** CHF 5/month (CHF 48/year - 20% off)
 - **Target:** Freelancers, consultants, landlords
-- **Features:** Unlimited invoices/clients, 1 user, QR-bill invoices, manual CAMT reconciliation, automatic bank sync, basic reminders, reports/export
+- **Features:** Unlimited invoices/clients, 1 user, QR-bill invoices, Open Banking (bLink) integration, automatic bank sync, basic reminders, reports/export
 
 **🏢 Business**
 
 - **Price:** CHF 50/month (CHF 480/year - 20% off)
 - **Target:** SMEs, fiduciaries, associations
-- **Features:** Everything in Freelancer + up to 3 users, team management with roles, advanced reminders, analytics
+- **Features:** Everything in Freelancer + up to 3 users, team management with roles, advanced reminders, analytics, advanced Open Banking features
 
 **🏦 Enterprise**
 
 - **Price:** CHF 150/month (CHF 1,440/year - 20% off)
 - **Target:** Large fiduciaries, banks, advanced SMEs
-- **Features:** Everything in Business + unlimited users, dedicated support/SLA
+- **Features:** Everything in Business + unlimited users, dedicated support/SLA, enterprise Open Banking features
 
 ### Pricing Strategy Benefits
 
@@ -552,6 +553,82 @@ Features communicate through:
 5. **Code Reuse:** Shared components and utilities
 6. **Performance:** Lazy loading of features
 
+### Backend Architecture: Supabase Edge Functions
+
+PayMatch uses **Supabase Edge Functions** for complex business operations that require server-side processing, external API integrations, and privileged database access.
+
+#### When to Use Edge Functions
+
+**✅ USE Edge Functions for:**
+
+- **Complex Business Logic** - Multi-step operations with external API calls
+- **File Processing** - CAMT.053 parsing, PDF generation, image processing
+- **External Integrations** - Stripe webhooks, Resend emails, bank APIs
+- **Heavy Calculations** - Dashboard KPIs, reporting, analytics
+- **Error-Prone Operations** - Operations that need retry logic and detailed error handling
+- **Real-time Processing** - Operations that need immediate response
+- **Webhook Handlers** - Stripe, Resend, bank notifications
+- **Email/Notification Systems** - All transactional communications
+- **Payment Processing** - Payment matching, reconciliation algorithms
+- **Swiss QR-Bill Generation** - Complex QR-bill creation and validation
+
+**❌ DON'T USE Edge Functions for:**
+
+- **Simple CRUD Operations** - Basic database queries and updates
+- **Data Validation** - Use database constraints and Zod schemas
+- **Authentication** - Use Supabase Auth directly
+- **Real-time Subscriptions** - Use Supabase Realtime directly
+- **File Storage** - Use Supabase Storage directly
+- **Basic Calculations** - Simple math operations in database
+- **RLS Policies** - Keep in database for security
+
+#### Edge Functions Architecture
+
+```
+supabase/functions/
+├── core/                    # Core business operations
+│   ├── process-invoice/     # Invoice creation & processing
+│   ├── reconcile-payments/  # Payment matching & reconciliation
+│   ├── generate-qr-bill/    # Swiss QR-bill generation
+│   └── process-camt-file/   # CAMT.053 file processing
+├── integrations/            # External service integrations
+│   ├── stripe-webhook/      # Stripe event processing
+│   ├── resend-email/        # Email sending service
+│   ├── blink-open-banking/  # Open Banking (bLink) integration
+│   ├── bank-api-sync/       # Bank API integration
+│   └── tax-calculation/     # Stripe Tax integration
+├── management/              # Admin and management functions
+│   ├── dashboard-data/      # Dashboard KPIs & reports
+│   ├── manage-countries/    # Country management
+│   ├── user-onboarding/     # Onboarding flow
+│   └── audit-logging/       # Audit trail management
+└── notifications/           # Communication functions
+    ├── send-reminders/      # Payment reminders
+    ├── overdue-notifications/ # Overdue invoice alerts
+    └── welcome-emails/      # User onboarding emails
+```
+
+#### Key Edge Functions for PayMatch
+
+1. **`generate-qr-bill`** - Swiss QR-bill generation with compliance validation
+2. **`blink-open-banking`** - Real-time Open Banking (bLink) integration for automatic payment reconciliation
+3. **`process-camt-file`** - CAMT.053 file parsing and payment extraction (fallback)
+4. **`reconcile-payments`** - Payment matching algorithms for Swiss banking
+5. **`stripe-webhook`** - Subscription management and billing events
+6. **`resend-email`** - Transactional email delivery (invoices, reminders)
+7. **`process-invoice`** - Complex invoice creation with tax calculations
+8. **`dashboard-data`** - KPI calculations and analytics
+9. **`send-reminders`** - Automated payment reminder system
+
+#### Security & Performance
+
+- **Service Role Access:** Edge Functions use service role key for privileged database operations
+- **Input Validation:** All inputs validated with Zod schemas
+- **Error Handling:** Comprehensive error handling and logging
+- **CORS Support:** Proper CORS headers for cross-origin requests
+- **Rate Limiting:** Built-in rate limiting for external API calls
+- **Retry Logic:** Automatic retry for failed operations
+
 ---
 
 ## 9. Competitive Landscape
@@ -581,8 +658,8 @@ Features communicate through:
 **Geographic Focus:**
 
 - **Primary Market:** Switzerland (CHF, German/French/Italian/English)
-- **Secondary Markets:** Germany, France, Italy (EUR, local languages)
-- **Region Locking:** App restricted to DACH + France/Italy regions
+- **Secondary Markets:** France, Italy (EUR, local languages)
+- **Region Locking:** App restricted to Switzerland + France/Italy regions
 
 **Why Region Locking:**
 
@@ -595,16 +672,14 @@ Features communicate through:
 **Regional Features:**
 
 - **Switzerland:** Full QR-bill compliance, Swiss tax rates, multi-language (DE/FR/IT/EN)
-- **Germany:** EU invoicing standards, German tax rates, German language
 - **France:** EU invoicing standards, French tax rates, French language
 - **Italy:** EU invoicing standards, Italian tax rates, Italian language
 
 **Expansion Strategy:**
 
 1. **Phase 1:** Dominate Swiss market (CHF, QR-bill focus)
-2. **Phase 2:** Expand to Germany (EUR, EU standards)
-3. **Phase 3:** Add France and Italy (EUR, local compliance)
-4. **Phase 4:** Consider other EU markets based on success
+2. **Phase 2:** Add France (EUR, EU standards, French language)
+3. **Phase 3:** Add Italy (EUR, EU standards, Italian language)
 
 **Technical Implementation:**
 
@@ -652,11 +727,12 @@ Features communicate through:
 - **Form Validation:** Zod for type-safe validation
 - **Database:** Supabase (PostgreSQL) with real-time subscriptions
 - **Authentication:** Supabase Auth with RLS policies
+- **Backend Logic:** Supabase Edge Functions for complex operations
 - **Subscription Billing:** Stripe Billing for plan management
 - **Invoice Payments:** Swiss QR-bill for direct bank transfers
 - **Email Service:** Resend for all transactional emails (auth, invoices, reminders)
 - **QR-bill:** `node-swiss-qr-bill` for Swiss compliance integration
-- **Bank Integration:** ISO 20022 (CAMT.053), later EBICS/OpenBanking
+- **Bank Integration:** Open Banking (bLink) for real-time payments, ISO 20022 (CAMT.053) as fallback
 - **Hosting:** Vercel (frontend), Supabase (backend & database)
 - **Type Safety:** TypeScript with generated database types
 
@@ -665,19 +741,25 @@ Features communicate through:
 ## 10. Roadmap
 
 **Phase 1 (MVP – 3 months)**  
-✅ Invoice creation + QR-bill  
-✅ Export as PDF/email  
-✅ Basic client database
+✅ Invoice creation + QR-bill (Edge Functions)  
+✅ Export as PDF/email (Edge Functions)  
+✅ Basic client database  
+✅ Core Edge Functions (QR-bill, invoice processing)
 
 **Phase 2 (Launch – 6 months)**  
-✅ CAMT.053 reconciliation  
+✅ Open Banking (bLink) integration (Edge Functions)  
+✅ CAMT.053 reconciliation (Edge Functions) as fallback  
 ✅ Recurring invoices  
-✅ Multi-language support
+✅ Multi-language support  
+✅ Email notification system (Edge Functions)  
+✅ Stripe webhook integration (Edge Functions)
 
 **Phase 3 (Scale – 12 months)**  
-✅ Bank API integrations (EBICS/OpenBanking)  
+✅ Advanced Open Banking features (multi-bank support)  
 ✅ Mobile app  
-✅ White-label for fiduciaries
+✅ White-label for fiduciaries  
+✅ Advanced analytics (Edge Functions)  
+✅ AI-powered payment matching (Edge Functions)
 
 ---
 
@@ -696,16 +778,16 @@ Features communicate through:
 ## 12. Exit Potential
 
 - **Acquisition:** Swiss banks, fiduciary networks, ERP firms (Bexio, Abacus).
-- **IPO/Scale:** EU expansion (SEPA invoicing + PSD2).
+- **IPO/Scale:** European expansion (SEPA invoicing + PSD2).
 
 ---
 
 # 🧩 Layers of the App
 
 1. **Presentation Layer (Frontend):** Web app → invoices, dashboard, reconciliation.
-2. **Application Layer (Backend):** Invoice/QR generation, reconciliation logic.
+2. **Application Layer (Edge Functions):** Invoice/QR generation, reconciliation logic, webhooks, email notifications.
 3. **Data Layer (DB/Storage):** Invoices, clients, users, CAMT.053, PDFs.
-4. **Integration Layer:** Banks (CAMT.053, EBICS, APIs), email/SMS, Stripe billing.
+4. **Integration Layer:** Open Banking (bLink), banks (CAMT.053, EBICS, APIs), email/SMS, Stripe billing.
 
 ---
 
@@ -720,13 +802,13 @@ Features communicate through:
 
 # 🔄 User Flow
 
-**Phase 1 – MVP (Manual Upload → Auto-Matching)**
+**Phase 1 – MVP (Open Banking Integration → Real-Time Matching)**
 
-- Sign up & onboard → Add client → Create invoice → Send → Client pays → User uploads CAMT.053 → App matches → Dashboard updates → Send reminders.
+- Sign up & onboard → Add client → Create invoice → Send → Client pays → Open Banking (bLink) automatically detects payment → Real-time reconciliation → Dashboard updates → Send reminders.
 
-**Phase 2 – Future Automation (Bank Connected → Zero Touch)**
+**Phase 2 – Advanced Automation (Multi-Bank → AI-Powered)**
 
-- Setup EBICS/Open Banking → Automatic daily CAMT.053 fetch → Auto reconciliation → Real-time cash flow dashboard → Bulk reminders.
+- Multi-bank Open Banking integration → AI-powered payment matching → Real-time cash flow dashboard → Automated bulk reminders → Predictive analytics.
 
 ---
 
