@@ -1,0 +1,230 @@
+# PayMatch Brand Guidelines
+
+## Brand Identity
+
+### Core Brand
+
+- **Domain**: paymatch.app
+- **Slogan**: "PayMatch — Invoices in sync, payments in check."
+- **Positioning**: Swiss-first invoicing and reconciliation platform for freelancers, SMEs, and fiduciaries
+
+### Brand Personality
+
+- **Reliable**: Swiss precision and accuracy
+- **Professional**: Financial industry standards
+- **Simple**: Easy to use, no complexity
+- **Trustworthy**: Secure and compliant
+- **Local**: Built for Swiss business needs
+
+## Color Palette
+
+### Primary Colors
+
+```css
+/* Primary Dark - Headers, primary text, navigation */
+--color-primary-dark: #0d192c;
+
+/* Secondary Dark - Secondary text, borders, subtle elements */
+--color-secondary-dark: #0a393d;
+
+/* Accent 1 - CTAs, success states, active elements */
+--color-accent-1: #14b8a1;
+
+/* Accent 2 - Alerts, errors, urgent actions */
+--color-accent-2: #e6262a;
+
+/* Background - Main background, cards, clean surfaces */
+--color-background: #fcfcfb;
+```
+
+### Color Usage Rules
+
+- **Primary Dark** (`#0D192C`): Use for headers, primary text, navigation elements
+- **Secondary Dark** (`#0A393D`): Use for secondary text, borders, subtle UI elements
+- **Accent 1** (`#14B8A1`): Use for CTAs, success states, active/hover states
+- **Accent 2** (`#E6262A`): Use for alerts, errors, urgent actions, Swiss identity
+- **Background** (`#FCFCFB`): Use for main backgrounds, cards, clean surfaces
+
+### Accessibility Requirements
+
+- Ensure WCAG 2.1 AA contrast ratios
+- Test with colorblind users
+- Provide alternative indicators beyond color
+- Use sufficient contrast for all text
+
+## Typography
+
+### Font Hierarchy
+
+- **Primary**: Clean, modern sans-serif (Inter, system fonts)
+- **Secondary**: Readable, professional (fallback fonts)
+- **Code/Data**: Monospace for numbers and technical content
+
+### Text Colors
+
+- **Primary Text**: `#0D192C` (primary dark)
+- **Secondary Text**: `#0A393D` (secondary dark)
+- **Muted Text**: `#6B7280` (gray-500)
+- **Error Text**: `#E6262A` (accent 2)
+- **Success Text**: `#14B8A1` (accent 1)
+
+## UI Component Guidelines
+
+### Buttons
+
+- **Primary**: Background `#14B8A1`, text white
+- **Secondary**: Border `#0A393D`, text `#0A393D`
+- **Danger**: Background `#E6262A`, text white
+- **Ghost**: Transparent, text `#0D192C`
+
+### Cards and Surfaces
+
+- **Background**: `#FCFCFB` (main background)
+- **Card Background**: White with subtle shadow
+- **Border**: `#E5E7EB` (gray-200) for subtle borders
+
+### Status Indicators
+
+- **Success**: `#14B8A1` (accent 1)
+- **Warning**: `#F59E0B` (amber-500)
+- **Error**: `#E6262A` (accent 2)
+- **Info**: `#3B82F6` (blue-500)
+
+## Swiss-Specific Elements
+
+### QR-Bill Integration
+
+- Emphasize QR-bill compliance in UI
+- Use Swiss red (`#E6262A`) for QR-bill related elements
+- Include Swiss flag or cross references where appropriate
+
+### Localization
+
+- Support German (DE), French (FR), Italian (IT), English (EN)
+- Use Swiss business terminology
+- Follow Swiss date and number formatting
+
+### Cultural Considerations
+
+- Swiss business practices and expectations
+- Local tax terminology and compliance
+- Regional payment preferences
+- Cultural color associations
+
+## Design Principles
+
+### Swiss Precision
+
+- Clean, minimal interfaces
+- Precise typography and spacing
+- Grid-based layouts
+- High contrast for readability
+
+### Financial Trust
+
+- Professional color palette
+- Clear data visualization
+- Consistent iconography
+- Secure, reliable appearance
+
+### Simplicity
+
+- Mobile-first approach
+- Intuitive navigation
+- Clear information hierarchy
+- Minimal cognitive load
+
+## Implementation Rules
+
+### CSS Variables
+
+```css
+:root {
+  --color-primary-dark: #0d192c;
+  --color-secondary-dark: #0a393d;
+  --color-accent-1: #14b8a1;
+  --color-accent-2: #e6262a;
+  --color-background: #fcfcfb;
+}
+```
+
+### Tailwind Configuration
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        'primary-dark': '#0D192C',
+        'secondary-dark': '#0A393D',
+        'accent-1': '#14B8A1',
+        'accent-2': '#E6262A',
+        background: '#FCFCFB',
+      },
+    },
+  },
+};
+```
+
+### Component Examples
+
+```tsx
+// Primary button
+<button className="bg-accent-1 text-white px-4 py-2 rounded-lg">
+  Create Invoice
+</button>
+
+// Card with Swiss red accent
+<div className="bg-white border-l-4 border-accent-2 p-4 rounded-lg shadow-sm">
+  <h3 className="text-primary-dark font-semibold">QR-Bill Invoice</h3>
+</div>
+
+// Success state
+<div className="text-accent-1 bg-accent-1/10 px-3 py-2 rounded-md">
+  Payment received
+</div>
+```
+
+## Brand Consistency Checklist
+
+### Visual Elements
+
+- [ ] Use approved color palette only
+- [ ] Maintain consistent spacing (4px, 8px, 16px, 24px, 32px)
+- [ ] Follow established typography hierarchy
+- [ ] Use consistent iconography style
+
+### Content
+
+- [ ] Follow Swiss business terminology
+- [ ] Use clear, direct language
+- [ ] Maintain professional yet approachable tone
+- [ ] Include Swiss red accents for local identity
+
+### Technical
+
+- [ ] Ensure responsive design
+- [ ] Test with colorblind users
+- [ ] Validate accessibility standards
+- [ ] Optimize for mobile devices
+
+## Brand Evolution
+
+### Current Focus
+
+- Establishing Swiss market presence
+- Building trust in financial sector
+- Simplifying complex processes
+- Ensuring compliance
+
+### Future Considerations
+
+- International expansion
+- Advanced features
+- Partner integrations
+- Market differentiation
+
+---
+
+_All design decisions should align with these brand guidelines to maintain consistency and effectiveness across all PayMatch touchpoints._
