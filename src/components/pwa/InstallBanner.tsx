@@ -1,0 +1,113 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { X, Download, Smartphone } from 'lucide-react';
+import { usePWA } from '@/hooks/use-pwa';
+import clsx from 'clsx';
+
+export function InstallBanner() {
+  const { isInstallable, isInstalled, installPWA } = usePWA();
+  const [isVisible, setIsVisible] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+
+  // Show banner if installable and not dismissed
+  useEffect(() => {
+    if (isInstallable && !isInstalled && !isDismissed) {
+      // Delay showing to avoid immediate popup
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isInstallable, isInstalled, isDismissed]);
+
+  // Auto-hide after 15 seconds
+  useEffect(() => {
+    if (isVisible) {
+      const timer = setTimeout(() => {
+        handleDismiss();
+      }, 15000);
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible]);
+
+  const handleInstall = async () => {
+    await installPWA();
+    handleDismiss();
+  };
+
+  const handleDismiss = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      setIsExiting(false);
+      setIsDismissed(true);
+      localStorage.setItem('pwa-banner-dismissed', 'true');
+    }, 300);
+  };
+
+  // Check if previously dismissed
+  useEffect(() => {
+    const dismissed = localStorage.getItem('pwa-banner-dismissed');
+    if (dismissed === 'true') {
+      setIsDismissed(true);
+    }
+  }, []);
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="fixed bottom-6 right-6 z-[60] max-w-sm">
+      <div
+        className={clsx(
+          'bg-white rounded-3xl shadow-lg shadow-gray-900/5 border border-gray-200 p-6 transition-all duration-300 ease-out',
+          isExiting
+            ? 'translate-y-2 scale-95 opacity-0'
+            : 'translate-y-0 scale-100 opacity-100'
+        )}
+      >
+        <div className="flex items-start space-x-4">
+          <div className="flex-shrink-0">
+            <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+              <Smartphone className="w-5 h-5 text-white" />
+            </div>
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-semibold text-gray-900">
+              Install PayMatch
+            </h3>
+            <p className="mt-1 text-sm text-gray-600">
+              Get quick access to your Swiss invoicing platform
+            </p>
+
+            <div className="mt-4 flex space-x-3">
+              <button
+                onClick={handleInstall}
+                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors"
+              >
+                <Download className="w-3 h-3 mr-1" />
+                Install
+              </button>
+
+              <button
+                onClick={handleDismiss}
+                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+              >
+                Not now
+              </button>
+            </div>
+          </div>
+
+          <button
+            onClick={handleDismiss}
+            className="flex-shrink-0 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 rounded-md p-1"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
