@@ -11,7 +11,11 @@ interface CookiePreferences {
   marketing: boolean;
 }
 
-export function CookieBanner() {
+interface CookieBannerProps {
+  onDismiss?: () => void;
+}
+
+export function CookieBanner({ onDismiss }: CookieBannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -82,6 +86,7 @@ export function CookieBanner() {
     setTimeout(() => {
       setIsVisible(false);
       setIsExiting(false);
+      onDismiss?.();
     }, 300);
   };
 
