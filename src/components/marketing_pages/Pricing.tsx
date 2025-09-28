@@ -8,11 +8,7 @@ import { Check, X } from 'lucide-react';
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
 import { Logomark } from '@/components/marketing_pages/Logo';
-import {
-  pricingConfig,
-  calculateMonthlyPricing,
-  getFreePlanInfo,
-} from '@/config/pricing';
+import { pricingConfig, calculateMonthlyPricing } from '@/config/pricing';
 
 function CheckIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
