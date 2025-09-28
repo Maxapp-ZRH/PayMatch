@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, Download, Smartphone } from 'lucide-react';
 import { usePWA } from '@/hooks/use-pwa';
 import clsx from 'clsx';
@@ -13,6 +13,16 @@ export function InstallBanner({ onDismiss }: InstallBannerProps) {
   const { isInstallable, isInstalled, installPWA } = usePWA();
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+
+  const handleDismiss = useCallback(() => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      setIsExiting(false);
+      localStorage.setItem('pwa-banner-dismissed', 'true');
+      onDismiss?.();
+    }, 300);
+  }, [onDismiss]);
 
   // Show banner if installable and not installed
   useEffect(() => {
@@ -33,21 +43,11 @@ export function InstallBanner({ onDismiss }: InstallBannerProps) {
       }, 15000);
       return () => clearTimeout(timer);
     }
-  }, [isVisible]);
+  }, [isVisible, handleDismiss]);
 
   const handleInstall = async () => {
     await installPWA();
     handleDismiss();
-  };
-
-  const handleDismiss = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      setIsVisible(false);
-      setIsExiting(false);
-      localStorage.setItem('pwa-banner-dismissed', 'true');
-      onDismiss?.();
-    }, 300);
   };
 
   if (!isVisible) return null;
