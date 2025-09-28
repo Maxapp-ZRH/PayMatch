@@ -16,6 +16,7 @@ import { AppScreen } from '@/components/marketing_pages/AppScreen';
 import { CircleBackground } from '@/components/marketing_pages/CircleBackground';
 import { Container } from '@/components/marketing_pages/Container';
 import { PhoneFrame } from '@/components/marketing_pages/PhoneFrame';
+import { useTranslations } from 'next-intl';
 
 const MotionAppScreenHeader = motion.create(AppScreen.Header);
 const MotionAppScreenBody = motion.create(AppScreen.Body);
@@ -638,6 +639,8 @@ function FeaturesMobile() {
 }
 
 export function PrimaryFeatures() {
+  const t = useTranslations('features');
+
   return (
     <section
       id="features"
@@ -647,14 +650,9 @@ export function PrimaryFeatures() {
       <Container>
         <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-3xl">
           <h2 className="text-3xl font-medium tracking-tight text-white">
-            Everything you need for Swiss invoicing. Try it for yourself.
+            {t('title')}
           </h2>
-          <p className="mt-2 text-lg text-gray-400">
-            PayMatch was built for Swiss businesses who value precision,
-            compliance, and professional presentation. From QR-bill generation
-            to payment reconciliation, we&apos;ve got every feature you need to
-            stay on top of your cash flow.
-          </p>
+          <p className="mt-2 text-lg text-gray-400">{t('subtitle')}</p>
         </div>
       </Container>
       <div className="mt-16 md:hidden">
@@ -665,11 +663,7 @@ export function PrimaryFeatures() {
       </Container>
       <Container className="mt-8">
         <div className="text-center">
-          <p className="text-sm text-gray-500">
-            * PayMatch is a web application accessible on desktop and mobile
-            browsers. The mobile interface shown above is for demonstration
-            purposes.
-          </p>
+          <p className="text-sm text-gray-500">{t('disclaimer')}</p>
         </div>
       </Container>
     </section>

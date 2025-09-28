@@ -3,12 +3,16 @@
 import { useState } from 'react';
 import { Radio, RadioGroup } from '@headlessui/react';
 import clsx from 'clsx';
-import { Check, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
 import { Logomark } from '@/components/marketing_pages/Logo';
-import { pricingConfig, calculateMonthlyPricing } from '@/config/pricing';
+import {
+  pricingConfig,
+  calculateMonthlyPricing,
+  createFeatureIcon,
+} from '@/config/pricing';
 
 function CheckIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -35,14 +39,22 @@ function FeatureIcon({
   value,
   className = 'w-4 h-4',
 }: {
-  value: string;
+  value: string | 'check' | 'cross';
   className?: string;
 }) {
-  if (value === '✅') {
-    return <Check className={clsx(className, 'text-green-600')} />;
+  if (value === 'check') {
+    const { Icon, className: iconClassName } = createFeatureIcon(
+      'check',
+      className
+    );
+    return <Icon className={iconClassName} />;
   }
-  if (value === '❌') {
-    return <X className={clsx(className, 'text-red-500')} />;
+  if (value === 'cross') {
+    const { Icon, className: iconClassName } = createFeatureIcon(
+      'cross',
+      className
+    );
+    return <Icon className={iconClassName} />;
   }
   return <span className="text-gray-700">{value}</span>;
 }
@@ -182,6 +194,7 @@ function Plan({
 }
 
 export function Pricing() {
+  const t = useTranslations('pricing');
   const [activePeriod, setActivePeriod] = useState<'Monthly' | 'Annually'>(
     'Monthly'
   );
@@ -198,11 +211,9 @@ export function Pricing() {
             id="pricing-title"
             className="text-3xl font-medium tracking-tight text-gray-900"
           >
-            {pricingConfig.sectionTitle}
+            {t('title')}
           </h2>
-          <p className="mt-2 text-lg text-gray-600">
-            {pricingConfig.sectionDescription}
-          </p>
+          <p className="mt-2 text-lg text-gray-600">{t('subtitle')}</p>
         </div>
 
         <div className="mt-8 flex justify-center">

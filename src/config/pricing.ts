@@ -6,6 +6,18 @@
  * consistent pricing information across all components and pages.
  */
 
+import {
+  Check,
+  X,
+  Users,
+  FileText,
+  CreditCard,
+  Bell,
+  BarChart3,
+  Palette,
+  HeadphonesIcon,
+} from 'lucide-react';
+
 export interface PricingPlan {
   name: string;
   featured: boolean;
@@ -22,10 +34,11 @@ export interface PricingPlan {
 
 export interface FeatureComparisonRow {
   feature: string;
-  free: string;
-  freelancer: string;
-  business: string;
-  enterprise: string;
+  free: string | 'check' | 'cross';
+  freelancer: string | 'check' | 'cross';
+  business: string | 'check' | 'cross';
+  enterprise: string | 'check' | 'cross';
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
 export interface PricingConfig {
@@ -53,6 +66,13 @@ export function calculateMonthlyPricing(
 ): number {
   const discountedAnnual = annualPrice * (1 - discountPercent / 100);
   return Math.round(discountedAnnual / 12);
+}
+
+// Helper function to create icon components for feature comparison
+export function createFeatureIcon(type: 'check' | 'cross', className?: string) {
+  const Icon = type === 'check' ? Check : X;
+  const colorClass = type === 'check' ? 'text-green-600' : 'text-red-600';
+  return { Icon, className: `w-4 h-4 ${colorClass} ${className || ''}` };
 }
 
 // Pricing plans configuration
@@ -123,6 +143,7 @@ export const pricingPlans: PricingPlan[] = [
 export const featureComparison: FeatureComparisonRow[] = [
   {
     feature: 'Invoices',
+    icon: FileText,
     free: 'Unlimited',
     freelancer: 'Unlimited',
     business: 'Unlimited',
@@ -130,6 +151,7 @@ export const featureComparison: FeatureComparisonRow[] = [
   },
   {
     feature: 'Clients',
+    icon: Users,
     free: 'Unlimited',
     freelancer: 'Unlimited',
     business: 'Unlimited',
@@ -137,6 +159,7 @@ export const featureComparison: FeatureComparisonRow[] = [
   },
   {
     feature: 'Users',
+    icon: Users,
     free: '1',
     freelancer: '1',
     business: '10 max',
@@ -144,20 +167,23 @@ export const featureComparison: FeatureComparisonRow[] = [
   },
   {
     feature: 'QR-bill invoices',
-    free: '✅',
-    freelancer: '✅',
-    business: '✅',
-    enterprise: '✅',
+    icon: FileText,
+    free: 'check',
+    freelancer: 'check',
+    business: 'check',
+    enterprise: 'check',
   },
   {
     feature: 'Payment reconciliation',
-    free: '✅',
-    freelancer: '✅',
-    business: '✅',
-    enterprise: '✅',
+    icon: CreditCard,
+    free: 'check',
+    freelancer: 'check',
+    business: 'check',
+    enterprise: 'check',
   },
   {
     feature: 'Reminders',
+    icon: Bell,
     free: 'Basic',
     freelancer: 'Basic',
     business: 'Advanced',
@@ -165,27 +191,31 @@ export const featureComparison: FeatureComparisonRow[] = [
   },
   {
     feature: 'Reports / Data exports',
-    free: '✅',
-    freelancer: '✅',
-    business: '✅',
-    enterprise: '✅',
+    icon: BarChart3,
+    free: 'check',
+    freelancer: 'check',
+    business: 'check',
+    enterprise: 'check',
   },
   {
     feature: 'Branding control',
-    free: '❌',
-    freelancer: '❌',
-    business: '✅',
-    enterprise: '✅',
+    icon: Palette,
+    free: 'cross',
+    freelancer: 'cross',
+    business: 'check',
+    enterprise: 'check',
   },
   {
     feature: 'Team management',
-    free: '❌',
-    freelancer: '❌',
-    business: '✅',
-    enterprise: '✅',
+    icon: Users,
+    free: 'cross',
+    freelancer: 'cross',
+    business: 'check',
+    enterprise: 'check',
   },
   {
     feature: 'Support',
+    icon: HeadphonesIcon,
     free: 'Community',
     freelancer: 'Priority',
     business: 'Priority',

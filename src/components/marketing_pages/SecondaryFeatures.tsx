@@ -1,42 +1,37 @@
 import { useId } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { Container } from '@/components/marketing_pages/Container';
 
-const features = [
+const getFeatures = (t: (key: string) => string) => [
   {
-    name: 'Multi-currency support',
-    description:
-      'Invoice in CHF and EUR to serve Swiss and European clients seamlessly.',
+    name: t('features.multiCurrency.name'),
+    description: t('features.multiCurrency.description'),
     icon: DeviceArrowIcon,
   },
   {
-    name: 'Client management',
-    description:
-      'Organize your clients and track their payment history in one place.',
+    name: t('features.clientManagement.name'),
+    description: t('features.clientManagement.description'),
     icon: DeviceCardsIcon,
   },
   {
-    name: 'Real-time notifications',
-    description:
-      'Get instant alerts when invoices are viewed, paid, or become overdue.',
+    name: t('features.notifications.name'),
+    description: t('features.notifications.description'),
     icon: DeviceClockIcon,
   },
   {
-    name: 'Team collaboration',
-    description:
-      'Invite team members to manage invoices and track payments together.',
+    name: t('features.collaboration.name'),
+    description: t('features.collaboration.description'),
     icon: DeviceListIcon,
   },
   {
-    name: 'Bank-level security',
-    description:
-      'Your financial data is protected with enterprise-grade encryption and GDPR compliance.',
+    name: t('features.security.name'),
+    description: t('features.security.description'),
     icon: DeviceLockIcon,
   },
   {
-    name: 'Financial reporting',
-    description:
-      'Generate detailed reports and export data for accounting and tax purposes.',
+    name: t('features.reporting.name'),
+    description: t('features.reporting.description'),
     icon: DeviceChartIcon,
   },
 ];
@@ -187,6 +182,9 @@ function DeviceChartIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 }
 
 export function SecondaryFeatures() {
+  const t = useTranslations('secondaryFeatures');
+  const features = getFeatures(t);
+
   return (
     <section
       id="secondary-features"
@@ -196,13 +194,9 @@ export function SecondaryFeatures() {
       <Container>
         <div className="mx-auto max-w-2xl sm:text-center">
           <h2 className="text-3xl font-medium tracking-tight text-gray-900">
-            Everything you need for professional invoicing.
+            {t('title')}
           </h2>
-          <p className="mt-2 text-lg text-gray-600">
-            From Swiss QR-bill compliance to payment reconciliation, PayMatch
-            provides all the tools Swiss businesses need to stay on top of their
-            cash flow.
-          </p>
+          <p className="mt-2 text-lg text-gray-600">{t('subtitle')}</p>
         </div>
         <ul
           role="list"

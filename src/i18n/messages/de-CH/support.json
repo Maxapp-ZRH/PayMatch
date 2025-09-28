@@ -1,0 +1,193 @@
+{
+  "faqSection": {
+    "title": "Häufig gestellte Fragen",
+    "subtitle": "Finden Sie schnelle Antworten auf häufige Fragen, bevor Sie sich an den Support wenden.",
+    "searchPlaceholder": "FAQs durchsuchen...",
+    "allCategories": "Alle Kategorien",
+    "activeFilters": "Aktive Filter:",
+    "searchLabel": "Suche",
+    "categoryLabel": "Kategorie",
+    "clearAll": "Alle löschen",
+    "popularQuestions": "Beliebte Fragen",
+    "questionFound": "Frage gefunden",
+    "questionsFound": "Fragen gefunden",
+    "noQuestionsFound": "Keine Fragen gefunden",
+    "noQuestionsDescription": "Versuchen Sie, Ihre Suchbegriffe anzupassen oder durchsuchen Sie alle Kategorien.",
+    "clearFilters": "Filter löschen"
+  },
+  "form": {
+    "title": "Support erhalten",
+    "subtitle": "Wir sind hier, um zu helfen! Finden Sie Antworten in unserem FAQ-Bereich oder senden Sie uns eine Nachricht und wir melden uns so schnell wie möglich bei Ihnen.",
+    "stillNeedHelp": "Brauchen Sie noch Hilfe?",
+    "formSubtitle": "Senden Sie uns eine Nachricht und unser Team meldet sich innerhalb von 24 Stunden bei Ihnen.",
+    "sections": {
+      "personalInfo": "Persönliche Informationen",
+      "issueDetails": "Problemdetails",
+      "message": "Nachricht"
+    },
+    "fields": {
+      "name": {
+        "label": "Vollständiger Name",
+        "placeholder": "Geben Sie Ihren vollständigen Namen ein",
+        "required": true
+      },
+      "email": {
+        "label": "E-Mail-Adresse",
+        "placeholder": "ihre.email@beispiel.com",
+        "required": true
+      },
+      "company": {
+        "label": "Unternehmen",
+        "placeholder": "Ihr Firmenname",
+        "required": false
+      },
+      "category": {
+        "label": "Kategorie",
+        "required": true
+      },
+      "priority": {
+        "label": "Priorität",
+        "required": true
+      },
+      "subject": {
+        "label": "Betreff",
+        "placeholder": "Kurze Beschreibung Ihres Problems",
+        "required": true
+      },
+      "message": {
+        "label": "Detaillierte Nachricht",
+        "placeholder": "Bitte geben Sie so viele Details wie möglich über Ihr Problem an, einschließlich Schritten zur Reproduktion falls zutreffend...",
+        "required": true,
+        "minLength": "Mindestens 10 Zeichen",
+        "maxLength": "Maximal 2000 Zeichen"
+      },
+      "consent": {
+        "label": "Ich stimme der Datenschutzrichtlinie zu und erteile PayMatch die Erlaubnis, meine persönlichen Daten zur Beantwortung dieser Anfrage zu verarbeiten.",
+        "required": true
+      }
+    },
+    "categories": {
+      "general": {
+        "label": "Allgemeine Anfrage",
+        "description": "Allgemeine Fragen zu PayMatch"
+      },
+      "technical": {
+        "label": "Technischer Support",
+        "description": "Technische Probleme oder Schwierigkeiten"
+      },
+      "billing": {
+        "label": "Abrechnung & Zahlungen",
+        "description": "Fragen zu Preisen oder Zahlungen"
+      },
+      "feature-request": {
+        "label": "Funktionsanfrage",
+        "description": "Schlagen Sie eine neue Funktion oder Verbesserung vor"
+      },
+      "bug-report": {
+        "label": "Fehlermeldung",
+        "description": "Melden Sie einen Fehler oder unerwartetes Verhalten"
+      },
+      "account": {
+        "label": "Kontoprobleme",
+        "description": "Probleme beim Zugriff oder der Verwaltung des Kontos"
+      },
+      "integration": {
+        "label": "Integrationshilfe",
+        "description": "Hilfe bei Drittanbieter-Integrationen"
+      },
+      "other": {
+        "label": "Sonstiges",
+        "description": "Etwas anderes, das nicht oben aufgeführt ist"
+      }
+    },
+    "priorities": {
+      "low": {
+        "label": "Niedrig",
+        "description": "Allgemeine Frage, keine Eile"
+      },
+      "medium": {
+        "label": "Mittel",
+        "description": "Wichtig, aber nicht dringend"
+      },
+      "high": {
+        "label": "Hoch",
+        "description": "Dringendes Problem, das die Arbeit beeinträchtigt"
+      },
+      "urgent": {
+        "label": "Dringend",
+        "description": "Kritisches Problem, sofortige Aufmerksamkeit erforderlich"
+      }
+    },
+    "buttons": {
+      "sendMessage": "Nachricht senden",
+      "sending": "Wird gesendet...",
+      "stillNeedHelp": "Brauchen Sie noch Hilfe? Support kontaktieren"
+    },
+    "contactInfo": {
+      "emailSupport": {
+        "title": "E-Mail-Support",
+        "email": "support@paymatch.app",
+        "availability": "24/7 verfügbar"
+      },
+      "responseTime": {
+        "title": "Antwortzeit",
+        "time": "Innerhalb von 24 Stunden",
+        "note": "Meist viel schneller"
+      },
+      "emergency": {
+        "title": "Notfall",
+        "instruction": "Dringende Priorität verwenden",
+        "note": "Für kritische Probleme"
+      }
+    },
+    "modals": {
+      "success": {
+        "title": "Nachricht erfolgreich gesendet!",
+        "message": "Vielen Dank für Ihre Kontaktaufnahme. Wir haben Ihre Nachricht erhalten und unser Team wird sich innerhalb von 24 Stunden bei Ihnen melden.",
+        "responseTime": "Typische Antwortzeit: 24 Stunden",
+        "button": "Verstanden, danke!"
+      },
+      "error": {
+        "title": "Nachricht konnte nicht gesendet werden",
+        "message": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+        "buttons": {
+          "close": "Schließen",
+          "tryAgain": "Erneut versuchen"
+        }
+      }
+    },
+    "validation": {
+      "name": {
+        "minLength": "Name muss mindestens 2 Zeichen lang sein",
+        "maxLength": "Name muss weniger als 100 Zeichen lang sein",
+        "invalidChars": "Name enthält ungültige Zeichen"
+      },
+      "email": {
+        "invalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+        "maxLength": "E-Mail muss weniger als 255 Zeichen lang sein"
+      },
+      "company": {
+        "maxLength": "Firmenname muss weniger als 100 Zeichen lang sein"
+      },
+      "category": {
+        "invalid": "Bitte wählen Sie eine gültige Kategorie"
+      },
+      "priority": {
+        "invalid": "Bitte wählen Sie eine gültige Prioritätsstufe"
+      },
+      "subject": {
+        "minLength": "Betreff muss mindestens 5 Zeichen lang sein",
+        "maxLength": "Betreff muss weniger als 200 Zeichen lang sein",
+        "invalidChars": "Betreff enthält ungültige Zeichen"
+      },
+      "message": {
+        "minLength": "Nachricht muss mindestens 10 Zeichen lang sein",
+        "maxLength": "Nachricht muss weniger als 2000 Zeichen lang sein",
+        "invalidContent": "Nachricht muss mindestens ein alphanumerisches Zeichen enthalten"
+      },
+      "consent": {
+        "required": "Sie müssen unserer Datenschutzrichtlinie zustimmen, um dieses Formular zu senden"
+      }
+    }
+  }
+}

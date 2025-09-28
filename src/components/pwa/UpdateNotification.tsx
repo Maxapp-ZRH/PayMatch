@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { RefreshCw, X } from 'lucide-react';
 import { usePWA } from '@/hooks/use-pwa';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
 export function UpdateNotification() {
+  const t = useTranslations('pwa.updateNotification');
   const { updateServiceWorker } = usePWA();
   const [showUpdate, setShowUpdate] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
@@ -53,11 +55,9 @@ export function UpdateNotification() {
 
           <div className="flex-1 min-w-0">
             <h3 className="text-sm font-semibold text-gray-900">
-              Update Available
+              {t('title')}
             </h3>
-            <p className="mt-1 text-sm text-gray-600">
-              A new version of PayMatch is ready with improvements
-            </p>
+            <p className="mt-1 text-sm text-gray-600">{t('description')}</p>
 
             <div className="mt-4 flex space-x-3">
               <button
@@ -65,14 +65,14 @@ export function UpdateNotification() {
                 className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
               >
                 <RefreshCw className="w-3 h-3 mr-1" />
-                Update Now
+                {t('updateNow')}
               </button>
 
               <button
                 onClick={handleDismiss}
                 className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
               >
-                Later
+                {t('later')}
               </button>
             </div>
           </div>

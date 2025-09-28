@@ -1,127 +1,121 @@
 {
-  "common": {
-    "loading": "Loading...",
-    "error": "An error occurred",
-    "success": "Success",
-    "cancel": "Cancel",
-    "save": "Save",
-    "delete": "Delete",
-    "edit": "Edit",
-    "close": "Close",
-    "back": "Back",
-    "next": "Next",
-    "previous": "Previous",
-    "submit": "Submit",
-    "search": "Search",
-    "filter": "Filter",
-    "sort": "Sort",
-    "refresh": "Refresh",
-    "retry": "Retry",
-    "continue": "Continue",
-    "finish": "Finish",
-    "yes": "Yes",
-    "no": "No",
-    "ok": "OK",
-    "learnMore": "Learn more",
-    "readMore": "Read more",
-    "showMore": "Show more",
-    "showLess": "Show less"
-  },
-  "navigation": {
-    "home": "Home",
-    "about": "About",
-    "features": "Features",
-    "pricing": "Pricing",
-    "contact": "Contact",
-    "support": "Support",
-    "login": "Login",
-    "register": "Register",
-    "logout": "Logout",
-    "dashboard": "Dashboard",
-    "profile": "Profile",
-    "settings": "Settings",
-    "help": "Help",
-    "documentation": "Documentation",
-    "api": "API",
-    "downloads": "Downloads",
-    "brand": "Brand"
-  },
-  "auth": {
-    "login": {
-      "title": "Welcome back",
-      "subtitle": "Sign in to your account to continue",
-      "email": "Email address",
-      "password": "Password",
-      "rememberMe": "Remember me",
-      "forgotPassword": "Forgot your password?",
-      "signIn": "Sign in",
-      "noAccount": "Don't have an account?",
-      "signUp": "Sign up"
-    },
-    "register": {
-      "title": "Create your account",
-      "subtitle": "Get started with PayMatch today",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email address",
-      "password": "Password",
-      "confirmPassword": "Confirm password",
-      "company": "Company name",
-      "agreeToTerms": "I agree to the",
-      "termsAndConditions": "Terms and Conditions",
-      "and": "and",
-      "privacyPolicy": "Privacy Policy",
-      "createAccount": "Create account",
-      "haveAccount": "Already have an account?",
-      "signIn": "Sign in"
-    },
-    "forgotPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your email address and we'll send you a link to reset your password",
-      "email": "Email address",
-      "sendResetLink": "Send reset link",
-      "backToLogin": "Back to login"
-    }
-  },
   "hero": {
-    "title": "Streamline Your Swiss Invoicing",
-    "subtitle": "Create, send, and track invoices with Swiss QR-bill compliance. Built specifically for Swiss SMEs with multi-currency support.",
-    "cta": "Start Free Trial",
-    "learnMore": "Learn More",
-    "trustedBy": "Trusted by Swiss businesses",
-    "features": {
-      "qrBill": "Swiss QR-Bill Compliance",
-      "multiCurrency": "CHF & EUR Support",
-      "automation": "Automated Workflows",
-      "integration": "Easy Integrations"
-    }
+    "title": "Swiss QR-bill invoicing made simple",
+    "subtitle": "Create, send, and reconcile Swiss QR-bill invoices effortlessly. Built for Swiss businesses who value precision, compliance, and professional presentation.",
+    "cta": "Start for Free",
+    "learnMore": "Learn More"
   },
   "features": {
     "title": "Everything you need for Swiss invoicing",
     "subtitle": "Built specifically for the Swiss market with compliance and efficiency in mind",
-    "swissQrBill": {
-      "title": "Swiss QR-Bill Compliance",
-      "description": "Generate compliant Swiss QR-bills automatically with all required fields and formatting."
-    },
-    "multiCurrency": {
-      "title": "Multi-Currency Support",
-      "description": "Handle CHF and EUR invoices seamlessly with automatic currency conversion and formatting."
-    },
-    "automation": {
-      "title": "Smart Automation",
-      "description": "Automate invoice creation, sending, and follow-ups to save time and reduce errors."
-    },
-    "integration": {
-      "title": "Easy Integrations",
-      "description": "Connect with your existing tools and workflows through our comprehensive API."
-    },
-    "security": {
-      "title": "Enterprise Security",
-      "description": "Bank-level security with Swiss data residency and GDPR compliance."
-    },
-    "support": {
-      "title": "Swiss Support",
-      "description": "Get help from our local Swiss team who understand your business needs."
+    "disclaimer": "* PayMatch is a web application accessible on desktop and mobile browsers. The mobile interface shown above is for demonstration purposes."
+  },
+  "secondaryFeatures": {
+    "title": "Everything you need for professional invoicing",
+    "subtitle": "From Swiss QR-bill compliance to payment reconciliation, PayMatch provides all the tools Swiss businesses need to stay on top of their cash flow.",
+    "features": {
+      "multiCurrency": {
+        "name": "Multi-currency support",
+        "description": "Invoice in CHF and EUR to serve Swiss and European clients seamlessly."
+      },
+      "clientManagement": {
+        "name": "Client management",
+        "description": "Organize your clients and track their payment history in one place."
+      },
+      "notifications": {
+        "name": "Real-time notifications",
+        "description": "Get instant alerts when invoices are viewed, paid, or become overdue."
+      },
+      "collaboration": {
+        "name": "Team collaboration",
+        "description": "Invite team members to manage invoices and track payments together."
+      },
+      "security": {
+        "name": "Bank-level security",
+        "description": "Your financial data is protected with enterprise-grade encryption and GDPR compliance."
+      },
+      "reporting": {
+        "name": "Financial reporting",
+        "description": "Generate detailed reports and export data for accounting and tax purposes."
+      }
+    }
+  },
+  "callToAction": {
+    "title": "Send your first Invoice",
+    "subtitle": "Create your first Swiss QR-bill invoice in under 2 minutes. No credit card required. Start free and scale as you grow.",
+    "cta": "Start for Free"
+  },
+  "reviews": {
+    "title": "Trusted by Swiss businesses across the country",
+    "subtitle": "From freelancers to enterprises, Swiss professionals are streamlining their invoicing with PayMatch.",
+    "reviews": [
+      {
+        "title": "Finally, Swiss invoicing made simple.",
+        "body": "As a freelancer in Zürich, I was struggling with QR-bill compliance. PayMatch made it effortless - I can create professional invoices in minutes.",
+        "author": "Maria Schmidt, Freelancer",
+        "rating": 5
+      },
+      {
+        "title": "Payment reconciliation is a game-changer.",
+        "body": "Uploading CAMT files and having payments automatically matched to invoices saves me hours every week. My accountant loves the clean data.",
+        "author": "Thomas Müller, SME Owner",
+        "rating": 5
+      },
+      {
+        "title": "Perfect for Swiss businesses.",
+        "body": "The multi-currency support (CHF/EUR) and Swiss VAT calculations are exactly what we needed. Finally, an invoicing tool built for our market.",
+        "author": "Anna Weber, Accounting Firm",
+        "rating": 5
+      },
+      {
+        "title": "Professional and compliant.",
+        "body": "Every invoice looks professional and meets Swiss standards. Clients pay faster because they trust the QR-bill format. Highly recommended!",
+        "author": "David Fischer, Consultant",
+        "rating": 5
+      },
+      {
+        "title": "Saves me 5 hours per week.",
+        "body": "The automated reminders and payment tracking features are incredible. I can focus on my business instead of chasing payments.",
+        "author": "Sarah Zimmermann, Service Provider",
+        "rating": 5
+      },
+      {
+        "title": "Best invoicing tool for Switzerland.",
+        "body": "I tried several other platforms, but none understood Swiss requirements like PayMatch. The QR-bill generation is flawless.",
+        "author": "Michael Keller, Agency Owner",
+        "rating": 5
+      }
+    ]
+  },
+  "faqs": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "If you have anything else you want to ask,",
+    "contactUs": "reach out to us",
+    "questions": {
+      "q1": {
+        "question": "What is PayMatch?",
+        "answer": "PayMatch is a Swiss invoicing platform designed specifically for Swiss businesses. It helps you create, send, and reconcile Swiss QR-bill invoices with ease."
+      },
+      "q2": {
+        "question": "How does QR-bill generation work?",
+        "answer": "PayMatch automatically generates compliant Swiss QR-bills with all required information, including VAT calculations and proper formatting for Swiss banking standards."
+      },
+      "q3": {
+        "question": "Can I integrate with my existing accounting software?",
+        "answer": "Yes, PayMatch offers integrations with popular accounting software and can export data in various formats for easy import."
+      },
+      "q4": {
+        "question": "Is my data secure?",
+        "answer": "Absolutely. We use bank-grade security measures and comply with Swiss data protection regulations to keep your data safe."
+      },
+      "q5": {
+        "question": "Do you support multiple currencies?",
+        "answer": "Yes, PayMatch supports both CHF and EUR with automatic currency conversion and proper formatting for Swiss and European markets."
+      },
+      "q6": {
+        "question": "What about Swiss compliance?",
+        "answer": "PayMatch is built specifically for Swiss invoicing standards and automatically ensures compliance with Swiss VAT regulations and banking requirements."
+      }
     }
   },
   "pricing": {
@@ -130,161 +124,34 @@
     "free": {
       "name": "Free",
       "price": "0",
-      "currency": "CHF",
-      "period": "/month",
       "description": "Perfect for getting started",
       "features": [
         "5 invoices per month",
-        "Basic Swiss QR-bill generation",
-        "CHF and EUR support",
+        "Swiss QR-bill generation",
+        "Basic client management",
         "Email support"
-      ],
-      "cta": "Get Started Free"
+      ]
     },
     "freelancer": {
       "name": "Freelancer",
       "price": "5",
-      "currency": "CHF",
-      "period": "/month",
-      "description": "For freelancers and small businesses",
+      "description": "For independent professionals",
       "features": [
         "Unlimited invoices",
-        "Advanced Swiss QR-bill features",
-        "Multi-currency support",
-        "Priority support",
-        "Custom branding"
-      ],
-      "cta": "Start Free Trial",
-      "popular": "Most Popular"
+        "Advanced reporting",
+        "Payment reminders",
+        "Priority support"
+      ]
     },
     "enterprise": {
       "name": "Enterprise",
       "price": "50",
-      "currency": "CHF",
-      "period": "/month",
       "description": "For growing businesses",
       "features": [
         "Everything in Freelancer",
         "Team collaboration",
-        "Advanced analytics",
-        "API access",
-        "Dedicated support",
-        "Custom integrations"
-      ],
-      "cta": "Contact Sales"
-    }
-  },
-  "footer": {
-    "description": "Invoices in sync, payments in check.",
-    "links": {
-      "product": "Product",
-      "features": "Features",
-      "pricing": "Pricing",
-      "integrations": "Integrations",
-      "api": "API",
-      "company": "Company",
-      "about": "About",
-      "careers": "Careers",
-      "blog": "Blog",
-      "press": "Press",
-      "support": "Support",
-      "help": "Help Center",
-      "contact": "Contact",
-      "status": "Status",
-      "legal": "Legal",
-      "privacy": "Privacy Policy",
-      "terms": "Terms of Service",
-      "cookies": "Cookie Policy",
-      "gdpr": "GDPR",
-      "imprint": "Imprint",
-      "startInvoicing": "Start invoicing today",
-      "startInvoicingDescription": "Create your first Swiss QR-bill invoice in under 2 minutes."
-    },
-    "newsletter": {
-      "title": "Stay Updated",
-      "description": "Get the latest PayMatch updates and invoicing tips delivered to your inbox.",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email address",
-      "emailPlaceholder": "Enter your email",
-      "consent": "I agree to receive marketing emails from PayMatch. I can unsubscribe at any time.",
-      "and": "and",
-      "apply": "apply",
-      "subscribe": "Subscribe"
-    },
-    "social": {
-      "followUs": "Follow us",
-      "twitter": "Twitter",
-      "linkedin": "LinkedIn",
-      "github": "GitHub"
-    },
-    "copyright": "© 2024 PayMatch. All rights reserved.",
-    "developedBy": "Developed by",
-    "swissMade": "Made in Switzerland"
-  },
-  "legal": {
-    "privacy": {
-      "title": "Privacy Policy",
-      "lastUpdated": "Last updated: {date}",
-      "introduction": "This Privacy Policy describes how PayMatch collects, uses, and protects your personal information when you use our service.",
-      "sections": {
-        "dataCollection": "Data Collection",
-        "dataUsage": "Data Usage",
-        "dataSharing": "Data Sharing",
-        "dataSecurity": "Data Security",
-        "yourRights": "Your Rights",
-        "contactUs": "Contact Us"
-      }
-    },
-    "terms": {
-      "title": "Terms of Service",
-      "lastUpdated": "Last updated: {date}",
-      "introduction": "These Terms of Service govern your use of PayMatch and our services.",
-      "sections": {
-        "acceptance": "Acceptance of Terms",
-        "useOfService": "Use of Service",
-        "userAccounts": "User Accounts",
-        "paymentTerms": "Payment Terms",
-        "termination": "Termination",
-        "limitationOfLiability": "Limitation of Liability"
-      }
-    },
-    "imprint": {
-      "title": "Imprint",
-      "company": "PayMatch AG",
-      "address": "Bahnhofstrasse 1, 8001 Zürich, Switzerland",
-      "phone": "+41 44 123 45 67",
-      "email": "info@paymatch.ch",
-      "website": "www.paymatch.ch",
-      "registration": "CHE-123.456.789",
-      "vatId": "CHE-123.456.789 MWST"
-    }
-  },
-  "support": {
-    "title": "Support Center",
-    "subtitle": "Get help with PayMatch",
-    "searchPlaceholder": "Search for help...",
-    "categories": {
-      "gettingStarted": "Getting Started",
-      "billing": "Billing & Payments",
-      "technical": "Technical Support",
-      "account": "Account Management"
-    },
-    "faq": {
-      "title": "Frequently Asked Questions",
-      "items": [
-        {
-          "question": "How do I create my first invoice?",
-          "answer": "Creating your first invoice is easy. Simply log in to your dashboard, click 'Create Invoice', and fill in the required details. Our system will automatically generate a Swiss QR-bill for you."
-        },
-        {
-          "question": "What currencies do you support?",
-          "answer": "We support CHF (Swiss Francs) and EUR (Euros) to cater to the Swiss and European markets."
-        },
-        {
-          "question": "Is my data secure?",
-          "answer": "Yes, we use bank-level security with Swiss data residency. All data is encrypted and stored in compliance with Swiss data protection laws."
-        }
+        "Custom integrations",
+        "Dedicated support"
       ]
     }
   }

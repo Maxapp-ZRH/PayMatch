@@ -1,127 +1,121 @@
 {
-  "common": {
-    "loading": "Wird geladen...",
-    "error": "Ein Fehler ist aufgetreten",
-    "success": "Erfolgreich",
-    "cancel": "Abbrechen",
-    "save": "Speichern",
-    "delete": "Löschen",
-    "edit": "Bearbeiten",
-    "close": "Schliessen",
-    "back": "Zurück",
-    "next": "Weiter",
-    "previous": "Zurück",
-    "submit": "Absenden",
-    "search": "Suchen",
-    "filter": "Filtern",
-    "sort": "Sortieren",
-    "refresh": "Aktualisieren",
-    "retry": "Wiederholen",
-    "continue": "Weiter",
-    "finish": "Beenden",
-    "yes": "Ja",
-    "no": "Nein",
-    "ok": "OK",
-    "learnMore": "Mehr erfahren",
-    "readMore": "Weiterlesen",
-    "showMore": "Mehr anzeigen",
-    "showLess": "Weniger anzeigen"
-  },
-  "navigation": {
-    "home": "Startseite",
-    "about": "Über uns",
-    "features": "Funktionen",
-    "pricing": "Preise",
-    "contact": "Kontakt",
-    "support": "Support",
-    "login": "Anmelden",
-    "register": "Registrieren",
-    "logout": "Abmelden",
-    "dashboard": "Dashboard",
-    "profile": "Profil",
-    "settings": "Einstellungen",
-    "help": "Hilfe",
-    "documentation": "Dokumentation",
-    "api": "API",
-    "downloads": "Downloads",
-    "brand": "Marke"
-  },
-  "auth": {
-    "login": {
-      "title": "Willkommen zurück",
-      "subtitle": "Melden Sie sich in Ihrem Konto an, um fortzufahren",
-      "email": "E-Mail-Adresse",
-      "password": "Passwort",
-      "rememberMe": "Angemeldet bleiben",
-      "forgotPassword": "Passwort vergessen?",
-      "signIn": "Anmelden",
-      "noAccount": "Noch kein Konto?",
-      "signUp": "Registrieren"
-    },
-    "register": {
-      "title": "Konto erstellen",
-      "subtitle": "Starten Sie noch heute mit PayMatch",
-      "firstName": "Vorname",
-      "lastName": "Nachname",
-      "email": "E-Mail-Adresse",
-      "password": "Passwort",
-      "confirmPassword": "Passwort bestätigen",
-      "company": "Firmenname",
-      "agreeToTerms": "Ich stimme den",
-      "termsAndConditions": "Allgemeinen Geschäftsbedingungen",
-      "and": "und der",
-      "privacyPolicy": "Datenschutzerklärung",
-      "createAccount": "Konto erstellen",
-      "haveAccount": "Bereits ein Konto?",
-      "signIn": "Anmelden"
-    },
-    "forgotPassword": {
-      "title": "Passwort zurücksetzen",
-      "subtitle": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts",
-      "email": "E-Mail-Adresse",
-      "sendResetLink": "Reset-Link senden",
-      "backToLogin": "Zurück zur Anmeldung"
-    }
-  },
   "hero": {
-    "title": "Optimieren Sie Ihr Schweizer Rechnungswesen",
-    "subtitle": "Erstellen, versenden und verfolgen Sie Rechnungen mit Swiss QR-Bill-Konformität. Speziell für Schweizer KMU mit Multi-Währungsunterstützung entwickelt.",
-    "cta": "Kostenlose Testversion starten",
-    "learnMore": "Mehr erfahren",
-    "trustedBy": "Vertraut von Schweizer Unternehmen",
-    "features": {
-      "qrBill": "Swiss QR-Bill Konformität",
-      "multiCurrency": "CHF & EUR Unterstützung",
-      "automation": "Automatisierte Workflows",
-      "integration": "Einfache Integrationen"
-    }
+    "title": "Schweizer QR-Rechnung einfach gemacht",
+    "subtitle": "Erstellen, senden und verwalten Sie Schweizer QR-Rechnungen mühelos. Entwickelt für Schweizer Unternehmen, die Präzision, Konformität und professionelle Präsentation schätzen.",
+    "cta": "Kostenlos starten",
+    "learnMore": "Mehr erfahren"
   },
   "features": {
     "title": "Alles was Sie für Schweizer Rechnungen brauchen",
     "subtitle": "Speziell für den Schweizer Markt mit Fokus auf Konformität und Effizienz entwickelt",
-    "swissQrBill": {
-      "title": "Swiss QR-Bill Konformität",
-      "description": "Generieren Sie automatisch konforme Swiss QR-Bills mit allen erforderlichen Feldern und Formatierung."
-    },
-    "multiCurrency": {
-      "title": "Multi-Währungsunterstützung",
-      "description": "Verwalten Sie CHF- und EUR-Rechnungen nahtlos mit automatischer Währungsumrechnung und Formatierung."
-    },
-    "automation": {
-      "title": "Intelligente Automatisierung",
-      "description": "Automatisieren Sie Rechnungserstellung, Versand und Nachfassaktionen, um Zeit zu sparen und Fehler zu reduzieren."
-    },
-    "integration": {
-      "title": "Einfache Integrationen",
-      "description": "Verbinden Sie sich mit Ihren bestehenden Tools und Workflows über unsere umfassende API."
-    },
-    "security": {
-      "title": "Enterprise-Sicherheit",
-      "description": "Banken-Level-Sicherheit mit Schweizer Datenresidenz und DSGVO-Konformität."
-    },
-    "support": {
-      "title": "Schweizer Support",
-      "description": "Erhalten Sie Hilfe von unserem lokalen Schweizer Team, das Ihre Geschäftsanforderungen versteht."
+    "disclaimer": "* PayMatch ist eine Webanwendung, die auf Desktop- und Mobilbrowsern zugänglich ist. Die oben gezeigte mobile Oberfläche dient nur zur Demonstration."
+  },
+  "secondaryFeatures": {
+    "title": "Alles was Sie für professionelles Rechnungswesen brauchen",
+    "subtitle": "Von Swiss QR-Bill-Konformität bis zur Zahlungsabstimmung bietet PayMatch alle Tools, die Schweizer Unternehmen benötigen, um ihre Liquidität im Griff zu behalten.",
+    "features": {
+      "multiCurrency": {
+        "name": "Multi-Währungsunterstützung",
+        "description": "Rechnungen in CHF und EUR erstellen, um Schweizer und europäische Kunden nahtlos zu bedienen."
+      },
+      "clientManagement": {
+        "name": "Kundenverwaltung",
+        "description": "Organisieren Sie Ihre Kunden und verfolgen Sie deren Zahlungshistorie an einem Ort."
+      },
+      "notifications": {
+        "name": "Echtzeit-Benachrichtigungen",
+        "description": "Erhalten Sie sofortige Benachrichtigungen, wenn Rechnungen angesehen, bezahlt oder überfällig werden."
+      },
+      "collaboration": {
+        "name": "Team-Zusammenarbeit",
+        "description": "Laden Sie Teammitglieder ein, um Rechnungen zu verwalten und Zahlungen gemeinsam zu verfolgen."
+      },
+      "security": {
+        "name": "Banken-Level-Sicherheit",
+        "description": "Ihre Finanzdaten sind mit Enterprise-Grade-Verschlüsselung und DSGVO-Konformität geschützt."
+      },
+      "reporting": {
+        "name": "Finanzberichterstattung",
+        "description": "Generieren Sie detaillierte Berichte und exportieren Sie Daten für Buchhaltungs- und Steuerzwecke."
+      }
+    }
+  },
+  "callToAction": {
+    "title": "Senden Sie Ihre erste Rechnung",
+    "subtitle": "Erstellen Sie Ihre erste Swiss QR-Bill-Rechnung in unter 2 Minuten. Keine Kreditkarte erforderlich. Starten Sie kostenlos und skalieren Sie mit dem Wachstum.",
+    "cta": "Kostenlos starten"
+  },
+  "reviews": {
+    "title": "Vertraut von Schweizer Unternehmen im ganzen Land",
+    "subtitle": "Von Freelancern bis zu Unternehmen - Schweizer Fachkräfte optimieren ihr Rechnungswesen mit PayMatch.",
+    "reviews": [
+      {
+        "title": "Endlich Schweizer Rechnungswesen vereinfacht.",
+        "body": "Als Freelancerin in Zürich hatte ich Probleme mit der QR-Bill-Konformität. PayMatch hat es mühelos gemacht - ich kann in Minuten professionelle Rechnungen erstellen.",
+        "author": "Maria Schmidt, Freelancerin",
+        "rating": 5
+      },
+      {
+        "title": "Zahlungsabstimmung ist ein Wendepunkt.",
+        "body": "CAMT-Dateien hochladen und Zahlungen automatisch mit Rechnungen abgleichen spart mir jede Woche Stunden. Mein Buchhalter liebt die sauberen Daten.",
+        "author": "Thomas Müller, KMU-Inhaber",
+        "rating": 5
+      },
+      {
+        "title": "Perfekt für Schweizer Unternehmen.",
+        "body": "Die Multi-Währungsunterstützung (CHF/EUR) und Schweizer Mehrwertsteuerberechnungen sind genau das, was wir brauchten. Endlich ein Rechnungstool für unseren Markt.",
+        "author": "Anna Weber, Buchhaltungsfirma",
+        "rating": 5
+      },
+      {
+        "title": "Professionell und konform.",
+        "body": "Jede Rechnung sieht professionell aus und entspricht Schweizer Standards. Kunden zahlen schneller, weil sie dem QR-Bill-Format vertrauen. Sehr empfehlenswert!",
+        "author": "David Fischer, Berater",
+        "rating": 5
+      },
+      {
+        "title": "Spart mir 5 Stunden pro Woche.",
+        "body": "Die automatisierten Erinnerungen und Zahlungsverfolgungsfunktionen sind unglaublich. Ich kann mich auf mein Geschäft konzentrieren, anstatt Zahlungen zu verfolgen.",
+        "author": "Sarah Zimmermann, Dienstleisterin",
+        "rating": 5
+      },
+      {
+        "title": "Bestes Rechnungstool für die Schweiz.",
+        "body": "Ich habe mehrere andere Plattformen ausprobiert, aber keine verstand Schweizer Anforderungen wie PayMatch. Die QR-Bill-Generierung ist fehlerfrei.",
+        "author": "Michael Keller, Agenturinhaber",
+        "rating": 5
+      }
+    ]
+  },
+  "faqs": {
+    "title": "Häufig gestellte Fragen",
+    "subtitle": "Falls Sie noch andere Fragen haben,",
+    "contactUs": "kontaktieren Sie uns",
+    "questions": {
+      "q1": {
+        "question": "Was ist PayMatch?",
+        "answer": "PayMatch ist eine Schweizer Rechnungsplattform, die speziell für Schweizer Unternehmen entwickelt wurde. Sie hilft Ihnen dabei, Swiss QR-Bill-Rechnungen zu erstellen, zu versenden und abzugleichen."
+      },
+      "q2": {
+        "question": "Wie funktioniert die QR-Bill-Generierung?",
+        "answer": "PayMatch generiert automatisch konforme Swiss QR-Bills mit allen erforderlichen Informationen, einschließlich Mehrwertsteuerberechnungen und ordnungsgemäßer Formatierung für Schweizer Bankstandards."
+      },
+      "q3": {
+        "question": "Kann ich mich mit meiner bestehenden Buchhaltungssoftware integrieren?",
+        "answer": "Ja, PayMatch bietet Integrationen mit beliebter Buchhaltungssoftware und kann Daten in verschiedenen Formaten für einfachen Import exportieren."
+      },
+      "q4": {
+        "question": "Sind meine Daten sicher?",
+        "answer": "Absolut. Wir verwenden Banken-Level-Sicherheitsmaßnahmen und halten uns an Schweizer Datenschutzbestimmungen, um Ihre Daten sicher zu halten."
+      },
+      "q5": {
+        "question": "Unterstützen Sie mehrere Währungen?",
+        "answer": "Ja, PayMatch unterstützt sowohl CHF als auch EUR mit automatischer Währungsumrechnung und ordnungsgemäßer Formatierung für Schweizer und europäische Märkte."
+      },
+      "q6": {
+        "question": "Was ist mit Schweizer Konformität?",
+        "answer": "PayMatch wurde speziell für Schweizer Rechnungsstandards entwickelt und stellt automatisch die Konformität mit Schweizer Mehrwertsteuerbestimmungen und Bankanforderungen sicher."
+      }
     }
   },
   "pricing": {
@@ -130,161 +124,34 @@
     "free": {
       "name": "Kostenlos",
       "price": "0",
-      "currency": "CHF",
-      "period": "/Monat",
       "description": "Perfekt für den Einstieg",
       "features": [
         "5 Rechnungen pro Monat",
-        "Grundlegende Swiss QR-Bill-Generierung",
-        "CHF und EUR Unterstützung",
+        "Swiss QR-Bill-Generierung",
+        "Grundlegende Kundenverwaltung",
         "E-Mail-Support"
-      ],
-      "cta": "Kostenlos starten"
+      ]
     },
     "freelancer": {
       "name": "Freelancer",
       "price": "5",
-      "currency": "CHF",
-      "period": "/Monat",
-      "description": "Für Freelancer und kleine Unternehmen",
+      "description": "Für selbstständige Fachkräfte",
       "features": [
         "Unbegrenzte Rechnungen",
-        "Erweiterte Swiss QR-Bill-Funktionen",
-        "Multi-Währungsunterstützung",
-        "Prioritäts-Support",
-        "Custom Branding"
-      ],
-      "cta": "Kostenlose Testversion starten",
-      "popular": "Beliebteste"
+        "Erweiterte Berichte",
+        "Zahlungserinnerungen",
+        "Prioritäts-Support"
+      ]
     },
     "enterprise": {
       "name": "Enterprise",
       "price": "50",
-      "currency": "CHF",
-      "period": "/Monat",
       "description": "Für wachsende Unternehmen",
       "features": [
         "Alles aus Freelancer",
         "Team-Zusammenarbeit",
-        "Erweiterte Analysen",
-        "API-Zugang",
-        "Dedizierter Support",
-        "Custom Integrationen"
-      ],
-      "cta": "Verkauf kontaktieren"
-    }
-  },
-  "footer": {
-    "description": "Rechnungen im Einklang, Zahlungen im Griff.",
-    "links": {
-      "product": "Produkt",
-      "features": "Funktionen",
-      "pricing": "Preise",
-      "integrations": "Integrationen",
-      "api": "API",
-      "company": "Unternehmen",
-      "about": "Über uns",
-      "careers": "Karriere",
-      "blog": "Blog",
-      "press": "Presse",
-      "support": "Support",
-      "help": "Hilfe-Center",
-      "contact": "Kontakt",
-      "status": "Status",
-      "legal": "Rechtliches",
-      "privacy": "Datenschutzerklärung",
-      "terms": "Nutzungsbedingungen",
-      "cookies": "Cookie-Richtlinie",
-      "gdpr": "DSGVO",
-      "imprint": "Impressum",
-      "startInvoicing": "Heute mit Rechnungen beginnen",
-      "startInvoicingDescription": "Erstellen Sie Ihre erste Swiss QR-Bill-Rechnung in unter 2 Minuten."
-    },
-    "newsletter": {
-      "title": "Bleiben Sie informiert",
-      "description": "Erhalten Sie die neuesten PayMatch-Updates und Rechnungstipps direkt in Ihren Posteingang.",
-      "firstName": "Vorname",
-      "lastName": "Nachname",
-      "email": "E-Mail-Adresse",
-      "emailPlaceholder": "E-Mail eingeben",
-      "consent": "Ich stimme zu, Marketing-E-Mails von PayMatch zu erhalten. Ich kann mich jederzeit abmelden.",
-      "and": "und",
-      "apply": "gelten",
-      "subscribe": "Abonnieren"
-    },
-    "social": {
-      "followUs": "Folgen Sie uns",
-      "twitter": "Twitter",
-      "linkedin": "LinkedIn",
-      "github": "GitHub"
-    },
-    "copyright": "© 2024 PayMatch. Alle Rechte vorbehalten.",
-    "developedBy": "Entwickelt von",
-    "swissMade": "Made in Switzerland"
-  },
-  "legal": {
-    "privacy": {
-      "title": "Datenschutzerklärung",
-      "lastUpdated": "Zuletzt aktualisiert: {date}",
-      "introduction": "Diese Datenschutzerklärung beschreibt, wie PayMatch Ihre persönlichen Informationen sammelt, verwendet und schützt, wenn Sie unseren Service nutzen.",
-      "sections": {
-        "dataCollection": "Datensammlung",
-        "dataUsage": "Datenverwendung",
-        "dataSharing": "Datenweitergabe",
-        "dataSecurity": "Datensicherheit",
-        "yourRights": "Ihre Rechte",
-        "contactUs": "Kontaktieren Sie uns"
-      }
-    },
-    "terms": {
-      "title": "Nutzungsbedingungen",
-      "lastUpdated": "Zuletzt aktualisiert: {date}",
-      "introduction": "Diese Nutzungsbedingungen regeln Ihre Nutzung von PayMatch und unseren Services.",
-      "sections": {
-        "acceptance": "Annahme der Bedingungen",
-        "useOfService": "Nutzung des Services",
-        "userAccounts": "Benutzerkonten",
-        "paymentTerms": "Zahlungsbedingungen",
-        "termination": "Kündigung",
-        "limitationOfLiability": "Haftungsbeschränkung"
-      }
-    },
-    "imprint": {
-      "title": "Impressum",
-      "company": "PayMatch AG",
-      "address": "Bahnhofstrasse 1, 8001 Zürich, Schweiz",
-      "phone": "+41 44 123 45 67",
-      "email": "info@paymatch.ch",
-      "website": "www.paymatch.ch",
-      "registration": "CHE-123.456.789",
-      "vatId": "CHE-123.456.789 MWST"
-    }
-  },
-  "support": {
-    "title": "Support-Center",
-    "subtitle": "Hilfe zu PayMatch erhalten",
-    "searchPlaceholder": "Nach Hilfe suchen...",
-    "categories": {
-      "gettingStarted": "Erste Schritte",
-      "billing": "Abrechnung & Zahlungen",
-      "technical": "Technischer Support",
-      "account": "Kontoverwaltung"
-    },
-    "faq": {
-      "title": "Häufig gestellte Fragen",
-      "items": [
-        {
-          "question": "Wie erstelle ich meine erste Rechnung?",
-          "answer": "Die Erstellung Ihrer ersten Rechnung ist einfach. Melden Sie sich einfach in Ihrem Dashboard an, klicken Sie auf 'Rechnung erstellen' und füllen Sie die erforderlichen Details aus. Unser System generiert automatisch einen Swiss QR-Bill für Sie."
-        },
-        {
-          "question": "Welche Währungen unterstützen Sie?",
-          "answer": "Wir unterstützen CHF (Schweizer Franken) und EUR (Euro), um den Schweizer und europäischen Märkten gerecht zu werden."
-        },
-        {
-          "question": "Sind meine Daten sicher?",
-          "answer": "Ja, wir verwenden Banken-Level-Sicherheit mit Schweizer Datenresidenz. Alle Daten sind verschlüsselt und werden in Übereinstimmung mit den Schweizer Datenschutzgesetzen gespeichert."
-        }
+        "Benutzerdefinierte Integrationen",
+        "Dedizierter Support"
       ]
     }
   }

@@ -1,0 +1,193 @@
+{
+  "faqSection": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find quick answers to common questions before reaching out to support.",
+    "searchPlaceholder": "Search FAQs...",
+    "allCategories": "All Categories",
+    "activeFilters": "Active filters:",
+    "searchLabel": "Search",
+    "categoryLabel": "Category",
+    "clearAll": "Clear all",
+    "popularQuestions": "Popular Questions",
+    "questionFound": "question found",
+    "questionsFound": "questions found",
+    "noQuestionsFound": "No questions found",
+    "noQuestionsDescription": "Try adjusting your search terms or browse all categories.",
+    "clearFilters": "Clear filters"
+  },
+  "form": {
+    "title": "Get Support",
+    "subtitle": "We're here to help! Find answers in our FAQ section or send us a message and we'll get back to you as soon as possible.",
+    "stillNeedHelp": "Still Need Help?",
+    "formSubtitle": "Send us a message and our team will get back to you within 24 hours.",
+    "sections": {
+      "personalInfo": "Personal Information",
+      "issueDetails": "Issue Details",
+      "message": "Message"
+    },
+    "fields": {
+      "name": {
+        "label": "Full Name",
+        "placeholder": "Enter your full name",
+        "required": true
+      },
+      "email": {
+        "label": "Email Address",
+        "placeholder": "your.email@example.com",
+        "required": true
+      },
+      "company": {
+        "label": "Company",
+        "placeholder": "Your company name",
+        "required": false
+      },
+      "category": {
+        "label": "Category",
+        "required": true
+      },
+      "priority": {
+        "label": "Priority",
+        "required": true
+      },
+      "subject": {
+        "label": "Subject",
+        "placeholder": "Brief description of your issue",
+        "required": true
+      },
+      "message": {
+        "label": "Detailed Message",
+        "placeholder": "Please provide as much detail as possible about your issue, including steps to reproduce if applicable...",
+        "required": true,
+        "minLength": "Minimum 10 characters",
+        "maxLength": "Maximum 2000 characters"
+      },
+      "consent": {
+        "label": "I agree to the Privacy Policy and consent to PayMatch processing my personal data to respond to this inquiry.",
+        "required": true
+      }
+    },
+    "categories": {
+      "general": {
+        "label": "General Inquiry",
+        "description": "General questions about PayMatch"
+      },
+      "technical": {
+        "label": "Technical Support",
+        "description": "Technical issues or problems"
+      },
+      "billing": {
+        "label": "Billing & Payments",
+        "description": "Questions about pricing or payments"
+      },
+      "feature-request": {
+        "label": "Feature Request",
+        "description": "Suggest a new feature or improvement"
+      },
+      "bug-report": {
+        "label": "Bug Report",
+        "description": "Report a bug or unexpected behavior"
+      },
+      "account": {
+        "label": "Account Issues",
+        "description": "Account access or management problems"
+      },
+      "integration": {
+        "label": "Integration Help",
+        "description": "Help with third-party integrations"
+      },
+      "other": {
+        "label": "Other",
+        "description": "Something else not listed above"
+      }
+    },
+    "priorities": {
+      "low": {
+        "label": "Low",
+        "description": "General question, no rush"
+      },
+      "medium": {
+        "label": "Medium",
+        "description": "Important but not urgent"
+      },
+      "high": {
+        "label": "High",
+        "description": "Urgent issue affecting work"
+      },
+      "urgent": {
+        "label": "Urgent",
+        "description": "Critical issue, immediate attention needed"
+      }
+    },
+    "buttons": {
+      "sendMessage": "Send Message",
+      "sending": "Sending...",
+      "stillNeedHelp": "Still need help? Contact support"
+    },
+    "contactInfo": {
+      "emailSupport": {
+        "title": "Email Support",
+        "email": "support@paymatch.app",
+        "availability": "Available 24/7"
+      },
+      "responseTime": {
+        "title": "Response Time",
+        "time": "Within 24 hours",
+        "note": "Usually much faster"
+      },
+      "emergency": {
+        "title": "Emergency",
+        "instruction": "Use urgent priority",
+        "note": "For critical issues"
+      }
+    },
+    "modals": {
+      "success": {
+        "title": "Message Sent Successfully!",
+        "message": "Thank you for contacting us. We've received your message and our team will get back to you within 24 hours.",
+        "responseTime": "Typical response time: 24 hours",
+        "button": "Got it, thanks!"
+      },
+      "error": {
+        "title": "Failed to Send Message",
+        "message": "An unexpected error occurred. Please try again.",
+        "buttons": {
+          "close": "Close",
+          "tryAgain": "Try Again"
+        }
+      }
+    },
+    "validation": {
+      "name": {
+        "minLength": "Name must be at least 2 characters",
+        "maxLength": "Name must be less than 100 characters",
+        "invalidChars": "Name contains invalid characters"
+      },
+      "email": {
+        "invalid": "Please enter a valid email address",
+        "maxLength": "Email must be less than 255 characters"
+      },
+      "company": {
+        "maxLength": "Company name must be less than 100 characters"
+      },
+      "category": {
+        "invalid": "Please select a valid category"
+      },
+      "priority": {
+        "invalid": "Please select a valid priority level"
+      },
+      "subject": {
+        "minLength": "Subject must be at least 5 characters",
+        "maxLength": "Subject must be less than 200 characters",
+        "invalidChars": "Subject contains invalid characters"
+      },
+      "message": {
+        "minLength": "Message must be at least 10 characters",
+        "maxLength": "Message must be less than 2000 characters",
+        "invalidContent": "Message must contain at least one alphanumeric character"
+      },
+      "consent": {
+        "required": "You must agree to our privacy policy to submit this form"
+      }
+    }
+  }
+}

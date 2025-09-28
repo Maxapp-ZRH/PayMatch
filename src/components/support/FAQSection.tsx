@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -16,43 +16,72 @@ import {
   HelpCircle,
   Filter,
   X,
-  Lightbulb,
-  User,
-  FileText,
-  CreditCard,
   Settings,
-  Shield,
 } from 'lucide-react';
 
-import { faqData, faqCategories, searchFAQs, getPopularFAQs } from '@/data/faq';
+import {
+  faqData,
+  faqCategories,
+  getPopularFAQs,
+  createTranslatedFAQs,
+  createTranslatedCategories,
+} from '@/utils/faq-manager';
+import { useTranslations } from 'next-intl';
 
-const categoryIcons = {
-  general: Lightbulb,
-  account: User,
-  invoicing: FileText,
-  payments: CreditCard,
-  technical: Settings,
-  'swiss-compliance': Shield,
-} as const;
+// Category icons are now imported from faqCategories in the data file
 
 interface FAQSectionProps {
   onQuestionClick?: (question: string) => void;
 }
 
 export function FAQSection({ onQuestionClick }: FAQSectionProps) {
+  const t = useTranslations('support.faqSection');
+  const tFaq = useTranslations('faq');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
 
+  // Use the centralized helper function
+  const getTranslatedFAQs = useCallback(
+    (faqs: typeof faqData) => {
+      return createTranslatedFAQs(faqs, tFaq);
+    },
+    [tFaq]
+  );
+
   // Filter FAQs based on search and category
   const filteredFAQs = useMemo(() => {
-    const results = searchFAQs(searchQuery, selectedCategory || undefined);
-    return showAll ? results : results.slice(0, 6);
-  }, [searchQuery, selectedCategory, showAll]);
+    let results = faqData;
+
+    // Filter by category
+    if (selectedCategory) {
+      results = results.filter((item) => item.category === selectedCategory);
+    }
+
+    // Filter by search query (search in translated content)
+    if (searchQuery.trim()) {
+      const searchTerm = searchQuery.toLowerCase().trim();
+      results = results.filter((item) => {
+        const translatedQuestion = tFaq(item.questionKey).toLowerCase();
+        const translatedAnswer = tFaq(item.answerKey).toLowerCase();
+        return (
+          translatedQuestion.includes(searchTerm) ||
+          translatedAnswer.includes(searchTerm) ||
+          item.tags.some((tag) => tag.toLowerCase().includes(searchTerm))
+        );
+      });
+    }
+
+    const translatedResults = getTranslatedFAQs(results);
+    return showAll ? translatedResults : translatedResults.slice(0, 6);
+  }, [searchQuery, selectedCategory, showAll, getTranslatedFAQs, tFaq]);
 
   // Get popular FAQs for quick access
-  const popularFAQs = useMemo(() => getPopularFAQs().slice(0, 3), []);
+  const popularFAQs = useMemo(
+    () => getTranslatedFAQs(getPopularFAQs().slice(0, 3)),
+    [getTranslatedFAQs]
+  );
 
   const toggleExpanded = (itemId: string) => {
     const newExpanded = new Set(expandedItems);
@@ -86,10 +115,10 @@ export function FAQSection({ onQuestionClick }: FAQSectionProps) {
           <HelpCircle className="w-8 h-8 text-white" />
         </div>
         <h2 className="text-3xl font-medium tracking-tight text-gray-900 sm:text-4xl mb-6">
-          Frequently Asked Questions
+          {t('title')}
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Find quick answers to common questions before reaching out to support.
+          {t('subtitle')}
         </p>
       </motion.div>
 
@@ -106,7 +135,7 @@ export function FAQSection({ onQuestionClick }: FAQSectionProps) {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search FAQs..."
+              placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
@@ -131,11 +160,10 @@ export function FAQSection({ onQuestionClick }: FAQSectionProps) {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              All Categories
+              {t('allCategories')}
             </button>
-            {faqCategories.map((category) => {
-              const Icon =
-                categoryIcons[category.id as keyof typeof categoryIcons];
+            {createTranslatedCategories(tFaq).map((category) => {
+              const Icon = category.icon;
               return (
                 <button
                   key={category.id}
@@ -157,23 +185,29 @@ export function FAQSection({ onQuestionClick }: FAQSectionProps) {
           {(searchQuery || selectedCategory) && (
             <div className="flex items-center space-x-2">
               <Filter className="w-4 h-4 text-gray-500" />
-              <span className="text-sm text-gray-600">Active filters:</span>
+              <span className="text-sm text-gray-600">
+                {t('activeFilters')}
+              </span>
               {searchQuery && (
                 <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                  Search: &quot;{searchQuery}&quot;
+                  {t('searchLabel')}: &quot;{searchQuery}&quot;
                 </span>
               )}
               {selectedCategory && (
                 <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                  Category:{' '}
-                  {faqCategories.find((c) => c.id === selectedCategory)?.name}
+                  {t('categoryLabel')}:{' '}
+                  {
+                    createTranslatedCategories(tFaq).find(
+                      (c) => c.id === selectedCategory
+                    )?.name
+                  }
                 </span>
               )}
               <button
                 onClick={clearFilters}
                 className="text-sm text-blue-600 hover:text-blue-700 underline"
               >
-                Clear all
+                {t('clearAll')}
               </button>
             </div>
           )}
@@ -189,7 +223,7 @@ export function FAQSection({ onQuestionClick }: FAQSectionProps) {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Popular Questions
+            {t('popularQuestions')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {popularFAQs.map((faq) => (
@@ -221,7 +255,9 @@ export function FAQSection({ onQuestionClick }: FAQSectionProps) {
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-900">
             {filteredFAQs.length}{' '}
-            {filteredFAQs.length === 1 ? 'Question' : 'Questions'} Found
+            {filteredFAQs.length === 1
+              ? t('questionFound')
+              : t('questionsFound')}
           </h3>
           {filteredFAQs.length > 6 && !showAll && (
             <button
@@ -236,8 +272,10 @@ export function FAQSection({ onQuestionClick }: FAQSectionProps) {
         <AnimatePresence>
           {filteredFAQs.map((faq, index) => {
             const isExpanded = expandedItems.has(faq.id);
-            const Icon =
-              categoryIcons[faq.category as keyof typeof categoryIcons];
+            const category = faqCategories.find(
+              (cat) => cat.id === faq.category
+            );
+            const Icon = category?.icon || Settings; // fallback to Settings icon
 
             return (
               <motion.div
@@ -326,16 +364,14 @@ export function FAQSection({ onQuestionClick }: FAQSectionProps) {
           >
             <HelpCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No questions found
+              {t('noQuestionsFound')}
             </h3>
-            <p className="text-gray-600 mb-4">
-              Try adjusting your search terms or browse all categories.
-            </p>
+            <p className="text-gray-600 mb-4">{t('noQuestionsDescription')}</p>
             <button
               onClick={clearFilters}
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
-              Clear filters
+              {t('clearFilters')}
             </button>
           </motion.div>
         )}
