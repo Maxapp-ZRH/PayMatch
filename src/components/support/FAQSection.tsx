@@ -82,13 +82,13 @@ export function FAQSection({ onQuestionClick }: FAQSectionProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
-          <HelpCircle className="w-8 h-8 text-blue-600" />
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-xl mb-8">
+          <HelpCircle className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-4">
+        <h2 className="text-3xl font-medium tracking-tight text-gray-900 sm:text-4xl mb-6">
           Frequently Asked Questions
         </h2>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Find quick answers to common questions before reaching out to support.
         </p>
       </motion.div>
