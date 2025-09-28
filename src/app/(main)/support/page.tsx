@@ -159,14 +159,14 @@ export default function SupportPage() {
         animate="visible"
       >
         {/* Header */}
-        <motion.div className="text-center mb-12" variants={itemVariants}>
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-100 rounded-full mb-6">
-            <MessageSquare className="w-8 h-8 text-teal-600" />
+        <motion.div className="text-center mb-16" variants={itemVariants}>
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-xl mb-8">
+            <MessageSquare className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl mb-4">
+          <h1 className="text-4xl font-medium tracking-tight text-gray-900 sm:text-5xl mb-6">
             Get Support
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             We&apos;re here to help! Send us a message and we&apos;ll get back
             to you as soon as possible.
           </p>
@@ -211,6 +211,11 @@ export default function SupportPage() {
           )}
         </AnimatePresence>
 
+        {/* FAQ Section */}
+        <motion.div className="mb-16" variants={itemVariants}>
+          <FAQSection onQuestionClick={handleFAQQuestionClick} />
+        </motion.div>
+
         {/* Form */}
         <motion.div
           className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm"
@@ -219,7 +224,7 @@ export default function SupportPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* Personal Information */}
             <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+              <h2 className="text-xl font-medium text-gray-900 flex items-center">
                 <User className="w-5 h-5 mr-2 text-teal-600" />
                 Personal Information
               </h2>
@@ -292,7 +297,7 @@ export default function SupportPage() {
 
             {/* Issue Details */}
             <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+              <h2 className="text-xl font-medium text-gray-900 flex items-center">
                 <Tag className="w-5 h-5 mr-2 text-teal-600" />
                 Issue Details
               </h2>
@@ -383,7 +388,7 @@ export default function SupportPage() {
 
             {/* Message */}
             <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+              <h2 className="text-xl font-medium text-gray-900 flex items-center">
                 <FileText className="w-5 h-5 mr-2 text-teal-600" />
                 Message
               </h2>
@@ -493,16 +498,6 @@ export default function SupportPage() {
             <p className="text-sm text-gray-600">Use urgent priority</p>
           </div>
         </motion.div>
-      </motion.div>
-
-      {/* FAQ Section */}
-      <motion.div
-        className="mt-16"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-      >
-        <FAQSection onQuestionClick={handleFAQQuestionClick} />
       </motion.div>
     </Container>
   );
