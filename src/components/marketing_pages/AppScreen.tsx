@@ -96,7 +96,10 @@ AppScreen.Body = forwardRef<
   return (
     <div
       ref={ref}
-      className={clsx('mt-6 flex-auto rounded-t-2xl bg-white', className)}
+      className={clsx(
+        'mt-6 flex-1 rounded-2xl bg-white overflow-hidden',
+        className
+      )}
     >
       {children}
     </div>
