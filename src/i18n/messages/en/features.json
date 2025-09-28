@@ -1,0 +1,28 @@
+{
+  "title": "Everything you need for Swiss invoicing",
+  "subtitle": "Built specifically for the Swiss market with compliance and efficiency in mind",
+  "swissQrBill": {
+    "title": "Swiss QR-Bill Compliance",
+    "description": "Generate compliant Swiss QR-bills automatically with all required fields and formatting."
+  },
+  "multiCurrency": {
+    "title": "Multi-Currency Support",
+    "description": "Handle CHF and EUR invoices seamlessly with automatic currency conversion and formatting."
+  },
+  "automation": {
+    "title": "Smart Automation",
+    "description": "Automate invoice creation, sending, and follow-ups to save time and reduce errors."
+  },
+  "integration": {
+    "title": "Easy Integrations",
+    "description": "Connect with your existing tools and workflows through our comprehensive API."
+  },
+  "security": {
+    "title": "Enterprise Security",
+    "description": "Bank-level security with Swiss data residency and GDPR compliance."
+  },
+  "support": {
+    "title": "Swiss Support",
+    "description": "Get help from our local Swiss team who understand your business needs."
+  }
+}

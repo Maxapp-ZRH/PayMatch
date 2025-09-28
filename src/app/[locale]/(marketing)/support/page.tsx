@@ -12,6 +12,7 @@ import React, { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from '@/i18n/navigation';
 import {
   Mail,
   MessageSquare,
@@ -900,12 +901,12 @@ export default function SupportPage() {
                     className="text-sm text-gray-700 leading-relaxed"
                   >
                     I agree to the{' '}
-                    <a
+                    <Link
                       href="/privacy"
                       className="text-teal-600 hover:text-teal-700 underline font-semibold"
                     >
                       Privacy Policy
-                    </a>{' '}
+                    </Link>{' '}
                     and consent to PayMatch processing my personal data to
                     respond to this inquiry. *
                   </label>

@@ -1,11 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
 import { TextField } from '@/components/marketing_pages/Fields';
 import { NavLinks } from '@/components/marketing_pages/NavLinks';
 import { QRCode } from '@/components/ui/QRCode';
+import { Link as I18nLink } from '@/i18n/navigation';
 
 function QrCodeBorder(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -20,6 +22,8 @@ function QrCodeBorder(props: React.ComponentPropsWithoutRef<'svg'>) {
 }
 
 export function Footer() {
+  const t = useTranslations('footer');
+
   return (
     <footer className="border-t border-gray-200">
       <Container>
@@ -35,7 +39,7 @@ export function Footer() {
               />
               <div className="ml-4">
                 <p className="text-base font-semibold">PayMatch</p>
-                <p className="text-sm">Invoices in sync, payments in check.</p>
+                <p className="text-sm">{t('description')}</p>
               </div>
             </div>
             <nav className="mt-8 flex gap-8">
@@ -54,13 +58,13 @@ export function Footer() {
             </div>
             <div className="ml-8 lg:w-64">
               <p className="text-base font-semibold text-gray-900">
-                <Link href="/register">
+                <I18nLink href="/register">
                   <span className="absolute inset-0 sm:rounded-2xl" />
-                  Start invoicing today
-                </Link>
+                  {t('links.startInvoicing')}
+                </I18nLink>
               </p>
               <p className="mt-1 text-sm text-gray-700">
-                Create your first Swiss QR-bill invoice in under 2 minutes.
+                {t('links.startInvoicingDescription')}
               </p>
             </div>
           </div>
@@ -72,7 +76,9 @@ export function Footer() {
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
               {/* Company & Support */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">Company</h3>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {t('links.company')}
+                </h3>
                 <ul className="mt-4 space-y-3">
                   <li>
                     <Link
@@ -81,63 +87,65 @@ export function Footer() {
                       rel="noopener noreferrer"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
-                      Company
+                      {t('links.company')}
                     </Link>
                   </li>
                   <li>
-                    <Link
+                    <I18nLink
                       href="/support"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
-                      Support
-                    </Link>
+                      {t('links.support')}
+                    </I18nLink>
                   </li>
                 </ul>
               </div>
 
               {/* Legal */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">Legal</h3>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {t('links.legal')}
+                </h3>
                 <ul className="mt-4 space-y-3">
                   <li>
-                    <Link
+                    <I18nLink
                       href="/privacy"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
-                      Privacy Policy
-                    </Link>
+                      {t('links.privacy')}
+                    </I18nLink>
                   </li>
                   <li>
-                    <Link
+                    <I18nLink
                       href="/terms"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
-                      Terms of Service
-                    </Link>
+                      {t('links.terms')}
+                    </I18nLink>
                   </li>
                   <li>
-                    <Link
+                    <I18nLink
                       href="/cookies"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
-                      Cookie Policy
-                    </Link>
+                      {t('links.cookies')}
+                    </I18nLink>
                   </li>
                   <li>
-                    <Link
+                    <I18nLink
                       href="/gdpr"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
-                      GDPR
-                    </Link>
+                      {t('links.gdpr')}
+                    </I18nLink>
                   </li>
                   <li>
-                    <Link
+                    <I18nLink
                       href="/imprint"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
-                      Imprint
-                    </Link>
+                      {t('links.imprint')}
+                    </I18nLink>
                   </li>
                 </ul>
               </div>
@@ -146,11 +154,10 @@ export function Footer() {
             {/* Newsletter */}
             <div className="lg:pl-8">
               <h3 className="text-sm font-semibold text-gray-900">
-                Stay Updated
+                {t('newsletter.title')}
               </h3>
               <p className="mt-2 text-sm text-gray-600">
-                Get the latest PayMatch updates and invoicing tips delivered to
-                your inbox.
+                {t('newsletter.description')}
               </p>
               <form className="mt-4 space-y-4">
                 {/* Name Fields */}
@@ -158,8 +165,8 @@ export function Footer() {
                   <TextField
                     type="text"
                     name="firstName"
-                    aria-label="First name"
-                    placeholder="First name"
+                    aria-label={t('newsletter.firstName')}
+                    placeholder={t('newsletter.firstName')}
                     autoComplete="given-name"
                     required
                     className="min-w-0"
@@ -167,8 +174,8 @@ export function Footer() {
                   <TextField
                     type="text"
                     name="lastName"
-                    aria-label="Last name"
-                    placeholder="Last name"
+                    aria-label={t('newsletter.lastName')}
+                    placeholder={t('newsletter.lastName')}
                     autoComplete="family-name"
                     required
                     className="min-w-0"
@@ -179,8 +186,8 @@ export function Footer() {
                 <TextField
                   type="email"
                   name="email"
-                  aria-label="Email address"
-                  placeholder="Enter your email"
+                  aria-label={t('newsletter.email')}
+                  placeholder={t('newsletter.emailPlaceholder')}
                   autoComplete="email"
                   required
                   className="w-full"
@@ -199,29 +206,28 @@ export function Footer() {
                     htmlFor="newsletter-consent"
                     className="text-xs text-gray-600 leading-relaxed"
                   >
-                    I agree to receive marketing emails from PayMatch. I can
-                    unsubscribe at any time.
+                    {t('newsletter.consent')}
                     <br />
-                    <Link
+                    <I18nLink
                       href="/privacy"
                       className="text-teal-600 hover:text-teal-700 underline"
                     >
-                      Privacy Policy
-                    </Link>{' '}
-                    and{' '}
-                    <Link
+                      {t('links.privacy')}
+                    </I18nLink>{' '}
+                    {t('newsletter.and')}{' '}
+                    <I18nLink
                       href="/terms"
                       className="text-teal-600 hover:text-teal-700 underline"
                     >
-                      Terms of Service
-                    </Link>{' '}
-                    apply.
+                      {t('links.terms')}
+                    </I18nLink>{' '}
+                    {t('newsletter.apply')}.
                   </label>
                 </div>
 
                 {/* Submit Button */}
                 <Button type="submit" color="cyan" className="w-full">
-                  Subscribe
+                  {t('newsletter.subscribe')}
                 </Button>
               </form>
             </div>
@@ -229,13 +235,10 @@ export function Footer() {
 
           {/* Bottom Section */}
           <div className="mt-8 flex flex-col items-center justify-between border-t border-gray-200 pt-8 md:flex-row">
-            <p className="text-sm text-gray-500">
-              &copy; Copyright {new Date().getFullYear()} PayMatch. All rights
-              reserved.
-            </p>
+            <p className="text-sm text-gray-500">{t('copyright')}</p>
             <div className="mt-4 flex items-center space-x-4 md:mt-0">
               <p className="text-sm text-gray-500">
-                Developed by{' '}
+                {t('developedBy')}{' '}
                 <Link
                   href="https://maxappzrh.com"
                   target="_blank"

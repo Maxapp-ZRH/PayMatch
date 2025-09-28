@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
@@ -97,6 +98,8 @@ function PlayIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 }
 
 export function Hero() {
+  const t = useTranslations('hero');
+
   return (
     <div
       data-testid="hero"
@@ -106,20 +109,16 @@ export function Hero() {
         <div className="lg:grid lg:grid-cols-12 lg:gap-x-8 lg:gap-y-20">
           <div className="relative z-10 mx-auto max-w-2xl lg:col-span-7 lg:max-w-none lg:pt-6 xl:col-span-6">
             <h1 className="text-4xl font-medium tracking-tight text-gray-900">
-              Swiss QR-bill invoicing made simple.
+              {t('title')}
             </h1>
-            <p className="mt-6 text-lg text-gray-600">
-              Create, send, and reconcile invoices effortlessly. Built for Swiss
-              businesses who value precision, compliance, and professional
-              presentation.
-            </p>
+            <p className="mt-6 text-lg text-gray-600">{t('subtitle')}</p>
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-4">
               <Button
                 href="/register"
                 color="cyan"
                 className="px-6 py-3 text-base font-semibold"
               >
-                Get Started Free
+                {t('cta')}
               </Button>
               <Button
                 href="#features"
@@ -128,7 +127,7 @@ export function Hero() {
                 className="px-6 text-base font-semibold !py-3"
               >
                 <PlayIcon className="h-6 w-6 flex-none" />
-                <span className="ml-2.5">See How It Works</span>
+                <span className="ml-2.5">{t('learnMore')}</span>
               </Button>
             </div>
           </div>
@@ -235,7 +234,7 @@ export function Hero() {
           </div>
           <div className="relative -mt-4 lg:col-span-7 lg:mt-0 xl:col-span-6">
             <p className="text-center text-sm font-semibold text-gray-900 lg:text-left">
-              Trusted by Swiss businesses
+              {t('trustedBy')}
             </p>
             <ul
               role="list"

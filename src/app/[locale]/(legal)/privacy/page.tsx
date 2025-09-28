@@ -7,6 +7,7 @@
  */
 
 import { LegalLayout } from '@/components/legal/LegalLayout';
+import { Link } from '@/i18n/navigation';
 
 export default function PrivacyPolicyPage() {
   return (
@@ -497,12 +498,12 @@ export default function PrivacyPolicyPage() {
             <p className="text-gray-700 leading-relaxed mb-6">
               We use cookies to enhance your experience. For detailed
               information, see our{' '}
-              <a
+              <Link
                 href="/cookies"
                 className="text-teal-600 hover:text-teal-700 underline transition-colors"
               >
                 Cookie Policy
-              </a>
+              </Link>
               .
             </p>
             <p className="text-gray-700 leading-relaxed">
