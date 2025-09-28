@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 
 import { Container } from '@/components/marketing_pages/Container';
+import { FAQSection } from '@/components/support/FAQSection';
 import {
   supportFormSchema,
   supportCategories,
@@ -133,6 +134,21 @@ export default function SupportPage() {
   const selectedPriority = supportPriorities.find(
     (pri) => pri.value === watchedPriority
   );
+
+  const handleFAQQuestionClick = (question: string) => {
+    // Pre-fill the subject field with the FAQ question
+    const subjectInput = document.getElementById('subject') as HTMLInputElement;
+    if (subjectInput) {
+      subjectInput.value = question;
+      subjectInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    // Scroll to the form
+    const formElement = document.querySelector('form');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <Container className="py-16">
@@ -477,6 +493,16 @@ export default function SupportPage() {
             <p className="text-sm text-gray-600">Use urgent priority</p>
           </div>
         </motion.div>
+      </motion.div>
+
+      {/* FAQ Section */}
+      <motion.div
+        className="mt-16"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+      >
+        <FAQSection onQuestionClick={handleFAQQuestionClick} />
       </motion.div>
     </Container>
   );
