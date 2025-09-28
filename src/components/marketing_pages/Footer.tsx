@@ -35,12 +35,10 @@ export function Footer() {
               />
               <div className="ml-4">
                 <p className="text-base font-semibold">PayMatch</p>
-                <p className="mt-1 text-sm">
-                  Invoices in sync, payments in check.
-                </p>
+                <p className="text-sm">Invoices in sync, payments in check.</p>
               </div>
             </div>
-            <nav className="mt-11 flex gap-8">
+            <nav className="mt-8 flex gap-8">
               <NavLinks />
             </nav>
           </div>
@@ -69,89 +67,100 @@ export function Footer() {
         </div>
         <div className="border-t border-gray-200 pt-8 pb-12">
           {/* Links Section */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
-            {/* Company & Support */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900">Company</h3>
-              <ul className="mt-4 space-y-3">
-                <li>
-                  <Link
-                    href="https://maxappzrh.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Company
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/support"
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Support
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/brand"
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Brand
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/downloads"
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Downloads
-                  </Link>
-                </li>
-              </ul>
-            </div>
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+            {/* Company & Legal Group */}
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+              {/* Company & Support */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Company</h3>
+                <ul className="mt-4 space-y-3">
+                  <li>
+                    <Link
+                      href="https://maxappzrh.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Company
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/support"
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Support
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/brand"
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Brand
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/downloads"
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Downloads
+                    </Link>
+                  </li>
+                </ul>
+              </div>
 
-            {/* Legal */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900">Legal</h3>
-              <ul className="mt-4 space-y-3">
-                <li>
-                  <Link
-                    href="/privacy"
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/terms"
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Terms of Service
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/cookies"
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Cookie Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/gdpr"
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    GDPR
-                  </Link>
-                </li>
-              </ul>
+              {/* Legal */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Legal</h3>
+                <ul className="mt-4 space-y-3">
+                  <li>
+                    <Link
+                      href="/privacy"
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/terms"
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Terms of Service
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/cookies"
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Cookie Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/gdpr"
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      GDPR
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/imprint"
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Imprint
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             {/* Newsletter */}
-            <div>
+            <div className="lg:pl-8">
               <h3 className="text-sm font-semibold text-gray-900">
                 Stay Updated
               </h3>
@@ -159,20 +168,77 @@ export function Footer() {
                 Get the latest PayMatch updates and invoicing tips delivered to
                 your inbox.
               </p>
-              <form className="mt-4">
-                <div className="flex gap-2">
+              <form className="mt-4 space-y-4">
+                {/* Name Fields */}
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <TextField
-                    type="email"
-                    aria-label="Email address"
-                    placeholder="Enter your email"
-                    autoComplete="email"
+                    type="text"
+                    name="firstName"
+                    aria-label="First name"
+                    placeholder="First name"
+                    autoComplete="given-name"
                     required
-                    className="flex-1 min-w-0"
+                    className="min-w-0"
                   />
-                  <Button type="submit" color="cyan" className="flex-none">
-                    Subscribe
-                  </Button>
+                  <TextField
+                    type="text"
+                    name="lastName"
+                    aria-label="Last name"
+                    placeholder="Last name"
+                    autoComplete="family-name"
+                    required
+                    className="min-w-0"
+                  />
                 </div>
+
+                {/* Email Field */}
+                <TextField
+                  type="email"
+                  name="email"
+                  aria-label="Email address"
+                  placeholder="Enter your email"
+                  autoComplete="email"
+                  required
+                  className="w-full"
+                />
+
+                {/* Consent Checkbox */}
+                <div className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    id="newsletter-consent"
+                    name="consent"
+                    required
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+                  />
+                  <label
+                    htmlFor="newsletter-consent"
+                    className="text-xs text-gray-600 leading-relaxed"
+                  >
+                    I agree to receive marketing emails from PayMatch. I can
+                    unsubscribe at any time.
+                    <br />
+                    <Link
+                      href="/privacy"
+                      className="text-teal-600 hover:text-teal-700 underline"
+                    >
+                      Privacy Policy
+                    </Link>{' '}
+                    and{' '}
+                    <Link
+                      href="/terms"
+                      className="text-teal-600 hover:text-teal-700 underline"
+                    >
+                      Terms of Service
+                    </Link>{' '}
+                    apply.
+                  </label>
+                </div>
+
+                {/* Submit Button */}
+                <Button type="submit" color="cyan" className="w-full">
+                  Subscribe
+                </Button>
               </form>
             </div>
           </div>

@@ -8,78 +8,11 @@ import { Check, X } from 'lucide-react';
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
 import { Logomark } from '@/components/marketing_pages/Logo';
-
-// Utility function to calculate monthly pricing with annual discount
-function calculateMonthlyPricing(
-  annualPrice: number,
-  discountPercent: number = 20
-): number {
-  const discountedAnnual = annualPrice * (1 - discountPercent / 100);
-  return Math.round(discountedAnnual / 12);
-}
-
-const plans = [
-  {
-    name: 'Freelancer',
-    featured: false,
-    monthlyPrice: 5,
-    annualPrice: 48,
-    description: 'For solo professionals who want invoicing without limits.',
-    button: {
-      label: 'Get Started',
-      href: '/register',
-    },
-    features: [
-      'Unlimited invoices & clients',
-      'Swiss QR-bill generation',
-      'Payment reconciliation',
-      'Priority support',
-      'No feature restrictions',
-    ],
-    logomarkClassName: 'fill-gray-500',
-  },
-  {
-    name: 'Business',
-    featured: true,
-    monthlyPrice: 50,
-    annualPrice: 480,
-    description:
-      'For SMEs and fiduciaries that need collaboration and more features.',
-    button: {
-      label: 'Get Started',
-      href: '/register',
-    },
-    features: [
-      'Everything in Freelancer',
-      'Team management (10 users)',
-      'Advanced reminders',
-      'Branding control',
-      'Organization dashboard',
-      'Advanced reporting',
-    ],
-    logomarkClassName: 'fill-teal-600',
-  },
-  {
-    name: 'Enterprise',
-    featured: false,
-    monthlyPrice: 150,
-    annualPrice: 1440,
-    description: 'For large fiduciaries and corporates with advanced needs.',
-    button: {
-      label: 'Get Started',
-      href: '/register',
-    },
-    features: [
-      'Everything in Business',
-      'Unlimited users',
-      'Dedicated support / SLA',
-      'Advanced security',
-      'Early access to AI features',
-      'Custom requests',
-    ],
-    logomarkClassName: 'fill-red-600',
-  },
-];
+import {
+  pricingConfig,
+  calculateMonthlyPricing,
+  getFreePlanInfo,
+} from '@/config/pricing';
 
 function CheckIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -177,7 +110,7 @@ function Plan({
                 featured ? 'text-white' : 'text-gray-900'
               )}
             >
-              CHF {monthlyPrice}
+              {pricingConfig.currency} {monthlyPrice}
             </span>
             <span
               aria-hidden={activePeriod === 'Monthly'}
@@ -188,7 +121,11 @@ function Plan({
                 featured ? 'text-white' : 'text-gray-900'
               )}
             >
-              CHF {calculateMonthlyPricing(annualPrice)}
+              {pricingConfig.currency}{' '}
+              {calculateMonthlyPricing(
+                annualPrice,
+                pricingConfig.annualDiscountPercent
+              )}
             </span>
           </div>
           <div className="mt-1">
@@ -200,7 +137,7 @@ function Plan({
             >
               {activePeriod === 'Monthly'
                 ? 'Billed monthly'
-                : `Billed annually (CHF ${annualPrice}/year)`}
+                : `Billed annually (${pricingConfig.currency} ${annualPrice}/year)`}
             </span>
           </div>
         </div>
@@ -239,7 +176,7 @@ function Plan({
           href={button.href}
           color={featured ? 'swiss' : 'gray'}
           className="mt-6"
-          aria-label={`Get started with the ${name} plan for CHF ${activePeriod === 'Monthly' ? monthlyPrice : calculateMonthlyPricing(annualPrice)}`}
+          aria-label={`Get started with the ${name} plan for ${pricingConfig.currency} ${activePeriod === 'Monthly' ? monthlyPrice : calculateMonthlyPricing(annualPrice, pricingConfig.annualDiscountPercent)}`}
         >
           {button.label}
         </Button>
@@ -265,12 +202,10 @@ export function Pricing() {
             id="pricing-title"
             className="text-3xl font-medium tracking-tight text-gray-900"
           >
-            Simple pricing for Swiss businesses.
+            {pricingConfig.sectionTitle}
           </h2>
           <p className="mt-2 text-lg text-gray-600">
-            From freelancers to enterprises, we&apos;ve got the perfect plan for
-            your invoicing needs. Start with our free plan and upgrade as you
-            grow.
+            {pricingConfig.sectionDescription}
           </p>
         </div>
 
@@ -281,7 +216,7 @@ export function Pricing() {
               onChange={setActivePeriod}
               className="grid grid-cols-2"
             >
-              {['Monthly', 'Annually'].map((period) => (
+              {pricingConfig.billingPeriods.map((period) => (
                 <Radio
                   key={period}
                   value={period}
@@ -305,7 +240,7 @@ export function Pricing() {
                   : '[clip-path:inset(0_0_0_calc(50%-1px))]'
               )}
             >
-              {['Monthly', 'Annually'].map((period) => (
+              {pricingConfig.billingPeriods.map((period) => (
                 <div
                   key={period}
                   className={clsx(
@@ -323,13 +258,13 @@ export function Pricing() {
         <div className="mt-4 text-center">
           <div className="inline-flex items-center rounded-full bg-green-50 px-3 py-1">
             <span className="text-sm font-medium text-green-700">
-              Save 20% with annual billing
+              {pricingConfig.annualBillingBadge}
             </span>
           </div>
         </div>
 
         <div className="mx-auto mt-16 grid max-w-4xl grid-cols-1 items-start gap-x-8 gap-y-10 sm:mt-20 sm:grid-cols-2 lg:max-w-none lg:grid-cols-3">
-          {plans.map((plan) => (
+          {pricingConfig.plans.map((plan) => (
             <Plan key={plan.name} {...plan} activePeriod={activePeriod} />
           ))}
         </div>
@@ -338,11 +273,10 @@ export function Pricing() {
         <div className="mt-20">
           <div className="text-center mb-12">
             <h3 className="text-3xl font-medium tracking-tight text-gray-900 mb-4">
-              Compare all features
+              {pricingConfig.comparisonTitle}
             </h3>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              See exactly what&apos;s included in each plan to choose the
-              perfect fit for your business
+              {pricingConfig.comparisonDescription}
             </p>
           </div>
           <div className="overflow-x-auto shadow-lg shadow-gray-900/5 rounded-3xl border border-gray-200">
@@ -357,7 +291,9 @@ export function Pricing() {
                       <span className="text-sm font-medium text-gray-500 mb-1">
                         FREE
                       </span>
-                      <span className="text-2xl font-bold">CHF 0</span>
+                      <span className="text-2xl font-bold">
+                        {pricingConfig.currency} 0
+                      </span>
                     </div>
                   </th>
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg">
@@ -365,7 +301,9 @@ export function Pricing() {
                       <span className="text-sm font-medium text-gray-500 mb-1">
                         FREELANCER
                       </span>
-                      <span className="text-2xl font-bold">CHF 5</span>
+                      <span className="text-2xl font-bold">
+                        {pricingConfig.currency} 5
+                      </span>
                     </div>
                   </th>
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-teal-600 text-lg bg-teal-50">
@@ -373,7 +311,9 @@ export function Pricing() {
                       <span className="text-sm font-medium text-teal-600 mb-1">
                         BUSINESS
                       </span>
-                      <span className="text-2xl font-bold">CHF 50</span>
+                      <span className="text-2xl font-bold">
+                        {pricingConfig.currency} 50
+                      </span>
                       <span className="text-xs text-teal-600 font-medium mt-1">
                         POPULAR
                       </span>
@@ -384,84 +324,15 @@ export function Pricing() {
                       <span className="text-sm font-medium text-gray-500 mb-1">
                         ENTERPRISE
                       </span>
-                      <span className="text-2xl font-bold">CHF 150</span>
+                      <span className="text-2xl font-bold">
+                        {pricingConfig.currency} 150
+                      </span>
                     </div>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {[
-                  {
-                    feature: 'Invoices',
-                    free: 'Unlimited',
-                    freelancer: 'Unlimited',
-                    business: 'Unlimited',
-                    enterprise: 'Unlimited',
-                  },
-                  {
-                    feature: 'Clients',
-                    free: 'Unlimited',
-                    freelancer: 'Unlimited',
-                    business: 'Unlimited',
-                    enterprise: 'Unlimited',
-                  },
-                  {
-                    feature: 'Users',
-                    free: '1',
-                    freelancer: '1',
-                    business: '10 max',
-                    enterprise: 'Unlimited',
-                  },
-                  {
-                    feature: 'QR-bill invoices',
-                    free: '✅',
-                    freelancer: '✅',
-                    business: '✅',
-                    enterprise: '✅',
-                  },
-                  {
-                    feature: 'Payment reconciliation',
-                    free: '✅',
-                    freelancer: '✅',
-                    business: '✅',
-                    enterprise: '✅',
-                  },
-                  {
-                    feature: 'Reminders',
-                    free: 'Basic',
-                    freelancer: 'Basic',
-                    business: 'Advanced',
-                    enterprise: 'Advanced',
-                  },
-                  {
-                    feature: 'Reports / Data exports',
-                    free: '✅',
-                    freelancer: '✅',
-                    business: '✅',
-                    enterprise: '✅',
-                  },
-                  {
-                    feature: 'Branding control',
-                    free: '❌',
-                    freelancer: '❌',
-                    business: '✅',
-                    enterprise: '✅',
-                  },
-                  {
-                    feature: 'Team management',
-                    free: '❌',
-                    freelancer: '❌',
-                    business: '✅',
-                    enterprise: '✅',
-                  },
-                  {
-                    feature: 'Support',
-                    free: 'Community',
-                    freelancer: 'Priority',
-                    business: 'Priority',
-                    enterprise: 'Dedicated SLA',
-                  },
-                ].map((row, index) => {
+                {pricingConfig.featureComparison.map((row, index) => {
                   const isLastRow = index === 9; // Last row index
                   return (
                     <tr
@@ -534,16 +405,13 @@ export function Pricing() {
             </table>
           </div>
           <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600">
-              All plans include Swiss QR-bill compliance and payment
-              reconciliation.
-            </p>
+            <p className="text-sm text-gray-600">{pricingConfig.footerText}</p>
             <p className="mt-2 text-sm text-gray-500">
               <a
-                href="/register"
+                href={pricingConfig.footerLink.href}
                 className="text-teal-600 hover:text-teal-700 font-medium"
               >
-                Start with Free plan →
+                {pricingConfig.footerLink.text}
               </a>
             </p>
           </div>

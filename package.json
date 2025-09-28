@@ -16,10 +16,7 @@
     "types:db:cloud": "supabase gen types typescript --linked --schema public --schema storage > src/types/database.ts",
     "functions:serve": "supabase functions serve",
     "functions:deploy": "supabase functions deploy",
-    "functions:deploy:all": "supabase functions deploy --no-verify-jwt",
-    "capture": "tsx scripts/capture.ts",
-    "capture:og": "tsx scripts/capture.ts",
-    "capture:all": "npm run capture:og"
+    "functions:deploy:all": "supabase functions deploy --no-verify-jwt"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
@@ -28,12 +25,14 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.22",
+    "geist": "^1.5.1",
     "lucide-react": "^0.544.0",
     "next": "15.5.3",
     "pdfkit": "^0.17.2",
     "qrcode": "^1.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "sharp": "^0.34.4",
     "swissqrbill": "^4.2.0",
     "tailwind-merge": "^3.3.1",
     "use-debounce": "^10.0.6"

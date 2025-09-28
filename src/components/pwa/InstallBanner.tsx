@@ -5,22 +5,25 @@ import { X, Download, Smartphone } from 'lucide-react';
 import { usePWA } from '@/hooks/use-pwa';
 import clsx from 'clsx';
 
-export function InstallBanner() {
+interface InstallBannerProps {
+  onDismiss?: () => void;
+}
+
+export function InstallBanner({ onDismiss }: InstallBannerProps) {
   const { isInstallable, isInstalled, installPWA } = usePWA();
   const [isVisible, setIsVisible] = useState(false);
-  const [isDismissed, setIsDismissed] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
 
-  // Show banner if installable and not dismissed
+  // Show banner if installable and not installed
   useEffect(() => {
-    if (isInstallable && !isInstalled && !isDismissed) {
+    if (isInstallable && !isInstalled) {
       // Delay showing to avoid immediate popup
       const timer = setTimeout(() => {
         setIsVisible(true);
-      }, 2000);
+      }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [isInstallable, isInstalled, isDismissed]);
+  }, [isInstallable, isInstalled]);
 
   // Auto-hide after 15 seconds
   useEffect(() => {
@@ -42,18 +45,10 @@ export function InstallBanner() {
     setTimeout(() => {
       setIsVisible(false);
       setIsExiting(false);
-      setIsDismissed(true);
       localStorage.setItem('pwa-banner-dismissed', 'true');
+      onDismiss?.();
     }, 300);
   };
-
-  // Check if previously dismissed
-  useEffect(() => {
-    const dismissed = localStorage.getItem('pwa-banner-dismissed');
-    if (dismissed === 'true') {
-      setIsDismissed(true);
-    }
-  }, []);
 
   if (!isVisible) return null;
 

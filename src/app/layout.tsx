@@ -1,18 +1,13 @@
-import { type Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { type Metadata, type Viewport } from 'next';
+import { GeistSans } from 'geist/font/sans';
 import clsx from 'clsx';
 
 import '@/styles/tailwind.css';
-import { InstallBanner } from '@/components/pwa/InstallBanner';
 import { UpdateNotification } from '@/components/pwa/UpdateNotification';
 import { ScrollToTop } from '@/components/ui/ScrollToTop';
-import { CookieBanner } from '@/components/ui/CookieBanner';
+import { BannerManager } from '@/components/ui/BannerManager';
 
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-});
+const geistSans = GeistSans;
 
 export const metadata: Metadata = {
   title: {
@@ -101,16 +96,6 @@ export const metadata: Metadata = {
   category: 'business',
   classification: 'Business Software',
   referrer: 'origin-when-cross-origin',
-  colorScheme: 'light',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fcfcfb' },
-    { media: '(prefers-color-scheme: dark)', color: '#0d192c' },
-  ],
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
   icons: {
     icon: [
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
@@ -134,6 +119,17 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  colorScheme: 'light',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#fcfcfb' },
+    { media: '(prefers-color-scheme: dark)', color: '#0d192c' },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -142,14 +138,13 @@ export default function RootLayout({
   return (
     <html
       lang="en-CH"
-      className={clsx('bg-gray-50 antialiased', inter.variable)}
+      className={clsx('bg-gray-50 antialiased', geistSans.className)}
     >
       <body>
         {children}
-        <InstallBanner />
+        <BannerManager />
         <UpdateNotification />
         <ScrollToTop />
-        <CookieBanner />
       </body>
     </html>
   );

@@ -53,7 +53,8 @@
   --color-gray-900: oklch(0.205 0 0);
   --color-gray-950: oklch(0.145 0 0);
 
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 
   --container-2xl: 40rem;
 
@@ -80,4 +81,9 @@
       transform: translateY(-50%);
     }
   }
+}
+
+/* Utility classes for specific mono font usage */
+.font-mono-illustration {
+  font-family: var(--font-geist-mono);
 }
