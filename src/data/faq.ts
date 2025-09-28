@@ -251,6 +251,88 @@ export const faqData: FAQItem[] = [
     tags: ['gdpr', 'privacy', 'data-protection', 'swiss', 'fadp'],
     priority: 'high',
   },
+  // Homepage FAQs - Added from marketing page
+  {
+    id: 'swiss-compliance-homepage',
+    question: 'Is PayMatch compliant with Swiss invoicing regulations?',
+    answer:
+      'Yes, PayMatch is fully compliant with Swiss invoicing standards. We generate proper Swiss QR-bills that meet all legal requirements, including correct VAT calculations and mandatory information fields.',
+    category: 'swiss-compliance',
+    tags: ['compliance', 'swiss', 'qr-bill', 'regulations', 'legal'],
+    priority: 'high',
+  },
+  {
+    id: 'currencies-supported',
+    question: 'What currencies does PayMatch support?',
+    answer:
+      'PayMatch supports Swiss Francs (CHF) and Euros (EUR), which covers the majority of Swiss and European business transactions. All currency conversions and calculations are handled automatically.',
+    category: 'general',
+    tags: ['currencies', 'chf', 'eur', 'international', 'payments'],
+    priority: 'high',
+  },
+  {
+    id: 'payment-reconciliation-homepage',
+    question: 'How does payment reconciliation work?',
+    answer:
+      'You can upload CAMT files from your bank or connect your bank account for automatic sync. PayMatch will automatically match incoming payments to your invoices based on amount, reference number, and other criteria.',
+    category: 'payments',
+    tags: ['reconciliation', 'camt', 'banking', 'automation', 'matching'],
+    priority: 'high',
+  },
+  {
+    id: 'data-security-homepage',
+    question: 'Is my data secure and GDPR compliant?',
+    answer:
+      'Absolutely. PayMatch uses bank-level encryption and is fully GDPR compliant. Your financial data is stored securely in Switzerland and we never share your information with third parties without your explicit consent.',
+    category: 'general',
+    tags: ['security', 'gdpr', 'privacy', 'encryption', 'switzerland'],
+    priority: 'high',
+  },
+  {
+    id: 'team-collaboration-homepage',
+    question: 'Can I use PayMatch for team collaboration?',
+    answer:
+      'Yes! Our Business and Enterprise plans include team collaboration features. You can invite team members, assign roles, and work together on invoice management and client relationships.',
+    category: 'account',
+    tags: ['team', 'collaboration', 'business', 'enterprise', 'roles'],
+    priority: 'high',
+  },
+  {
+    id: 'free-plan-limits-homepage',
+    question: 'What happens if I exceed my free plan limits?',
+    answer:
+      "If you exceed 5 invoices per month on the free plan, you can upgrade to a paid plan at any time. We'll notify you when you're approaching your limit and provide easy upgrade options.",
+    category: 'account',
+    tags: ['free-plan', 'limits', 'upgrade', 'billing', 'notifications'],
+    priority: 'medium',
+  },
+  {
+    id: 'get-started-homepage',
+    question: 'How do I get started with PayMatch?',
+    answer:
+      'Simply sign up for free and create your first invoice in under 2 minutes. No credit card required for the free plan. You can start invoicing immediately and upgrade when you need more features.',
+    category: 'general',
+    tags: ['getting-started', 'signup', 'free', 'quick-start', 'onboarding'],
+    priority: 'high',
+  },
+  {
+    id: 'customize-invoices-homepage',
+    question: 'Can I customize my invoices?',
+    answer:
+      'Yes! You can add your company logo, customize colors, and create professional invoice templates. Business and Enterprise plans include advanced branding options.',
+    category: 'invoicing',
+    tags: ['customization', 'branding', 'templates', 'logo', 'design'],
+    priority: 'medium',
+  },
+  {
+    id: 'support-offered-homepage',
+    question: 'What kind of support do you offer?',
+    answer:
+      'We offer email support for all plans, with priority support for Enterprise customers. Our support team is knowledgeable about Swiss invoicing regulations and can help with any questions.',
+    category: 'general',
+    tags: ['support', 'email', 'enterprise', 'swiss', 'help'],
+    priority: 'medium',
+  },
 ];
 
 // Search functionality
