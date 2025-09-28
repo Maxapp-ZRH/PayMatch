@@ -12,6 +12,7 @@ import { Header } from '@/components/marketing_pages/Header';
 import { Container } from '@/components/marketing_pages/Container';
 import Link from 'next/link';
 import { FileText, Shield, Cookie, Scale, Building2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface LegalPage {
   title: string;
@@ -20,36 +21,36 @@ interface LegalPage {
   description: string;
 }
 
-const legalPages: LegalPage[] = [
+const getLegalPages = (t: (key: string) => string): LegalPage[] => [
   {
-    title: 'Privacy Policy',
+    title: t('privacy.title'),
     href: '/privacy',
     icon: Shield,
-    description: 'How we collect, use, and protect your personal data',
+    description: t('privacy.description'),
   },
   {
-    title: 'Terms of Service',
+    title: t('terms.title'),
     href: '/terms',
     icon: FileText,
-    description: 'Terms and conditions for using PayMatch',
+    description: t('terms.description'),
   },
   {
-    title: 'Cookie Policy',
+    title: t('cookies.title'),
     href: '/cookies',
     icon: Cookie,
-    description: 'Information about cookies and tracking technologies',
+    description: t('cookies.description'),
   },
   {
-    title: 'GDPR',
+    title: t('gdpr.title'),
     href: '/gdpr',
     icon: Scale,
-    description: 'Your rights under the General Data Protection Regulation',
+    description: t('gdpr.description'),
   },
   {
-    title: 'Imprint',
+    title: t('imprint.title'),
     href: '/imprint',
     icon: Building2,
-    description: 'Company information and legal details',
+    description: t('imprint.description'),
   },
 ];
 
@@ -64,6 +65,9 @@ export function LegalLayout({
   title,
   lastUpdated,
 }: LegalLayoutProps) {
+  const t = useTranslations('legal');
+  const legalPages = getLegalPages(t);
+
   return (
     <>
       <Header />
@@ -76,14 +80,14 @@ export function LegalLayout({
                 {title}
               </h1>
               <p className="mt-4 text-lg text-gray-600">
-                Last updated: {lastUpdated}
+                {t('lastUpdated')}: {lastUpdated}
               </p>
             </div>
 
             {/* Legal Pages Navigation */}
             <div className="mb-12">
               <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                Legal Information
+                {t('legalInformation')}
               </h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {legalPages.map((page) => {

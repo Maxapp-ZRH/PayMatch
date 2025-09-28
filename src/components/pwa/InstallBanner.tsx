@@ -4,12 +4,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { X, Download, Smartphone } from 'lucide-react';
 import { usePWA } from '@/hooks/use-pwa';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
 interface InstallBannerProps {
   onDismiss?: () => void;
 }
 
 export function InstallBanner({ onDismiss }: InstallBannerProps) {
+  const t = useTranslations('pwa.installBanner');
   const { isInstallable, isInstalled, installPWA } = usePWA();
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
@@ -71,11 +73,9 @@ export function InstallBanner({ onDismiss }: InstallBannerProps) {
 
           <div className="flex-1 min-w-0">
             <h3 className="text-sm font-semibold text-gray-900">
-              Install PayMatch
+              {t('title')}
             </h3>
-            <p className="mt-1 text-sm text-gray-600">
-              Get quick access to your Swiss invoicing platform
-            </p>
+            <p className="mt-1 text-sm text-gray-600">{t('description')}</p>
 
             <div className="mt-4 flex space-x-3">
               <button
@@ -83,14 +83,14 @@ export function InstallBanner({ onDismiss }: InstallBannerProps) {
                 className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors"
               >
                 <Download className="w-3 h-3 mr-1" />
-                Install
+                {t('install')}
               </button>
 
               <button
                 onClick={handleDismiss}
                 className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
               >
-                Not now
+                {t('notNow')}
               </button>
             </div>
           </div>

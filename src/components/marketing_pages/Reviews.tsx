@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useInView } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 import { Container } from '@/components/marketing_pages/Container';
 
@@ -278,6 +279,8 @@ function ReviewGrid() {
 }
 
 export function Reviews() {
+  const t = useTranslations('reviews');
+
   return (
     <section
       id="reviews"
@@ -289,11 +292,10 @@ export function Reviews() {
           id="reviews-title"
           className="text-3xl font-medium tracking-tight text-gray-900 sm:text-center"
         >
-          Trusted by Swiss businesses across the country.
+          {t('title')}
         </h2>
         <p className="mt-2 text-lg text-gray-600 sm:text-center">
-          From freelancers to enterprises, Swiss professionals are streamlining
-          their invoicing with PayMatch.
+          {t('subtitle')}
         </p>
         <ReviewGrid />
       </Container>

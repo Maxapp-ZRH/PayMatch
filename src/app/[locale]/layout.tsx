@@ -13,6 +13,8 @@ import { routing } from '@/i18n/routing';
 import { hasLocale } from 'next-intl';
 import { GeistSans } from 'geist/font/sans';
 import clsx from 'clsx';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import '@/styles/tailwind.css';
 import { UpdateNotification } from '@/components/pwa/UpdateNotification';
@@ -169,6 +171,8 @@ export default async function LocaleLayout({ children, params }: Props) {
           <UpdateNotification />
           <ScrollToTop />
         </NextIntlClientProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -10,18 +10,18 @@ import { z } from 'zod';
 export const supportFormSchema = z.object({
   name: z
     .string()
-    .min(2, 'Name must be at least 2 characters')
-    .max(100, 'Name must be less than 100 characters')
-    .regex(/^[a-zA-Z\s\-'\.]+$/, 'Name contains invalid characters'),
+    .min(2, 'validation.name.minLength')
+    .max(100, 'validation.name.maxLength')
+    .regex(/^[\p{L}\s\-'\.]+$/u, 'validation.name.invalidChars'),
 
   email: z
     .string()
-    .email('Please enter a valid email address')
-    .max(255, 'Email must be less than 255 characters'),
+    .email('validation.email.invalid')
+    .max(255, 'validation.email.maxLength'),
 
   company: z
     .string()
-    .max(100, 'Company name must be less than 100 characters')
+    .max(100, 'validation.company.maxLength')
     .optional()
     .or(z.literal('')),
 
@@ -37,33 +37,33 @@ export const supportFormSchema = z.object({
       'other',
     ],
     {
-      errorMap: () => ({ message: 'Please select a valid category' }),
+      errorMap: () => ({ message: 'validation.category.invalid' }),
     }
   ),
 
   priority: z.enum(['low', 'medium', 'high', 'urgent'], {
-    errorMap: () => ({ message: 'Please select a valid priority level' }),
+    errorMap: () => ({ message: 'validation.priority.invalid' }),
   }),
 
   subject: z
     .string()
-    .min(5, 'Subject must be at least 5 characters')
-    .max(200, 'Subject must be less than 200 characters')
-    .regex(/^[a-zA-Z0-9\s\-_.,!?]+$/, 'Subject contains invalid characters'),
+    .min(5, 'validation.subject.minLength')
+    .max(200, 'validation.subject.maxLength')
+    .regex(/^[\p{L}\p{N}\s\-_.,!?]+$/u, 'validation.subject.invalidChars'),
 
   message: z
     .string()
-    .min(10, 'Message must be at least 10 characters')
-    .max(2000, 'Message must be less than 2000 characters')
+    .min(10, 'validation.message.minLength')
+    .max(2000, 'validation.message.maxLength')
     .regex(
-      /^[\s\S]*[a-zA-Z0-9][\s\S]*$/,
-      'Message must contain at least one alphanumeric character'
+      /^[\s\S]*[\p{L}\p{N}][\s\S]*$/u,
+      'validation.message.invalidContent'
     ),
 
   attachments: z.array(z.string()).max(5, 'Maximum 5 attachments allowed'),
 
   consent: z.boolean().refine((val) => val === true, {
-    message: 'You must agree to our privacy policy to submit this form',
+    message: 'validation.consent.required',
   }),
 });
 

@@ -1,0 +1,13 @@
+{
+  "navigation": {
+    "features": "Funktionen",
+    "pricing": "Preise",
+    "login": "Anmelden",
+    "register": "Registrieren"
+  },
+  "buttons": {
+    "getStarted": "Loslegen",
+    "learnMore": "Mehr erfahren",
+    "contactUs": "Kontakt"
+  }
+}

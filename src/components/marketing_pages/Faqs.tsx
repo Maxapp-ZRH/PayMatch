@@ -1,5 +1,6 @@
 import { Container } from '@/components/marketing_pages/Container';
-import { faqData } from '@/data/faq';
+import { faqData, createTranslatedFAQs } from '@/utils/faq-manager';
+import { useTranslations } from 'next-intl';
 
 // Get homepage FAQs from the centralized FAQ data
 const homepageFaqIds = [
@@ -14,20 +15,23 @@ const homepageFaqIds = [
   'support-offered-homepage',
 ];
 
-const faqs = homepageFaqIds
-  .map((id) => {
-    const faq = faqData.find((item) => item.id === id);
-    return {
-      question: faq?.question || '',
-      answer: faq?.answer || '',
-    };
-  })
-  .filter((faq) => faq.question && faq.answer);
-
-// Split FAQs into 3 columns for the grid layout
-const faqsColumns = [faqs.slice(0, 3), faqs.slice(3, 6), faqs.slice(6, 9)];
-
 export function Faqs() {
+  const t = useTranslations('faqs');
+  const tFaq = useTranslations('faq');
+
+  // Get homepage FAQs and translate them
+  const homepageFAQs = faqData.filter((item) =>
+    homepageFaqIds.includes(item.id)
+  );
+  const translatedFAQs = createTranslatedFAQs(homepageFAQs, tFaq);
+
+  // Split FAQs into 3 columns for the grid layout
+  const faqsColumns = [
+    translatedFAQs.slice(0, 3),
+    translatedFAQs.slice(3, 6),
+    translatedFAQs.slice(6, 9),
+  ];
+
   return (
     <section
       id="faqs"
@@ -40,15 +44,15 @@ export function Faqs() {
             id="faqs-title"
             className="text-3xl font-medium tracking-tight text-gray-900"
           >
-            Frequently asked questions
+            {t('title')}
           </h2>
           <p className="mt-2 text-lg text-gray-600">
-            If you have anything else you want to ask,{' '}
+            {t('subtitle')}{' '}
             <a
               href="mailto:support@paymatch.app"
               className="text-gray-900 underline"
             >
-              reach out to us
+              {t('contactUs')}
             </a>
             .
           </p>

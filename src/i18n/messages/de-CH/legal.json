@@ -1,0 +1,24 @@
+{
+  "lastUpdated": "Zuletzt aktualisiert",
+  "legalInformation": "Rechtliche Informationen",
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "description": "Wie wir Ihre persönlichen Daten sammeln, verwenden und schützen"
+  },
+  "terms": {
+    "title": "Nutzungsbedingungen",
+    "description": "Bedingungen für die Nutzung von PayMatch"
+  },
+  "cookies": {
+    "title": "Cookie-Richtlinie",
+    "description": "Informationen über Cookies und Tracking-Technologien"
+  },
+  "gdpr": {
+    "title": "DSGVO",
+    "description": "Ihre Rechte unter der Datenschutz-Grundverordnung"
+  },
+  "imprint": {
+    "title": "Impressum",
+    "description": "Firmeninformationen und rechtliche Details"
+  }
+}

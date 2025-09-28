@@ -8,11 +8,12 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import {
   Mail,
   MessageSquare,
@@ -43,7 +44,15 @@ import {
   supportPriorities,
   type SupportFormData,
 } from '@/schemas/support';
-import { faqData, faqCategories, searchFAQs, getPopularFAQs } from '@/data/faq';
+import {
+  faqData,
+  faqCategories,
+  searchFAQs,
+  getPopularFAQs,
+  createTranslatedFAQs,
+  createTranslatedCategories,
+  type TranslatedFAQItem,
+} from '@/utils/faq-manager';
 
 // Animation variants
 const containerVariants = {
@@ -96,9 +105,11 @@ const categoryIcons = {
 function SuccessModal({
   isOpen,
   onClose,
+  tForm,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  tForm: (key: string) => string;
 }) {
   return (
     <AnimatePresence>
@@ -125,18 +136,17 @@ function SuccessModal({
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Message Sent Successfully!
+                {tForm('modals.success.title')}
               </h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Thank you for contacting us. We&apos;ve received your message
-                and our team will get back to you within 24 hours.
+                {tForm('modals.success.message')}
               </p>
               <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-6">
                 <Clock className="w-4 h-4" />
-                <span>Typical response time: 24 hours</span>
+                <span>{tForm('modals.success.responseTime')}</span>
               </div>
               <Button onClick={onClose} color="cyan" className="w-full">
-                Got it, thanks!
+                {tForm('modals.success.button')}
               </Button>
             </div>
           </motion.div>
@@ -151,10 +161,12 @@ function ErrorModal({
   isOpen,
   onClose,
   errorMessage,
+  tForm,
 }: {
   isOpen: boolean;
   onClose: () => void;
   errorMessage: string;
+  tForm: (key: string) => string;
 }) {
   return (
     <AnimatePresence>
@@ -181,18 +193,17 @@ function ErrorModal({
                 <AlertCircle className="w-8 h-8 text-red-600" />
               </div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Failed to Send Message
+                {tForm('modals.error.title')}
               </h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                {errorMessage ||
-                  'An unexpected error occurred. Please try again.'}
+                {errorMessage || tForm('modals.error.message')}
               </p>
               <div className="flex space-x-3">
                 <Button onClick={onClose} variant="outline" className="flex-1">
-                  Close
+                  {tForm('modals.error.buttons.close')}
                 </Button>
                 <Button onClick={onClose} color="cyan" className="flex-1">
-                  Try Again
+                  {tForm('modals.error.buttons.tryAgain')}
                 </Button>
               </div>
             </div>
@@ -206,22 +217,34 @@ function ErrorModal({
 // Enhanced FAQ Section Component
 function EnhancedFAQSection({
   onQuestionClick,
+  tForm,
 }: {
   onQuestionClick?: (question: string) => void;
+  tForm: (key: string) => string;
 }) {
+  const tFaq = useTranslations('faq');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [questionsPerPage] = useState(4);
 
+  // Use the centralized helper function
+  const getTranslatedFAQs = useCallback(
+    (faqs: typeof faqData) => {
+      return createTranslatedFAQs(faqs, tFaq);
+    },
+    [tFaq]
+  );
+
   // Filter FAQs based on search and category
-  const allFilteredFAQs = useMemo(() => {
-    return searchFAQs(searchQuery, selectedCategory || undefined);
-  }, [searchQuery, selectedCategory]);
+  const allFilteredFAQs = useMemo((): TranslatedFAQItem[] => {
+    const results = searchFAQs(searchQuery, selectedCategory || undefined);
+    return getTranslatedFAQs(results);
+  }, [searchQuery, selectedCategory, getTranslatedFAQs]);
 
   // Paginated FAQs
-  const filteredFAQs = useMemo(() => {
+  const filteredFAQs = useMemo((): TranslatedFAQItem[] => {
     const startIndex = (currentPage - 1) * questionsPerPage;
     const endIndex = startIndex + questionsPerPage;
     return allFilteredFAQs.slice(0, endIndex);
@@ -233,7 +256,9 @@ function EnhancedFAQSection({
   }, [filteredFAQs.length, allFilteredFAQs.length]);
 
   // Get popular FAQs for quick access
-  const popularFAQs = useMemo(() => getPopularFAQs().slice(0, 6), []);
+  const popularFAQs = useMemo((): TranslatedFAQItem[] => {
+    return getTranslatedFAQs(getPopularFAQs().slice(0, 6));
+  }, [getTranslatedFAQs]);
 
   const toggleExpanded = (itemId: string) => {
     const newExpanded = new Set(expandedItems);
@@ -312,9 +337,8 @@ function EnhancedFAQSection({
           >
             All Categories
           </button>
-          {faqCategories.map((category) => {
-            const Icon =
-              categoryIcons[category.id as keyof typeof categoryIcons];
+          {createTranslatedCategories(tFaq).map((category) => {
+            const Icon = category.icon;
             return (
               <button
                 key={category.id}
@@ -345,7 +369,11 @@ function EnhancedFAQSection({
             {selectedCategory && (
               <span className="px-3 py-1 bg-teal-100 text-teal-800 text-sm rounded-full">
                 Category:{' '}
-                {faqCategories.find((c) => c.id === selectedCategory)?.name}
+                {
+                  createTranslatedCategories(tFaq).find(
+                    (c) => c.id === selectedCategory
+                  )?.name
+                }
               </span>
             )}
             <button
@@ -514,7 +542,7 @@ function EnhancedFAQSection({
                               className="inline-flex items-center px-4 py-2 bg-teal-600 text-white text-sm font-semibold rounded-lg hover:bg-teal-700 transition-colors"
                             >
                               <MessageSquare className="w-4 h-4 mr-2" />
-                              Still need help? Contact support
+                              {tForm('buttons.stillNeedHelp')}
                             </button>
                           </div>
                         </div>
@@ -572,6 +600,7 @@ function EnhancedFAQSection({
 }
 
 export default function SupportPage() {
+  const tForm = useTranslations('support.form');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -616,14 +645,15 @@ export default function SupportPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send message');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send message');
       }
 
       setShowSuccessModal(true);
       reset();
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : 'An unexpected error occurred'
+        error instanceof Error ? error.message : tForm('modals.error.message')
       );
       setShowErrorModal(true);
     } finally {
@@ -665,18 +695,20 @@ export default function SupportPage() {
           {/* Header */}
           <motion.div className="mb-16 px-8" variants={itemVariants}>
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl mb-6">
-              Get Support
+              {tForm('title')}
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl leading-relaxed mb-8">
-              We&apos;re here to help! Find answers in our FAQ section or send
-              us a message and we&apos;ll get back to you as soon as possible.
+              {tForm('subtitle')}
             </p>
             <div className="border-t border-gray-200"></div>
           </motion.div>
 
           {/* FAQ Section */}
           <motion.div className="mb-16" variants={itemVariants}>
-            <EnhancedFAQSection onQuestionClick={handleFAQQuestionClick} />
+            <EnhancedFAQSection
+              onQuestionClick={handleFAQQuestionClick}
+              tForm={tForm}
+            />
           </motion.div>
 
           {/* Contact Form Section */}
@@ -686,18 +718,15 @@ export default function SupportPage() {
           >
             <div className="mb-8">
               <h2 className="text-3xl font-semibold tracking-tight text-gray-900 mb-4">
-                Still Need Help?
+                {tForm('stillNeedHelp')}
               </h2>
-              <p className="text-lg text-gray-600">
-                Send us a message and our team will get back to you within 24
-                hours.
-              </p>
+              <p className="text-lg text-gray-600">{tForm('formSubtitle')}</p>
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Personal Information */}
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold text-gray-900">
-                  Personal Information
+                  {tForm('sections.personalInfo')}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -706,7 +735,8 @@ export default function SupportPage() {
                       htmlFor="name"
                       className="block text-sm font-semibold text-gray-700 mb-3"
                     >
-                      Full Name *
+                      {tForm('fields.name.label')}{' '}
+                      {tForm('fields.name.required') && '*'}
                     </label>
                     <input
                       {...register('name')}
@@ -715,11 +745,11 @@ export default function SupportPage() {
                       className={`w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors ${
                         errors.name ? 'border-red-300' : 'border-gray-300'
                       }`}
-                      placeholder="Enter your full name"
+                      placeholder={tForm('fields.name.placeholder')}
                     />
                     {errors.name && (
                       <p className="mt-2 text-sm text-red-600 font-medium">
-                        {errors.name.message}
+                        {tForm(`validation.${errors.name.message}`)}
                       </p>
                     )}
                   </div>
@@ -729,7 +759,8 @@ export default function SupportPage() {
                       htmlFor="email"
                       className="block text-sm font-semibold text-gray-700 mb-3"
                     >
-                      Email Address *
+                      {tForm('fields.email.label')}{' '}
+                      {tForm('fields.email.required') && '*'}
                     </label>
                     <input
                       {...register('email')}
@@ -738,11 +769,11 @@ export default function SupportPage() {
                       className={`w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors ${
                         errors.email ? 'border-red-300' : 'border-gray-300'
                       }`}
-                      placeholder="your.email@example.com"
+                      placeholder={tForm('fields.email.placeholder')}
                     />
                     {errors.email && (
                       <p className="mt-2 text-sm text-red-600 font-medium">
-                        {errors.email.message}
+                        {tForm(`validation.${errors.email.message}`)}
                       </p>
                     )}
                   </div>
@@ -753,112 +784,122 @@ export default function SupportPage() {
                     htmlFor="company"
                     className="block text-sm font-semibold text-gray-700 mb-3"
                   >
-                    Company (Optional)
+                    {tForm('fields.company.label')}{' '}
+                    {!tForm('fields.company.required') && '(Optional)'}
                   </label>
                   <input
                     {...register('company')}
                     type="text"
                     id="company"
                     className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                    placeholder="Your company name"
+                    placeholder={tForm('fields.company.placeholder')}
                   />
                 </div>
               </div>
 
               {/* Issue Details */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900">
-                  Issue Details
-                </h3>
+              <div className="space-y-4"></div>
+              <h3 className="text-xl font-semibold text-gray-900">
+                {tForm('sections.issueDetails')}
+              </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label
-                      htmlFor="category"
-                      className="block text-sm font-semibold text-gray-700 mb-3"
-                    >
-                      Category *
-                    </label>
-                    <select
-                      {...register('category')}
-                      id="category"
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                    >
-                      {supportCategories.map((category) => (
-                        <option key={category.value} value={category.value}>
-                          {category.label}
-                        </option>
-                      ))}
-                    </select>
-                    {selectedCategory && (
-                      <p className="mt-2 text-sm text-gray-600">
-                        {selectedCategory.description}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="priority"
-                      className="block text-sm font-semibold text-gray-700 mb-3"
-                    >
-                      Priority *
-                    </label>
-                    <select
-                      {...register('priority')}
-                      id="priority"
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                    >
-                      {supportPriorities.map((priority) => (
-                        <option key={priority.value} value={priority.value}>
-                          {priority.label}
-                        </option>
-                      ))}
-                    </select>
-                    {selectedPriority && (
-                      <p
-                        className={`mt-2 text-sm font-medium ${selectedPriority.color}`}
-                      >
-                        {selectedPriority.description}
-                      </p>
-                    )}
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    htmlFor="category"
+                    className="block text-sm font-semibold text-gray-700 mb-3"
+                  >
+                    {tForm('fields.category.label')}{' '}
+                    {tForm('fields.category.required') && '*'}
+                  </label>
+                  <select
+                    {...register('category')}
+                    id="category"
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                  >
+                    {supportCategories.map((category) => (
+                      <option key={category.value} value={category.value}>
+                        {tForm(`categories.${category.value}.label`)}
+                      </option>
+                    ))}
+                  </select>
+                  {selectedCategory && (
+                    <p className="mt-2 text-sm text-gray-600">
+                      {tForm(
+                        `categories.${selectedCategory.value}.description`
+                      )}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <label
-                    htmlFor="subject"
+                    htmlFor="priority"
                     className="block text-sm font-semibold text-gray-700 mb-3"
                   >
-                    Subject *
+                    {tForm('fields.priority.label')}{' '}
+                    {tForm('fields.priority.required') && '*'}
                   </label>
-                  <input
-                    {...register('subject')}
-                    type="text"
-                    id="subject"
-                    className={`w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors ${
-                      errors.subject ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                    placeholder="Brief description of your issue"
-                  />
-                  {errors.subject && (
-                    <p className="mt-2 text-sm text-red-600 font-medium">
-                      {errors.subject.message}
+                  <select
+                    {...register('priority')}
+                    id="priority"
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                  >
+                    {supportPriorities.map((priority) => (
+                      <option key={priority.value} value={priority.value}>
+                        {tForm(`priorities.${priority.value}.label`)}
+                      </option>
+                    ))}
+                  </select>
+                  {selectedPriority && (
+                    <p
+                      className={`mt-2 text-sm font-medium ${selectedPriority.color}`}
+                    >
+                      {tForm(
+                        `priorities.${selectedPriority.value}.description`
+                      )}
                     </p>
                   )}
                 </div>
               </div>
 
+              <div>
+                <label
+                  htmlFor="subject"
+                  className="block text-sm font-semibold text-gray-700 mb-3"
+                >
+                  {tForm('fields.subject.label')}{' '}
+                  {tForm('fields.subject.required') && '*'}
+                </label>
+                <input
+                  {...register('subject')}
+                  type="text"
+                  id="subject"
+                  className={`w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors ${
+                    errors.subject ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder={tForm('fields.subject.placeholder')}
+                />
+                {errors.subject && (
+                  <p className="mt-2 text-sm text-red-600 font-medium">
+                    {tForm(`validation.${errors.subject.message}`)}
+                  </p>
+                )}
+              </div>
+
               {/* Message */}
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900">Message</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {tForm('sections.message')}
+                </h3>
 
                 <div>
                   <label
                     htmlFor="message"
                     className="block text-sm font-semibold text-gray-700 mb-3"
                   >
-                    Detailed Message *
+                    {tForm('fields.message.label')}{' '}
+                    {tForm('fields.message.required') && '*'}
                   </label>
                   <textarea
                     {...register('message')}
@@ -867,10 +908,10 @@ export default function SupportPage() {
                     className={`w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors resize-none ${
                       errors.message ? 'border-red-300' : 'border-gray-300'
                     }`}
-                    placeholder="Please provide as much detail as possible about your issue, including steps to reproduce if applicable..."
+                    placeholder={tForm('fields.message.placeholder')}
                   />
                   <div className="mt-2 flex justify-between text-sm text-gray-500">
-                    <span>Minimum 10 characters</span>
+                    <span>{tForm('fields.message.minLength')}</span>
                     <span
                       className={
                         watch('message')?.length > 2000 ? 'text-red-500' : ''
@@ -881,7 +922,7 @@ export default function SupportPage() {
                   </div>
                   {errors.message && (
                     <p className="mt-2 text-sm text-red-600 font-medium">
-                      {errors.message.message}
+                      {tForm(`validation.${errors.message.message}`)}
                     </p>
                   )}
                 </div>
@@ -900,20 +941,19 @@ export default function SupportPage() {
                     htmlFor="consent"
                     className="text-sm text-gray-700 leading-relaxed"
                   >
-                    I agree to the{' '}
+                    {tForm('fields.consent.label').split('Privacy Policy')[0]}
                     <Link
                       href="/privacy"
                       className="text-teal-600 hover:text-teal-700 underline font-semibold"
                     >
                       Privacy Policy
-                    </Link>{' '}
-                    and consent to PayMatch processing my personal data to
-                    respond to this inquiry. *
+                    </Link>
+                    {tForm('fields.consent.label').split('Privacy Policy')[1]}
                   </label>
                 </div>
                 {errors.consent && (
                   <p className="text-sm text-red-600 font-medium">
-                    {errors.consent.message}
+                    {tForm(`validation.${errors.consent.message}`)}
                   </p>
                 )}
               </div>
@@ -930,12 +970,12 @@ export default function SupportPage() {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Sending...</span>
+                      <span>{tForm('buttons.sending')}</span>
                     </>
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
-                      <span>Send Message</span>
+                      <span>{tForm('buttons.sendMessage')}</span>
                     </>
                   )}
                 </motion.button>
@@ -953,10 +993,14 @@ export default function SupportPage() {
                 <Mail className="w-8 h-8 text-teal-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Email Support
+                {tForm('contactInfo.emailSupport.title')}
               </h3>
-              <p className="text-gray-600 mb-4">support@paymatch.app</p>
-              <p className="text-sm text-gray-500">Available 24/7</p>
+              <p className="text-gray-600 mb-4">
+                {tForm('contactInfo.emailSupport.email')}
+              </p>
+              <p className="text-sm text-gray-500">
+                {tForm('contactInfo.emailSupport.availability')}
+              </p>
             </div>
 
             <div className="p-8 bg-white rounded-2xl border border-gray-200">
@@ -964,10 +1008,14 @@ export default function SupportPage() {
                 <Clock className="w-8 h-8 text-teal-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Response Time
+                {tForm('contactInfo.responseTime.title')}
               </h3>
-              <p className="text-gray-600 mb-4">Within 24 hours</p>
-              <p className="text-sm text-gray-500">Usually much faster</p>
+              <p className="text-gray-600 mb-4">
+                {tForm('contactInfo.responseTime.time')}
+              </p>
+              <p className="text-sm text-gray-500">
+                {tForm('contactInfo.responseTime.note')}
+              </p>
             </div>
 
             <div className="p-8 bg-white rounded-2xl border border-gray-200">
@@ -975,10 +1023,14 @@ export default function SupportPage() {
                 <AlertTriangle className="w-8 h-8 text-teal-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Emergency
+                {tForm('contactInfo.emergency.title')}
               </h3>
-              <p className="text-gray-600 mb-4">Use urgent priority</p>
-              <p className="text-sm text-gray-500">For critical issues</p>
+              <p className="text-gray-600 mb-4">
+                {tForm('contactInfo.emergency.instruction')}
+              </p>
+              <p className="text-sm text-gray-500">
+                {tForm('contactInfo.emergency.note')}
+              </p>
             </div>
           </motion.div>
         </motion.div>
@@ -988,11 +1040,13 @@ export default function SupportPage() {
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
+        tForm={tForm}
       />
       <ErrorModal
         isOpen={showErrorModal}
         onClose={() => setShowErrorModal(false)}
         errorMessage={errorMessage}
+        tForm={tForm}
       />
     </>
   );

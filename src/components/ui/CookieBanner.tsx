@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { X, Cookie, Settings } from 'lucide-react';
 import { Switch } from '@headlessui/react';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
 interface CookiePreferences {
   necessary: boolean;
@@ -16,6 +17,7 @@ interface CookieBannerProps {
 }
 
 export function CookieBanner({ onDismiss }: CookieBannerProps) {
+  const t = useTranslations('cookieBanner');
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -121,20 +123,16 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
 
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-semibold text-gray-900">
-                We use cookies
+                {t('title')}
               </h3>
-              <p className="mt-1 text-sm text-gray-600">
-                We use cookies to enhance your experience, analyze site usage,
-                and assist in our marketing efforts. By clicking &quot;Accept
-                All&quot;, you consent to our use of cookies.
-              </p>
+              <p className="mt-1 text-sm text-gray-600">{t('description')}</p>
 
               <div className="mt-4 flex flex-wrap gap-3">
                 <button
                   onClick={handleAcceptAll}
                   className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors"
                 >
-                  Accept All
+                  {t('acceptAll')}
                 </button>
 
                 <button
@@ -142,14 +140,14 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
                   className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
                 >
                   <Settings className="w-3 h-3 mr-1" />
-                  Customize
+                  {t('customize')}
                 </button>
 
                 <button
                   onClick={handleRejectAll}
                   className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
                 >
-                  Reject All
+                  {t('rejectAll')}
                 </button>
               </div>
             </div>
@@ -166,7 +164,7 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-gray-900">
-                Cookie Preferences
+                {t('preferences.title')}
               </h3>
               <button
                 onClick={() => setShowSettings(false)}
@@ -181,10 +179,10 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-medium text-gray-900">
-                    Necessary Cookies
+                    {t('preferences.necessary.title')}
                   </h4>
                   <p className="text-xs text-gray-600">
-                    Required for the website to function properly
+                    {t('preferences.necessary.description')}
                   </p>
                 </div>
                 <div className="flex items-center">
@@ -192,7 +190,7 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
                     <div className="w-4 h-4 bg-white rounded-full"></div>
                   </div>
                   <span className="ml-2 text-xs text-gray-500 font-medium">
-                    Always on
+                    {t('preferences.necessary.alwaysOn')}
                   </span>
                 </div>
               </div>
@@ -201,10 +199,10 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-medium text-gray-900">
-                    Analytics Cookies
+                    {t('preferences.analytics.title')}
                   </h4>
                   <p className="text-xs text-gray-600">
-                    Help us understand how visitors interact with our website
+                    {t('preferences.analytics.description')}
                   </p>
                 </div>
                 <Switch
@@ -223,11 +221,10 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-medium text-gray-900">
-                    Marketing Cookies
+                    {t('preferences.marketing.title')}
                   </h4>
                   <p className="text-xs text-gray-600">
-                    Used to track visitors across websites for advertising
-                    purposes
+                    {t('preferences.marketing.description')}
                   </p>
                 </div>
                 <Switch
@@ -248,14 +245,14 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
                 onClick={handleAcceptSelected}
                 className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors"
               >
-                Save Preferences
+                {t('preferences.savePreferences')}
               </button>
 
               <button
                 onClick={handleAcceptAll}
                 className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
               >
-                Accept All
+                {t('acceptAll')}
               </button>
             </div>
           </div>

@@ -1,0 +1,24 @@
+{
+  "lastUpdated": "Last updated",
+  "legalInformation": "Legal Information",
+  "privacy": {
+    "title": "Privacy Policy",
+    "description": "How we collect, use, and protect your personal data"
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "description": "Terms and conditions for using PayMatch"
+  },
+  "cookies": {
+    "title": "Cookie Policy",
+    "description": "Information about cookies and tracking technologies"
+  },
+  "gdpr": {
+    "title": "GDPR",
+    "description": "Your rights under the General Data Protection Regulation"
+  },
+  "imprint": {
+    "title": "Imprint",
+    "description": "Company information and legal details"
+  }
+}

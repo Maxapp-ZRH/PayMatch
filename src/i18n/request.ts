@@ -18,18 +18,109 @@ export default getRequestConfig(async ({ requestLocale }) => {
     ? requested
     : routing.defaultLocale;
 
-  // Load messages for the locale from the structured directory
+  // Load messages for the locale from multiple files
   let messages;
   try {
-    // For now, we'll load from a single file per locale
-    // Later we can implement dynamic loading from multiple files
-    messages = (await import(`./messages/${locale}/index.json`)).default;
+    // Load all message files for the locale
+    const [
+      commonMessages,
+      featuresMessages,
+      cookieBannerMessages,
+      pwaMessages,
+      legalMessages,
+      supportMessages,
+      faqMessages,
+      indexMessages,
+    ] = await Promise.all([
+      import(`./messages/${locale}/common.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/features.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/cookieBanner.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/pwa.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/legal.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/support.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/faq.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/index.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+    ]);
+
+    // Merge all messages into a single object
+    messages = {
+      common: commonMessages,
+      features: featuresMessages,
+      cookieBanner: cookieBannerMessages,
+      pwa: pwaMessages,
+      legal: legalMessages,
+      support: supportMessages,
+      faq: faqMessages,
+      ...indexMessages, // Main page content
+    };
   } catch {
     console.warn(
       `Failed to load messages for locale ${locale}, falling back to English`
     );
     try {
-      messages = (await import(`./messages/en/index.json`)).default;
+      // Fallback to English
+      const [
+        commonMessages,
+        featuresMessages,
+        cookieBannerMessages,
+        pwaMessages,
+        legalMessages,
+        supportMessages,
+        faqMessages,
+        indexMessages,
+      ] = await Promise.all([
+        import(`./messages/en/common.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en/features.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en/cookieBanner.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en/pwa.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en/legal.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en/support.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en/faq.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en/index.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+      ]);
+
+      messages = {
+        common: commonMessages,
+        features: featuresMessages,
+        cookieBanner: cookieBannerMessages,
+        pwa: pwaMessages,
+        legal: legalMessages,
+        support: supportMessages,
+        faq: faqMessages,
+        ...indexMessages,
+      };
     } catch (fallbackError) {
       console.error('Failed to load fallback messages:', fallbackError);
       messages = {};

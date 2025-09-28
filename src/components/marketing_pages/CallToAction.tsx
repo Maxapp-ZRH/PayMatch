@@ -1,8 +1,11 @@
 import { Button } from '@/components/marketing_pages/Button';
 import { CircleBackground } from '@/components/marketing_pages/CircleBackground';
 import { Container } from '@/components/marketing_pages/Container';
+import { useTranslations } from 'next-intl';
 
 export function CallToAction() {
+  const t = useTranslations('callToAction');
+
   return (
     <section
       id="start-free-trial"
@@ -14,19 +17,16 @@ export function CallToAction() {
       <Container className="relative">
         <div className="mx-auto max-w-md sm:text-center">
           <h2 className="text-3xl font-medium tracking-tight text-white sm:text-4xl">
-            Send your first Invoice
+            {t('title')}
           </h2>
-          <p className="mt-4 text-lg text-gray-300">
-            Create your first Swiss QR-bill invoice in under 2 minutes. No
-            credit card required. Start free and scale as you grow.
-          </p>
+          <p className="mt-4 text-lg text-gray-300">{t('subtitle')}</p>
           <div className="mt-8 flex justify-center">
             <Button
               href="/register"
               color="cyan"
               className="px-8 py-3 text-base font-semibold"
             >
-              Start for Free
+              {t('cta')}
             </Button>
           </div>
         </div>

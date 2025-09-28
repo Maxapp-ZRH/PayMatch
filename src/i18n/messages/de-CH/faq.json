@@ -1,0 +1,24 @@
+{
+  "categories": {
+    "general": "Allgemein",
+    "account": "Konto & Abrechnung",
+    "invoicing": "Rechnungswesen",
+    "payments": "Zahlungen",
+    "technical": "Technisch",
+    "swiss-compliance": "Schweizer Konformität"
+  },
+  "faq": {
+    "whatIsPayMatch": {
+      "question": "Was ist PayMatch?",
+      "answer": "PayMatch ist eine Schweizer QR-Rechnungsplattform, die speziell für Schweizer Unternehmen entwickelt wurde. Sie hilft Ihnen dabei, Swiss QR-Bill-konforme Rechnungen mühelos zu erstellen, zu versenden und abzugleichen, mit integrierter Zahlungsabstimmung und Schweizer Steuerkonformität."
+    },
+    "whoCanUse": {
+      "question": "Wer kann PayMatch verwenden?",
+      "answer": "PayMatch ist für Schweizer Unternehmen, Freelancer und KMU konzipiert, die Swiss QR-Bill-konforme Rechnungen erstellen müssen. Wir unterstützen Unternehmen in der Schweiz, Deutschland, Frankreich und Italien mit Plänen für einzelne Freelancer und Enterprise-Teams."
+    },
+    "pricingPlans": {
+      "question": "Welche Preismodelle bieten Sie an?",
+      "answer": "Wir bieten drei Hauptpläne an: Kostenlos (5 Rechnungen/Monat), Freelancer (CHF 5/Monat, unbegrenzte Rechnungen), Business (CHF 50/Monat, Team-Features) und Enterprise (CHF 150/Monat, unbegrenzte Benutzer). Alle Preise inklusive Schweizer Mehrwertsteuer."
+    }
+  }
+}
