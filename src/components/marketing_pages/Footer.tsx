@@ -92,22 +92,6 @@ export function Footer() {
                       Support
                     </Link>
                   </li>
-                  <li>
-                    <Link
-                      href="/brand"
-                      className="text-sm text-gray-600 hover:text-gray-900"
-                    >
-                      Brand
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/downloads"
-                      className="text-sm text-gray-600 hover:text-gray-900"
-                    >
-                      Downloads
-                    </Link>
-                  </li>
                 </ul>
               </div>
 
