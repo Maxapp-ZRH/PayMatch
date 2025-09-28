@@ -7,6 +7,7 @@
  */
 
 import { LegalLayout } from '@/components/legal/LegalLayout';
+import { Link } from '@/i18n/navigation';
 
 export default function TermsOfServicePage() {
   return (
@@ -368,12 +369,12 @@ export default function TermsOfServicePage() {
           <div className="bg-white border border-gray-200 rounded-lg p-8">
             <p className="text-gray-700 leading-relaxed mb-6">
               Your privacy is important to us. Please review our{' '}
-              <a
+              <Link
                 href="/privacy"
                 className="text-teal-600 hover:text-teal-700 underline transition-colors"
               >
                 Privacy Policy
-              </a>{' '}
+              </Link>{' '}
               to understand how we collect, use, and protect your information.
             </p>
 

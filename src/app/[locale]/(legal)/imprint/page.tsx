@@ -7,6 +7,7 @@
  */
 
 import { LegalLayout } from '@/components/legal/LegalLayout';
+import { Link } from '@/i18n/navigation';
 
 export default function ImprintPage() {
   return (
@@ -463,12 +464,12 @@ export default function ImprintPage() {
               <p className="text-gray-700 leading-relaxed">
                 For detailed information about how we collect, use, and protect
                 your data, please see our{' '}
-                <a
+                <Link
                   href="/privacy"
                   className="text-teal-600 hover:text-teal-700 underline transition-colors"
                 >
                   Privacy Policy
-                </a>
+                </Link>
                 .
               </p>
             </div>

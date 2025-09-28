@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
 import {
   Popover,
@@ -9,10 +8,13 @@ import {
   PopoverPanel,
 } from '@headlessui/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
 import { NavLinks } from '@/components/marketing_pages/NavLinks';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { Link } from '@/i18n/navigation';
 
 function MenuIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -40,22 +42,9 @@ function ChevronUpIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   );
 }
 
-function MobileNavLink(
-  props: Omit<
-    React.ComponentPropsWithoutRef<typeof PopoverButton<typeof Link>>,
-    'as' | 'className'
-  >
-) {
-  return (
-    <PopoverButton
-      as={Link}
-      className="block text-base/7 tracking-tight text-gray-700"
-      {...props}
-    />
-  );
-}
-
 export function Header() {
+  const t = useTranslations('navigation');
+
   return (
     <header>
       <nav>
@@ -81,6 +70,9 @@ export function Header() {
             </div>
           </div>
           <div className="flex items-center gap-6">
+            {/* Language Switcher */}
+            <LanguageSwitcher className="hidden sm:block" />
+
             <Popover className="lg:hidden">
               {({ open }: { open: boolean }) => (
                 <>
@@ -120,23 +112,44 @@ export function Header() {
                           className="absolute inset-x-0 top-0 z-0 origin-top rounded-b-2xl bg-gray-50 px-6 pt-32 pb-6 shadow-2xl shadow-gray-900/20"
                         >
                           <div className="space-y-4">
-                            <MobileNavLink href="/#features">
-                              Features
-                            </MobileNavLink>
-                            <MobileNavLink href="/#reviews">
+                            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                            <a
+                              href="/#features"
+                              className="block text-base/7 tracking-tight text-gray-700"
+                            >
+                              {t('features')}
+                            </a>
+                            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                            <a
+                              href="/#reviews"
+                              className="block text-base/7 tracking-tight text-gray-700"
+                            >
                               Reviews
-                            </MobileNavLink>
-                            <MobileNavLink href="/#pricing">
-                              Pricing
-                            </MobileNavLink>
-                            <MobileNavLink href="/#faqs">FAQs</MobileNavLink>
+                            </a>
+                            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                            <a
+                              href="/#pricing"
+                              className="block text-base/7 tracking-tight text-gray-700"
+                            >
+                              {t('pricing')}
+                            </a>
+                            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                            <a
+                              href="/#faqs"
+                              className="block text-base/7 tracking-tight text-gray-700"
+                            >
+                              FAQs
+                            </a>
+                          </div>
+                          <div className="mt-6 mb-4">
+                            <LanguageSwitcher variant="buttons" />
                           </div>
                           <div className="mt-8 flex flex-col gap-4">
                             <Button href="/login" variant="outline">
-                              Log in
+                              {t('login')}
                             </Button>
                             <Button href="/register" color="cyan">
-                              Sign Up
+                              {t('register')}
                             </Button>
                           </div>
                         </PopoverPanel>
@@ -148,10 +161,10 @@ export function Header() {
             </Popover>
             <div className="flex items-center gap-6 max-lg:hidden">
               <Button href="/login" variant="outline">
-                Log in
+                {t('login')}
               </Button>
               <Button href="/register" color="cyan">
-                Sign Up
+                {t('register')}
               </Button>
             </div>
           </div>
