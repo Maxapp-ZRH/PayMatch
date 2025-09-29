@@ -192,7 +192,7 @@ function ClientManagementScreen(
             <h3 className="text-lg font-semibold text-gray-900">
               {props.t('screens.clientManagement.allClients')}
             </h3>
-            <div className="rounded-lg bg-teal-600 px-3 py-1 text-sm font-semibold text-white">
+            <div className="rounded-lg bg-red-500 px-3 py-1 text-sm font-semibold text-white">
               {props.t('screens.clientManagement.addClient')}
             </div>
           </div>
@@ -203,7 +203,7 @@ function ClientManagementScreen(
                 email: 'contact@swissbusiness.ch',
                 location: 'Zürich, CH',
                 invoices: '12 invoices',
-                color: '#14B8A1',
+                color: '#E4262A',
               },
               {
                 name: 'Zurich Consulting',
@@ -279,7 +279,7 @@ function InvoiceCreationScreen(
               </label>
               <div className="mt-2 rounded-lg border border-gray-300 bg-white p-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-600 text-white text-sm font-semibold">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white text-sm font-semibold">
                     S
                   </div>
                   <div className="flex-auto">
@@ -290,7 +290,7 @@ function InvoiceCreationScreen(
                       contact@swissbusiness.ch
                     </div>
                   </div>
-                  <div className="text-teal-600">✓</div>
+                  <div className="text-red-500">✓</div>
                 </div>
               </div>
             </div>
@@ -327,7 +327,7 @@ function InvoiceCreationScreen(
           </div>
 
           <div className="mt-6 space-y-2">
-            <div className="rounded-lg bg-teal-600 px-4 py-3 text-center text-sm font-semibold text-white">
+            <div className="rounded-lg bg-red-500 px-4 py-3 text-center text-sm font-semibold text-white">
               {props.t('screens.invoiceCreation.generateQRBill')}
             </div>
             <div className="text-center text-xs text-gray-500">
@@ -529,7 +529,7 @@ function FeaturesDesktop({
       </TabList>
       <div className="relative col-span-6">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <CircleBackground color="#14b8a1" className="animate-spin-slower" />
+          <CircleBackground color="#E4262A" className="animate-spin-slower" />
         </div>
         <PhoneFrame className="z-10 mx-auto w-full max-w-[366px]">
           <TabPanels as={Fragment}>
@@ -602,7 +602,7 @@ function FeaturesMobile({
     <>
       <div
         ref={slideContainerRef}
-        className="-mb-4 flex snap-x snap-mandatory -space-x-4 overflow-x-auto overscroll-x-contain scroll-smooth pb-4 [scrollbar-width:none] sm:-space-x-6 [&::-webkit-scrollbar]:hidden"
+        className="-mb-4 flex snap-x snap-mandatory -space-x-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-4 [scrollbar-width:none] sm:-space-x-4 lg:-space-x-6 [&::-webkit-scrollbar]:hidden"
       >
         {features.map((feature, featureIndex) => (
           <div
@@ -612,24 +612,24 @@ function FeaturesMobile({
                 slideRefs.current[featureIndex] = ref;
               }
             }}
-            className="w-full flex-none snap-center px-4 sm:px-6"
+            className="w-full flex-none snap-center px-3 sm:px-4 lg:px-6"
           >
-            <div className="relative transform overflow-hidden rounded-2xl bg-gray-800 px-5 py-6">
+            <div className="relative transform overflow-hidden rounded-xl sm:rounded-2xl bg-gray-800 px-4 py-4 sm:px-5 sm:py-6">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <CircleBackground
-                  color="#14b8a1"
+                  color="#E4262A"
                   className={featureIndex % 2 === 1 ? 'rotate-180' : undefined}
                 />
               </div>
-              <PhoneFrame className="relative mx-auto w-full max-w-[366px]">
+              <PhoneFrame className="relative mx-auto w-full max-w-[280px] sm:max-w-[366px]">
                 <feature.screen t={t} />
               </PhoneFrame>
-              <div className="absolute inset-x-0 bottom-0 bg-gray-800/95 p-6 backdrop-blur-sm sm:p-10">
-                <feature.icon className="h-8 w-8" />
-                <h3 className="mt-6 text-sm font-semibold text-white sm:text-lg">
+              <div className="absolute inset-x-0 bottom-0 bg-gray-800/95 p-4 backdrop-blur-sm sm:p-6 lg:p-10">
+                <feature.icon className="h-6 w-6 sm:h-8 sm:w-8" />
+                <h3 className="mt-4 sm:mt-6 text-sm font-semibold text-white sm:text-base lg:text-lg">
                   {feature.name}
                 </h3>
-                <p className="mt-2 text-sm text-gray-400">
+                <p className="mt-2 text-xs sm:text-sm text-gray-400">
                   {feature.description}
                 </p>
               </div>
@@ -688,25 +688,27 @@ export function PrimaryFeatures() {
     <section
       id="features"
       aria-label="Features for Swiss invoicing and payment reconciliation"
-      className="bg-gray-900 py-20 sm:py-32"
+      className="bg-gray-900 py-12 sm:py-20 lg:py-32"
     >
       <Container>
         <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-3xl">
-          <h2 className="text-3xl font-medium tracking-tight text-white">
+          <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-white">
             {t('title')}
           </h2>
-          <p className="mt-2 text-lg text-gray-400">{t('subtitle')}</p>
+          <p className="mt-2 text-base sm:text-lg text-gray-400">
+            {t('subtitle')}
+          </p>
         </div>
       </Container>
-      <div className="mt-16 md:hidden">
+      <div className="mt-12 sm:mt-16 md:hidden">
         <FeaturesMobile features={features} t={t} />
       </div>
       <Container className="hidden md:mt-20 md:block">
         <FeaturesDesktop features={features} t={t} />
       </Container>
-      <Container className="mt-8">
+      <Container className="mt-6 sm:mt-8">
         <div className="text-center">
-          <p className="text-sm text-gray-500">{t('disclaimer')}</p>
+          <p className="text-xs sm:text-sm text-gray-500">{t('disclaimer')}</p>
         </div>
       </Container>
     </section>

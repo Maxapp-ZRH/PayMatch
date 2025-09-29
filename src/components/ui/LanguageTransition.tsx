@@ -61,7 +61,7 @@ export function LanguageTransition({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-teal-50 via-white to-blue-50"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-red-50 via-white to-blue-50"
       >
         {/* Animated background pattern */}
         <div className="absolute inset-0 overflow-hidden">
@@ -75,7 +75,7 @@ export function LanguageTransition({
               repeat: Infinity,
               ease: 'linear',
             }}
-            className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-teal-100/20 to-blue-100/20 rounded-full"
+            className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-red-100/20 to-blue-100/20 rounded-full"
           />
           <motion.div
             animate={{
@@ -87,7 +87,7 @@ export function LanguageTransition({
               repeat: Infinity,
               ease: 'linear',
             }}
-            className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-blue-100/20 to-teal-100/20 rounded-full"
+            className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-blue-100/20 to-red-100/20 rounded-full"
           />
         </div>
 
@@ -108,7 +108,7 @@ export function LanguageTransition({
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.5, duration: 0.3 }}
-              className="text-4xl text-teal-600"
+              className="text-4xl text-red-500"
             >
               →
             </motion.div>
@@ -144,7 +144,7 @@ export function LanguageTransition({
           <div className="w-64 mx-auto">
             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-teal-500 rounded-full"
+                className="h-full bg-red-500 rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.1 }}
@@ -179,7 +179,7 @@ export function LanguageTransition({
                   repeat: Infinity,
                   delay: i * 0.2,
                 }}
-                className="w-2 h-2 bg-teal-500 rounded-full"
+                className="w-2 h-2 bg-red-500 rounded-full"
               />
             ))}
           </motion.div>
@@ -190,7 +190,7 @@ export function LanguageTransition({
           {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-1 h-1 bg-teal-400/30 rounded-full"
+              className="absolute w-1 h-1 bg-red-400/30 rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,

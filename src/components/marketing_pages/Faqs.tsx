@@ -1,6 +1,7 @@
 import { Container } from '@/components/marketing_pages/Container';
 import { faqData, createTranslatedFAQs } from '@/utils/faq-manager';
 import { useTranslations } from 'next-intl';
+import { Link as I18nLink } from '@/i18n/navigation';
 
 // Get homepage FAQs from the centralized FAQ data
 const homepageFaqIds = [
@@ -35,40 +36,42 @@ export function Faqs() {
     <section
       id="faqs"
       aria-labelledby="faqs-title"
-      className="border-t border-gray-200 py-20 sm:py-32"
+      className="border-t border-gray-200 py-12 sm:py-20 lg:py-32"
     >
       <Container>
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2
             id="faqs-title"
-            className="text-3xl font-medium tracking-tight text-gray-900"
+            className="text-2xl sm:text-3xl font-medium tracking-tight text-gray-900"
           >
             {t('title')}
           </h2>
-          <p className="mt-2 text-lg text-gray-600">
+          <p className="mt-2 text-base sm:text-lg text-gray-600">
             {t('subtitle')}{' '}
-            <a
-              href="mailto:support@paymatch.app"
-              className="text-gray-900 underline"
+            <I18nLink
+              href="/support"
+              className="text-gray-900 underline hover:text-gray-700"
             >
               {t('contactUs')}
-            </a>
+            </I18nLink>
             .
           </p>
         </div>
         <ul
           role="list"
-          className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 sm:mt-20 lg:max-w-none lg:grid-cols-3"
+          className="mx-auto mt-12 grid max-w-2xl grid-cols-1 gap-6 sm:mt-16 sm:gap-8 lg:mt-20 lg:max-w-none lg:grid-cols-3"
         >
           {faqsColumns.map((column, columnIndex) => (
             <li key={columnIndex}>
-              <ul role="list" className="space-y-10">
+              <ul role="list" className="space-y-6 sm:space-y-8 lg:space-y-10">
                 {column.map((faq, faqIndex) => (
                   <li key={faqIndex}>
-                    <h3 className="text-lg/6 font-semibold text-gray-900">
+                    <h3 className="text-sm sm:text-base lg:text-lg/6 font-semibold text-gray-900">
                       {faq.question}
                     </h3>
-                    <p className="mt-4 text-sm text-gray-700">{faq.answer}</p>
+                    <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-700">
+                      {faq.answer}
+                    </p>
                   </li>
                 ))}
               </ul>

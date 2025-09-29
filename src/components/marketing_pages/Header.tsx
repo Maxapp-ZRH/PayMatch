@@ -142,7 +142,13 @@ export function Header() {
                             </a>
                           </div>
                           <div className="mt-6 mb-4">
-                            <LanguageSwitcher variant="buttons" />
+                            <div className="text-sm font-medium text-gray-900 mb-3">
+                              Language
+                            </div>
+                            <LanguageSwitcher
+                              variant="buttons"
+                              className="w-full"
+                            />
                           </div>
                           <div className="mt-8 flex flex-col gap-4">
                             <Button href="/login" variant="outline">

@@ -5,10 +5,11 @@ import { Radio, RadioGroup } from '@headlessui/react';
 import clsx from 'clsx';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Gift, User, Building2, Crown } from 'lucide-react';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
-import { Logomark } from '@/components/marketing_pages/Logo';
 import {
   pricingConfig,
   calculateMonthlyPricing,
@@ -40,12 +41,37 @@ function CheckIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   );
 }
 
+// Function to get the appropriate icon for each plan
+function getPlanIcon(planName: string, isFeatured: boolean) {
+  const iconProps = {
+    className: clsx(
+      'h-5 w-5 sm:h-6 sm:w-6 flex-none',
+      isFeatured ? 'text-red-500' : 'text-gray-600'
+    ),
+  };
+
+  switch (planName.toLowerCase()) {
+    case 'free':
+      return <Gift {...iconProps} />;
+    case 'freelancer':
+      return <User {...iconProps} />;
+    case 'business':
+      return <Building2 {...iconProps} />;
+    case 'enterprise':
+      return <Crown {...iconProps} />;
+    default:
+      return <Gift {...iconProps} />;
+  }
+}
+
 function FeatureIcon({
   value,
   className = 'w-4 h-4',
+  textColor = 'text-gray-700',
 }: {
   value: string | 'check' | 'cross';
   className?: string;
+  textColor?: string;
 }) {
   if (value === 'check') {
     const { Icon, className: iconClassName } = createFeatureIcon(
@@ -61,7 +87,7 @@ function FeatureIcon({
     );
     return <Icon className={iconClassName} />;
   }
-  return <span className="text-gray-700">{value}</span>;
+  return <span className={textColor}>{value}</span>;
 }
 
 function Plan({
@@ -72,10 +98,13 @@ function Plan({
   button,
   features,
   activePeriod,
-  logomarkClassName,
   featured = false,
   t,
   currencySymbol,
+  planIndex,
+  getFeatureTranslation,
+  getFeatureValueTranslation,
+  previousPeriod,
 }: {
   name: string;
   monthlyPrice: number;
@@ -87,24 +116,31 @@ function Plan({
   };
   features: Array<string>;
   activePeriod: 'Monthly' | 'Annually';
-  logomarkClassName?: string;
   featured?: boolean;
   t: (key: string) => string;
   currencySymbol: string;
+  planIndex?: number;
+  getFeatureTranslation: (key: string) => string;
+  getFeatureValueTranslation: (
+    value: string | 'check' | 'cross'
+  ) => string | 'check' | 'cross';
+  previousPeriod: 'Monthly' | 'Annually';
 }) {
   return (
     <div className="relative">
       {featured && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-          <span className="inline-flex items-center rounded-full bg-teal-600 px-3 py-1 text-xs font-semibold text-white shadow-lg">
+          <div className="rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white shadow-lg">
             {t('mostPopular')}
-          </span>
+          </div>
         </div>
       )}
       <section
         className={clsx(
-          'flex flex-col overflow-hidden rounded-3xl p-6 shadow-lg shadow-gray-900/5',
-          featured ? 'order-first bg-gray-900 lg:order-0' : 'bg-white'
+          'flex flex-col overflow-hidden rounded-3xl p-4 sm:p-6 shadow-lg shadow-gray-900/5',
+          featured
+            ? 'order-first bg-gray-900 lg:order-0 ring-2 ring-red-400/50 ring-offset-2'
+            : 'bg-white'
         )}
       >
         <h3
@@ -113,86 +149,160 @@ function Plan({
             featured ? 'text-white' : 'text-gray-900'
           )}
         >
-          <Logomark className={clsx('h-6 w-6 flex-none', logomarkClassName)} />
-          <span className="ml-4">{name}</span>
+          {getPlanIcon(name, featured)}
+          <span className="ml-3 sm:ml-4">{name}</span>
         </h3>
-        <div className="mt-5">
-          <div className="relative flex text-3xl tracking-tight">
-            <span
-              aria-hidden={activePeriod === 'Annually'}
-              className={clsx(
-                'transition duration-300',
-                activePeriod === 'Annually' &&
-                  'pointer-events-none translate-x-6 opacity-0 select-none',
-                featured ? 'text-white' : 'text-gray-900'
-              )}
-            >
-              {currencySymbol} {monthlyPrice}
-            </span>
-            <span
-              aria-hidden={activePeriod === 'Monthly'}
-              className={clsx(
-                'absolute top-0 left-0 transition duration-300',
-                activePeriod === 'Monthly' &&
-                  'pointer-events-none -translate-x-6 opacity-0 select-none',
-                featured ? 'text-white' : 'text-gray-900'
-              )}
-            >
-              {currencySymbol}{' '}
-              {calculateMonthlyPricing(
-                annualPrice,
-                PRICING_CONSTANTS.annualDiscountPercent
-              )}
-            </span>
+        <div className="mt-4 sm:mt-5">
+          <div className="flex items-baseline">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`price-container-${activePeriod}`}
+                initial={{
+                  opacity: 0,
+                  x: previousPeriod === 'Monthly' ? -20 : 20,
+                }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{
+                  opacity: 0,
+                  x: previousPeriod === 'Monthly' ? 20 : -20,
+                }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="flex items-baseline"
+              >
+                <span
+                  className={clsx(
+                    'text-2xl sm:text-3xl font-bold tracking-tight',
+                    featured ? 'text-white' : 'text-gray-900'
+                  )}
+                >
+                  {currencySymbol}
+                  {activePeriod === 'Monthly'
+                    ? monthlyPrice
+                    : calculateMonthlyPricing(
+                        annualPrice,
+                        PRICING_CONSTANTS.annualDiscountPercent
+                      )}
+                </span>
+                <span
+                  className={clsx(
+                    'ml-1 text-sm font-medium',
+                    featured ? 'text-gray-300' : 'text-gray-500'
+                  )}
+                >
+                  /{activePeriod === 'Monthly' ? 'month' : 'month'}
+                </span>
+              </motion.div>
+            </AnimatePresence>
           </div>
-          <div className="mt-1">
-            <span
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={`billing-${activePeriod}`}
+              initial={{
+                opacity: 0,
+                x: previousPeriod === 'Monthly' ? -20 : 20,
+              }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{
+                opacity: 0,
+                x: previousPeriod === 'Monthly' ? 20 : -20,
+              }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
               className={clsx(
-                'text-sm',
+                'mt-1 text-sm',
                 featured ? 'text-gray-400' : 'text-gray-500'
               )}
             >
               {activePeriod === 'Monthly'
                 ? t('billedMonthly')
-                : `${t('billedAnnually')} (${pricingConfig.currency} ${annualPrice}/year)`}
-            </span>
-          </div>
+                : `${t('billedAnnually')} (${currencySymbol}${annualPrice})`}
+            </motion.p>
+          </AnimatePresence>
         </div>
         <p
           className={clsx(
-            'mt-3 text-sm',
+            'mt-3 text-xs sm:text-sm',
             featured ? 'text-gray-300' : 'text-gray-700'
           )}
         >
           {description}
         </p>
-        <div className="order-last mt-6">
-          <ul
-            role="list"
-            className={clsx(
-              '-my-2 divide-y text-sm',
-              featured
-                ? 'divide-gray-800 text-gray-300'
-                : 'divide-gray-200 text-gray-700'
+        <div className="order-last mt-4 sm:mt-6">
+          {/* Mobile: Show comparison table */}
+          <div className="block sm:hidden">
+            {planIndex !== undefined && (
+              <ul
+                role="list"
+                className={clsx(
+                  '-my-2 divide-y text-xs',
+                  name === 'Business' || featured
+                    ? 'divide-gray-800 text-white '
+                    : 'divide-gray-200 text-gray-700'
+                )}
+              >
+                {featureComparisonData.map((row, index) => {
+                  const planValues = [
+                    row.free,
+                    row.freelancer,
+                    row.business,
+                    row.enterprise,
+                  ];
+                  const value = planValues[planIndex];
+
+                  return (
+                    <li
+                      key={index}
+                      className="flex items-center justify-between py-2"
+                    >
+                      <span className="flex-1 pr-2">
+                        {getFeatureTranslation(row.featureKey)}
+                      </span>
+                      <div className="flex-shrink-0">
+                        <FeatureIcon
+                          value={getFeatureValueTranslation(value)}
+                          className="w-4 h-4"
+                          textColor={
+                            name === 'Business' || featured
+                              ? 'text-white'
+                              : 'text-gray-700'
+                          }
+                        />
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
             )}
-          >
-            {features.map((feature) => (
-              <li key={feature} className="flex py-2">
-                <CheckIcon
-                  className={clsx(
-                    'h-6 w-6 flex-none',
-                    featured ? 'text-white' : 'text-teal-600'
-                  )}
-                />
-                <span className="ml-4">{feature}</span>
-              </li>
-            ))}
-          </ul>
+          </div>
+
+          {/* Desktop: Show individual features */}
+          <div className="hidden sm:block">
+            <ul
+              role="list"
+              className={clsx(
+                '-my-2 divide-y text-sm',
+                featured
+                  ? 'divide-gray-800 text-white'
+                  : 'divide-gray-200 text-gray-700'
+              )}
+            >
+              {features.map((feature) => (
+                <li key={feature} className="flex py-2">
+                  <CheckIcon
+                    className={clsx(
+                      'h-6 w-6 flex-none',
+                      featured ? 'text-white' : 'text-red-500'
+                    )}
+                  />
+                  <span className="ml-4">{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
         <Button
           href={button.href}
           color={featured ? 'swiss' : 'gray'}
-          className="mt-6"
+          className="mt-4 sm:mt-6 text-sm sm:text-base"
           aria-label={`Get started with the ${name} plan for ${pricingConfig.currency} ${activePeriod === 'Monthly' ? monthlyPrice : calculateMonthlyPricing(annualPrice, pricingConfig.annualDiscountPercent)}`}
         >
           {button.label}
@@ -207,6 +317,9 @@ export function Pricing() {
   const tCommon = useTranslations('common');
   const locale = useLocale();
   const [activePeriod, setActivePeriod] = useState<'Monthly' | 'Annually'>(
+    'Monthly'
+  );
+  const [previousPeriod, setPreviousPeriod] = useState<'Monthly' | 'Annually'>(
     'Monthly'
   );
 
@@ -238,6 +351,12 @@ export function Pricing() {
     return t(valueMap[value] || value);
   };
 
+  // Get plan index for feature comparison
+  const getPlanIndex = (planName: string) => {
+    const planNames = ['Free', 'Freelancer', 'Business', 'Enterprise'];
+    return planNames.indexOf(planName);
+  };
+
   return (
     <section
       id="pricing"
@@ -255,11 +374,19 @@ export function Pricing() {
           <p className="mt-2 text-lg text-gray-600">{t('subtitle')}</p>
         </div>
 
-        <div className="mt-8 flex justify-center">
+        <motion.div
+          className="mt-8 flex justify-center"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <div className="relative">
             <RadioGroup
               value={activePeriod}
-              onChange={setActivePeriod}
+              onChange={(newPeriod) => {
+                setPreviousPeriod(activePeriod);
+                setActivePeriod(newPeriod);
+              }}
               className="grid grid-cols-2"
             >
               {PRICING_CONSTANTS.billingPeriods.map((period) => (
@@ -280,7 +407,7 @@ export function Pricing() {
             <div
               aria-hidden="true"
               className={clsx(
-                'pointer-events-none absolute inset-0 z-10 grid grid-cols-2 overflow-hidden rounded-lg bg-teal-600 transition-all duration-300',
+                'pointer-events-none absolute inset-0 z-10 grid grid-cols-2 overflow-hidden rounded-lg bg-red-500 transition-all duration-300',
                 activePeriod === 'Monthly'
                   ? '[clip-path:inset(0_50%_0_0)]'
                   : '[clip-path:inset(0_0_0_calc(50%-1px))]'
@@ -299,44 +426,106 @@ export function Pricing() {
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="mt-4 text-center">
-          <div className="inline-flex items-center rounded-full bg-green-50 px-3 py-1">
-            <span className="text-sm font-medium text-green-700">
-              {t('annualBillingBadge')}
-            </span>
+        <motion.div
+          className="mt-4 text-center"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          <div className="inline-flex items-center rounded-full bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 px-4 py-2 shadow-sm">
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full">
+                <svg
+                  className="w-3 h-3 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-semibold text-green-800">
+                {t('annualBillingBadge')}
+              </span>
+            </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="mx-auto mt-16 grid max-w-4xl grid-cols-1 items-start gap-x-8 gap-y-10 sm:mt-20 sm:grid-cols-2 lg:max-w-none lg:grid-cols-3">
-          {pricingPlans
-            .filter((plan) => plan.name !== 'Free')
-            .map((plan) => {
-              const planKey = plan.name.toLowerCase();
-              const translatedPlan = {
-                ...plan,
-                description: t(`plans.${planKey}.description`),
-                features: t.raw(`plans.${planKey}.features`),
-                button: {
-                  label: tCommon('buttons.getStarted'),
-                  href: '/register',
-                },
-              };
-              return (
+        <motion.div
+          className="mx-auto mt-16 grid max-w-4xl grid-cols-1 items-start gap-x-8 gap-y-8 sm:mt-20 sm:grid-cols-2 sm:gap-y-10 lg:max-w-none lg:grid-cols-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
+          {pricingPlans.map((plan, index) => {
+            const planKey = plan.name.toLowerCase();
+            const translatedPlan = {
+              ...plan,
+              description: t(`plans.${planKey}.description`),
+              features: t.raw(`plans.${planKey}.features`),
+              button: {
+                label: tCommon('buttons.getStarted'),
+                href: '/register',
+              },
+            };
+            return (
+              <motion.div
+                key={plan.name}
+                className={clsx(
+                  // Show Free plan only on mobile (hidden on sm and up)
+                  plan.name === 'Free' ? 'block sm:hidden' : 'block'
+                )}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.1,
+                  ease: 'easeOut',
+                }}
+              >
                 <Plan
-                  key={plan.name}
                   {...translatedPlan}
                   activePeriod={activePeriod}
                   t={t}
                   currencySymbol={currencySymbol}
+                  planIndex={getPlanIndex(plan.name)}
+                  getFeatureTranslation={getFeatureTranslation}
+                  getFeatureValueTranslation={getFeatureValueTranslation}
+                  previousPeriod={previousPeriod}
                 />
-              );
-            })}
+              </motion.div>
+            );
+          })}
+        </motion.div>
+
+        {/* Mobile: Start with Free plan link */}
+        <div className="mt-12 text-center sm:hidden">
+          <p className="text-sm text-gray-600 mb-4">
+            All plans include Swiss QR-bill compliance and payment
+            reconciliation.
+          </p>
+          <p className="text-sm text-gray-500">
+            <Link
+              href="/register"
+              className="text-red-500 hover:text-red-600 font-medium"
+            >
+              Start with Free plan →
+            </Link>
+          </p>
         </div>
 
-        {/* Feature Comparison Table */}
-        <div className="mt-20">
+        {/* Feature Comparison Table - Hidden on mobile */}
+        <motion.div
+          className="mt-20 hidden sm:block"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
           <div className="text-center mb-12">
             <h3 className="text-3xl font-medium tracking-tight text-gray-900 mb-4">
               {t('comparisonTitle')}
@@ -345,7 +534,9 @@ export function Pricing() {
               {t('comparisonDescription')}
             </p>
           </div>
-          <div className="overflow-x-auto shadow-lg shadow-gray-900/5 rounded-3xl border border-gray-200">
+
+          {/* Desktop Table Layout */}
+          <div className="hidden lg:block overflow-x-auto shadow-lg shadow-gray-900/5 rounded-3xl border border-gray-200">
             <table className="w-full table-auto border-separate border-spacing-0">
               <thead>
                 <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
@@ -368,26 +559,71 @@ export function Pricing() {
                         key={plan.name}
                         className={`border-b ${isLast ? 'border-gray-200' : 'border-r border-gray-200'} px-6 py-4 text-center font-semibold text-lg last:rounded-tr-3xl ${
                           isFeatured
-                            ? 'text-teal-600 bg-teal-50'
+                            ? 'text-red-500 bg-red-50'
                             : 'text-gray-900'
                         }`}
                       >
                         <div className="flex flex-col items-center">
                           <span
-                            className={`text-sm font-medium mb-1 ${
-                              isFeatured ? 'text-teal-600' : 'text-gray-500'
+                            className={`text-sm font-medium mb-2 ${
+                              isFeatured ? 'text-red-500' : 'text-gray-500'
                             }`}
                           >
                             {plan.name.toUpperCase()}
                           </span>
-                          <span className="text-2xl font-bold">
-                            {currencySymbol} {monthlyPrice}
-                          </span>
-                          {isFeatured && (
-                            <span className="text-xs text-teal-600 font-medium mt-1">
-                              {t('mostPopular')}
-                            </span>
-                          )}
+                          <div className="text-center">
+                            <div className="flex items-baseline justify-center">
+                              <AnimatePresence mode="wait">
+                                <motion.div
+                                  key={`table-price-container-${activePeriod}-${plan.name}`}
+                                  initial={{
+                                    opacity: 0,
+                                    x: previousPeriod === 'Monthly' ? -20 : 20,
+                                  }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  exit={{
+                                    opacity: 0,
+                                    x: previousPeriod === 'Monthly' ? 20 : -20,
+                                  }}
+                                  transition={{
+                                    duration: 0.3,
+                                    ease: 'easeInOut',
+                                  }}
+                                  className="flex items-baseline"
+                                >
+                                  <span className="text-2xl font-bold">
+                                    {currencySymbol} {monthlyPrice}
+                                  </span>
+                                  <span className="ml-1 text-sm text-gray-500">
+                                    /month
+                                  </span>
+                                </motion.div>
+                              </AnimatePresence>
+                            </div>
+                            <AnimatePresence mode="wait">
+                              <motion.div
+                                key={`table-billing-${activePeriod}-${plan.name}`}
+                                initial={{
+                                  opacity: 0,
+                                  x: previousPeriod === 'Monthly' ? -20 : 20,
+                                }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{
+                                  opacity: 0,
+                                  x: previousPeriod === 'Monthly' ? 20 : -20,
+                                }}
+                                transition={{
+                                  duration: 0.3,
+                                  ease: 'easeInOut',
+                                }}
+                                className="text-sm text-gray-500 mt-1"
+                              >
+                                {activePeriod === 'Monthly'
+                                  ? t('billedMonthly')
+                                  : `${t('billedAnnually')} (${currencySymbol}${plan.annualPrice})`}
+                              </motion.div>
+                            </AnimatePresence>
+                          </div>
                         </div>
                       </th>
                     );
@@ -433,7 +669,7 @@ export function Pricing() {
                                 ? 'border-gray-200'
                                 : 'border-r border-gray-200',
                               isLast && isLastRow ? 'rounded-br-3xl' : '',
-                              isFeatured ? 'bg-teal-50/30' : ''
+                              isFeatured ? 'bg-red-50/30' : ''
                             )}
                           >
                             <div className="flex items-center justify-center">
@@ -451,18 +687,19 @@ export function Pricing() {
               </tbody>
             </table>
           </div>
+
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-600">{t('footerText')}</p>
             <p className="mt-2 text-sm text-gray-500">
               <Link
                 href="/register"
-                className="text-teal-600 hover:text-teal-700 font-medium"
+                className="text-red-500 hover:text-red-600 font-medium"
               >
                 {t('footerLink')}
               </Link>
             </p>
           </div>
-        </div>
+        </motion.div>
       </Container>
     </section>
   );

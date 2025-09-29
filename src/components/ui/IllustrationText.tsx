@@ -41,7 +41,7 @@ export function IllustrationText({
   const colorClasses = {
     default: 'text-gray-900',
     muted: 'text-gray-600',
-    accent: 'text-teal-600',
+    accent: 'text-red-500',
     white: 'text-white',
   };
 
