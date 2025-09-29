@@ -13,6 +13,9 @@ import {
   pricingConfig,
   calculateMonthlyPricing,
   createFeatureIcon,
+  pricingPlansData,
+  PRICING_CONSTANTS,
+  featureComparisonData,
 } from '@/config/pricing';
 
 function CheckIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
@@ -203,20 +206,8 @@ export function Pricing() {
   );
 
   // Map feature names to translation keys
-  const getFeatureTranslation = (feature: string) => {
-    const featureMap: Record<string, string> = {
-      Invoices: 'featureComparison.invoices',
-      Clients: 'featureComparison.clients',
-      Users: 'featureComparison.users',
-      'QR-bill invoices': 'featureComparison.qrBillInvoices',
-      'Payment reconciliation': 'featureComparison.paymentReconciliation',
-      Reminders: 'featureComparison.reminders',
-      'Reports / Data exports': 'featureComparison.reportsDataExports',
-      'Branding control': 'featureComparison.brandingControl',
-      'Team management': 'featureComparison.teamManagement',
-      Support: 'featureComparison.support',
-    };
-    return t(featureMap[feature] || feature);
+  const getFeatureTranslation = (featureKey: string) => {
+    return t(`featureComparison.${featureKey}`);
   };
 
   // Map feature values to translation keys
@@ -262,7 +253,7 @@ export function Pricing() {
               onChange={setActivePeriod}
               className="grid grid-cols-2"
             >
-              {['Monthly', 'Annually'].map((period) => (
+              {PRICING_CONSTANTS.billingPeriods.map((period) => (
                 <Radio
                   key={period}
                   value={period}
@@ -286,7 +277,7 @@ export function Pricing() {
                   : '[clip-path:inset(0_0_0_calc(50%-1px))]'
               )}
             >
-              {['Monthly', 'Annually'].map((period) => (
+              {PRICING_CONSTANTS.billingPeriods.map((period) => (
                 <div
                   key={period}
                   className={clsx(
@@ -345,54 +336,58 @@ export function Pricing() {
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-left font-semibold text-gray-900 text-lg first:rounded-tl-3xl">
                     {t('features')}
                   </th>
-                  <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg">
-                    <div className="flex flex-col items-center">
-                      <span className="text-sm font-medium text-gray-500 mb-1">
-                        FREE
-                      </span>
-                      <span className="text-2xl font-bold">
-                        {pricingConfig.currency} 0
-                      </span>
-                    </div>
-                  </th>
-                  <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg">
-                    <div className="flex flex-col items-center">
-                      <span className="text-sm font-medium text-gray-500 mb-1">
-                        FREELANCER
-                      </span>
-                      <span className="text-2xl font-bold">
-                        {pricingConfig.currency} 5
-                      </span>
-                    </div>
-                  </th>
-                  <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-teal-600 text-lg bg-teal-50">
-                    <div className="flex flex-col items-center">
-                      <span className="text-sm font-medium text-teal-600 mb-1">
-                        BUSINESS
-                      </span>
-                      <span className="text-2xl font-bold">
-                        {pricingConfig.currency} 50
-                      </span>
-                      <span className="text-xs text-teal-600 font-medium mt-1">
-                        {t('mostPopular')}
-                      </span>
-                    </div>
-                  </th>
-                  <th className="border-b border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg last:rounded-tr-3xl">
-                    <div className="flex flex-col items-center">
-                      <span className="text-sm font-medium text-gray-500 mb-1">
-                        ENTERPRISE
-                      </span>
-                      <span className="text-2xl font-bold">
-                        {pricingConfig.currency} 150
-                      </span>
-                    </div>
-                  </th>
+                  {pricingPlansData.map((plan, index) => {
+                    const isLast = index === pricingPlansData.length - 1;
+                    const isFeatured = plan.featured;
+                    const monthlyPrice =
+                      activePeriod === 'Monthly'
+                        ? plan.monthlyPrice
+                        : calculateMonthlyPricing(
+                            plan.annualPrice,
+                            PRICING_CONSTANTS.annualDiscountPercent
+                          );
+
+                    return (
+                      <th
+                        key={plan.name}
+                        className={`border-b ${isLast ? 'border-gray-200' : 'border-r border-gray-200'} px-6 py-4 text-center font-semibold text-lg last:rounded-tr-3xl ${
+                          isFeatured
+                            ? 'text-teal-600 bg-teal-50'
+                            : 'text-gray-900'
+                        }`}
+                      >
+                        <div className="flex flex-col items-center">
+                          <span
+                            className={`text-sm font-medium mb-1 ${
+                              isFeatured ? 'text-teal-600' : 'text-gray-500'
+                            }`}
+                          >
+                            {plan.name.toUpperCase()}
+                          </span>
+                          <span className="text-2xl font-bold">
+                            {PRICING_CONSTANTS.currency} {monthlyPrice}
+                          </span>
+                          {isFeatured && (
+                            <span className="text-xs text-teal-600 font-medium mt-1">
+                              {t('mostPopular')}
+                            </span>
+                          )}
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
-                {pricingConfig.featureComparison.map((row, index) => {
-                  const isLastRow = index === 9; // Last row index
+                {featureComparisonData.map((row, index) => {
+                  const isLastRow = index === featureComparisonData.length - 1;
+                  const planValues = [
+                    row.free,
+                    row.freelancer,
+                    row.business,
+                    row.enterprise,
+                  ];
+
                   return (
                     <tr
                       key={index}
@@ -406,60 +401,34 @@ export function Pricing() {
                           isLastRow ? 'first:rounded-bl-3xl' : ''
                         )}
                       >
-                        {getFeatureTranslation(row.feature)}
+                        {getFeatureTranslation(row.featureKey)}
                       </td>
-                      <td
-                        className={clsx(
-                          'border-b border-r border-gray-200 px-6 py-4 text-center',
-                          isLastRow ? '' : ''
-                        )}
-                      >
-                        <div className="flex items-center justify-center">
-                          <FeatureIcon
-                            value={getFeatureValueTranslation(row.free)}
-                            className="w-5 h-5"
-                          />
-                        </div>
-                      </td>
-                      <td
-                        className={clsx(
-                          'border-b border-r border-gray-200 px-6 py-4 text-center',
-                          isLastRow ? '' : ''
-                        )}
-                      >
-                        <div className="flex items-center justify-center">
-                          <FeatureIcon
-                            value={getFeatureValueTranslation(row.freelancer)}
-                            className="w-5 h-5"
-                          />
-                        </div>
-                      </td>
-                      <td
-                        className={clsx(
-                          'border-b border-r border-gray-200 px-6 py-4 text-center bg-teal-50/30',
-                          isLastRow ? '' : ''
-                        )}
-                      >
-                        <div className="flex items-center justify-center">
-                          <FeatureIcon
-                            value={getFeatureValueTranslation(row.business)}
-                            className="w-5 h-5"
-                          />
-                        </div>
-                      </td>
-                      <td
-                        className={clsx(
-                          'border-b border-gray-200 px-6 py-4 text-center',
-                          isLastRow ? 'last:rounded-br-3xl' : ''
-                        )}
-                      >
-                        <div className="flex items-center justify-center">
-                          <FeatureIcon
-                            value={getFeatureValueTranslation(row.enterprise)}
-                            className="w-5 h-5"
-                          />
-                        </div>
-                      </td>
+                      {pricingPlansData.map((plan, planIndex) => {
+                        const isLast =
+                          planIndex === pricingPlansData.length - 1;
+                        const isFeatured = plan.featured;
+                        const value = planValues[planIndex];
+
+                        return (
+                          <td
+                            key={plan.name}
+                            className={clsx(
+                              'border-b px-6 py-4 text-center',
+                              isLast
+                                ? 'border-gray-200 last:rounded-br-3xl'
+                                : 'border-r border-gray-200',
+                              isFeatured ? 'bg-teal-50/30' : ''
+                            )}
+                          >
+                            <div className="flex items-center justify-center">
+                              <FeatureIcon
+                                value={getFeatureValueTranslation(value)}
+                                className="w-5 h-5"
+                              />
+                            </div>
+                          </td>
+                        );
+                      })}
                     </tr>
                   );
                 })}

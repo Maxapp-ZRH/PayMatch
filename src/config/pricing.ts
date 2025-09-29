@@ -98,6 +98,13 @@ export function createFeatureIcon(type: 'check' | 'cross', className?: string) {
 // Pricing plans data (without text content - handled by translations)
 export const pricingPlansData: PricingPlanData[] = [
   {
+    name: 'Free',
+    featured: false,
+    monthlyPrice: 0,
+    annualPrice: 0,
+    logomarkClassName: 'fill-gray-400',
+  },
+  {
     name: 'Freelancer',
     featured: false,
     monthlyPrice: 5,
