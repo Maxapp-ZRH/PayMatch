@@ -73,18 +73,17 @@ function Review({
     >
       <blockquote className="text-gray-900">
         <StarRating rating={rating} />
-        <p className="mt-3 sm:mt-4 text-sm sm:text-base lg:text-lg/6 font-semibold before:content-['\u201C'] after:content-['\u201D']">
-          {title}
+        <p className="mt-3 sm:mt-4 text-sm sm:text-base lg:text-lg font-semibold">
+          &ldquo;{title}&rdquo;
         </p>
-        <p className="mt-2 sm:mt-3 text-xs sm:text-sm lg:text-base/7">{body}</p>
+        <p className="mt-2 sm:mt-3 text-xs sm:text-sm lg:text-base">{body}</p>
       </blockquote>
-      <figcaption className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-600 before:content-['–_']">
-        {author}
+      <figcaption className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-600">
+        &ndash; {author}
       </figcaption>
     </figure>
   );
 }
-
 function splitArray<T>(array: Array<T>, numParts: number) {
   const result: Array<Array<T>> = [];
   for (let i = 0; i < array.length; i++) {
