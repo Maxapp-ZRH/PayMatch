@@ -310,27 +310,29 @@ export function Pricing() {
         </div>
 
         <div className="mx-auto mt-16 grid max-w-4xl grid-cols-1 items-start gap-x-8 gap-y-10 sm:mt-20 sm:grid-cols-2 lg:max-w-none lg:grid-cols-3">
-          {pricingPlans.map((plan) => {
-            const planKey = plan.name.toLowerCase();
-            const translatedPlan = {
-              ...plan,
-              description: t(`plans.${planKey}.description`),
-              features: t.raw(`plans.${planKey}.features`),
-              button: {
-                label: tCommon('buttons.getStarted'),
-                href: '/register',
-              },
-            };
-            return (
-              <Plan
-                key={plan.name}
-                {...translatedPlan}
-                activePeriod={activePeriod}
-                t={t}
-                currencySymbol={currencySymbol}
-              />
-            );
-          })}
+          {pricingPlans
+            .filter((plan) => plan.name !== 'Free')
+            .map((plan) => {
+              const planKey = plan.name.toLowerCase();
+              const translatedPlan = {
+                ...plan,
+                description: t(`plans.${planKey}.description`),
+                features: t.raw(`plans.${planKey}.features`),
+                button: {
+                  label: tCommon('buttons.getStarted'),
+                  href: '/register',
+                },
+              };
+              return (
+                <Plan
+                  key={plan.name}
+                  {...translatedPlan}
+                  activePeriod={activePeriod}
+                  t={t}
+                  currencySymbol={currencySymbol}
+                />
+              );
+            })}
         </div>
 
         {/* Feature Comparison Table */}

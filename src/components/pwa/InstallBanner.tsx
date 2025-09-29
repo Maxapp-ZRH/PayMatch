@@ -10,42 +10,48 @@ interface InstallBannerProps {
   onDismiss?: () => void;
 }
 
+const PWA_BANNER_STORAGE_KEY = 'pwa-banner-dismissed';
+const PWA_BANNER_DELAY = 2 * 60 * 1000; // 2 minutes in milliseconds
+
 export function InstallBanner({ onDismiss }: InstallBannerProps) {
   const t = useTranslations('utils.installBanner');
   const { isInstallable, isInstalled, installPWA } = usePWA();
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const handleDismiss = useCallback(() => {
     setIsExiting(true);
     setTimeout(() => {
       setIsVisible(false);
       setIsExiting(false);
-      localStorage.setItem('pwa-banner-dismissed', 'true');
+      localStorage.setItem(PWA_BANNER_STORAGE_KEY, 'true');
       onDismiss?.();
     }, 300);
   }, [onDismiss]);
 
-  // Show banner if installable and not installed
+  // Check if banner was previously dismissed
   useEffect(() => {
-    if (isInstallable && !isInstalled) {
-      // Delay showing to avoid immediate popup
-      const timer = setTimeout(() => {
-        setIsVisible(true);
-      }, 1000);
-      return () => clearTimeout(timer);
+    const wasDismissed =
+      localStorage.getItem(PWA_BANNER_STORAGE_KEY) === 'true';
+    if (wasDismissed) {
+      return; // Don't show if previously dismissed
     }
-  }, [isInstallable, isInstalled]);
 
-  // Auto-hide after 15 seconds
+    // Load PWA banner after 2 minutes
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, PWA_BANNER_DELAY);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show banner if installable, not installed, and loaded
   useEffect(() => {
-    if (isVisible) {
-      const timer = setTimeout(() => {
-        handleDismiss();
-      }, 15000);
-      return () => clearTimeout(timer);
+    if (isLoaded && isInstallable && !isInstalled) {
+      setIsVisible(true);
     }
-  }, [isVisible, handleDismiss]);
+  }, [isLoaded, isInstallable, isInstalled]);
 
   const handleInstall = async () => {
     await installPWA();
