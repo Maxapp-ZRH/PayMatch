@@ -1,0 +1,118 @@
+{
+  "title": "Imprint",
+  "lastUpdated": "September 28, 2025",
+  "sections": {
+    "companyInformation": {
+      "title": "1. Company Information",
+      "subsections": {
+        "companyName": {
+          "title": "Company Name",
+          "content": "Maxapp ZRH AG"
+        },
+        "address": {
+          "title": "Registered Address",
+          "content": "Birkenstrasse 49, 6343 Rotkreuz, Schweiz"
+        },
+        "phone": {
+          "title": "Phone",
+          "content": "+41 41 123 45 67"
+        },
+        "email": {
+          "title": "Email",
+          "content": "info@paymatch.ch"
+        },
+        "website": {
+          "title": "Website",
+          "content": "https://paymatch.ch"
+        }
+      }
+    },
+    "legalDetails": {
+      "title": "2. Legal Details",
+      "subsections": {
+        "legalForm": {
+          "title": "Legal Form",
+          "content": "Aktiengesellschaft (AG) - Swiss Corporation"
+        },
+        "registrationNumber": {
+          "title": "Commercial Register Number",
+          "content": "CHE-123.456.789"
+        },
+        "vatNumber": {
+          "title": "VAT Number",
+          "content": "CHE-123.456.789 MWST"
+        },
+        "chamberOfCommerce": {
+          "title": "Chamber of Commerce",
+          "content": "Zug Chamber of Commerce"
+        },
+        "managingDirector": {
+          "title": "Managing Director",
+          "content": "John Smith"
+        }
+      }
+    },
+    "businessPurpose": {
+      "title": "3. Business Purpose",
+      "content": "Development and operation of software solutions for Swiss QR-bill compliant invoicing and payment reconciliation services for Swiss and European businesses."
+    },
+    "regulatoryInformation": {
+      "title": "4. Regulatory Information",
+      "subsections": {
+        "dataProtection": {
+          "title": "Data Protection",
+          "content": "Our data protection practices comply with the Swiss Federal Data Protection Act (FADP) and the General Data Protection Regulation (GDPR)."
+        },
+        "financialServices": {
+          "title": "Financial Services",
+          "content": "PayMatch is not a financial institution and does not provide financial services. We provide software tools for invoicing and payment reconciliation."
+        },
+        "swissCompliance": {
+          "title": "Swiss Compliance",
+          "content": "Our invoicing solutions comply with Swiss QR-bill standards and Swiss Federal Tax Administration requirements."
+        }
+      }
+    },
+    "intellectualProperty": {
+      "title": "5. Intellectual Property",
+      "content": "All content, trademarks, and intellectual property rights on this website are owned by Maxapp ZRH AG or our licensors. Unauthorized use is prohibited."
+    },
+    "liability": {
+      "title": "6. Liability Disclaimer",
+      "content": "While we strive to provide accurate and up-to-date information, we cannot guarantee the completeness or accuracy of all content. We disclaim liability for any damages arising from the use of this website."
+    },
+    "externalLinks": {
+      "title": "7. External Links",
+      "content": "Our website may contain links to external websites. We are not responsible for the content or privacy practices of these external sites."
+    },
+    "governingLaw": {
+      "title": "8. Governing Law",
+      "content": "This website and its content are governed by Swiss law. Any disputes shall be subject to the jurisdiction of the courts of Zug, Switzerland."
+    },
+    "contact": {
+      "title": "9. Contact Information",
+      "subsections": {
+        "generalInquiries": {
+          "title": "General Inquiries",
+          "content": "info@paymatch.ch"
+        },
+        "support": {
+          "title": "Technical Support",
+          "content": "support@paymatch.ch"
+        },
+        "privacy": {
+          "title": "Privacy and Data Protection",
+          "content": "privacy@paymatch.ch"
+        },
+        "legal": {
+          "title": "Legal Matters",
+          "content": "legal@paymatch.ch"
+        }
+      }
+    },
+    "lastUpdated": {
+      "title": "10. Last Updated",
+      "content": "This imprint was last updated on September 28, 2025. We reserve the right to make changes at any time without prior notice."
+    }
+  }
+}

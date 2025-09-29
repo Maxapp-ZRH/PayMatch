@@ -1,13 +1,16 @@
 {
-  "categories": {
-    "general": "General",
-    "account": "Account & Billing",
-    "invoicing": "Invoicing",
-    "payments": "Payments",
-    "technical": "Technical",
-    "swiss-compliance": "Swiss Compliance"
-  },
+  "title": "Frequently Asked Questions",
+  "subtitle": "If you have anything else you want to ask,",
+  "contactUs": "reach out to us",
   "faq": {
+    "categories": {
+      "general": "General",
+      "account": "Account & Billing",
+      "invoicing": "Invoicing",
+      "payments": "Payments",
+      "technical": "Technical",
+      "swiss-compliance": "Swiss Compliance"
+    },
     "whatIsPayMatch": {
       "question": "What is PayMatch?",
       "answer": "PayMatch is a Swiss QR-bill invoicing platform designed specifically for Swiss businesses. It helps you create, send, and reconcile Swiss QR-bill compliant invoices effortlessly, with built-in payment matching and Swiss tax compliance features."

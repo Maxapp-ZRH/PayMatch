@@ -1,0 +1,121 @@
+{
+  "title": "Datenschutzerklärung",
+  "lastUpdated": "28. September 2025",
+  "sections": {
+    "introduction": {
+      "title": "1. Einführung",
+      "content": {
+        "paragraph1": "PayMatch (\"wir\", \"unser\" oder \"uns\") ist dem Schutz Ihrer Privatsphäre und persönlichen Daten verpflichtet. Diese Datenschutzerklärung erklärt, wie wir Ihre Informationen sammeln, verwenden, offenlegen und schützen, wenn Sie unsere Schweizer QR-Rechnungsplattform nutzen.",
+        "paragraph2": "Diese Richtlinie entspricht der Datenschutz-Grundverordnung (DSGVO), dem Schweizer Bundesgesetz über den Datenschutz (DSG) und den geltenden Datenschutzgesetzen in Deutschland, Frankreich und Italien."
+      },
+      "dataController": {
+        "title": "Verantwortlicher",
+        "content": "Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz"
+      },
+      "dataProtectionOfficer": {
+        "title": "Datenschutzbeauftragter",
+        "content": "privacy@paymatch.ch"
+      }
+    },
+    "dataCollection": {
+      "title": "2. Daten, die wir sammeln",
+      "subsections": {
+        "personalInformation": {
+          "title": "2.1 Persönliche Informationen",
+          "content": "Wir sammeln Informationen, die Sie uns direkt zur Verfügung stellen, z. B. wenn Sie ein Konto erstellen, unsere Dienste nutzen oder uns für Support kontaktieren."
+        },
+        "usageData": {
+          "title": "2.2 Nutzungsdaten",
+          "content": "Wir sammeln automatisch bestimmte Informationen über Ihre Nutzung unserer Dienste, einschließlich Geräteinformationen, IP-Adresse und Nutzungsmuster."
+        },
+        "cookies": {
+          "title": "2.3 Cookies und Tracking-Technologien",
+          "content": "Wir verwenden Cookies und ähnliche Technologien, um Ihre Erfahrung zu verbessern und Nutzungsmuster zu analysieren."
+        }
+      }
+    },
+    "dataUsage": {
+      "title": "3. Wie wir Ihre Daten verwenden",
+      "subsections": {
+        "serviceProvision": {
+          "title": "3.1 Dienstleistungserbringung",
+          "content": "Um unsere Rechnungs- und Zahlungsabstimmungsdienste bereitzustellen, zu warten und zu verbessern."
+        },
+        "communication": {
+          "title": "3.2 Kommunikation",
+          "content": "Um Ihnen wichtige Updates, Benachrichtigungen und Support-Kommunikationen zu senden."
+        },
+        "legalCompliance": {
+          "title": "3.3 Rechtliche Compliance",
+          "content": "Um den Schweizer Rechnungsvorschriften und den geltenden Gesetzen in Ihrer Gerichtsbarkeit zu entsprechen."
+        }
+      }
+    },
+    "dataSharing": {
+      "title": "4. Datenweitergabe und -offenlegung",
+      "subsections": {
+        "serviceProviders": {
+          "title": "4.1 Dienstleister",
+          "content": "Wir können Ihre Daten mit vertrauenswürdigen Drittanbietern teilen, die uns beim Betrieb unserer Plattform unterstützen."
+        },
+        "legalRequirements": {
+          "title": "4.2 Rechtliche Anforderungen",
+          "content": "Wir können Ihre Daten offenlegen, wenn dies gesetzlich vorgeschrieben ist oder um unsere Rechte und die Rechte anderer zu schützen."
+        },
+        "businessTransfers": {
+          "title": "4.3 Geschäftsübertragungen",
+          "content": "Im Falle einer Fusion, Übernahme oder eines Verkaufs von Vermögenswerten können Ihre Daten als Teil der Transaktion übertragen werden."
+        }
+      }
+    },
+    "dataSecurity": {
+      "title": "5. Datensicherheit",
+      "content": "Wir implementieren angemessene technische und organisatorische Maßnahmen, um Ihre persönlichen Daten vor unbefugtem Zugriff, Änderung, Offenlegung oder Zerstörung zu schützen."
+    },
+    "yourRights": {
+      "title": "6. Ihre Rechte",
+      "subsections": {
+        "access": {
+          "title": "6.1 Recht auf Auskunft",
+          "content": "Sie haben das Recht, Zugang zu Ihren persönlichen Daten und Informationen über deren Verarbeitung zu verlangen."
+        },
+        "rectification": {
+          "title": "6.2 Recht auf Berichtigung",
+          "content": "Sie haben das Recht, die Berichtigung unrichtiger oder unvollständiger persönlicher Daten zu verlangen."
+        },
+        "erasure": {
+          "title": "6.3 Recht auf Löschung",
+          "content": "Sie haben das Recht, die Löschung Ihrer persönlichen Daten unter bestimmten Umständen zu verlangen."
+        },
+        "portability": {
+          "title": "6.4 Recht auf Datenübertragbarkeit",
+          "content": "Sie haben das Recht, Ihre persönlichen Daten in einem strukturierten, gängigen Format zu erhalten."
+        },
+        "objection": {
+          "title": "6.5 Recht auf Widerspruch",
+          "content": "Sie haben das Recht, der Verarbeitung Ihrer persönlichen Daten für bestimmte Zwecke zu widersprechen."
+        }
+      }
+    },
+    "dataRetention": {
+      "title": "7. Datenspeicherung",
+      "content": "Wir speichern Ihre persönlichen Daten nur so lange, wie es zur Erfüllung der in dieser Datenschutzerklärung beschriebenen Zwecke erforderlich ist, es sei denn, eine längere Aufbewahrungsfrist ist gesetzlich vorgeschrieben."
+    },
+    "internationalTransfers": {
+      "title": "8. Internationale Datenübertragungen",
+      "content": "Ihre Daten können in Länder außerhalb des Europäischen Wirtschaftsraums übertragen und dort verarbeitet werden. Wir stellen sicher, dass angemessene Schutzmaßnahmen für solche Übertragungen vorhanden sind."
+    },
+    "childrenPrivacy": {
+      "title": "9. Datenschutz von Kindern",
+      "content": "Unsere Dienste sind nicht für Kinder unter 16 Jahren bestimmt. Wir sammeln nicht wissentlich persönliche Daten von Kindern unter 16 Jahren."
+    },
+    "changes": {
+      "title": "10. Änderungen dieser Datenschutzerklärung",
+      "content": "Wir können diese Datenschutzerklärung von Zeit zu Zeit aktualisieren. Wir werden Sie über Änderungen informieren, indem wir die neue Datenschutzerklärung auf dieser Seite veröffentlichen und das Datum der \"Zuletzt aktualisiert\" aktualisieren."
+    },
+    "contact": {
+      "title": "11. Kontaktieren Sie uns",
+      "content": "Wenn Sie Fragen zu dieser Datenschutzerklärung oder unseren Datenpraktiken haben, kontaktieren Sie uns bitte unter privacy@paymatch.ch oder schreiben Sie uns an Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
+    }
+  }
+}

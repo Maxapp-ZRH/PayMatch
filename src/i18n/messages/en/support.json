@@ -29,41 +29,49 @@
       "name": {
         "label": "Full Name",
         "placeholder": "Enter your full name",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       },
       "email": {
         "label": "Email Address",
         "placeholder": "your.email@example.com",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       },
       "company": {
         "label": "Company",
         "placeholder": "Your company name",
-        "required": false
+        "required": "",
+        "requiredValue": false
       },
       "category": {
         "label": "Category",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       },
       "priority": {
         "label": "Priority",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       },
       "subject": {
         "label": "Subject",
         "placeholder": "Brief description of your issue",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       },
       "message": {
         "label": "Detailed Message",
         "placeholder": "Please provide as much detail as possible about your issue, including steps to reproduce if applicable...",
-        "required": true,
+        "required": "*",
+        "requiredValue": true,
         "minLength": "Minimum 10 characters",
         "maxLength": "Maximum 2000 characters"
       },
       "consent": {
         "label": "I agree to the Privacy Policy and consent to PayMatch processing my personal data to respond to this inquiry.",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       }
     },
     "categories": {
@@ -121,7 +129,17 @@
     "buttons": {
       "sendMessage": "Send Message",
       "sending": "Sending...",
-      "stillNeedHelp": "Still need help? Contact support"
+      "stillNeedHelp": "Still need help? Contact support",
+      "loadMoreQuestions": "Load More Questions",
+      "clearFilters": "Clear filters"
+    },
+    "pagination": {
+      "moreQuestionsAvailable": "more questions available",
+      "showingQuestions": "Showing {current} of {total} questions",
+      "questionsFound": "Questions Found",
+      "questionFound": "Question Found",
+      "noQuestionsFound": "No questions found",
+      "noQuestionsDescription": "Try adjusting your search terms or browse all categories."
     },
     "contactInfo": {
       "emailSupport": {

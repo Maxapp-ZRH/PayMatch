@@ -14,92 +14,7 @@ interface Review {
   rating: 1 | 2 | 3 | 4 | 5;
 }
 
-const reviews: Array<Review> = [
-  {
-    title: 'Finally, Swiss invoicing made simple.',
-    body: 'As a freelancer in Zürich, I was struggling with QR-bill compliance. PayMatch made it effortless - I can create professional invoices in minutes.',
-    author: 'Maria Schmidt, Freelancer',
-    rating: 5,
-  },
-  {
-    title: 'Payment reconciliation is a game-changer.',
-    body: 'Uploading CAMT files and having payments automatically matched to invoices saves me hours every week. My accountant loves the clean data.',
-    author: 'Thomas Müller, SME Owner',
-    rating: 5,
-  },
-  {
-    title: 'Perfect for Swiss businesses.',
-    body: 'The multi-currency support (CHF/EUR) and Swiss VAT calculations are exactly what we needed. Finally, an invoicing tool built for our market.',
-    author: 'Anna Weber, Accounting Firm',
-    rating: 5,
-  },
-  {
-    title: 'Professional and compliant.',
-    body: 'Every invoice looks professional and meets Swiss standards. Clients pay faster because they trust the QR-bill format. Highly recommended!',
-    author: 'David Fischer, Consultant',
-    rating: 5,
-  },
-  {
-    title: 'Saves me 5 hours per week.',
-    body: 'The automated reminders and payment tracking features are incredible. I can focus on my business instead of chasing payments.',
-    author: 'Sarah Zimmermann, Service Provider',
-    rating: 5,
-  },
-  {
-    title: 'Best invoicing tool for Switzerland.',
-    body: 'I tried several other platforms, but none understood Swiss requirements like PayMatch. The QR-bill generation is flawless.',
-    author: 'Michael Keller, Agency Owner',
-    rating: 5,
-  },
-  {
-    title: 'Team collaboration is excellent.',
-    body: 'My team can manage invoices together seamlessly. The real-time updates and notifications keep everyone in sync.',
-    author: 'Lisa Brunner, Operations Manager',
-    rating: 5,
-  },
-  {
-    title: 'GDPR compliance built-in.',
-    body: 'Knowing my client data is secure and GDPR compliant gives me peace of mind. The security features are enterprise-grade.',
-    author: 'Robert Huber, Data-Sensitive Business',
-    rating: 5,
-  },
-  {
-    title: 'Financial reporting is comprehensive.',
-    body: 'The reporting features help me understand my cash flow better. Exporting data for my accountant is seamless.',
-    author: 'Christine Wagner, Financial Controller',
-    rating: 5,
-  },
-  {
-    title: 'Customer support is outstanding.',
-    body: 'When I had questions about Swiss VAT rules, their support team was incredibly helpful and knowledgeable about local regulations.',
-    author: 'Peter Lehmann, New Business Owner',
-    rating: 5,
-  },
-  {
-    title: 'Worth every Swiss Franc.',
-    body: 'The time I save on invoicing and payment tracking more than pays for the subscription. It has transformed my business operations.',
-    author: 'Nicole Graf, Professional Services',
-    rating: 5,
-  },
-  {
-    title: 'Intuitive and powerful.',
-    body: 'The interface is clean and easy to use, but the features are comprehensive. Perfect balance of simplicity and functionality.',
-    author: 'Stefan Roth, Tech Consultant',
-    rating: 5,
-  },
-  {
-    title: 'Swiss precision at its finest.',
-    body: 'PayMatch embodies Swiss quality - precise, reliable, and efficient. Everything works exactly as promised.',
-    author: 'Andrea Meier, Quality Manager',
-    rating: 5,
-  },
-  {
-    title: 'Game-changer for my practice.',
-    body: 'As a fiduciary, I manage multiple clients. PayMatch makes it easy to keep everything organized and compliant.',
-    author: 'Markus Schneider, Fiduciary',
-    rating: 5,
-  },
-];
+// Reviews will be loaded from translations
 
 function StarIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -232,8 +147,12 @@ function ReviewColumn({
 }
 
 function ReviewGrid() {
+  const t = useTranslations('reviews');
   const containerRef = useRef<React.ElementRef<'div'>>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.4 });
+
+  // Get reviews from translations
+  const reviews = t.raw('reviews') as Array<Review>;
   const columns = splitArray(reviews, 3);
   const column1 = columns[0];
   const column2 = columns[1];

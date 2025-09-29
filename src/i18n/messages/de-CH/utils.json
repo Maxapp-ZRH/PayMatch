@@ -1,0 +1,48 @@
+{
+  "installBanner": {
+    "title": "PayMatch installieren",
+    "description": "Erhalten Sie schnellen Zugang zu Ihrer Schweizer Rechnungsplattform",
+    "install": "Installieren",
+    "notNow": "Nicht jetzt"
+  },
+  "updateNotification": {
+    "title": "Update verfügbar",
+    "description": "Eine neue Version von PayMatch ist mit Verbesserungen bereit",
+    "updateNow": "Jetzt aktualisieren",
+    "later": "Später"
+  },
+  "cookieBanner": {
+    "title": "Wir verwenden Cookies",
+    "description": "Wir verwenden Cookies, um Ihre Erfahrung zu verbessern, Website-Traffic zu analysieren und Inhalte zu personalisieren. Sie können Ihre Präferenzen anpassen oder alle Cookies akzeptieren.",
+    "acceptAll": "Alle akzeptieren",
+    "customize": "Anpassen",
+    "rejectAll": "Alle ablehnen",
+    "settings": {
+      "title": "Cookie-Einstellungen",
+      "description": "Wählen Sie aus, welche Cookies Sie zulassen möchten. Sie können diese Einstellungen jederzeit ändern.",
+      "necessary": {
+        "title": "Notwendige Cookies",
+        "description": "Diese Cookies sind für das ordnungsgemäße Funktionieren der Website unerlässlich. Sie können nicht deaktiviert werden.",
+        "enabled": "Immer aktiv"
+      },
+      "analytics": {
+        "title": "Analyse-Cookies",
+        "description": "Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren, indem sie Informationen anonym sammeln und melden.",
+        "enabled": "Aktiviert"
+      },
+      "marketing": {
+        "title": "Marketing-Cookies",
+        "description": "Diese Cookies werden verwendet, um Besucher über Websites hinweg zu verfolgen, um relevante und ansprechende Werbung anzuzeigen.",
+        "enabled": "Aktiviert"
+      },
+      "savePreferences": "Einstellungen speichern",
+      "back": "Zurück"
+    }
+  },
+  "statusIndicator": {
+    "online": "Online",
+    "offline": "Offline",
+    "syncing": "Synchronisiere...",
+    "error": "Verbindungsfehler"
+  }
+}

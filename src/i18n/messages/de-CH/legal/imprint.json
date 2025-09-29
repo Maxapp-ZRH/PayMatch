@@ -1,0 +1,118 @@
+{
+  "title": "Impressum",
+  "lastUpdated": "28. September 2025",
+  "sections": {
+    "companyInformation": {
+      "title": "1. Firmeninformationen",
+      "subsections": {
+        "companyName": {
+          "title": "Firmenname",
+          "content": "Maxapp ZRH AG"
+        },
+        "address": {
+          "title": "Sitz",
+          "content": "Birkenstrasse 49, 6343 Rotkreuz, Schweiz"
+        },
+        "phone": {
+          "title": "Telefon",
+          "content": "+41 41 123 45 67"
+        },
+        "email": {
+          "title": "E-Mail",
+          "content": "info@paymatch.ch"
+        },
+        "website": {
+          "title": "Website",
+          "content": "https://paymatch.ch"
+        }
+      }
+    },
+    "legalDetails": {
+      "title": "2. Rechtliche Angaben",
+      "subsections": {
+        "legalForm": {
+          "title": "Rechtsform",
+          "content": "Aktiengesellschaft (AG)"
+        },
+        "registrationNumber": {
+          "title": "Handelsregister-Nummer",
+          "content": "CHE-123.456.789"
+        },
+        "vatNumber": {
+          "title": "MWST-Nummer",
+          "content": "CHE-123.456.789 MWST"
+        },
+        "chamberOfCommerce": {
+          "title": "Handelskammer",
+          "content": "Handelskammer Zug"
+        },
+        "managingDirector": {
+          "title": "Geschäftsführer",
+          "content": "John Smith"
+        }
+      }
+    },
+    "businessPurpose": {
+      "title": "3. Geschäftszweck",
+      "content": "Entwicklung und Betrieb von Softwarelösungen für Swiss QR-Bill-konforme Rechnungsstellung und Zahlungsabstimmungsdienste für Schweizer und europäische Unternehmen."
+    },
+    "regulatoryInformation": {
+      "title": "4. Regulatorische Informationen",
+      "subsections": {
+        "dataProtection": {
+          "title": "Datenschutz",
+          "content": "Unsere Datenschutzpraktiken entsprechen dem Schweizer Bundesgesetz über den Datenschutz (DSG) und der Datenschutz-Grundverordnung (DSGVO)."
+        },
+        "financialServices": {
+          "title": "Finanzdienstleistungen",
+          "content": "PayMatch ist kein Finanzinstitut und bietet keine Finanzdienstleistungen an. Wir bieten Software-Tools für Rechnungsstellung und Zahlungsabstimmung."
+        },
+        "swissCompliance": {
+          "title": "Schweizer Compliance",
+          "content": "Unsere Rechnungslösungen entsprechen den Swiss QR-Bill-Standards und den Anforderungen der Eidgenössischen Steuerverwaltung."
+        }
+      }
+    },
+    "intellectualProperty": {
+      "title": "5. Geistiges Eigentum",
+      "content": "Alle Inhalte, Marken und geistigen Eigentumsrechte auf dieser Website gehören der Maxapp ZRH AG oder unseren Lizenzgebern. Unbefugte Nutzung ist verboten."
+    },
+    "liability": {
+      "title": "6. Haftungsausschluss",
+      "content": "Obwohl wir uns bemühen, genaue und aktuelle Informationen bereitzustellen, können wir nicht die Vollständigkeit oder Genauigkeit aller Inhalte garantieren. Wir lehnen die Haftung für Schäden ab, die aus der Nutzung dieser Website entstehen."
+    },
+    "externalLinks": {
+      "title": "7. Externe Links",
+      "content": "Unsere Website kann Links zu externen Websites enthalten. Wir sind nicht verantwortlich für den Inhalt oder die Datenschutzpraktiken dieser externen Websites."
+    },
+    "governingLaw": {
+      "title": "8. Geltendes Recht",
+      "content": "Diese Website und ihre Inhalte unterliegen dem Schweizer Recht. Alle Streitigkeiten unterliegen der Gerichtsbarkeit der Gerichte von Zug, Schweiz."
+    },
+    "contact": {
+      "title": "9. Kontaktinformationen",
+      "subsections": {
+        "generalInquiries": {
+          "title": "Allgemeine Anfragen",
+          "content": "info@paymatch.ch"
+        },
+        "support": {
+          "title": "Technischer Support",
+          "content": "support@paymatch.ch"
+        },
+        "privacy": {
+          "title": "Datenschutz und Datenschutz",
+          "content": "privacy@paymatch.ch"
+        },
+        "legal": {
+          "title": "Rechtliche Angelegenheiten",
+          "content": "legal@paymatch.ch"
+        }
+      }
+    },
+    "lastUpdated": {
+      "title": "10. Zuletzt aktualisiert",
+      "content": "Dieses Impressum wurde zuletzt am 28. September 2025 aktualisiert. Wir behalten uns das Recht vor, jederzeit ohne vorherige Ankündigung Änderungen vorzunehmen."
+    }
+  }
+}

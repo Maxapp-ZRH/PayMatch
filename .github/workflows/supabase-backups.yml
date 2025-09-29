@@ -56,7 +56,7 @@ jobs:
       - name: Commit backup files
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: 'backup: Supabase comprehensive backup $(date +"%Y-%m-%d %H:%M")'
+          commit_message: 'Supabase Backup'
           file_pattern: 'supabase/backups/*.sql'
           commit_user_name: 'Supabase Backup Bot'
           commit_user_email: 'backup@paymatch.ch'

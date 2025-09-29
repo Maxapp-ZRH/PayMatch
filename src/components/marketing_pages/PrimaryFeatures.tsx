@@ -18,6 +18,18 @@ import { Container } from '@/components/marketing_pages/Container';
 import { PhoneFrame } from '@/components/marketing_pages/PhoneFrame';
 import { useTranslations } from 'next-intl';
 
+// Define Feature type
+interface Feature {
+  name: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  screen: React.ComponentType<{
+    t: (key: string) => string;
+    animated?: boolean;
+    custom?: CustomAnimationProps;
+  }>;
+}
+
 const MotionAppScreenHeader = motion.create(AppScreen.Header);
 const MotionAppScreenBody = motion.create(AppScreen.Body);
 
@@ -26,29 +38,7 @@ interface CustomAnimationProps {
   changeCount: number;
 }
 
-const features = [
-  {
-    name: 'Add & manage clients',
-    description:
-      'Create and organize your client database with contact details, billing information, and payment preferences. Keep everything in one place.',
-    icon: DeviceUserIcon,
-    screen: ClientManagementScreen,
-  },
-  {
-    name: 'Create invoices by selecting clients',
-    description:
-      'Generate Swiss QR-bill invoices in seconds by selecting from your client list. Automatic tax calculations and professional formatting included.',
-    icon: DeviceNotificationIcon,
-    screen: InvoiceCreationScreen,
-  },
-  {
-    name: 'Track invoice status & reconcile payments',
-    description:
-      'Monitor Paid, Pending, and Overdue invoices at a glance. Auto-sync with your bank for real-time payment matching, with manual CAMT upload as fallback.',
-    icon: DeviceTouchIcon,
-    screen: ReconciliationScreen,
-  },
-];
+// Features will be loaded from translations
 
 function DeviceUserIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -181,21 +171,29 @@ type ScreenProps =
     }
   | { animated?: false };
 
-function ClientManagementScreen(props: ScreenProps) {
+function ClientManagementScreen(
+  props: ScreenProps & { t: (key: string) => string }
+) {
   return (
     <AppScreen className="w-full">
       <MotionAppScreenHeader {...(props.animated ? headerAnimation : {})}>
-        <AppScreen.Title>Clients</AppScreen.Title>
-        <AppScreen.Subtitle>Manage your client database</AppScreen.Subtitle>
+        <AppScreen.Title>
+          {props.t('screens.clientManagement.title')}
+        </AppScreen.Title>
+        <AppScreen.Subtitle>
+          {props.t('screens.clientManagement.subtitle')}
+        </AppScreen.Subtitle>
       </MotionAppScreenHeader>
       <MotionAppScreenBody
         {...(props.animated ? { ...bodyAnimation, custom: props.custom } : {})}
       >
         <div className="px-4 py-6">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">All Clients</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {props.t('screens.clientManagement.allClients')}
+            </h3>
             <div className="rounded-lg bg-teal-600 px-3 py-1 text-sm font-semibold text-white">
-              + Add Client
+              {props.t('screens.clientManagement.addClient')}
             </div>
           </div>
           <div className="space-y-3">
@@ -243,7 +241,8 @@ function ClientManagementScreen(props: ScreenProps) {
                   <div className="font-medium text-gray-900">{client.name}</div>
                   <div className="text-sm text-gray-500">{client.email}</div>
                   <div className="text-xs text-gray-400">
-                    {client.location} • {client.invoices}
+                    {client.location} • {client.invoices}{' '}
+                    {props.t('screens.clientManagement.invoices')}
                   </div>
                 </div>
                 <div className="text-xs text-gray-400">•••</div>
@@ -256,13 +255,17 @@ function ClientManagementScreen(props: ScreenProps) {
   );
 }
 
-function InvoiceCreationScreen(props: ScreenProps) {
+function InvoiceCreationScreen(
+  props: ScreenProps & { t: (key: string) => string }
+) {
   return (
     <AppScreen className="w-full">
       <MotionAppScreenHeader {...(props.animated ? headerAnimation : {})}>
-        <AppScreen.Title>Create Invoice</AppScreen.Title>
+        <AppScreen.Title>
+          {props.t('screens.invoiceCreation.title')}
+        </AppScreen.Title>
         <AppScreen.Subtitle>
-          Select client and generate QR-bill
+          {props.t('screens.invoiceCreation.subtitle')}
         </AppScreen.Subtitle>
       </MotionAppScreenHeader>
       <MotionAppScreenBody
@@ -272,7 +275,7 @@ function InvoiceCreationScreen(props: ScreenProps) {
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium text-gray-700">
-                Select Client
+                {props.t('screens.invoiceCreation.selectClient')}
               </label>
               <div className="mt-2 rounded-lg border border-gray-300 bg-white p-3">
                 <div className="flex items-center gap-3">
@@ -295,7 +298,7 @@ function InvoiceCreationScreen(props: ScreenProps) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-gray-700">
-                  Amount
+                  {props.t('screens.invoiceCreation.amount')}
                 </label>
                 <div className="mt-2 rounded-lg border border-gray-300 bg-white p-3">
                   <div className="text-sm text-gray-900">CHF 1,250.00</div>
@@ -303,7 +306,7 @@ function InvoiceCreationScreen(props: ScreenProps) {
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-700">
-                  Due Date
+                  {props.t('screens.invoiceCreation.dueDate')}
                 </label>
                 <div className="mt-2 rounded-lg border border-gray-300 bg-white p-3">
                   <div className="text-sm text-gray-900">30 days</div>
@@ -313,20 +316,22 @@ function InvoiceCreationScreen(props: ScreenProps) {
 
             <div>
               <label className="text-sm font-medium text-gray-700">
-                Description
+                {props.t('screens.invoiceCreation.description')}
               </label>
               <div className="mt-2 rounded-lg border border-gray-300 bg-white p-3">
-                <div className="text-sm text-gray-900">Consulting Services</div>
+                <div className="text-sm text-gray-900">
+                  {props.t('screens.invoiceCreation.consultingServices')}
+                </div>
               </div>
             </div>
           </div>
 
           <div className="mt-6 space-y-2">
             <div className="rounded-lg bg-teal-600 px-4 py-3 text-center text-sm font-semibold text-white">
-              Generate Swiss QR-Bill
+              {props.t('screens.invoiceCreation.generateQRBill')}
             </div>
             <div className="text-center text-xs text-gray-500">
-              Automatic tax calculation included
+              {props.t('screens.invoiceCreation.autoTaxCalculation')}
             </div>
           </div>
         </div>
@@ -335,13 +340,17 @@ function InvoiceCreationScreen(props: ScreenProps) {
   );
 }
 
-function ReconciliationScreen(props: ScreenProps) {
+function ReconciliationScreen(
+  props: ScreenProps & { t: (key: string) => string }
+) {
   return (
     <AppScreen className="w-full">
       <MotionAppScreenHeader {...(props.animated ? headerAnimation : {})}>
-        <AppScreen.Title>Reconciliation</AppScreen.Title>
+        <AppScreen.Title>
+          {props.t('screens.reconciliation.title')}
+        </AppScreen.Title>
         <AppScreen.Subtitle>
-          Auto bank sync & payment tracking
+          {props.t('screens.reconciliation.subtitle')}
         </AppScreen.Subtitle>
       </MotionAppScreenHeader>
       <MotionAppScreenBody
@@ -353,14 +362,14 @@ function ReconciliationScreen(props: ScreenProps) {
               <div className="flex items-center gap-2">
                 <div className="text-green-600">🔄</div>
                 <div className="text-sm font-medium text-green-900">
-                  Auto Sync
+                  {props.t('screens.reconciliation.autoSync')}
                 </div>
                 <div className="ml-auto text-xs text-green-700 bg-green-100 px-2 py-1 rounded-full">
-                  Active
+                  {props.t('screens.reconciliation.active')}
                 </div>
               </div>
               <div className="text-xs text-green-700 mt-1">
-                Last sync: 2 minutes ago
+                {props.t('screens.reconciliation.lastSync')}
               </div>
             </div>
 
@@ -368,19 +377,21 @@ function ReconciliationScreen(props: ScreenProps) {
               <div className="flex items-center gap-2">
                 <div className="text-blue-600">📄</div>
                 <div className="text-sm font-medium text-blue-900">
-                  Manual Upload
+                  {props.t('screens.reconciliation.manualUpload')}
                 </div>
-                <div className="ml-auto text-xs text-blue-500">Fallback</div>
+                <div className="ml-auto text-xs text-blue-500">
+                  {props.t('screens.reconciliation.fallback')}
+                </div>
               </div>
               <div className="text-xs text-blue-700 mt-1">
-                Drag & drop CAMT files if needed
+                {props.t('screens.reconciliation.dragDropCAMT')}
               </div>
             </div>
           </div>
 
           <div className="space-y-3">
             <div className="text-sm font-medium text-gray-700">
-              Recent Invoices
+              {props.t('screens.reconciliation.recentInvoices')}
             </div>
             {[
               {
@@ -438,10 +449,10 @@ function ReconciliationScreen(props: ScreenProps) {
 
           <div className="mt-4 rounded-lg bg-green-50 border border-green-200 p-3">
             <div className="text-sm font-medium text-green-900">
-              Auto-matched: 2 payments
+              {props.t('screens.reconciliation.autoMatched')}
             </div>
             <div className="text-xs text-green-700">
-              Total: CHF 1,700.00 • Synced 2 min ago
+              {props.t('screens.reconciliation.total')}
             </div>
           </div>
         </div>
@@ -460,7 +471,13 @@ function usePrevious<T>(value: T) {
   return ref.current;
 }
 
-function FeaturesDesktop() {
+function FeaturesDesktop({
+  features,
+  t,
+}: {
+  features: Feature[];
+  t: (key: string) => string;
+}) {
   const [changeCount, setChangeCount] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const prevIndex = usePrevious(selectedIndex);
@@ -530,6 +547,7 @@ function FeaturesDesktop() {
                     <feature.screen
                       animated
                       custom={{ isForwards, changeCount }}
+                      t={t}
                     />
                   </TabPanel>
                 ) : null
@@ -542,7 +560,13 @@ function FeaturesDesktop() {
   );
 }
 
-function FeaturesMobile() {
+function FeaturesMobile({
+  features,
+  t,
+}: {
+  features: Feature[];
+  t: (key: string) => string;
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const slideContainerRef = useRef<React.ElementRef<'div'>>(null);
   const slideRefs = useRef<Array<React.ElementRef<'div'>>>([]);
@@ -598,7 +622,7 @@ function FeaturesMobile() {
                 />
               </div>
               <PhoneFrame className="relative mx-auto w-full max-w-[366px]">
-                <feature.screen />
+                <feature.screen t={t} />
               </PhoneFrame>
               <div className="absolute inset-x-0 bottom-0 bg-gray-800/95 p-6 backdrop-blur-sm sm:p-10">
                 <feature.icon className="h-8 w-8" />
@@ -641,6 +665,25 @@ function FeaturesMobile() {
 export function PrimaryFeatures() {
   const t = useTranslations('features');
 
+  // Create features array from translations
+  const features = t
+    .raw('features')
+    .map(
+      (
+        feature: { name: string; description: string; icon: string },
+        index: number
+      ) => ({
+        name: feature.name,
+        description: feature.description,
+        icon: [DeviceUserIcon, DeviceNotificationIcon, DeviceTouchIcon][index],
+        screen: [
+          ClientManagementScreen,
+          InvoiceCreationScreen,
+          ReconciliationScreen,
+        ][index],
+      })
+    );
+
   return (
     <section
       id="features"
@@ -656,10 +699,10 @@ export function PrimaryFeatures() {
         </div>
       </Container>
       <div className="mt-16 md:hidden">
-        <FeaturesMobile />
+        <FeaturesMobile features={features} t={t} />
       </div>
       <Container className="hidden md:mt-20 md:block">
-        <FeaturesDesktop />
+        <FeaturesDesktop features={features} t={t} />
       </Container>
       <Container className="mt-8">
         <div className="text-center">

@@ -1,7 +1,9 @@
 {
   "navigation": {
     "features": "Features",
+    "reviews": "Reviews",
     "pricing": "Pricing",
+    "faqs": "FAQs",
     "login": "Login",
     "register": "Register"
   },
@@ -9,5 +11,34 @@
     "getStarted": "Get Started",
     "learnMore": "Learn More",
     "contactUs": "Contact Us"
+  },
+  "footer": {
+    "description": "Swiss invoicing made simple. Create, send, and track invoices with QR-bill compliance.",
+    "links": {
+      "startInvoicing": "Start Invoicing",
+      "startInvoicingDescription": "Scan QR code to get started with PayMatch",
+      "company": "Company",
+      "support": "Support",
+      "legal": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy",
+      "gdpr": "GDPR",
+      "imprint": "Imprint"
+    },
+    "newsletter": {
+      "title": "Stay Updated",
+      "description": "Get the latest updates on PayMatch features and Swiss invoicing regulations.",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "consent": "I agree to the",
+      "and": "and",
+      "apply": "that apply",
+      "subscribe": "Subscribe"
+    },
+    "copyright": "© 2024 PayMatch. All rights reserved.",
+    "developedBy": "Developed by"
   }
 }

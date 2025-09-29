@@ -3,16 +3,18 @@
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export function NavLinks() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const timeoutRef = useRef<number | null>(null);
+  const t = useTranslations('common.navigation');
 
   return [
-    ['Features', '/#features'],
-    ['Reviews', '/#reviews'],
-    ['Pricing', '/#pricing'],
-    ['FAQs', '/#faqs'],
+    [t('features'), '/#features'],
+    [t('reviews'), '/#reviews'],
+    [t('pricing'), '/#pricing'],
+    [t('faqs'), '/#faqs'],
   ].map(([label, href], index) => (
     <Link
       key={label}

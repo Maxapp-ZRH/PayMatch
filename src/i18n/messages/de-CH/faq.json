@@ -1,13 +1,16 @@
 {
-  "categories": {
-    "general": "Allgemein",
-    "account": "Konto & Abrechnung",
-    "invoicing": "Rechnungswesen",
-    "payments": "Zahlungen",
-    "technical": "Technisch",
-    "swiss-compliance": "Schweizer Konformität"
-  },
+  "title": "Häufig gestellte Fragen",
+  "subtitle": "Falls Sie noch andere Fragen haben,",
+  "contactUs": "kontaktieren Sie uns",
   "faq": {
+    "categories": {
+      "general": "Allgemein",
+      "account": "Konto & Abrechnung",
+      "invoicing": "Rechnungswesen",
+      "payments": "Zahlungen",
+      "technical": "Technisch",
+      "swiss-compliance": "Schweizer Konformität"
+    },
     "whatIsPayMatch": {
       "question": "Was ist PayMatch?",
       "answer": "PayMatch ist eine Schweizer QR-Rechnungsplattform, die speziell für Schweizer Unternehmen entwickelt wurde. Sie hilft Ihnen dabei, Swiss QR-Bill-konforme Rechnungen mühelos zu erstellen, zu versenden und abzugleichen, mit integrierter Zahlungsabstimmung und Schweizer Steuerkonformität."
@@ -19,6 +22,126 @@
     "pricingPlans": {
       "question": "Welche Preismodelle bieten Sie an?",
       "answer": "Wir bieten drei Hauptpläne an: Kostenlos (5 Rechnungen/Monat), Freelancer (CHF 5/Monat, unbegrenzte Rechnungen), Business (CHF 50/Monat, Team-Features) und Enterprise (CHF 150/Monat, unbegrenzte Benutzer). Alle Preise inklusive Schweizer Mehrwertsteuer."
+    },
+    "createAccount": {
+      "question": "Wie erstelle ich ein Konto?",
+      "answer": "Besuchen Sie einfach unsere Registrierungsseite, geben Sie Ihre Unternehmensdaten ein und verifizieren Sie Ihre E-Mail-Adresse. Sie können mit unserem kostenlosen Plan beginnen und jederzeit upgraden. Wir benötigen grundlegende Unternehmensinformationen für die Schweizer Konformität."
+    },
+    "changePlan": {
+      "question": "Wie ändere ich meinen Plan?",
+      "answer": "Sie können Ihren Plan jederzeit in Ihren Kontoeinstellungen upgraden oder downgraden. Änderungen werden im nächsten Abrechnungszyklus wirksam. Downgrades können je nach Ihrer aktuellen Nutzung eine Datenmigration erfordern."
+    },
+    "cancelSubscription": {
+      "question": "Wie kündige ich mein Abonnement?",
+      "answer": "Sie können Ihr Abonnement jederzeit in Ihren Kontoeinstellungen kündigen. Ihr Konto bleibt bis zum Ende Ihres aktuellen Abrechnungszeitraums aktiv. Sie können Ihre Daten vor der Kündigung exportieren."
+    },
+    "billingInvoices": {
+      "question": "Wo finde ich meine Abrechnungsrechnungen?",
+      "answer": "Alle Abrechnungsrechnungen sind in Ihren Kontoeinstellungen unter \"Abrechnungshistorie\" verfügbar. Sie können PDF-Kopien herunterladen und den Zahlungsstatus einsehen. Rechnungen werden auch an Ihre registrierte E-Mail-Adresse gesendet."
+    },
+    "createInvoice": {
+      "question": "Wie erstelle ich eine neue Rechnung?",
+      "answer": "Klicken Sie auf \"Rechnung erstellen\" in Ihrem Dashboard, füllen Sie die Kundendaten aus, fügen Sie Positionen hinzu, und das System generiert automatisch eine Swiss QR-Bill-konforme Rechnung. Sie können vor dem Versenden eine Vorschau anzeigen."
+    },
+    "invoiceTemplates": {
+      "question": "Kann ich Rechnungsvorlagen anpassen?",
+      "answer": "Ja! Sie können Ihre Rechnungsvorlagen mit Ihrem Logo, Farben und Unternehmensbranding anpassen. Wir bieten mehrere professionelle Vorlagen, die den Schweizer Rechnungsstandards entsprechen."
+    },
+    "invoiceLanguages": {
+      "question": "Welche Sprachen werden für Rechnungen unterstützt?",
+      "answer": "Wir unterstützen Deutsch, Französisch, Italienisch und Englisch für die Rechnungserstellung. Der Swiss QR-Bill-Bereich wird automatisch in der entsprechenden Sprache basierend auf dem Standort Ihres Kunden generiert."
+    },
+    "recurringInvoices": {
+      "question": "Kann ich wiederkehrende Rechnungen erstellen?",
+      "answer": "Ja, Sie können wiederkehrende Rechnungen für regelmäßige Kunden einrichten. Legen Sie die Häufigkeit fest (monatlich, vierteljährlich, jährlich) und das System generiert und versendet Rechnungen automatisch nach Zeitplan."
+    },
+    "paymentMethods": {
+      "question": "Welche Zahlungsmethoden unterstützen Sie?",
+      "answer": "Wir unterstützen alle wichtigen Schweizer Zahlungsmethoden einschließlich Banküberweisungen, Kreditkarten und digitalen Geldbörsen. Zahlungen werden sicher über Stripe mit Schweizer Bankintegration verarbeitet."
+    },
+    "paymentMatching": {
+      "question": "Wie funktioniert die Zahlungsabstimmung?",
+      "answer": "Laden Sie Ihre CAMT.053-Bankauszugdateien hoch und unser System stimmt eingehende Zahlungen automatisch mit ausstehenden Rechnungen ab. Sie können auch manuell Zahlungen abgleichen oder automatische Regeln einrichten."
+    },
+    "paymentReminders": {
+      "question": "Kann ich Zahlungserinnerungen senden?",
+      "answer": "Ja, Sie können automatisierte Zahlungserinnerungen in anpassbaren Intervallen senden. Richten Sie Erinnerungspläne ein und das System sendet automatisch Follow-up-E-Mails für überfällige Rechnungen."
+    },
+    "refundProcess": {
+      "question": "Wie verarbeite ich Rückerstattungen?",
+      "answer": "Rückerstattungen können direkt von der Rechnungsdetailseite verarbeitet werden. Sie können Teil- oder Vollrückerstattungen ausstellen, und das System aktualisiert automatisch den Zahlungsstatus und generiert Rückerstattungsbelege."
+    },
+    "browserSupport": {
+      "question": "Welche Browser werden unterstützt?",
+      "answer": "PayMatch funktioniert auf allen modernen Browsern einschließlich Chrome, Firefox, Safari und Edge. Wir empfehlen die Verwendung der neuesten Version Ihres bevorzugten Browsers für die beste Erfahrung."
+    },
+    "mobileApp": {
+      "question": "Gibt es eine mobile App?",
+      "answer": "PayMatch ist eine Progressive Web App (PWA), die auf mobilen Geräten funktioniert. Sie können sie auf dem Startbildschirm Ihres Telefons installieren für eine native App-ähnliche Erfahrung mit Offline-Funktionen."
+    },
+    "dataExport": {
+      "question": "Kann ich meine Daten exportieren?",
+      "answer": "Ja, Sie können alle Ihre Daten einschließlich Rechnungen, Kunden und Berichte in verschiedenen Formaten (PDF, Excel, CSV) exportieren. Der Datenexport ist in Ihren Kontoeinstellungen verfügbar und ist DSGVO-konform."
+    },
+    "apiAccess": {
+      "question": "Bieten Sie API-Zugang?",
+      "answer": "API-Zugang ist für Business- und Enterprise-Pläne verfügbar. Unsere REST-API ermöglicht es Ihnen, PayMatch in Ihre bestehenden Geschäftssysteme zu integrieren und die Rechnungserstellung zu automatisieren."
+    },
+    "qrBillCompliance": {
+      "question": "Ist PayMatch Swiss QR-Bill-konform?",
+      "answer": "Ja, alle von PayMatch generierten Rechnungen sind vollständig konform mit Swiss QR-Bill-Standards (ISO 20022). Wir fügen automatisch alle erforderlichen Elemente hinzu und stellen die ordnungsgemäße Formatierung sicher."
+    },
+    "vatHandling": {
+      "question": "Wie funktioniert die Mehrwertsteuerbehandlung?",
+      "answer": "PayMatch berechnet automatisch die Schweizer Mehrwertsteuer basierend auf Ihrem Unternehmenstyp und Rechnungsdetails. Wir unterstützen Standard- (7,7%), reduzierte (2,5%) und Null-Mehrwertsteuer gemäß Schweizer Steuervorschriften."
+    },
+    "taxReporting": {
+      "question": "Kann ich Steuerberichte generieren?",
+      "answer": "Ja, PayMatch generiert umfassende Steuerberichte für Schweizer Behörden einschließlich Mehrwertsteuererklärungen und Jahreszusammenfassungen. Berichte sind nach den Anforderungen der Schweizer Steuerbehörde formatiert."
+    },
+    "dataRetention": {
+      "question": "Wie lange behalten Sie meine Daten?",
+      "answer": "Wir behalten Rechnungsdaten 10 Jahre wie vom Schweizer Gesetz vorgeschrieben, Kontodaten 7 Jahre und Zahlungsdaten 7 Jahre. Sie können die Datenlöschung nach der gesetzlichen Aufbewahrungsfrist beantragen."
+    },
+    "gdprCompliance": {
+      "question": "Sind Sie DSGVO-konform?",
+      "answer": "Ja, PayMatch ist vollständig DSGVO-konform und hält sich auch an das Schweizer Bundesgesetz über den Datenschutz (DSG). Wir implementieren angemessene technische und organisatorische Maßnahmen zum Schutz Ihrer Daten."
+    },
+    "swissComplianceHomepage": {
+      "question": "Ist PayMatch konform mit Schweizer Rechnungsvorschriften?",
+      "answer": "Ja, PayMatch ist vollständig konform mit Schweizer Rechnungsstandards. Wir generieren ordnungsgemäße Swiss QR-Bills, die alle rechtlichen Anforderungen erfüllen, einschließlich korrekter Mehrwertsteuerberechnungen und obligatorischer Informationsfelder."
+    },
+    "currenciesSupported": {
+      "question": "Welche Währungen unterstützt PayMatch?",
+      "answer": "PayMatch unterstützt Schweizer Franken (CHF) und Euro (EUR), was die Mehrheit der Schweizer und europäischen Geschäftstransaktionen abdeckt. Alle Währungsumrechnungen und -berechnungen werden automatisch durchgeführt."
+    },
+    "paymentReconciliationHomepage": {
+      "question": "Wie funktioniert die Zahlungsabstimmung?",
+      "answer": "Sie können CAMT-Dateien von Ihrer Bank hochladen oder Ihr Bankkonto für automatische Synchronisation verbinden. PayMatch stimmt automatisch eingehende Zahlungen mit Ihren Rechnungen basierend auf Betrag, Referenznummer und anderen Kriterien ab."
+    },
+    "dataSecurityHomepage": {
+      "question": "Sind meine Daten sicher und DSGVO-konform?",
+      "answer": "Absolut. PayMatch verwendet Bank-Level-Verschlüsselung und ist vollständig DSGVO-konform. Ihre Finanzdaten werden sicher in der Schweiz gespeichert und wir teilen Ihre Informationen niemals ohne Ihre ausdrückliche Zustimmung mit Dritten."
+    },
+    "teamCollaborationHomepage": {
+      "question": "Kann ich PayMatch für Teamzusammenarbeit verwenden?",
+      "answer": "Ja! Unsere Business- und Enterprise-Pläne enthalten Teamzusammenarbeitsfunktionen. Sie können Teammitglieder einladen, Rollen zuweisen und gemeinsam an der Rechnungsverwaltung und Kundenbeziehungen arbeiten."
+    },
+    "freePlanLimitsHomepage": {
+      "question": "Was passiert, wenn ich die Grenzen meines kostenlosen Plans überschreite?",
+      "answer": "Wenn Sie 5 Rechnungen pro Monat im kostenlosen Plan überschreiten, können Sie jederzeit auf einen kostenpflichtigen Plan upgraden. Wir benachrichtigen Sie, wenn Sie sich Ihrem Limit nähern, und bieten einfache Upgrade-Optionen."
+    },
+    "getStartedHomepage": {
+      "question": "Wie beginne ich mit PayMatch?",
+      "answer": "Melden Sie sich einfach kostenlos an und erstellen Sie Ihre erste Rechnung in weniger als 2 Minuten. Keine Kreditkarte für den kostenlosen Plan erforderlich. Sie können sofort mit der Rechnungserstellung beginnen und upgraden, wenn Sie mehr Funktionen benötigen."
+    },
+    "customizeInvoicesHomepage": {
+      "question": "Kann ich meine Rechnungen anpassen?",
+      "answer": "Ja! Sie können Ihr Firmenlogo hinzufügen, Farben anpassen und professionelle Rechnungsvorlagen erstellen. Business- und Enterprise-Pläne enthalten erweiterte Branding-Optionen."
+    },
+    "supportOfferedHomepage": {
+      "question": "Welche Art von Support bieten Sie an?",
+      "answer": "Wir bieten E-Mail-Support für alle Pläne, mit Prioritätssupport für Enterprise-Kunden. Unser Support-Team ist mit Schweizer Rechnungsvorschriften vertraut und kann bei allen Fragen helfen."
     }
   }
 }

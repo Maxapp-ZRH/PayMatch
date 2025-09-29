@@ -17,7 +17,7 @@ interface CookieBannerProps {
 }
 
 export function CookieBanner({ onDismiss }: CookieBannerProps) {
-  const t = useTranslations('cookieBanner');
+  const t = useTranslations('utils.cookieBanner');
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [showSettings, setShowSettings] = useState(false);

@@ -16,14 +16,13 @@ const homepageFaqIds = [
 ];
 
 export function Faqs() {
-  const t = useTranslations('faqs');
-  const tFaq = useTranslations('faq');
+  const t = useTranslations('faq');
 
   // Get homepage FAQs and translate them
   const homepageFAQs = faqData.filter((item) =>
     homepageFaqIds.includes(item.id)
   );
-  const translatedFAQs = createTranslatedFAQs(homepageFAQs, tFaq);
+  const translatedFAQs = createTranslatedFAQs(homepageFAQs, t);
 
   // Split FAQs into 3 columns for the grid layout
   const faqsColumns = [

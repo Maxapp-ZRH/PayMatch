@@ -1,0 +1,121 @@
+{
+  "title": "Privacy Policy",
+  "lastUpdated": "September 28, 2025",
+  "sections": {
+    "introduction": {
+      "title": "1. Introduction",
+      "content": {
+        "paragraph1": "PayMatch (\"we,\" \"our,\" or \"us\") is committed to protecting your privacy and personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Swiss QR-bill invoicing platform.",
+        "paragraph2": "This policy complies with the General Data Protection Regulation (GDPR), the Swiss Federal Data Protection Act (FADP), and applicable data protection laws in Germany, France, and Italy."
+      },
+      "dataController": {
+        "title": "Data Controller",
+        "content": "Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz"
+      },
+      "dataProtectionOfficer": {
+        "title": "Data Protection Officer",
+        "content": "privacy@paymatch.ch"
+      }
+    },
+    "dataCollection": {
+      "title": "2. Data We Collect",
+      "subsections": {
+        "personalInformation": {
+          "title": "2.1 Personal Information",
+          "content": "We collect information you provide directly to us, such as when you create an account, use our services, or contact us for support."
+        },
+        "usageData": {
+          "title": "2.2 Usage Data",
+          "content": "We automatically collect certain information about your use of our services, including device information, IP address, and usage patterns."
+        },
+        "cookies": {
+          "title": "2.3 Cookies and Tracking Technologies",
+          "content": "We use cookies and similar technologies to enhance your experience and analyze usage patterns."
+        }
+      }
+    },
+    "dataUsage": {
+      "title": "3. How We Use Your Data",
+      "subsections": {
+        "serviceProvision": {
+          "title": "3.1 Service Provision",
+          "content": "To provide, maintain, and improve our invoicing and payment reconciliation services."
+        },
+        "communication": {
+          "title": "3.2 Communication",
+          "content": "To send you important updates, notifications, and support communications."
+        },
+        "legalCompliance": {
+          "title": "3.3 Legal Compliance",
+          "content": "To comply with Swiss invoicing regulations and applicable laws in your jurisdiction."
+        }
+      }
+    },
+    "dataSharing": {
+      "title": "4. Data Sharing and Disclosure",
+      "subsections": {
+        "serviceProviders": {
+          "title": "4.1 Service Providers",
+          "content": "We may share your data with trusted third-party service providers who assist us in operating our platform."
+        },
+        "legalRequirements": {
+          "title": "4.2 Legal Requirements",
+          "content": "We may disclose your data if required by law or to protect our rights and the rights of others."
+        },
+        "businessTransfers": {
+          "title": "4.3 Business Transfers",
+          "content": "In the event of a merger, acquisition, or sale of assets, your data may be transferred as part of the transaction."
+        }
+      }
+    },
+    "dataSecurity": {
+      "title": "5. Data Security",
+      "content": "We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction."
+    },
+    "yourRights": {
+      "title": "6. Your Rights",
+      "subsections": {
+        "access": {
+          "title": "6.1 Right to Access",
+          "content": "You have the right to request access to your personal data and information about how it is processed."
+        },
+        "rectification": {
+          "title": "6.2 Right to Rectification",
+          "content": "You have the right to request correction of inaccurate or incomplete personal data."
+        },
+        "erasure": {
+          "title": "6.3 Right to Erasure",
+          "content": "You have the right to request deletion of your personal data under certain circumstances."
+        },
+        "portability": {
+          "title": "6.4 Right to Data Portability",
+          "content": "You have the right to receive your personal data in a structured, commonly used format."
+        },
+        "objection": {
+          "title": "6.5 Right to Object",
+          "content": "You have the right to object to processing of your personal data for certain purposes."
+        }
+      }
+    },
+    "dataRetention": {
+      "title": "7. Data Retention",
+      "content": "We retain your personal data only for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required by law."
+    },
+    "internationalTransfers": {
+      "title": "8. International Data Transfers",
+      "content": "Your data may be transferred to and processed in countries outside the European Economic Area. We ensure appropriate safeguards are in place for such transfers."
+    },
+    "childrenPrivacy": {
+      "title": "9. Children's Privacy",
+      "content": "Our services are not intended for children under 16 years of age. We do not knowingly collect personal data from children under 16."
+    },
+    "changes": {
+      "title": "10. Changes to This Privacy Policy",
+      "content": "We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the \"Last Updated\" date."
+    },
+    "contact": {
+      "title": "11. Contact Us",
+      "content": "If you have any questions about this Privacy Policy or our data practices, please contact us at privacy@paymatch.ch or write to us at Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
+    }
+  }
+}

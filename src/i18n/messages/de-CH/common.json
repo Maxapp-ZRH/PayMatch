@@ -1,7 +1,9 @@
 {
   "navigation": {
     "features": "Funktionen",
+    "reviews": "Bewertungen",
     "pricing": "Preise",
+    "faqs": "Häufige Fragen",
     "login": "Anmelden",
     "register": "Registrieren"
   },
@@ -9,5 +11,34 @@
     "getStarted": "Loslegen",
     "learnMore": "Mehr erfahren",
     "contactUs": "Kontakt"
+  },
+  "footer": {
+    "description": "Schweizer Rechnungsstellung einfach gemacht. Erstellen, senden und verfolgen Sie Rechnungen mit QR-Rechnung-Compliance.",
+    "links": {
+      "startInvoicing": "Rechnungen erstellen",
+      "startInvoicingDescription": "QR-Code scannen, um mit PayMatch zu beginnen",
+      "company": "Unternehmen",
+      "support": "Support",
+      "legal": "Rechtliches",
+      "privacy": "Datenschutz",
+      "terms": "Nutzungsbedingungen",
+      "cookies": "Cookie-Richtlinie",
+      "gdpr": "DSGVO",
+      "imprint": "Impressum"
+    },
+    "newsletter": {
+      "title": "Bleiben Sie informiert",
+      "description": "Erhalten Sie die neuesten Updates zu PayMatch-Funktionen und Schweizer Rechnungsstellungsvorschriften.",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "E-Mail eingeben",
+      "consent": "Ich stimme den",
+      "and": "und",
+      "apply": "zu, die gelten",
+      "subscribe": "Abonnieren"
+    },
+    "copyright": "© 2024 PayMatch. Alle Rechte vorbehalten.",
+    "developedBy": "Entwickelt von"
   }
 }

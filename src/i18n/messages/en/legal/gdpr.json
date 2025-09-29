@@ -1,0 +1,112 @@
+{
+  "title": "GDPR",
+  "lastUpdated": "September 28, 2025",
+  "sections": {
+    "introduction": {
+      "title": "1. Introduction to GDPR",
+      "content": {
+        "paragraph1": "The General Data Protection Regulation (GDPR) is a comprehensive data protection law that applies to all organizations processing personal data of individuals in the European Union and European Economic Area.",
+        "paragraph2": "This page explains your rights under GDPR and how PayMatch ensures compliance with these regulations."
+      }
+    },
+    "yourRights": {
+      "title": "2. Your Rights Under GDPR",
+      "subsections": {
+        "rightToInformation": {
+          "title": "2.1 Right to Information",
+          "content": "You have the right to be informed about the collection and use of your personal data, including the purposes of processing and retention periods."
+        },
+        "rightOfAccess": {
+          "title": "2.2 Right of Access",
+          "content": "You have the right to obtain confirmation as to whether or not personal data concerning you is being processed and, if so, access to that data."
+        },
+        "rightToRectification": {
+          "title": "2.3 Right to Rectification",
+          "content": "You have the right to have inaccurate personal data corrected and incomplete personal data completed."
+        },
+        "rightToErasure": {
+          "title": "2.4 Right to Erasure (Right to be Forgotten)",
+          "content": "You have the right to have your personal data erased in certain circumstances, such as when the data is no longer necessary for the original purpose."
+        },
+        "rightToRestrictProcessing": {
+          "title": "2.5 Right to Restrict Processing",
+          "content": "You have the right to restrict the processing of your personal data in certain circumstances."
+        },
+        "rightToDataPortability": {
+          "title": "2.6 Right to Data Portability",
+          "content": "You have the right to receive your personal data in a structured, commonly used format and to transmit that data to another controller."
+        },
+        "rightToObject": {
+          "title": "2.7 Right to Object",
+          "content": "You have the right to object to the processing of your personal data for certain purposes, including direct marketing."
+        },
+        "rightsRelatedToAutomatedDecisionMaking": {
+          "title": "2.8 Rights Related to Automated Decision Making",
+          "content": "You have the right not to be subject to decisions based solely on automated processing that significantly affects you."
+        }
+      }
+    },
+    "lawfulBasis": {
+      "title": "3. Lawful Basis for Processing",
+      "subsections": {
+        "consent": {
+          "title": "3.1 Consent",
+          "content": "We process your personal data based on your explicit consent, which you can withdraw at any time."
+        },
+        "contract": {
+          "title": "3.2 Contract",
+          "content": "We process your personal data to perform our contractual obligations to you."
+        },
+        "legalObligation": {
+          "title": "3.3 Legal Obligation",
+          "content": "We process your personal data to comply with legal obligations, such as Swiss invoicing regulations."
+        },
+        "legitimateInterests": {
+          "title": "3.4 Legitimate Interests",
+          "content": "We process your personal data based on our legitimate interests, balanced against your rights and freedoms."
+        }
+      }
+    },
+    "dataProcessing": {
+      "title": "4. How We Process Your Data",
+      "subsections": {
+        "dataMinimization": {
+          "title": "4.1 Data Minimization",
+          "content": "We only collect and process personal data that is necessary for the specified purposes."
+        },
+        "purposeLimitation": {
+          "title": "4.2 Purpose Limitation",
+          "content": "We process personal data only for specified, explicit, and legitimate purposes."
+        },
+        "storageLimitation": {
+          "title": "4.3 Storage Limitation",
+          "content": "We retain personal data only for as long as necessary to fulfill the purposes for which it was collected."
+        },
+        "accuracy": {
+          "title": "4.4 Accuracy",
+          "content": "We take reasonable steps to ensure personal data is accurate and up to date."
+        }
+      }
+    },
+    "dataBreaches": {
+      "title": "5. Data Breach Notification",
+      "content": "In the event of a personal data breach that is likely to result in a high risk to your rights and freedoms, we will notify you without undue delay and within 72 hours of becoming aware of the breach."
+    },
+    "dataProtectionOfficer": {
+      "title": "6. Data Protection Officer",
+      "content": "We have appointed a Data Protection Officer (DPO) who can be contacted at privacy@paymatch.ch for any questions regarding data protection and your rights under GDPR."
+    },
+    "internationalTransfers": {
+      "title": "7. International Data Transfers",
+      "content": "When we transfer your personal data outside the European Economic Area, we ensure appropriate safeguards are in place, such as adequacy decisions, standard contractual clauses, or binding corporate rules."
+    },
+    "complaints": {
+      "title": "8. Right to Complain",
+      "content": "You have the right to lodge a complaint with a supervisory authority if you believe we have not handled your personal data in accordance with GDPR. In Switzerland, you can contact the Federal Data Protection and Information Commissioner (FDPIC)."
+    },
+    "contact": {
+      "title": "9. Contact Us About GDPR",
+      "content": "If you have any questions about your rights under GDPR or our data processing practices, please contact us at privacy@paymatch.ch or write to us at Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
+    }
+  }
+}

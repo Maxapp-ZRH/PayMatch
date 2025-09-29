@@ -29,41 +29,49 @@
       "name": {
         "label": "Vollständiger Name",
         "placeholder": "Geben Sie Ihren vollständigen Namen ein",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       },
       "email": {
         "label": "E-Mail-Adresse",
         "placeholder": "ihre.email@beispiel.com",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       },
       "company": {
         "label": "Unternehmen",
         "placeholder": "Ihr Firmenname",
-        "required": false
+        "required": "",
+        "requiredValue": false
       },
       "category": {
         "label": "Kategorie",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       },
       "priority": {
         "label": "Priorität",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       },
       "subject": {
         "label": "Betreff",
         "placeholder": "Kurze Beschreibung Ihres Problems",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       },
       "message": {
         "label": "Detaillierte Nachricht",
         "placeholder": "Bitte geben Sie so viele Details wie möglich über Ihr Problem an, einschließlich Schritten zur Reproduktion falls zutreffend...",
-        "required": true,
+        "required": "*",
+        "requiredValue": true,
         "minLength": "Mindestens 10 Zeichen",
         "maxLength": "Maximal 2000 Zeichen"
       },
       "consent": {
         "label": "Ich stimme der Datenschutzrichtlinie zu und erteile PayMatch die Erlaubnis, meine persönlichen Daten zur Beantwortung dieser Anfrage zu verarbeiten.",
-        "required": true
+        "required": "*",
+        "requiredValue": true
       }
     },
     "categories": {
@@ -121,7 +129,17 @@
     "buttons": {
       "sendMessage": "Nachricht senden",
       "sending": "Wird gesendet...",
-      "stillNeedHelp": "Brauchen Sie noch Hilfe? Support kontaktieren"
+      "stillNeedHelp": "Brauchen Sie noch Hilfe? Support kontaktieren",
+      "loadMoreQuestions": "Weitere Fragen laden",
+      "clearFilters": "Filter löschen"
+    },
+    "pagination": {
+      "moreQuestionsAvailable": "weitere Fragen verfügbar",
+      "showingQuestions": "Zeige {current} von {total} Fragen",
+      "questionsFound": "Fragen gefunden",
+      "questionFound": "Frage gefunden",
+      "noQuestionsFound": "Keine Fragen gefunden",
+      "noQuestionsDescription": "Versuchen Sie, Ihre Suchbegriffe anzupassen oder durchsuchen Sie alle Kategorien."
     },
     "contactInfo": {
       "emailSupport": {

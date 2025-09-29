@@ -3,12 +3,60 @@
     "title": "Swiss QR-bill invoicing made simple",
     "subtitle": "Create, send, and reconcile Swiss QR-bill invoices effortlessly. Built for Swiss businesses who value precision, compliance, and professional presentation.",
     "cta": "Start for Free",
-    "learnMore": "Learn More"
+    "learnMore": "Learn More",
+    "trustedBy": "Trusted by leading Swiss businesses"
   },
   "features": {
     "title": "Everything you need for Swiss invoicing",
     "subtitle": "Built specifically for the Swiss market with compliance and efficiency in mind",
-    "disclaimer": "* PayMatch is a web application accessible on desktop and mobile browsers. The mobile interface shown above is for demonstration purposes."
+    "disclaimer": "* PayMatch is a web application accessible on desktop and mobile browsers. The mobile interface shown above is for demonstration purposes.",
+    "features": [
+      {
+        "name": "Add & manage clients",
+        "description": "Create and organize your client database with contact details, billing information, and payment preferences. Keep everything in one place."
+      },
+      {
+        "name": "Create invoices by selecting clients",
+        "description": "Generate Swiss QR-bill invoices in seconds by selecting from your client list. Automatic tax calculations and professional formatting included."
+      },
+      {
+        "name": "Track invoice status & reconcile payments",
+        "description": "Monitor Paid, Pending, and Overdue invoices at a glance. Auto-sync with your bank for real-time payment matching, with manual CAMT upload as fallback."
+      }
+    ],
+    "screens": {
+      "clientManagement": {
+        "title": "Clients",
+        "subtitle": "Manage your client database",
+        "allClients": "All Clients",
+        "addClient": "+ Add Client",
+        "invoices": "invoices"
+      },
+      "invoiceCreation": {
+        "title": "Create Invoice",
+        "subtitle": "Select client and generate QR-bill",
+        "selectClient": "Select Client",
+        "amount": "Amount",
+        "dueDate": "Due Date",
+        "description": "Description",
+        "consultingServices": "Consulting Services",
+        "generateQRBill": "Generate Swiss QR-Bill",
+        "autoTaxCalculation": "Automatic tax calculation included"
+      },
+      "reconciliation": {
+        "title": "Reconciliation",
+        "subtitle": "Auto bank sync & payment tracking",
+        "autoSync": "Auto Sync",
+        "active": "Active",
+        "lastSync": "Last sync: 2 minutes ago",
+        "manualUpload": "Manual Upload",
+        "fallback": "Fallback",
+        "dragDropCAMT": "Drag & drop CAMT files if needed",
+        "recentInvoices": "Recent Invoices",
+        "autoMatched": "Auto-matched: 2 payments",
+        "total": "Total: CHF 1,700.00 • Synced 2 min ago"
+      }
+    }
   },
   "secondaryFeatures": {
     "title": "Everything you need for professional invoicing",
@@ -84,43 +132,71 @@
         "body": "I tried several other platforms, but none understood Swiss requirements like PayMatch. The QR-bill generation is flawless.",
         "author": "Michael Keller, Agency Owner",
         "rating": 5
+      },
+      {
+        "title": "Team collaboration is excellent.",
+        "body": "My team can manage invoices together seamlessly. The real-time updates and notifications keep everyone in sync.",
+        "author": "Lisa Brunner, Operations Manager",
+        "rating": 5
+      },
+      {
+        "title": "GDPR compliance built-in.",
+        "body": "Knowing my client data is secure and GDPR compliant gives me peace of mind. The security features are enterprise-grade.",
+        "author": "Robert Huber, Data-Sensitive Business",
+        "rating": 5
+      },
+      {
+        "title": "Financial reporting is comprehensive.",
+        "body": "The reporting features help me understand my cash flow better. Exporting data for my accountant is seamless.",
+        "author": "Christine Wagner, Financial Controller",
+        "rating": 5
+      },
+      {
+        "title": "Customer support is outstanding.",
+        "body": "When I had questions about Swiss VAT rules, their support team was incredibly helpful and knowledgeable about local regulations.",
+        "author": "Peter Lehmann, New Business Owner",
+        "rating": 5
+      },
+      {
+        "title": "Worth every Swiss Franc.",
+        "body": "The time I save on invoicing and payment tracking more than pays for the subscription. It has transformed my business operations.",
+        "author": "Nicole Graf, Professional Services",
+        "rating": 5
+      },
+      {
+        "title": "Intuitive and powerful.",
+        "body": "The interface is clean and easy to use, but the features are comprehensive. Perfect balance of simplicity and functionality.",
+        "author": "Stefan Roth, Tech Consultant",
+        "rating": 5
+      },
+      {
+        "title": "Swiss precision at its finest.",
+        "body": "PayMatch embodies Swiss quality - precise, reliable, and efficient. Everything works exactly as promised.",
+        "author": "Andrea Meier, Quality Manager",
+        "rating": 5
+      },
+      {
+        "title": "Game-changer for my practice.",
+        "body": "As a fiduciary, I manage multiple clients. PayMatch makes it easy to keep everything organized and compliant.",
+        "author": "Markus Schneider, Fiduciary",
+        "rating": 5
       }
     ]
-  },
-  "faqs": {
-    "title": "Frequently Asked Questions",
-    "subtitle": "If you have anything else you want to ask,",
-    "contactUs": "reach out to us",
-    "questions": {
-      "q1": {
-        "question": "What is PayMatch?",
-        "answer": "PayMatch is a Swiss invoicing platform designed specifically for Swiss businesses. It helps you create, send, and reconcile Swiss QR-bill invoices with ease."
-      },
-      "q2": {
-        "question": "How does QR-bill generation work?",
-        "answer": "PayMatch automatically generates compliant Swiss QR-bills with all required information, including VAT calculations and proper formatting for Swiss banking standards."
-      },
-      "q3": {
-        "question": "Can I integrate with my existing accounting software?",
-        "answer": "Yes, PayMatch offers integrations with popular accounting software and can export data in various formats for easy import."
-      },
-      "q4": {
-        "question": "Is my data secure?",
-        "answer": "Absolutely. We use bank-grade security measures and comply with Swiss data protection regulations to keep your data safe."
-      },
-      "q5": {
-        "question": "Do you support multiple currencies?",
-        "answer": "Yes, PayMatch supports both CHF and EUR with automatic currency conversion and proper formatting for Swiss and European markets."
-      },
-      "q6": {
-        "question": "What about Swiss compliance?",
-        "answer": "PayMatch is built specifically for Swiss invoicing standards and automatically ensures compliance with Swiss VAT regulations and banking requirements."
-      }
-    }
   },
   "pricing": {
     "title": "Simple, transparent pricing",
     "subtitle": "Choose the plan that fits your business needs",
+    "mostPopular": "Most Popular",
+    "billedMonthly": "Billed monthly",
+    "billedAnnually": "Billed annually",
+    "features": "Features",
+    "planNames": {
+      "free": "FREE",
+      "freelancer": "FREELANCER",
+      "business": "BUSINESS",
+      "enterprise": "ENTERPRISE"
+    },
+    "popular": "POPULAR",
     "free": {
       "name": "Free",
       "price": "0",
@@ -143,8 +219,8 @@
         "Priority support"
       ]
     },
-    "enterprise": {
-      "name": "Enterprise",
+    "business": {
+      "name": "Business",
       "price": "50",
       "description": "For growing businesses",
       "features": [
@@ -152,6 +228,17 @@
         "Team collaboration",
         "Custom integrations",
         "Dedicated support"
+      ]
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price": "150",
+      "description": "For large organizations",
+      "features": [
+        "Everything in Business",
+        "Unlimited users",
+        "Advanced analytics",
+        "White-label options"
       ]
     }
   }

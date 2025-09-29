@@ -11,7 +11,7 @@ interface InstallBannerProps {
 }
 
 export function InstallBanner({ onDismiss }: InstallBannerProps) {
-  const t = useTranslations('pwa.installBanner');
+  const t = useTranslations('utils.installBanner');
   const { isInstallable, isInstalled, installPWA } = usePWA();
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);

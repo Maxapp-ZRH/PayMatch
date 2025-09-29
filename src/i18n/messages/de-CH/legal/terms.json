@@ -1,0 +1,135 @@
+{
+  "title": "Nutzungsbedingungen",
+  "lastUpdated": "28. September 2025",
+  "sections": {
+    "agreement": {
+      "title": "1. Vereinbarung zu den Bedingungen",
+      "content": {
+        "paragraph1": "Diese Nutzungsbedingungen (\"Bedingungen\") regeln Ihre Nutzung von PayMatch, einer Schweizer QR-Rechnungsplattform, die von der Maxapp ZRH AG (\"Unternehmen\", \"wir\", \"unser\" oder \"uns\") betrieben wird.",
+        "paragraph2": "Durch den Zugriff auf oder die Nutzung unseres Dienstes stimmen Sie zu, an diese Bedingungen gebunden zu sein. Wenn Sie mit einem Teil dieser Bedingungen nicht einverstanden sind, können Sie den Dienst nicht nutzen."
+      }
+    },
+    "definitions": {
+      "title": "2. Definitionen",
+      "subsections": {
+        "service": {
+          "title": "2.1 Dienst",
+          "content": "PayMatch ist eine cloudbasierte Rechnungs- und Zahlungsabstimmungsplattform für Schweizer Unternehmen."
+        },
+        "user": {
+          "title": "2.2 Benutzer",
+          "content": "Jede Person oder Entität, die auf unseren Dienst zugreift oder ihn nutzt."
+        },
+        "content": {
+          "title": "2.3 Inhalt",
+          "content": "Alle Daten, Informationen und Materialien, die über unseren Dienst hochgeladen, generiert oder verarbeitet werden."
+        }
+      }
+    },
+    "serviceDescription": {
+      "title": "3. Dienstbeschreibung",
+      "content": "PayMatch bietet Swiss QR-Bill-konforme Rechnungsstellung, Zahlungsabstimmung und verwandte Geschäftsdienste. Unser Dienst soll Schweizer Unternehmen dabei helfen, ihre Rechnungsprozesse zu optimieren und gleichzeitig die Einhaltung der Schweizer Vorschriften zu gewährleisten."
+    },
+    "userAccounts": {
+      "title": "4. Benutzerkonten",
+      "subsections": {
+        "registration": {
+          "title": "4.1 Registrierung",
+          "content": "Sie müssen genaue und vollständige Informationen angeben, wenn Sie ein Konto erstellen. Sie sind dafür verantwortlich, die Vertraulichkeit Ihrer Kontodaten zu wahren."
+        },
+        "accountSecurity": {
+          "title": "4.2 Kontosicherheit",
+          "content": "Sie sind für alle Aktivitäten verantwortlich, die unter Ihrem Konto stattfinden. Benachrichtigen Sie uns sofort über unbefugte Nutzung."
+        }
+      }
+    },
+    "acceptableUse": {
+      "title": "5. Zulässige Nutzung",
+      "subsections": {
+        "permittedUse": {
+          "title": "5.1 Erlaubte Nutzung",
+          "content": "Sie dürfen unseren Dienst nur für rechtmäßige Geschäftszwecke und in Übereinstimmung mit diesen Bedingungen nutzen."
+        },
+        "prohibitedUse": {
+          "title": "5.2 Verbotene Nutzung",
+          "content": "Sie dürfen unseren Dienst nicht für illegale oder unbefugte Zwecke nutzen, einschließlich, aber nicht beschränkt auf Betrug, Geldwäsche oder Verletzung geltender Gesetze."
+        }
+      }
+    },
+    "paymentTerms": {
+      "title": "6. Zahlungsbedingungen",
+      "subsections": {
+        "fees": {
+          "title": "6.1 Gebühren",
+          "content": "Dienstgebühren sind wie in unseren Preisplänen angegeben. Alle Gebühren sind in Schweizer Franken (CHF) und unterliegen den geltenden Steuern."
+        },
+        "billing": {
+          "title": "6.2 Abrechnung",
+          "content": "Gebühren werden im Voraus monatlich oder jährlich abgerechnet, je nach Ihrem gewählten Plan."
+        },
+        "refunds": {
+          "title": "6.3 Rückerstattungen",
+          "content": "Rückerstattungen werden gemäß unserer Rückerstattungsrichtlinie gewährt, die auf Anfrage verfügbar ist."
+        }
+      }
+    },
+    "intellectualProperty": {
+      "title": "7. Geistiges Eigentum",
+      "subsections": {
+        "ourRights": {
+          "title": "7.1 Unsere Rechte",
+          "content": "PayMatch und sein ursprünglicher Inhalt, Funktionen und Funktionalität gehören der Maxapp ZRH AG und sind durch internationale Urheberrechts-, Marken- und andere Gesetze zum geistigen Eigentum geschützt."
+        },
+        "yourContent": {
+          "title": "7.2 Ihr Inhalt",
+          "content": "Sie behalten das Eigentum an Ihrem Inhalt. Durch die Nutzung unseres Dienstes gewähren Sie uns eine Lizenz zur Nutzung, Speicherung und Verarbeitung Ihres Inhalts, wie es zur Erbringung des Dienstes erforderlich ist."
+        }
+      }
+    },
+    "privacy": {
+      "title": "8. Datenschutz",
+      "content": "Ihre Privatsphäre ist uns wichtig. Bitte lesen Sie unsere Datenschutzerklärung, die auch Ihre Nutzung des Dienstes regelt, um unsere Praktiken zu verstehen."
+    },
+    "disclaimers": {
+      "title": "9. Haftungsausschlüsse",
+      "content": "Der Dienst wird \"wie besehen\" und \"wie verfügbar\" bereitgestellt. Wir geben keine Gewährleistungen, weder ausdrücklich noch stillschweigend, bezüglich der Verfügbarkeit, Genauigkeit oder Zuverlässigkeit des Dienstes."
+    },
+    "limitationOfLiability": {
+      "title": "10. Haftungsbeschränkung",
+      "content": "Im gesetzlich zulässigen Umfang haften wir nicht für indirekte, zufällige, besondere, Folgeschäden oder Strafschäden, die aus Ihrer Nutzung des Dienstes resultieren."
+    },
+    "indemnification": {
+      "title": "11. Freistellung",
+      "content": "Sie stimmen zu, die Maxapp ZRH AG von allen Ansprüchen, Schäden oder Ausgaben freizustellen, die aus Ihrer Nutzung des Dienstes oder Verletzung dieser Bedingungen resultieren."
+    },
+    "termination": {
+      "title": "12. Kündigung",
+      "subsections": {
+        "byYou": {
+          "title": "12.1 Kündigung durch Sie",
+          "content": "Sie können Ihr Konto jederzeit kündigen, indem Sie uns kontaktieren oder die Konto-Kündigungsfunktion in Ihrem Dashboard verwenden."
+        },
+        "byUs": {
+          "title": "12.2 Kündigung durch uns",
+          "content": "Wir können Ihr Konto sofort ohne vorherige Ankündigung aus jedem Grund kündigen oder sperren, einschließlich Verletzung dieser Bedingungen."
+        }
+      }
+    },
+    "governingLaw": {
+      "title": "13. Geltendes Recht",
+      "content": "Diese Bedingungen unterliegen dem Schweizer Recht und werden in Übereinstimmung mit dem Schweizer Recht ausgelegt, ohne Berücksichtigung von Kollisionsrechtsprinzipien."
+    },
+    "disputeResolution": {
+      "title": "14. Streitbeilegung",
+      "content": "Alle Streitigkeiten, die aus diesen Bedingungen oder Ihrer Nutzung des Dienstes resultieren, werden durch verbindliche Schiedsverfahren gemäß dem Schweizer Schiedsrecht beigelegt."
+    },
+    "changes": {
+      "title": "15. Änderungen der Bedingungen",
+      "content": "Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern. Wir werden Benutzer über wesentliche Änderungen per E-Mail oder über den Dienst benachrichtigen."
+    },
+    "contact": {
+      "title": "16. Kontaktinformationen",
+      "content": "Wenn Sie Fragen zu diesen Bedingungen haben, kontaktieren Sie uns bitte unter legal@paymatch.ch oder schreiben Sie uns an Maxapp ZRH AG, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
+    }
+  }
+}
