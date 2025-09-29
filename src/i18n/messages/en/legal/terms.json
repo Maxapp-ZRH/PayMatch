@@ -1,0 +1,135 @@
+{
+  "title": "Terms of Service",
+  "lastUpdated": "September 28, 2025",
+  "sections": {
+    "agreement": {
+      "title": "1. Agreement to Terms",
+      "content": {
+        "paragraph1": "These Terms of Service (\"Terms\") govern your use of PayMatch, a Swiss QR-bill invoicing platform operated by Maxapp ZRH AG (\"Company,\" \"we,\" \"our,\" or \"us\").",
+        "paragraph2": "By accessing or using our service, you agree to be bound by these Terms. If you disagree with any part of these terms, then you may not access the service."
+      }
+    },
+    "definitions": {
+      "title": "2. Definitions",
+      "subsections": {
+        "service": {
+          "title": "2.1 Service",
+          "content": "PayMatch is a cloud-based invoicing and payment reconciliation platform designed for Swiss businesses."
+        },
+        "user": {
+          "title": "2.2 User",
+          "content": "Any individual or entity that accesses or uses our service."
+        },
+        "content": {
+          "title": "2.3 Content",
+          "content": "All data, information, and materials uploaded, generated, or processed through our service."
+        }
+      }
+    },
+    "serviceDescription": {
+      "title": "3. Service Description",
+      "content": "PayMatch provides Swiss QR-bill compliant invoicing, payment reconciliation, and related business services. Our service is designed to help Swiss businesses streamline their invoicing processes while maintaining compliance with Swiss regulations."
+    },
+    "userAccounts": {
+      "title": "4. User Accounts",
+      "subsections": {
+        "registration": {
+          "title": "4.1 Registration",
+          "content": "You must provide accurate and complete information when creating an account. You are responsible for maintaining the confidentiality of your account credentials."
+        },
+        "accountSecurity": {
+          "title": "4.2 Account Security",
+          "content": "You are responsible for all activities that occur under your account. Notify us immediately of any unauthorized use."
+        }
+      }
+    },
+    "acceptableUse": {
+      "title": "5. Acceptable Use",
+      "subsections": {
+        "permittedUse": {
+          "title": "5.1 Permitted Use",
+          "content": "You may use our service only for lawful business purposes and in accordance with these Terms."
+        },
+        "prohibitedUse": {
+          "title": "5.2 Prohibited Use",
+          "content": "You may not use our service for any illegal or unauthorized purpose, including but not limited to fraud, money laundering, or violation of applicable laws."
+        }
+      }
+    },
+    "paymentTerms": {
+      "title": "6. Payment Terms",
+      "subsections": {
+        "fees": {
+          "title": "6.1 Fees",
+          "content": "Service fees are as specified in our pricing plans. All fees are in Swiss Francs (CHF) and are subject to applicable taxes."
+        },
+        "billing": {
+          "title": "6.2 Billing",
+          "content": "Fees are billed in advance on a monthly or annual basis, depending on your selected plan."
+        },
+        "refunds": {
+          "title": "6.3 Refunds",
+          "content": "Refunds are provided in accordance with our refund policy, which is available upon request."
+        }
+      }
+    },
+    "intellectualProperty": {
+      "title": "7. Intellectual Property",
+      "subsections": {
+        "ourRights": {
+          "title": "7.1 Our Rights",
+          "content": "PayMatch and its original content, features, and functionality are owned by Maxapp ZRH AG and are protected by international copyright, trademark, and other intellectual property laws."
+        },
+        "yourContent": {
+          "title": "7.2 Your Content",
+          "content": "You retain ownership of your content. By using our service, you grant us a license to use, store, and process your content as necessary to provide the service."
+        }
+      }
+    },
+    "privacy": {
+      "title": "8. Privacy",
+      "content": "Your privacy is important to us. Please review our Privacy Policy, which also governs your use of the service, to understand our practices."
+    },
+    "disclaimers": {
+      "title": "9. Disclaimers",
+      "content": "The service is provided on an \"as is\" and \"as available\" basis. We make no warranties, express or implied, regarding the service's availability, accuracy, or reliability."
+    },
+    "limitationOfLiability": {
+      "title": "10. Limitation of Liability",
+      "content": "To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the service."
+    },
+    "indemnification": {
+      "title": "11. Indemnification",
+      "content": "You agree to indemnify and hold harmless Maxapp ZRH AG from any claims, damages, or expenses arising from your use of the service or violation of these Terms."
+    },
+    "termination": {
+      "title": "12. Termination",
+      "subsections": {
+        "byYou": {
+          "title": "12.1 Termination by You",
+          "content": "You may terminate your account at any time by contacting us or using the account termination feature in your dashboard."
+        },
+        "byUs": {
+          "title": "12.2 Termination by Us",
+          "content": "We may terminate or suspend your account immediately, without prior notice, for any reason, including violation of these Terms."
+        }
+      }
+    },
+    "governingLaw": {
+      "title": "13. Governing Law",
+      "content": "These Terms shall be governed by and construed in accordance with Swiss law, without regard to conflict of law principles."
+    },
+    "disputeResolution": {
+      "title": "14. Dispute Resolution",
+      "content": "Any disputes arising from these Terms or your use of the service shall be resolved through binding arbitration in accordance with Swiss arbitration law."
+    },
+    "changes": {
+      "title": "15. Changes to Terms",
+      "content": "We reserve the right to modify these Terms at any time. We will notify users of any material changes by email or through the service."
+    },
+    "contact": {
+      "title": "16. Contact Information",
+      "content": "If you have any questions about these Terms, please contact us at legal@paymatch.ch or write to us at Maxapp ZRH AG, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
+    }
+  }
+}

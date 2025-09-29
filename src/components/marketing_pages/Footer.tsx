@@ -22,7 +22,7 @@ function QrCodeBorder(props: React.ComponentPropsWithoutRef<'svg'>) {
 }
 
 export function Footer() {
-  const t = useTranslations('footer');
+  const t = useTranslations('common.footer');
 
   return (
     <footer className="border-t border-gray-200">

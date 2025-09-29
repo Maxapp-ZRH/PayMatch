@@ -2,8 +2,10 @@
 
 import { usePWA } from '@/hooks/use-pwa';
 import { Wifi, WifiOff, Download, CheckCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function StatusIndicator() {
+  const t = useTranslations('utils.statusIndicator');
   const { isOnline, isInstalled, isServiceWorkerReady } = usePWA();
 
   return (
@@ -17,7 +19,7 @@ export function StatusIndicator() {
             <WifiOff className="w-4 h-4 text-red-600" />
           )}
           <span className="text-xs text-gray-600">
-            {isOnline ? 'Online' : 'Offline'}
+            {isOnline ? t('online') : t('offline')}
           </span>
         </div>
 

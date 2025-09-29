@@ -43,7 +43,7 @@ function ChevronUpIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 }
 
 export function Header() {
-  const t = useTranslations('navigation');
+  const t = useTranslations('common.navigation');
 
   return (
     <header>
@@ -124,7 +124,7 @@ export function Header() {
                               href="/#reviews"
                               className="block text-base/7 tracking-tight text-gray-700"
                             >
-                              Reviews
+                              {t('reviews')}
                             </a>
                             {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
                             <a
@@ -138,7 +138,7 @@ export function Header() {
                               href="/#faqs"
                               className="block text-base/7 tracking-tight text-gray-700"
                             >
-                              FAQs
+                              {t('faqs')}
                             </a>
                           </div>
                           <div className="mt-6 mb-4">

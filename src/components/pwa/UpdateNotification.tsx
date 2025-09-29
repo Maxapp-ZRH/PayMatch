@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
 export function UpdateNotification() {
-  const t = useTranslations('pwa.updateNotification');
+  const t = useTranslations('utils.updateNotification');
   const { updateServiceWorker } = usePWA();
   const [showUpdate, setShowUpdate] = useState(false);
   const [isExiting, setIsExiting] = useState(false);

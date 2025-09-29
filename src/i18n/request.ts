@@ -9,6 +9,13 @@ import { getRequestConfig } from 'next-intl/server';
 import { hasLocale } from 'next-intl';
 import { routing } from './routing';
 
+// Helper function to safely access nested properties
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function safeGet(obj: any, path: string): Record<string, any> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (obj?.[path] as Record<string, any>) || {};
+}
+
 export default getRequestConfig(async ({ requestLocale }) => {
   // Get the requested locale from the URL
   const requested = await requestLocale;
@@ -24,10 +31,13 @@ export default getRequestConfig(async ({ requestLocale }) => {
     // Load all message files for the locale
     const [
       commonMessages,
-      featuresMessages,
-      cookieBannerMessages,
-      pwaMessages,
-      legalMessages,
+      utilsMessages,
+      legalIndexMessages,
+      legalPrivacyMessages,
+      legalTermsMessages,
+      legalCookiesMessages,
+      legalGdprMessages,
+      legalImprintMessages,
       supportMessages,
       faqMessages,
       indexMessages,
@@ -35,16 +45,25 @@ export default getRequestConfig(async ({ requestLocale }) => {
       import(`./messages/${locale}/common.json`)
         .then((m) => m.default)
         .catch(() => ({})),
-      import(`./messages/${locale}/features.json`)
+      import(`./messages/${locale}/utils.json`)
         .then((m) => m.default)
         .catch(() => ({})),
-      import(`./messages/${locale}/cookieBanner.json`)
+      import(`./messages/${locale}/legal/index.json`)
         .then((m) => m.default)
         .catch(() => ({})),
-      import(`./messages/${locale}/pwa.json`)
+      import(`./messages/${locale}/legal/privacy.json`)
         .then((m) => m.default)
         .catch(() => ({})),
-      import(`./messages/${locale}/legal.json`)
+      import(`./messages/${locale}/legal/terms.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/legal/cookies.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/legal/gdpr.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/legal/imprint.json`)
         .then((m) => m.default)
         .catch(() => ({})),
       import(`./messages/${locale}/support.json`)
@@ -61,10 +80,30 @@ export default getRequestConfig(async ({ requestLocale }) => {
     // Merge all messages into a single object
     messages = {
       common: commonMessages,
-      features: featuresMessages,
-      cookieBanner: cookieBannerMessages,
-      pwa: pwaMessages,
-      legal: legalMessages,
+      utils: utilsMessages,
+      legal: {
+        ...legalIndexMessages,
+        privacy: {
+          ...safeGet(legalIndexMessages, 'privacy'),
+          ...legalPrivacyMessages,
+        },
+        terms: {
+          ...safeGet(legalIndexMessages, 'terms'),
+          ...legalTermsMessages,
+        },
+        cookies: {
+          ...safeGet(legalIndexMessages, 'cookies'),
+          ...legalCookiesMessages,
+        },
+        gdpr: {
+          ...safeGet(legalIndexMessages, 'gdpr'),
+          ...legalGdprMessages,
+        },
+        imprint: {
+          ...safeGet(legalIndexMessages, 'imprint'),
+          ...legalImprintMessages,
+        },
+      },
       support: supportMessages,
       faq: faqMessages,
       ...indexMessages, // Main page content
@@ -77,10 +116,13 @@ export default getRequestConfig(async ({ requestLocale }) => {
       // Fallback to English
       const [
         commonMessages,
-        featuresMessages,
-        cookieBannerMessages,
-        pwaMessages,
-        legalMessages,
+        utilsMessages,
+        legalIndexMessages,
+        legalPrivacyMessages,
+        legalTermsMessages,
+        legalCookiesMessages,
+        legalGdprMessages,
+        legalImprintMessages,
         supportMessages,
         faqMessages,
         indexMessages,
@@ -88,16 +130,25 @@ export default getRequestConfig(async ({ requestLocale }) => {
         import(`./messages/en/common.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/features.json`)
+        import(`./messages/en/utils.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/cookieBanner.json`)
+        import(`./messages/en/legal/index.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/pwa.json`)
+        import(`./messages/en/legal/privacy.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/legal.json`)
+        import(`./messages/en/legal/terms.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en/legal/cookies.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en/legal/gdpr.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en/legal/imprint.json`)
           .then((m) => m.default)
           .catch(() => ({})),
         import(`./messages/en/support.json`)
@@ -113,10 +164,30 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
       messages = {
         common: commonMessages,
-        features: featuresMessages,
-        cookieBanner: cookieBannerMessages,
-        pwa: pwaMessages,
-        legal: legalMessages,
+        utils: utilsMessages,
+        legal: {
+          ...legalIndexMessages,
+          privacy: {
+            ...safeGet(legalIndexMessages, 'privacy'),
+            ...legalPrivacyMessages,
+          },
+          terms: {
+            ...safeGet(legalIndexMessages, 'terms'),
+            ...legalTermsMessages,
+          },
+          cookies: {
+            ...safeGet(legalIndexMessages, 'cookies'),
+            ...legalCookiesMessages,
+          },
+          gdpr: {
+            ...safeGet(legalIndexMessages, 'gdpr'),
+            ...legalGdprMessages,
+          },
+          imprint: {
+            ...safeGet(legalIndexMessages, 'imprint'),
+            ...legalImprintMessages,
+          },
+        },
         support: supportMessages,
         faq: faqMessages,
         ...indexMessages,

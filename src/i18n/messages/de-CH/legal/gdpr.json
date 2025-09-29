@@ -1,0 +1,112 @@
+{
+  "title": "DSGVO",
+  "lastUpdated": "28. September 2025",
+  "sections": {
+    "introduction": {
+      "title": "1. Einführung in die DSGVO",
+      "content": {
+        "paragraph1": "Die Datenschutz-Grundverordnung (DSGVO) ist ein umfassendes Datenschutzgesetz, das für alle Organisationen gilt, die personenbezogene Daten von Personen in der Europäischen Union und im Europäischen Wirtschaftsraum verarbeiten.",
+        "paragraph2": "Diese Seite erklärt Ihre Rechte unter der DSGVO und wie PayMatch die Einhaltung dieser Vorschriften gewährleistet."
+      }
+    },
+    "yourRights": {
+      "title": "2. Ihre Rechte unter der DSGVO",
+      "subsections": {
+        "rightToInformation": {
+          "title": "2.1 Recht auf Information",
+          "content": "Sie haben das Recht, über die Sammlung und Verwendung Ihrer personenbezogenen Daten informiert zu werden, einschließlich der Verarbeitungszwecke und Aufbewahrungsfristen."
+        },
+        "rightOfAccess": {
+          "title": "2.2 Recht auf Auskunft",
+          "content": "Sie haben das Recht, eine Bestätigung darüber zu erhalten, ob personenbezogene Daten über Sie verarbeitet werden, und wenn ja, Zugang zu diesen Daten."
+        },
+        "rightToRectification": {
+          "title": "2.3 Recht auf Berichtigung",
+          "content": "Sie haben das Recht, unrichtige personenbezogene Daten korrigieren und unvollständige personenbezogene Daten vervollständigen zu lassen."
+        },
+        "rightToErasure": {
+          "title": "2.4 Recht auf Löschung (Recht auf Vergessenwerden)",
+          "content": "Sie haben das Recht, Ihre personenbezogenen Daten in bestimmten Umständen löschen zu lassen, z. B. wenn die Daten für den ursprünglichen Zweck nicht mehr erforderlich sind."
+        },
+        "rightToRestrictProcessing": {
+          "title": "2.5 Recht auf Einschränkung der Verarbeitung",
+          "content": "Sie haben das Recht, die Verarbeitung Ihrer personenbezogenen Daten in bestimmten Umständen einzuschränken."
+        },
+        "rightToDataPortability": {
+          "title": "2.6 Recht auf Datenübertragbarkeit",
+          "content": "Sie haben das Recht, Ihre personenbezogenen Daten in einem strukturierten, gängigen Format zu erhalten und diese Daten an einen anderen Verantwortlichen zu übertragen."
+        },
+        "rightToObject": {
+          "title": "2.7 Recht auf Widerspruch",
+          "content": "Sie haben das Recht, der Verarbeitung Ihrer personenbezogenen Daten für bestimmte Zwecke zu widersprechen, einschließlich Direktmarketing."
+        },
+        "rightsRelatedToAutomatedDecisionMaking": {
+          "title": "2.8 Rechte im Zusammenhang mit automatisierter Entscheidungsfindung",
+          "content": "Sie haben das Recht, nicht Entscheidungen unterworfen zu werden, die ausschließlich auf automatisierter Verarbeitung beruhen und Sie erheblich beeinträchtigen."
+        }
+      }
+    },
+    "lawfulBasis": {
+      "title": "3. Rechtsgrundlage für die Verarbeitung",
+      "subsections": {
+        "consent": {
+          "title": "3.1 Einverständnis",
+          "content": "Wir verarbeiten Ihre personenbezogenen Daten auf der Grundlage Ihrer ausdrücklichen Einwilligung, die Sie jederzeit widerrufen können."
+        },
+        "contract": {
+          "title": "3.2 Vertrag",
+          "content": "Wir verarbeiten Ihre personenbezogenen Daten, um unsere vertraglichen Verpflichtungen Ihnen gegenüber zu erfüllen."
+        },
+        "legalObligation": {
+          "title": "3.3 Rechtliche Verpflichtung",
+          "content": "Wir verarbeiten Ihre personenbezogenen Daten, um rechtlichen Verpflichtungen nachzukommen, wie z. B. Schweizer Rechnungsvorschriften."
+        },
+        "legitimateInterests": {
+          "title": "3.4 Berechtigte Interessen",
+          "content": "Wir verarbeiten Ihre personenbezogenen Daten auf der Grundlage unserer berechtigten Interessen, abgewogen gegen Ihre Rechte und Freiheiten."
+        }
+      }
+    },
+    "dataProcessing": {
+      "title": "4. Wie wir Ihre Daten verarbeiten",
+      "subsections": {
+        "dataMinimization": {
+          "title": "4.1 Datenminimierung",
+          "content": "Wir sammeln und verarbeiten nur personenbezogene Daten, die für die angegebenen Zwecke erforderlich sind."
+        },
+        "purposeLimitation": {
+          "title": "4.2 Zweckbindung",
+          "content": "Wir verarbeiten personenbezogene Daten nur für bestimmte, ausdrückliche und legitime Zwecke."
+        },
+        "storageLimitation": {
+          "title": "4.3 Speicherbegrenzung",
+          "content": "Wir speichern personenbezogene Daten nur so lange, wie es zur Erfüllung der Zwecke, für die sie gesammelt wurden, erforderlich ist."
+        },
+        "accuracy": {
+          "title": "4.4 Richtigkeit",
+          "content": "Wir unternehmen angemessene Schritte, um sicherzustellen, dass personenbezogene Daten korrekt und aktuell sind."
+        }
+      }
+    },
+    "dataBreaches": {
+      "title": "5. Meldung von Datenschutzverletzungen",
+      "content": "Im Falle einer Verletzung des Schutzes personenbezogener Daten, die wahrscheinlich ein hohes Risiko für Ihre Rechte und Freiheiten zur Folge hat, werden wir Sie unverzüglich und innerhalb von 72 Stunden nach Kenntnisnahme der Verletzung benachrichtigen."
+    },
+    "dataProtectionOfficer": {
+      "title": "6. Datenschutzbeauftragter",
+      "content": "Wir haben einen Datenschutzbeauftragten (DSB) ernannt, der unter privacy@paymatch.ch für Fragen zum Datenschutz und Ihren Rechten unter der DSGVO kontaktiert werden kann."
+    },
+    "internationalTransfers": {
+      "title": "7. Internationale Datenübertragungen",
+      "content": "Wenn wir Ihre personenbezogenen Daten außerhalb des Europäischen Wirtschaftsraums übertragen, stellen wir sicher, dass angemessene Schutzmaßnahmen vorhanden sind, wie z. B. Angemessenheitsbeschlüsse, Standardvertragsklauseln oder verbindliche Unternehmensregeln."
+    },
+    "complaints": {
+      "title": "8. Recht auf Beschwerde",
+      "content": "Sie haben das Recht, eine Beschwerde bei einer Aufsichtsbehörde einzureichen, wenn Sie der Ansicht sind, dass wir Ihre personenbezogenen Daten nicht in Übereinstimmung mit der DSGVO behandelt haben. In der Schweiz können Sie den Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB) kontaktieren."
+    },
+    "contact": {
+      "title": "9. Kontaktieren Sie uns bezüglich der DSGVO",
+      "content": "Wenn Sie Fragen zu Ihren Rechten unter der DSGVO oder unseren Datenverarbeitungspraktiken haben, kontaktieren Sie uns bitte unter privacy@paymatch.ch oder schreiben Sie uns an Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
+    }
+  }
+}

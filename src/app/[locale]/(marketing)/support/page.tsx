@@ -218,9 +218,11 @@ function ErrorModal({
 function EnhancedFAQSection({
   onQuestionClick,
   tForm,
+  t,
 }: {
   onQuestionClick?: (question: string) => void;
   tForm: (key: string) => string;
+  t: (key: string, values?: Record<string, string | number>) => string;
 }) {
   const tFaq = useTranslations('faq');
   const [searchQuery, setSearchQuery] = useState('');
@@ -448,10 +450,17 @@ function EnhancedFAQSection({
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-gray-900">
             {allFilteredFAQs.length}{' '}
-            {allFilteredFAQs.length === 1 ? 'Question' : 'Questions'} Found
+            {allFilteredFAQs.length === 1
+              ? tForm('pagination.questionFound')
+              : tForm('pagination.questionsFound')}
             {filteredFAQs.length < allFilteredFAQs.length && (
               <span className="text-sm font-normal text-gray-500 ml-2">
-                (Showing {filteredFAQs.length} of {allFilteredFAQs.length})
+                (
+                {t('pagination.showingQuestions', {
+                  current: filteredFAQs.length,
+                  total: allFilteredFAQs.length,
+                })}
+                )
               </span>
             )}
           </h3>
@@ -558,16 +567,16 @@ function EnhancedFAQSection({
         {filteredFAQs.length === 0 && (
           <div className="py-12">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              No questions found
+              {tForm('pagination.noQuestionsFound')}
             </h3>
             <p className="text-gray-600 mb-4">
-              Try adjusting your search terms or browse all categories.
+              {tForm('pagination.noQuestionsDescription')}
             </p>
             <button
               onClick={clearFilters}
               className="text-teal-600 hover:text-teal-700 font-semibold"
             >
-              Clear filters
+              {tForm('buttons.clearFilters')}
             </button>
           </div>
         )}
@@ -581,16 +590,18 @@ function EnhancedFAQSection({
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <span>Load More Questions</span>
+              <span>{tForm('buttons.loadMoreQuestions')}</span>
               <ChevronDown className="w-5 h-5 ml-2" />
             </motion.button>
             <p className="text-sm text-gray-500 mt-4">
-              {allFilteredFAQs.length - filteredFAQs.length} more questions
-              available
+              {allFilteredFAQs.length - filteredFAQs.length}{' '}
+              {tForm('pagination.moreQuestionsAvailable')}
             </p>
             <div className="mt-2 text-xs text-gray-400">
-              Showing {filteredFAQs.length} of {allFilteredFAQs.length}{' '}
-              questions
+              {t('pagination.showingQuestions', {
+                current: filteredFAQs.length,
+                total: allFilteredFAQs.length,
+              })}
             </div>
           </div>
         )}
@@ -601,6 +612,7 @@ function EnhancedFAQSection({
 
 export default function SupportPage() {
   const tForm = useTranslations('support.form');
+  const t = useTranslations('support');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -708,6 +720,7 @@ export default function SupportPage() {
             <EnhancedFAQSection
               onQuestionClick={handleFAQQuestionClick}
               tForm={tForm}
+              t={t}
             />
           </motion.div>
 

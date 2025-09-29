@@ -69,6 +69,7 @@ function Plan({
   activePeriod,
   logomarkClassName,
   featured = false,
+  t,
 }: {
   name: string;
   monthlyPrice: number;
@@ -82,13 +83,14 @@ function Plan({
   activePeriod: 'Monthly' | 'Annually';
   logomarkClassName?: string;
   featured?: boolean;
+  t: (key: string) => string;
 }) {
   return (
     <div className="relative">
       {featured && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
           <span className="inline-flex items-center rounded-full bg-teal-600 px-3 py-1 text-xs font-semibold text-white shadow-lg">
-            Most Popular
+            {t('mostPopular')}
           </span>
         </div>
       )}
@@ -144,8 +146,8 @@ function Plan({
               )}
             >
               {activePeriod === 'Monthly'
-                ? 'Billed monthly'
-                : `Billed annually (${pricingConfig.currency} ${annualPrice}/year)`}
+                ? t('billedMonthly')
+                : `${t('billedAnnually')} (${pricingConfig.currency} ${annualPrice}/year)`}
             </span>
           </div>
         </div>
@@ -272,7 +274,7 @@ export function Pricing() {
 
         <div className="mx-auto mt-16 grid max-w-4xl grid-cols-1 items-start gap-x-8 gap-y-10 sm:mt-20 sm:grid-cols-2 lg:max-w-none lg:grid-cols-3">
           {pricingConfig.plans.map((plan) => (
-            <Plan key={plan.name} {...plan} activePeriod={activePeriod} />
+            <Plan key={plan.name} {...plan} activePeriod={activePeriod} t={t} />
           ))}
         </div>
 
@@ -291,12 +293,12 @@ export function Pricing() {
               <thead>
                 <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-left font-semibold text-gray-900 text-lg first:rounded-tl-3xl">
-                    Features
+                    {t('features')}
                   </th>
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-gray-500 mb-1">
-                        FREE
+                        {t('planNames.free')}
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 0
@@ -306,7 +308,7 @@ export function Pricing() {
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-gray-500 mb-1">
-                        FREELANCER
+                        {t('planNames.freelancer')}
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 5
@@ -316,20 +318,20 @@ export function Pricing() {
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-teal-600 text-lg bg-teal-50">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-teal-600 mb-1">
-                        BUSINESS
+                        {t('planNames.business')}
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 50
                       </span>
                       <span className="text-xs text-teal-600 font-medium mt-1">
-                        POPULAR
+                        {t('popular')}
                       </span>
                     </div>
                   </th>
                   <th className="border-b border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg last:rounded-tr-3xl">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-gray-500 mb-1">
-                        ENTERPRISE
+                        {t('planNames.enterprise')}
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 150

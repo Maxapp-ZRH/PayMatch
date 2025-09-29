@@ -3,12 +3,60 @@
     "title": "Schweizer QR-Rechnung einfach gemacht",
     "subtitle": "Erstellen, senden und verwalten Sie Schweizer QR-Rechnungen mühelos. Entwickelt für Schweizer Unternehmen, die Präzision, Konformität und professionelle Präsentation schätzen.",
     "cta": "Kostenlos starten",
-    "learnMore": "Mehr erfahren"
+    "learnMore": "Mehr erfahren",
+    "trustedBy": "Vertraut von führenden Schweizer Unternehmen"
   },
   "features": {
     "title": "Alles was Sie für Schweizer Rechnungen brauchen",
     "subtitle": "Speziell für den Schweizer Markt mit Fokus auf Konformität und Effizienz entwickelt",
-    "disclaimer": "* PayMatch ist eine Webanwendung, die auf Desktop- und Mobilbrowsern zugänglich ist. Die oben gezeigte mobile Oberfläche dient nur zur Demonstration."
+    "disclaimer": "* PayMatch ist eine Webanwendung, die auf Desktop- und Mobilbrowsern zugänglich ist. Die oben gezeigte mobile Oberfläche dient nur zur Demonstration.",
+    "features": [
+      {
+        "name": "Kunden hinzufügen & verwalten",
+        "description": "Erstellen und organisieren Sie Ihre Kundendatenbank mit Kontaktdaten, Rechnungsinformationen und Zahlungspräferenzen. Alles an einem Ort."
+      },
+      {
+        "name": "Rechnungen durch Kundenauswahl erstellen",
+        "description": "Generieren Sie Schweizer QR-Rechnungen in Sekunden durch Auswahl aus Ihrer Kundenliste. Automatische Steuerberechnungen und professionelle Formatierung inklusive."
+      },
+      {
+        "name": "Rechnungsstatus verfolgen & Zahlungen abgleichen",
+        "description": "Überwachen Sie bezahlte, ausstehende und überfällige Rechnungen auf einen Blick. Automatische Synchronisation mit Ihrer Bank für Echtzeit-Zahlungsabgleich, mit manuellem CAMT-Upload als Fallback."
+      }
+    ],
+    "screens": {
+      "clientManagement": {
+        "title": "Kunden",
+        "subtitle": "Verwalten Sie Ihre Kundendatenbank",
+        "allClients": "Alle Kunden",
+        "addClient": "+ Kunde hinzufügen",
+        "invoices": "Rechnungen"
+      },
+      "invoiceCreation": {
+        "title": "Rechnung erstellen",
+        "subtitle": "Kunde auswählen und QR-Rechnung generieren",
+        "selectClient": "Kunde auswählen",
+        "amount": "Betrag",
+        "dueDate": "Fälligkeitsdatum",
+        "description": "Beschreibung",
+        "consultingServices": "Beratungsdienstleistungen",
+        "generateQRBill": "Schweizer QR-Rechnung generieren",
+        "autoTaxCalculation": "Automatische Steuerberechnung inklusive"
+      },
+      "reconciliation": {
+        "title": "Abgleich",
+        "subtitle": "Automatische Bank-Synchronisation & Zahlungsverfolgung",
+        "autoSync": "Auto-Sync",
+        "active": "Aktiv",
+        "lastSync": "Letzte Synchronisation: vor 2 Minuten",
+        "manualUpload": "Manueller Upload",
+        "fallback": "Fallback",
+        "dragDropCAMT": "CAMT-Dateien bei Bedarf per Drag & Drop hochladen",
+        "recentInvoices": "Aktuelle Rechnungen",
+        "autoMatched": "Automatisch abgeglichen: 2 Zahlungen",
+        "total": "Gesamt: CHF 1.700,00 • Vor 2 Min synchronisiert"
+      }
+    }
   },
   "secondaryFeatures": {
     "title": "Alles was Sie für professionelles Rechnungswesen brauchen",
@@ -84,43 +132,71 @@
         "body": "Ich habe mehrere andere Plattformen ausprobiert, aber keine verstand Schweizer Anforderungen wie PayMatch. Die QR-Bill-Generierung ist fehlerfrei.",
         "author": "Michael Keller, Agenturinhaber",
         "rating": 5
+      },
+      {
+        "title": "Team-Zusammenarbeit ist ausgezeichnet.",
+        "body": "Mein Team kann Rechnungen nahtlos gemeinsam verwalten. Die Echtzeit-Updates und Benachrichtigungen halten alle synchron.",
+        "author": "Lisa Brunner, Operationsmanagerin",
+        "rating": 5
+      },
+      {
+        "title": "DSGVO-Konformität eingebaut.",
+        "body": "Zu wissen, dass meine Kundendaten sicher und DSGVO-konform sind, gibt mir Seelenfrieden. Die Sicherheitsfunktionen sind auf Unternehmensniveau.",
+        "author": "Robert Huber, Datensensibles Unternehmen",
+        "rating": 5
+      },
+      {
+        "title": "Finanzberichterstattung ist umfassend.",
+        "body": "Die Berichtsfunktionen helfen mir, meinen Cashflow besser zu verstehen. Der Datenexport für meinen Buchhalter ist nahtlos.",
+        "author": "Christine Wagner, Finanzcontrollerin",
+        "rating": 5
+      },
+      {
+        "title": "Kundensupport ist herausragend.",
+        "body": "Als ich Fragen zu Schweizer Mehrwertsteuerregeln hatte, war ihr Support-Team unglaublich hilfreich und kenntnisreich über lokale Vorschriften.",
+        "author": "Peter Lehmann, Neuer Unternehmer",
+        "rating": 5
+      },
+      {
+        "title": "Wert jeden Schweizer Franken.",
+        "body": "Die Zeit, die ich beim Rechnungswesen und der Zahlungsverfolgung spare, zahlt mehr als das Abonnement. Es hat meine Geschäftsabläufe transformiert.",
+        "author": "Nicole Graf, Professionelle Dienstleisterin",
+        "rating": 5
+      },
+      {
+        "title": "Intuitiv und leistungsstark.",
+        "body": "Die Oberfläche ist sauber und einfach zu verwenden, aber die Funktionen sind umfassend. Perfektes Gleichgewicht zwischen Einfachheit und Funktionalität.",
+        "author": "Stefan Roth, Tech-Berater",
+        "rating": 5
+      },
+      {
+        "title": "Schweizer Präzision vom Feinsten.",
+        "body": "PayMatch verkörpert Schweizer Qualität - präzise, zuverlässig und effizient. Alles funktioniert genau wie versprochen.",
+        "author": "Andrea Meier, Qualitätsmanagerin",
+        "rating": 5
+      },
+      {
+        "title": "Wendepunkt für meine Praxis.",
+        "body": "Als Treuhänder verwalte ich mehrere Kunden. PayMatch macht es einfach, alles organisiert und konform zu halten.",
+        "author": "Markus Schneider, Treuhänder",
+        "rating": 5
       }
     ]
-  },
-  "faqs": {
-    "title": "Häufig gestellte Fragen",
-    "subtitle": "Falls Sie noch andere Fragen haben,",
-    "contactUs": "kontaktieren Sie uns",
-    "questions": {
-      "q1": {
-        "question": "Was ist PayMatch?",
-        "answer": "PayMatch ist eine Schweizer Rechnungsplattform, die speziell für Schweizer Unternehmen entwickelt wurde. Sie hilft Ihnen dabei, Swiss QR-Bill-Rechnungen zu erstellen, zu versenden und abzugleichen."
-      },
-      "q2": {
-        "question": "Wie funktioniert die QR-Bill-Generierung?",
-        "answer": "PayMatch generiert automatisch konforme Swiss QR-Bills mit allen erforderlichen Informationen, einschließlich Mehrwertsteuerberechnungen und ordnungsgemäßer Formatierung für Schweizer Bankstandards."
-      },
-      "q3": {
-        "question": "Kann ich mich mit meiner bestehenden Buchhaltungssoftware integrieren?",
-        "answer": "Ja, PayMatch bietet Integrationen mit beliebter Buchhaltungssoftware und kann Daten in verschiedenen Formaten für einfachen Import exportieren."
-      },
-      "q4": {
-        "question": "Sind meine Daten sicher?",
-        "answer": "Absolut. Wir verwenden Banken-Level-Sicherheitsmaßnahmen und halten uns an Schweizer Datenschutzbestimmungen, um Ihre Daten sicher zu halten."
-      },
-      "q5": {
-        "question": "Unterstützen Sie mehrere Währungen?",
-        "answer": "Ja, PayMatch unterstützt sowohl CHF als auch EUR mit automatischer Währungsumrechnung und ordnungsgemäßer Formatierung für Schweizer und europäische Märkte."
-      },
-      "q6": {
-        "question": "Was ist mit Schweizer Konformität?",
-        "answer": "PayMatch wurde speziell für Schweizer Rechnungsstandards entwickelt und stellt automatisch die Konformität mit Schweizer Mehrwertsteuerbestimmungen und Bankanforderungen sicher."
-      }
-    }
   },
   "pricing": {
     "title": "Einfache, transparente Preise",
     "subtitle": "Wählen Sie den Plan, der zu Ihren Geschäftsanforderungen passt",
+    "mostPopular": "Am beliebtesten",
+    "billedMonthly": "Monatlich abgerechnet",
+    "billedAnnually": "Jährlich abgerechnet",
+    "features": "Funktionen",
+    "planNames": {
+      "free": "KOSTENLOS",
+      "freelancer": "FREELANCER",
+      "business": "BUSINESS",
+      "enterprise": "ENTERPRISE"
+    },
+    "popular": "BELIEBT",
     "free": {
       "name": "Kostenlos",
       "price": "0",
@@ -143,8 +219,8 @@
         "Prioritäts-Support"
       ]
     },
-    "enterprise": {
-      "name": "Enterprise",
+    "business": {
+      "name": "Business",
       "price": "50",
       "description": "Für wachsende Unternehmen",
       "features": [
@@ -152,6 +228,17 @@
         "Team-Zusammenarbeit",
         "Benutzerdefinierte Integrationen",
         "Dedizierter Support"
+      ]
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price": "150",
+      "description": "Für große Organisationen",
+      "features": [
+        "Alles aus Business",
+        "Unbegrenzte Benutzer",
+        "Erweiterte Analysen",
+        "White-Label-Optionen"
       ]
     }
   }

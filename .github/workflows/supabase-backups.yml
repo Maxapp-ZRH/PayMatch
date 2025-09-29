@@ -53,9 +53,9 @@ jobs:
           ln -sf "$(basename "$BACKUP_FILE")" supabase/backups/latest.sql
 
       - name: Commit backup files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add supabase/backups/
-          git commit -m "supabase backup" || exit 0
-          git push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'supabase backup'
+          file_pattern: 'supabase/backups/*.sql'
+          commit_user_name: 'Supabase Backup Bot'
+          commit_user_email: 'backup@paymatch.ch'
