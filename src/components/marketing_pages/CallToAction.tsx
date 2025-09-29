@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/marketing_pages/Button';
 import { CircleBackground } from '@/components/marketing_pages/CircleBackground';
 import { Container } from '@/components/marketing_pages/Container';
