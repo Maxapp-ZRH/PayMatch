@@ -204,6 +204,7 @@ function Plan({
 
 export function Pricing() {
   const t = useTranslations('pricing');
+  const tCommon = useTranslations('common');
   const locale = useLocale();
   const [activePeriod, setActivePeriod] = useState<'Monthly' | 'Annually'>(
     'Monthly'
@@ -316,7 +317,7 @@ export function Pricing() {
               description: t(`plans.${planKey}.description`),
               features: t.raw(`plans.${planKey}.features`),
               button: {
-                label: t('common.getStarted'),
+                label: tCommon('buttons.getStarted'),
                 href: '/register',
               },
             };
