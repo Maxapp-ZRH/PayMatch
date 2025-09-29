@@ -5,12 +5,6 @@
     "install": "Install",
     "notNow": "Not now"
   },
-  "updateNotification": {
-    "title": "Update Available",
-    "description": "A new version of PayMatch is ready with improvements",
-    "updateNow": "Update Now",
-    "later": "Later"
-  },
   "cookieBanner": {
     "title": "We use cookies",
     "description": "We use cookies to enhance your experience, analyze site traffic, and personalize content. You can customize your preferences or accept all cookies.",

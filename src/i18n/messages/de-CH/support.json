@@ -1,4 +1,12 @@
 {
+  "pagination": {
+    "moreQuestionsAvailable": "weitere Fragen verfügbar",
+    "showingQuestions": "Zeige {current} von {total} Fragen",
+    "questionsFound": "Fragen gefunden",
+    "questionFound": "Frage gefunden",
+    "noQuestionsFound": "Keine Fragen gefunden",
+    "noQuestionsDescription": "Versuchen Sie, Ihre Suchbegriffe anzupassen oder durchsuchen Sie alle Kategorien."
+  },
   "faqSection": {
     "title": "Häufig gestellte Fragen",
     "subtitle": "Finden Sie schnelle Antworten auf häufige Fragen, bevor Sie sich an den Support wenden.",
@@ -132,14 +140,6 @@
       "stillNeedHelp": "Brauchen Sie noch Hilfe? Support kontaktieren",
       "loadMoreQuestions": "Weitere Fragen laden",
       "clearFilters": "Filter löschen"
-    },
-    "pagination": {
-      "moreQuestionsAvailable": "weitere Fragen verfügbar",
-      "showingQuestions": "Zeige {current} von {total} Fragen",
-      "questionsFound": "Fragen gefunden",
-      "questionFound": "Frage gefunden",
-      "noQuestionsFound": "Keine Fragen gefunden",
-      "noQuestionsDescription": "Versuchen Sie, Ihre Suchbegriffe anzupassen oder durchsuchen Sie alle Kategorien."
     },
     "contactInfo": {
       "emailSupport": {
