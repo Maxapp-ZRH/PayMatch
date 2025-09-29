@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import { useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
 
 import { Container } from '@/components/marketing_pages/Container';
 
@@ -192,22 +193,37 @@ export function SecondaryFeatures() {
       className="py-12 sm:py-20 lg:py-32"
     >
       <Container>
-        <div className="mx-auto max-w-2xl sm:text-center">
+        <motion.div
+          className="mx-auto max-w-2xl sm:text-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
           <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-gray-900">
             {t('title')}
           </h2>
           <p className="mt-2 text-base sm:text-lg text-gray-600">
             {t('subtitle')}
           </p>
-        </div>
-        <ul
+        </motion.div>
+        <motion.ul
           role="list"
           className="mx-auto mt-12 grid max-w-2xl grid-cols-1 gap-4 text-sm sm:mt-16 sm:grid-cols-2 sm:gap-6 md:gap-y-8 lg:mt-20 lg:max-w-none lg:grid-cols-3 lg:gap-y-10"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
         >
-          {features.map((feature) => (
-            <li
+          {features.map((feature, index) => (
+            <motion.li
               key={feature.name}
               className="rounded-xl sm:rounded-2xl border border-gray-200 p-4 sm:p-6 lg:p-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.5,
+                delay: 0.4 + index * 0.1,
+                ease: 'easeOut',
+              }}
             >
               <feature.icon className="h-6 w-6 sm:h-8 sm:w-8" />
               <h3 className="mt-4 sm:mt-6 font-semibold text-gray-900 text-sm sm:text-base">
@@ -216,9 +232,9 @@ export function SecondaryFeatures() {
               <p className="mt-2 text-gray-700 text-xs sm:text-sm">
                 {feature.description}
               </p>
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </motion.ul>
       </Container>
     </section>
   );
