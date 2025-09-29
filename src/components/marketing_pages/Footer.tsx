@@ -42,13 +42,13 @@ export function Footer() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
           >
-            <div className="flex items-center text-gray-900">
+            <div className="flex items-start text-gray-900">
               <Image
                 src="/logo.png"
                 alt="PayMatch"
                 width={40}
                 height={40}
-                className="h-10 w-10 flex-none"
+                className="h-10 w-10 flex-none mt-0.5"
               />
               <div className="ml-4">
                 <p className="text-base font-semibold">PayMatch</p>
@@ -65,11 +65,11 @@ export function Footer() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
           >
-            <div className="relative flex h-20 w-20 flex-none items-center justify-center sm:h-24 sm:w-24">
+            <div className="relative flex h-24 w-24 flex-none items-center justify-center sm:h-28 sm:w-28">
               <QrCodeBorder className="absolute inset-0 h-full w-full stroke-gray-300 transition-colors group-hover:stroke-red-500" />
               <QRCode
                 value="https://paymatch.app"
-                size={64}
+                size={80}
                 className="rounded-lg"
                 alt="QR Code to PayMatch.app"
               />
