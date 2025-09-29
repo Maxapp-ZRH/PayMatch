@@ -1,4 +1,12 @@
 {
+  "pagination": {
+    "moreQuestionsAvailable": "more questions available",
+    "showingQuestions": "Showing {current} of {total} questions",
+    "questionsFound": "Questions Found",
+    "questionFound": "Question Found",
+    "noQuestionsFound": "No questions found",
+    "noQuestionsDescription": "Try adjusting your search terms or browse all categories."
+  },
   "faqSection": {
     "title": "Frequently Asked Questions",
     "subtitle": "Find quick answers to common questions before reaching out to support.",
@@ -132,14 +140,6 @@
       "stillNeedHelp": "Still need help? Contact support",
       "loadMoreQuestions": "Load More Questions",
       "clearFilters": "Clear filters"
-    },
-    "pagination": {
-      "moreQuestionsAvailable": "more questions available",
-      "showingQuestions": "Showing {current} of {total} questions",
-      "questionsFound": "Questions Found",
-      "questionFound": "Question Found",
-      "noQuestionsFound": "No questions found",
-      "noQuestionsDescription": "Try adjusting your search terms or browse all categories."
     },
     "contactInfo": {
       "emailSupport": {

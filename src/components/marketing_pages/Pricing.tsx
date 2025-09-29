@@ -414,7 +414,7 @@ export function Pricing() {
                       <td
                         className={clsx(
                           'border-b border-r border-gray-200 px-6 py-4 font-medium text-gray-900 text-lg',
-                          isLastRow ? 'first:rounded-bl-3xl' : ''
+                          isLastRow ? 'rounded-bl-3xl' : ''
                         )}
                       >
                         {getFeatureTranslation(row.featureKey)}
@@ -430,8 +430,9 @@ export function Pricing() {
                             className={clsx(
                               'border-b px-6 py-4 text-center',
                               isLast
-                                ? 'border-gray-200 last:rounded-br-3xl'
+                                ? 'border-gray-200'
                                 : 'border-r border-gray-200',
+                              isLast && isLastRow ? 'rounded-br-3xl' : '',
                               isFeatured ? 'bg-teal-50/30' : ''
                             )}
                           >
