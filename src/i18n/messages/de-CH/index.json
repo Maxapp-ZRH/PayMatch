@@ -184,62 +184,85 @@
     ]
   },
   "pricing": {
-    "title": "Einfache, transparente Preise",
-    "subtitle": "Wählen Sie den Plan, der zu Ihren Geschäftsanforderungen passt",
+    "title": "Einfache Preise für Schweizer Unternehmen.",
+    "subtitle": "Von Freelancern bis zu Grossunternehmen - wir haben den perfekten Plan für Ihre Rechnungsstellungsbedürfnisse. Beginnen Sie mit unserem kostenlosen Plan und upgraden Sie, wenn Sie wachsen.",
+    "billingPeriods": {
+      "monthly": "Monatlich",
+      "annually": "Jährlich"
+    },
     "mostPopular": "Am beliebtesten",
     "billedMonthly": "Monatlich abgerechnet",
-    "billedAnnually": "Jährlich abgerechnet",
+    "billedAnnually": "Monatlich abgerechnet",
+    "annualBillingBadge": "Sparen Sie 20% mit jährlicher Abrechnung",
+    "comparisonTitle": "Alle Funktionen vergleichen",
+    "comparisonDescription": "Sehen Sie genau, was in jedem Plan enthalten ist, um die perfekte Lösung für Ihr Unternehmen zu wählen",
     "features": "Funktionen",
-    "planNames": {
-      "free": "KOSTENLOS",
-      "freelancer": "FREELANCER",
-      "business": "BUSINESS",
-      "enterprise": "ENTERPRISE"
+    "footerText": "Alle Pläne beinhalten Swiss QR-Bill-Konformität und Zahlungsabgleich.",
+    "footerLink": "Mit kostenlosem Plan starten →",
+    "featureComparison": {
+      "invoices": "Rechnungen",
+      "clients": "Kunden",
+      "users": "Benutzer",
+      "qrBillInvoices": "QR-Bill-Rechnungen",
+      "paymentReconciliation": "Zahlungsabgleich",
+      "reminders": "Erinnerungen",
+      "reportsDataExports": "Berichte / Datenexporte",
+      "brandingControl": "Branding-Kontrolle",
+      "teamManagement": "Team-Management",
+      "support": "Support",
+      "unlimited": "Unbegrenzt",
+      "basic": "Basis",
+      "advanced": "Erweitert",
+      "community": "Community",
+      "priority": "Priorität",
+      "dedicatedSLA": "Dedizierter SLA"
     },
-    "popular": "BELIEBT",
-    "free": {
-      "name": "Kostenlos",
-      "price": "0",
-      "description": "Perfekt für den Einstieg",
-      "features": [
-        "5 Rechnungen pro Monat",
-        "Swiss QR-Bill-Generierung",
-        "Grundlegende Kundenverwaltung",
-        "E-Mail-Support"
-      ]
-    },
-    "freelancer": {
-      "name": "Freelancer",
-      "price": "5",
-      "description": "Für selbstständige Fachkräfte",
-      "features": [
-        "Unbegrenzte Rechnungen",
-        "Erweiterte Berichte",
-        "Zahlungserinnerungen",
-        "Prioritäts-Support"
-      ]
-    },
-    "business": {
-      "name": "Business",
-      "price": "50",
-      "description": "Für wachsende Unternehmen",
-      "features": [
-        "Alles aus Freelancer",
-        "Team-Zusammenarbeit",
-        "Benutzerdefinierte Integrationen",
-        "Dedizierter Support"
-      ]
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "price": "150",
-      "description": "Für große Organisationen",
-      "features": [
-        "Alles aus Business",
-        "Unbegrenzte Benutzer",
-        "Erweiterte Analysen",
-        "White-Label-Optionen"
-      ]
+    "plans": {
+      "free": {
+        "name": "Kostenlos",
+        "description": "Perfekt für den Einstieg in die Schweizer Rechnungsstellung.",
+        "features": [
+          "5 Rechnungen pro Monat",
+          "Swiss QR-Bill-Generierung",
+          "Zahlungsabgleich",
+          "Community-Support"
+        ]
+      },
+      "freelancer": {
+        "name": "Freelancer",
+        "description": "Für Solo-Profis, die Rechnungsstellung ohne Grenzen wollen.",
+        "features": [
+          "Unbegrenzte Rechnungen & Kunden",
+          "Swiss QR-Bill-Generierung",
+          "Zahlungsabgleich",
+          "Prioritäts-Support",
+          "Keine Funktionsbeschränkungen"
+        ]
+      },
+      "business": {
+        "name": "Business",
+        "description": "Für KMU und Treuhänder, die Zusammenarbeit und mehr Funktionen benötigen.",
+        "features": [
+          "Alles aus Freelancer",
+          "Team-Management (10 Benutzer)",
+          "Erweiterte Erinnerungen",
+          "Branding-Kontrolle",
+          "Organisations-Dashboard",
+          "Erweiterte Berichte"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "description": "Für grosse Treuhänder und Unternehmen mit erweiterten Bedürfnissen.",
+        "features": [
+          "Alles aus Business",
+          "Unbegrenzte Benutzer",
+          "Dedizierter Support / SLA",
+          "Erweiterte Sicherheit",
+          "Früher Zugang zu KI-Funktionen",
+          "Benutzerdefinierte Anfragen"
+        ]
+      }
     }
   }
 }
