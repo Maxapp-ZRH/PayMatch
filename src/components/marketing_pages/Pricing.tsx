@@ -222,8 +222,13 @@ export function Pricing() {
   // Map feature values to translation keys
   const getFeatureValueTranslation = (value: string | 'check' | 'cross') => {
     if (value === 'check' || value === 'cross') return value;
+
+    // Handle numeric values and other non-translatable values
+    if (value === '1' || value === '10 max' || value === 'Unlimited') {
+      return value;
+    }
+
     const valueMap: Record<string, string> = {
-      Unlimited: 'featureComparison.unlimited',
       Basic: 'featureComparison.basic',
       Advanced: 'featureComparison.advanced',
       Community: 'featureComparison.community',
