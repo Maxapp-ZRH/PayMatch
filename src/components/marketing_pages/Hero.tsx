@@ -2,6 +2,7 @@ import { useId } from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
@@ -107,14 +108,34 @@ export function Hero() {
     >
       <Container>
         <div className="lg:grid lg:grid-cols-12 lg:gap-x-8 lg:gap-y-20">
-          <div className="relative z-10 mx-auto max-w-2xl lg:col-span-7 lg:max-w-none lg:pt-6 xl:col-span-6">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-gray-900">
+          <motion.div
+            className="relative z-10 mx-auto max-w-2xl lg:col-span-7 lg:max-w-none lg:pt-6 xl:col-span-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
+            <motion.h1
+              className="text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-gray-900"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+            >
               {t('title')}
-            </h1>
-            <p className="mt-4 sm:mt-6 text-base sm:text-lg text-gray-600">
+            </motion.h1>
+            <motion.p
+              className="mt-4 sm:mt-6 text-base sm:text-lg text-gray-600"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+            >
               {t('subtitle')}
-            </p>
-            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-x-6 sm:gap-y-4">
+            </motion.p>
+            <motion.div
+              className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-x-6 sm:gap-y-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6, ease: 'easeOut' }}
+            >
               <Button
                 href="/register"
                 color="cyan"
@@ -131,9 +152,14 @@ export function Hero() {
                 <PlayIcon className="h-5 w-5 sm:h-6 sm:w-6 flex-none" />
                 <span className="ml-2 sm:ml-2.5">{t('learnMore')}</span>
               </Button>
-            </div>
-          </div>
-          <div className="relative mt-10 sm:mt-20 lg:col-span-5 lg:row-span-2 lg:mt-0 xl:col-span-6">
+            </motion.div>
+          </motion.div>
+          <motion.div
+            className="relative mt-10 sm:mt-20 lg:col-span-5 lg:row-span-2 lg:mt-0 xl:col-span-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
+          >
             <BackgroundIllustration className="absolute top-4 left-1/2 h-[1026px] w-[1026px] -translate-x-1/3 mask-[linear-gradient(to_bottom,white_20%,transparent_75%)] stroke-gray-300/70 sm:top-16 sm:-translate-x-1/2 lg:-top-16 lg:ml-12 xl:-top-14 xl:ml-0" />
             <div className="-mx-4 h-[320px] sm:h-[448px] mask-[linear-gradient(to_bottom,white_60%,transparent)] px-4 sm:px-9 sm:mx-0 lg:absolute lg:-inset-x-10 lg:-top-10 lg:-bottom-20 lg:h-auto lg:px-0 lg:pt-10 xl:-bottom-32">
               <div className="mx-auto max-w-[280px] sm:max-w-[366px] bg-white rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden">
@@ -233,8 +259,13 @@ export function Hero() {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="relative -mt-4 lg:col-span-7 lg:mt-0 xl:col-span-6">
+          </motion.div>
+          <motion.div
+            className="relative -mt-4 lg:col-span-7 lg:mt-0 xl:col-span-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8, ease: 'easeOut' }}
+          >
             <p className="text-center text-xs sm:text-sm font-semibold text-gray-900 lg:text-left">
               {t('trustedBy')}
             </p>
@@ -262,7 +293,7 @@ export function Hero() {
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
         </div>
       </Container>
     </div>

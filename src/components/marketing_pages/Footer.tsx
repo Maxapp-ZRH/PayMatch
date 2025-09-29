@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
@@ -27,8 +28,18 @@ export function Footer() {
   return (
     <footer className="border-t border-gray-200">
       <Container>
-        <div className="flex flex-col items-start justify-between gap-y-8 pt-12 pb-6 sm:gap-y-12 sm:pt-16 lg:flex-row lg:items-center lg:py-16">
-          <div className="w-full">
+        <motion.div
+          className="flex flex-col items-start justify-between gap-y-8 pt-12 pb-6 sm:gap-y-12 sm:pt-16 lg:flex-row lg:items-center lg:py-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
+          <motion.div
+            className="w-full"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+          >
             <div className="flex items-center text-gray-900">
               <Image
                 src="/logo.png"
@@ -45,8 +56,13 @@ export function Footer() {
             <nav className="mt-6 flex flex-wrap gap-6 sm:mt-8 sm:gap-8">
               <NavLinks />
             </nav>
-          </div>
-          <div className="group relative -mx-4 flex w-full items-center self-stretch p-4 transition-colors hover:bg-gray-100 sm:w-auto sm:self-auto sm:rounded-2xl lg:mx-0 lg:self-auto lg:p-6">
+          </motion.div>
+          <motion.div
+            className="group relative -mx-4 flex w-full items-center self-stretch p-4 transition-colors hover:bg-gray-100 sm:w-auto sm:self-auto sm:rounded-2xl lg:mx-0 lg:self-auto lg:p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+          >
             <div className="relative flex h-20 w-20 flex-none items-center justify-center sm:h-24 sm:w-24">
               <QrCodeBorder className="absolute inset-0 h-full w-full stroke-gray-300 transition-colors group-hover:stroke-red-500" />
               <QRCode
@@ -67,9 +83,14 @@ export function Footer() {
                 {t('links.startInvoicingDescription')}
               </p>
             </div>
-          </div>
-        </div>
-        <div className="border-t border-gray-200 pt-8 pb-12">
+          </motion.div>
+        </motion.div>
+        <motion.div
+          className="border-t border-gray-200 pt-8 pb-12"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6, ease: 'easeOut' }}
+        >
           {/* Links Section */}
           <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-16">
             {/* Company & Legal Group */}
@@ -253,7 +274,7 @@ export function Footer() {
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </Container>
     </footer>
   );

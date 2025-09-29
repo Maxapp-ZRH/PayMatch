@@ -2,6 +2,7 @@ import { Button } from '@/components/marketing_pages/Button';
 import { CircleBackground } from '@/components/marketing_pages/CircleBackground';
 import { Container } from '@/components/marketing_pages/Container';
 import { useTranslations } from 'next-intl';
+import { motion } from 'framer-motion';
 
 export function CallToAction() {
   const t = useTranslations('callToAction');
@@ -15,14 +16,34 @@ export function CallToAction() {
         <CircleBackground color="#E4262A" className="animate-spin-slower" />
       </div>
       <Container className="relative">
-        <div className="mx-auto max-w-md sm:text-center">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-white">
+        <motion.div
+          className="mx-auto max-w-md sm:text-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
+          <motion.h2
+            className="text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-white"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+          >
             {t('title')}
-          </h2>
-          <p className="mt-4 text-base sm:text-lg text-gray-300">
+          </motion.h2>
+          <motion.p
+            className="mt-4 text-base sm:text-lg text-gray-300"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+          >
             {t('subtitle')}
-          </p>
-          <div className="mt-6 sm:mt-8 flex justify-center">
+          </motion.p>
+          <motion.div
+            className="mt-6 sm:mt-8 flex justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6, ease: 'easeOut' }}
+          >
             <Button
               href="/register"
               color="cyan"
@@ -30,8 +51,8 @@ export function CallToAction() {
             >
               {t('cta')}
             </Button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </Container>
     </section>
   );
