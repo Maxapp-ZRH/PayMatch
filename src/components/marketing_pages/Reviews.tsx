@@ -31,8 +31,8 @@ function StarRating({ rating }: { rating: Review['rating'] }) {
         <StarIcon
           key={index}
           className={clsx(
-            'h-5 w-5',
-            rating > index ? 'fill-teal-600' : 'fill-gray-300'
+            'h-4 w-4 sm:h-5 sm:w-5',
+            rating > index ? 'fill-red-500' : 'fill-gray-300'
           )}
         />
       ))}
@@ -65,7 +65,7 @@ function Review({
   return (
     <figure
       className={clsx(
-        'animate-fade-in rounded-3xl bg-white p-6 opacity-0 shadow-md shadow-gray-900/5',
+        'animate-fade-in rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-6 opacity-0 shadow-md shadow-gray-900/5',
         className
       )}
       style={{ animationDelay }}
@@ -73,12 +73,12 @@ function Review({
     >
       <blockquote className="text-gray-900">
         <StarRating rating={rating} />
-        <p className="mt-4 text-lg/6 font-semibold before:content-['“'] after:content-['”']">
+        <p className="mt-3 sm:mt-4 text-sm sm:text-base lg:text-lg/6 font-semibold before:content-['\u201C'] after:content-['\u201D']">
           {title}
         </p>
-        <p className="mt-3 text-base/7">{body}</p>
+        <p className="mt-2 sm:mt-3 text-xs sm:text-sm lg:text-base/7">{body}</p>
       </blockquote>
-      <figcaption className="mt-3 text-sm text-gray-600 before:content-['–_']">
+      <figcaption className="mt-2 sm:mt-3 text-xs sm:text-sm text-gray-600 before:content-['–_']">
         {author}
       </figcaption>
     </figure>
@@ -161,7 +161,7 @@ function ReviewGrid() {
   return (
     <div
       ref={containerRef}
-      className="relative -mx-4 mt-16 grid h-196 max-h-[150vh] grid-cols-1 items-start gap-8 overflow-hidden px-4 sm:mt-20 md:grid-cols-2 lg:grid-cols-3"
+      className="relative -mx-4 mt-12 grid h-196 max-h-[150vh] grid-cols-1 items-start gap-6 overflow-hidden px-4 sm:mt-16 sm:gap-8 md:grid-cols-2 lg:mt-20 lg:grid-cols-3"
     >
       {isInView && (
         <>
@@ -204,16 +204,16 @@ export function Reviews() {
     <section
       id="reviews"
       aria-labelledby="reviews-title"
-      className="pt-20 pb-16 sm:pt-32 sm:pb-24"
+      className="pt-12 pb-12 sm:pt-20 sm:pb-16 lg:pt-32 lg:pb-24"
     >
       <Container>
         <h2
           id="reviews-title"
-          className="text-3xl font-medium tracking-tight text-gray-900 sm:text-center"
+          className="text-2xl sm:text-3xl font-medium tracking-tight text-gray-900 sm:text-center"
         >
           {t('title')}
         </h2>
-        <p className="mt-2 text-lg text-gray-600 sm:text-center">
+        <p className="mt-2 text-base sm:text-lg text-gray-600 sm:text-center">
           {t('subtitle')}
         </p>
         <ReviewGrid />

@@ -189,29 +189,33 @@ export function SecondaryFeatures() {
     <section
       id="secondary-features"
       aria-label="Features for professional invoicing and payment management"
-      className="py-20 sm:py-32"
+      className="py-12 sm:py-20 lg:py-32"
     >
       <Container>
         <div className="mx-auto max-w-2xl sm:text-center">
-          <h2 className="text-3xl font-medium tracking-tight text-gray-900">
+          <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-gray-900">
             {t('title')}
           </h2>
-          <p className="mt-2 text-lg text-gray-600">{t('subtitle')}</p>
+          <p className="mt-2 text-base sm:text-lg text-gray-600">
+            {t('subtitle')}
+          </p>
         </div>
         <ul
           role="list"
-          className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 text-sm sm:mt-20 sm:grid-cols-2 md:gap-y-10 lg:max-w-none lg:grid-cols-3"
+          className="mx-auto mt-12 grid max-w-2xl grid-cols-1 gap-4 text-sm sm:mt-16 sm:grid-cols-2 sm:gap-6 md:gap-y-8 lg:mt-20 lg:max-w-none lg:grid-cols-3 lg:gap-y-10"
         >
           {features.map((feature) => (
             <li
               key={feature.name}
-              className="rounded-2xl border border-gray-200 p-8"
+              className="rounded-xl sm:rounded-2xl border border-gray-200 p-4 sm:p-6 lg:p-8"
             >
-              <feature.icon className="h-8 w-8" />
-              <h3 className="mt-6 font-semibold text-gray-900">
+              <feature.icon className="h-6 w-6 sm:h-8 sm:w-8" />
+              <h3 className="mt-4 sm:mt-6 font-semibold text-gray-900 text-sm sm:text-base">
                 {feature.name}
               </h3>
-              <p className="mt-2 text-gray-700">{feature.description}</p>
+              <p className="mt-2 text-gray-700 text-xs sm:text-sm">
+                {feature.description}
+              </p>
             </li>
           ))}
         </ul>

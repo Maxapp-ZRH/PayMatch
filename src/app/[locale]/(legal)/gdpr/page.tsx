@@ -14,19 +14,19 @@ export default function GDPRPage() {
 
   return (
     <LegalLayout title={t('title')} lastUpdated={t('lastUpdated')}>
-      <div className="max-w-4xl mx-auto space-y-12">
+      <div className="max-w-4xl mx-auto space-y-8 sm:space-y-12">
         {/* Introduction */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.introduction.title')}
           </h2>
 
           <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <p className="text-gray-700 leading-relaxed mb-6">
                 {t('sections.introduction.content.paragraph1')}
               </p>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.introduction.content.paragraph2')}
               </p>
             </div>
@@ -34,96 +34,96 @@ export default function GDPRPage() {
         </section>
 
         {/* Your Rights */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.yourRights.title')}
           </h2>
 
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.yourRights.subsections.rightToInformation.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.yourRights.subsections.rightToInformation.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.yourRights.subsections.rightOfAccess.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.yourRights.subsections.rightOfAccess.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.yourRights.subsections.rightToRectification.title'
                 )}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.yourRights.subsections.rightToRectification.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.yourRights.subsections.rightToErasure.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.yourRights.subsections.rightToErasure.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.yourRights.subsections.rightToRestrictProcessing.title'
                 )}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.yourRights.subsections.rightToRestrictProcessing.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.yourRights.subsections.rightToDataPortability.title'
                 )}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.yourRights.subsections.rightToDataPortability.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.yourRights.subsections.rightToObject.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.yourRights.subsections.rightToObject.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.yourRights.subsections.rightsRelatedToAutomatedDecisionMaking.title'
                 )}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.yourRights.subsections.rightsRelatedToAutomatedDecisionMaking.content'
                 )}
@@ -133,46 +133,46 @@ export default function GDPRPage() {
         </section>
 
         {/* Lawful Basis */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.lawfulBasis.title')}
           </h2>
 
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.lawfulBasis.subsections.consent.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.lawfulBasis.subsections.consent.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.lawfulBasis.subsections.contract.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.lawfulBasis.subsections.contract.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.lawfulBasis.subsections.legalObligation.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.lawfulBasis.subsections.legalObligation.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.lawfulBasis.subsections.legitimateInterests.title'
                 )}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.lawfulBasis.subsections.legitimateInterests.content'
                 )}
@@ -182,56 +182,56 @@ export default function GDPRPage() {
         </section>
 
         {/* Data Processing */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.dataProcessing.title')}
           </h2>
 
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.dataProcessing.subsections.dataMinimization.title'
                 )}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.dataProcessing.subsections.dataMinimization.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.dataProcessing.subsections.purposeLimitation.title'
                 )}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.dataProcessing.subsections.purposeLimitation.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.dataProcessing.subsections.storageLimitation.title'
                 )}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.dataProcessing.subsections.storageLimitation.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.dataProcessing.subsections.accuracy.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.dataProcessing.subsections.accuracy.content')}
               </p>
             </div>
@@ -239,8 +239,8 @@ export default function GDPRPage() {
         </section>
 
         {/* Data Breaches */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.dataBreaches.title')}
           </h2>
 
@@ -252,8 +252,8 @@ export default function GDPRPage() {
         </section>
 
         {/* Data Protection Officer */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.dataProtectionOfficer.title')}
           </h2>
 
@@ -265,8 +265,8 @@ export default function GDPRPage() {
         </section>
 
         {/* International Transfers */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.internationalTransfers.title')}
           </h2>
 
@@ -278,8 +278,8 @@ export default function GDPRPage() {
         </section>
 
         {/* Complaints */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.complaints.title')}
           </h2>
 
@@ -292,7 +292,7 @@ export default function GDPRPage() {
 
         {/* Contact */}
         <section className="pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.contact.title')}
           </h2>
 

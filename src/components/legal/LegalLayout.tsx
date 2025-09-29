@@ -72,43 +72,43 @@ export function LegalLayout({
     <>
       <Header />
       <main className="flex-auto">
-        <Container className="py-16">
+        <Container className="py-8 sm:py-12 lg:py-16">
           {/* Header */}
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+            <div className="text-center mb-8 sm:mb-12">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-gray-900">
                 {title}
               </h1>
-              <p className="mt-4 text-lg text-gray-600">
+              <p className="mt-2 sm:mt-4 text-sm sm:text-base lg:text-lg text-gray-600">
                 {t('lastUpdated')}: {lastUpdated}
               </p>
             </div>
 
             {/* Legal Pages Navigation */}
-            <div className="mb-12">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+            <div className="mb-8 sm:mb-12">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-6">
                 {t('legalInformation')}
               </h2>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {legalPages.map((page) => {
                   const Icon = page.icon;
                   return (
                     <Link
                       key={page.href}
                       href={page.href}
-                      className="group relative rounded-lg border border-gray-200 bg-white p-6 hover:border-teal-300 transition-all duration-200"
+                      className="group relative rounded-lg border border-gray-200 bg-white p-4 sm:p-6 hover:border-red-300 transition-all duration-200"
                     >
-                      <div className="flex items-start space-x-4">
+                      <div className="flex items-start space-x-3 sm:space-x-4">
                         <div className="flex-shrink-0">
-                          <div className="w-10 h-10 bg-teal-50 rounded-lg flex items-center justify-center group-hover:bg-teal-100 transition-colors">
-                            <Icon className="w-5 h-5 text-teal-600" />
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                            <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
                           </div>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-semibold text-gray-900 group-hover:text-teal-600 transition-colors">
+                          <h3 className="text-xs sm:text-sm font-semibold text-gray-900 group-hover:text-red-500 transition-colors">
                             {page.title}
                           </h3>
-                          <p className="mt-1 text-xs text-gray-600">
+                          <p className="mt-1 text-xs text-gray-600 line-clamp-2">
                             {page.description}
                           </p>
                         </div>
@@ -120,7 +120,7 @@ export function LegalLayout({
             </div>
 
             {/* Content */}
-            <div className="prose prose-lg prose-gray max-w-none">
+            <div className="prose prose-sm sm:prose-base lg:prose-lg prose-gray max-w-none">
               {children}
             </div>
           </div>

@@ -130,7 +130,7 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
               <div className="mt-4 flex flex-wrap gap-3">
                 <button
                   onClick={handleAcceptAll}
-                  className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors"
+                  className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
                 >
                   {t('acceptAll')}
                 </button>
@@ -208,7 +208,7 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
                 <Switch
                   checked={preferences.analytics}
                   onChange={() => togglePreference('analytics')}
-                  className="group relative flex h-5 w-10 cursor-pointer rounded-full bg-gray-300 p-0.5 ease-in-out focus:not-data-focus:outline-none data-checked:bg-teal-600 data-focus:outline data-focus:outline-teal-500 data-focus:outline-offset-2"
+                  className="group relative flex h-5 w-10 cursor-pointer rounded-full bg-gray-300 p-0.5 ease-in-out focus:not-data-focus:outline-none data-checked:bg-red-500 data-focus:outline data-focus:outline-red-500 data-focus:outline-offset-2"
                 >
                   <span
                     aria-hidden="true"
@@ -230,7 +230,7 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
                 <Switch
                   checked={preferences.marketing}
                   onChange={() => togglePreference('marketing')}
-                  className="group relative flex h-5 w-10 cursor-pointer rounded-full bg-gray-300 p-0.5 ease-in-out focus:not-data-focus:outline-none data-checked:bg-teal-600 data-focus:outline data-focus:outline-teal-500 data-focus:outline-offset-2"
+                  className="group relative flex h-5 w-10 cursor-pointer rounded-full bg-gray-300 p-0.5 ease-in-out focus:not-data-focus:outline-none data-checked:bg-red-500 data-focus:outline data-focus:outline-red-500 data-focus:outline-offset-2"
                 >
                   <span
                     aria-hidden="true"
@@ -243,7 +243,7 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
             <div className="mt-6 flex flex-wrap gap-3">
               <button
                 onClick={handleAcceptSelected}
-                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors"
+                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
               >
                 {t('preferences.savePreferences')}
               </button>

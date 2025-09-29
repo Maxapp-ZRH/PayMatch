@@ -16,7 +16,7 @@ export default function Login() {
       subtitle={
         <>
           Don&apos;t have an account?{' '}
-          <Link href="/register" className="text-teal-600">
+          <Link href="/register" className="text-red-500">
             Sign up
           </Link>{' '}
           to start invoicing.

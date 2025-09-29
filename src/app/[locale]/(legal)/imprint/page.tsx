@@ -14,39 +14,39 @@ export default function ImprintPage() {
 
   return (
     <LegalLayout title={t('title')} lastUpdated={t('lastUpdated')}>
-      <div className="max-w-4xl mx-auto space-y-12">
+      <div className="max-w-4xl mx-auto space-y-8 sm:space-y-12">
         {/* Company Information */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.companyInformation.title')}
           </h2>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6 pb-2 border-b border-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 lg:mb-6 pb-2 border-b border-gray-100">
                 {t('sections.companyInformation.subsections.companyName.title')}
               </h3>
-              <p className="text-gray-700 text-lg font-medium">
+              <p className="text-sm sm:text-base lg:text-lg text-gray-700 font-medium">
                 {t(
                   'sections.companyInformation.subsections.companyName.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 lg:mb-6 pb-2 border-b border-gray-100">
                 {t('sections.companyInformation.subsections.address.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 {t('sections.companyInformation.subsections.address.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 lg:mb-6 pb-2 border-b border-gray-100">
                 {t('sections.companyInformation.subsections.phone.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 <a
                   href="tel:+41411234567"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
@@ -56,11 +56,11 @@ export default function ImprintPage() {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 lg:mb-6 pb-2 border-b border-gray-100">
                 {t('sections.companyInformation.subsections.email.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 <a
                   href="mailto:info@paymatch.ch"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
@@ -70,11 +70,11 @@ export default function ImprintPage() {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 lg:mb-6 pb-2 border-b border-gray-100">
                 {t('sections.companyInformation.subsections.website.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 <a
                   href="https://paymatch.ch"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
@@ -89,59 +89,59 @@ export default function ImprintPage() {
         </section>
 
         {/* Legal Details */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.legalDetails.title')}
           </h2>
 
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t('sections.legalDetails.subsections.legalForm.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 {t('sections.legalDetails.subsections.legalForm.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.legalDetails.subsections.registrationNumber.title'
                 )}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 {t(
                   'sections.legalDetails.subsections.registrationNumber.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t('sections.legalDetails.subsections.vatNumber.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 {t('sections.legalDetails.subsections.vatNumber.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t('sections.legalDetails.subsections.chamberOfCommerce.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 {t(
                   'sections.legalDetails.subsections.chamberOfCommerce.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t('sections.legalDetails.subsections.managingDirector.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 {t(
                   'sections.legalDetails.subsections.managingDirector.content'
                 )}
@@ -151,8 +151,8 @@ export default function ImprintPage() {
         </section>
 
         {/* Business Purpose */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.businessPurpose.title')}
           </h2>
 
@@ -164,13 +164,13 @@ export default function ImprintPage() {
         </section>
 
         {/* Regulatory Information */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.regulatoryInformation.title')}
           </h2>
 
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.regulatoryInformation.subsections.dataProtection.title'
@@ -183,7 +183,7 @@ export default function ImprintPage() {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.regulatoryInformation.subsections.financialServices.title'
@@ -196,7 +196,7 @@ export default function ImprintPage() {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.regulatoryInformation.subsections.swissCompliance.title'
@@ -212,8 +212,8 @@ export default function ImprintPage() {
         </section>
 
         {/* Intellectual Property */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.intellectualProperty.title')}
           </h2>
 
@@ -225,8 +225,8 @@ export default function ImprintPage() {
         </section>
 
         {/* Liability */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.liability.title')}
           </h2>
 
@@ -238,8 +238,8 @@ export default function ImprintPage() {
         </section>
 
         {/* External Links */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.externalLinks.title')}
           </h2>
 
@@ -251,8 +251,8 @@ export default function ImprintPage() {
         </section>
 
         {/* Governing Law */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.governingLaw.title')}
           </h2>
 
@@ -264,17 +264,17 @@ export default function ImprintPage() {
         </section>
 
         {/* Contact */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.contact.title')}
           </h2>
 
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t('sections.contact.subsections.generalInquiries.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 <a
                   href="mailto:info@paymatch.ch"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
@@ -284,11 +284,11 @@ export default function ImprintPage() {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t('sections.contact.subsections.support.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 <a
                   href="mailto:support@paymatch.ch"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
@@ -298,11 +298,11 @@ export default function ImprintPage() {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t('sections.contact.subsections.privacy.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 <a
                   href="mailto:privacy@paymatch.ch"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
@@ -312,11 +312,11 @@ export default function ImprintPage() {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
                 {t('sections.contact.subsections.legal.title')}
               </h3>
-              <p className="text-gray-700">
+              <p className="text-sm sm:text-base text-gray-700">
                 <a
                   href="mailto:legal@paymatch.ch"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
@@ -330,7 +330,7 @@ export default function ImprintPage() {
 
         {/* Last Updated */}
         <section className="pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.lastUpdated.title')}
           </h2>
 

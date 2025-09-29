@@ -115,7 +115,7 @@ function SuccessModal({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -125,27 +125,31 @@ function SuccessModal({
             onClick={onClose}
           />
           <motion.div
-            className="relative bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl"
+            className="relative bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 max-w-sm sm:max-w-md w-full mx-2 sm:mx-4 shadow-2xl"
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
             <div className="text-center">
-              <div className="mx-auto flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="mx-auto flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full mb-4 sm:mb-6">
+                <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
               </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 mb-3 sm:mb-4">
                 {tForm('modals.success.title')}
               </h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">
                 {tForm('modals.success.message')}
               </p>
-              <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-6">
-                <Clock className="w-4 h-4" />
+              <div className="flex items-center justify-center space-x-2 text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
+                <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span>{tForm('modals.success.responseTime')}</span>
               </div>
-              <Button onClick={onClose} color="cyan" className="w-full">
+              <Button
+                onClick={onClose}
+                color="cyan"
+                className="w-full text-sm sm:text-base"
+              >
                 {tForm('modals.success.button')}
               </Button>
             </div>
@@ -172,7 +176,7 @@ function ErrorModal({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -182,27 +186,35 @@ function ErrorModal({
             onClick={onClose}
           />
           <motion.div
-            className="relative bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl"
+            className="relative bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 max-w-sm sm:max-w-md w-full mx-2 sm:mx-4 shadow-2xl"
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
           >
             <div className="text-center">
-              <div className="mx-auto flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-6">
-                <AlertCircle className="w-8 h-8 text-red-600" />
+              <div className="mx-auto flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full mb-4 sm:mb-6">
+                <AlertCircle className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
               </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 mb-3 sm:mb-4">
                 {tForm('modals.error.title')}
               </h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">
                 {errorMessage || tForm('modals.error.message')}
               </p>
-              <div className="flex space-x-3">
-                <Button onClick={onClose} variant="outline" className="flex-1">
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                <Button
+                  onClick={onClose}
+                  variant="outline"
+                  className="flex-1 text-sm sm:text-base"
+                >
                   {tForm('modals.error.buttons.close')}
                 </Button>
-                <Button onClick={onClose} color="cyan" className="flex-1">
+                <Button
+                  onClick={onClose}
+                  color="cyan"
+                  className="flex-1 text-sm sm:text-base"
+                >
                   {tForm('modals.error.buttons.tryAgain')}
                 </Button>
               </div>
@@ -292,13 +304,13 @@ function EnhancedFAQSection({
   }, [searchQuery, selectedCategory]);
 
   return (
-    <div className="bg-gray-50 rounded-2xl p-8">
+    <div className="bg-gray-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8">
-        <h2 className="text-3xl font-semibold tracking-tight text-gray-900 mb-4">
+      <div className="mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold tracking-tight text-gray-900 mb-3 sm:mb-4">
           Knowledge Base & FAQ Forum
         </h2>
-        <p className="text-lg text-gray-600 max-w-2xl">
+        <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-2xl">
           Browse our comprehensive knowledge base and find answers to common
           questions. Can&apos;t find what you&apos;re looking for? Contact our
           support team.
@@ -306,34 +318,34 @@ function EnhancedFAQSection({
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
+      <div className="bg-white rounded-lg sm:rounded-xl border border-gray-200 p-4 sm:p-6 mb-6 sm:mb-8 shadow-sm">
         {/* Search Bar */}
-        <div className="relative mb-6">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <div className="relative mb-4 sm:mb-6">
+          <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
           <input
             type="text"
             placeholder="Search FAQs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors text-lg"
+            className="w-full pl-10 sm:pl-12 pr-10 sm:pr-4 py-3 sm:py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors text-sm sm:text-base lg:text-lg"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           )}
         </div>
 
         {/* Category Filters */}
-        <div className="flex flex-wrap gap-3 mb-4">
+        <div className="flex flex-wrap gap-2 sm:gap-3 mb-4">
           <button
             onClick={() => setSelectedCategory('')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               selectedCategory === ''
-                ? 'bg-teal-600 text-white'
+                ? 'bg-red-500 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
@@ -345,14 +357,15 @@ function EnhancedFAQSection({
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2 ${
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center space-x-1 sm:space-x-2 ${
                   selectedCategory === category.id
-                    ? 'bg-teal-600 text-white'
+                    ? 'bg-red-500 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                <Icon className="w-4 h-4" />
-                <span>{category.name}</span>
+                <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">{category.name}</span>
+                <span className="sm:hidden">{category.name.split(' ')[0]}</span>
               </button>
             );
           })}
@@ -364,12 +377,12 @@ function EnhancedFAQSection({
             <Filter className="w-4 h-4 text-gray-500" />
             <span className="text-sm text-gray-600">Active filters:</span>
             {searchQuery && (
-              <span className="px-3 py-1 bg-teal-100 text-teal-800 text-sm rounded-full">
+              <span className="px-3 py-1 bg-red-100 text-red-800 text-sm rounded-full">
                 Search: &quot;{searchQuery}&quot;
               </span>
             )}
             {selectedCategory && (
-              <span className="px-3 py-1 bg-teal-100 text-teal-800 text-sm rounded-full">
+              <span className="px-3 py-1 bg-red-100 text-red-800 text-sm rounded-full">
                 Category:{' '}
                 {
                   createTranslatedCategories(tFaq).find(
@@ -380,7 +393,7 @@ function EnhancedFAQSection({
             )}
             <button
               onClick={clearFilters}
-              className="text-sm text-teal-600 hover:text-teal-700 font-medium underline"
+              className="text-sm text-red-500 hover:text-red-600 font-medium underline"
             >
               Clear all
             </button>
@@ -389,54 +402,62 @@ function EnhancedFAQSection({
       </div>
 
       {/* Forum Stats */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8 shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="bg-white rounded-lg sm:rounded-xl border border-gray-200 p-4 sm:p-6 mb-6 sm:mb-8 shadow-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-teal-600 mb-1">
+            <div className="text-lg sm:text-xl lg:text-2xl font-bold text-red-500 mb-1">
               {faqData.length}
             </div>
-            <div className="text-sm text-gray-600">Total Questions</div>
+            <div className="text-xs sm:text-sm text-gray-600">
+              Total Questions
+            </div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-teal-600 mb-1">
+            <div className="text-lg sm:text-xl lg:text-2xl font-bold text-red-500 mb-1">
               {faqCategories.length}
             </div>
-            <div className="text-sm text-gray-600">Categories</div>
+            <div className="text-xs sm:text-sm text-gray-600">Categories</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-teal-600 mb-1">
+            <div className="text-lg sm:text-xl lg:text-2xl font-bold text-red-500 mb-1">
               {getPopularFAQs().length}
             </div>
-            <div className="text-sm text-gray-600">Popular Topics</div>
+            <div className="text-xs sm:text-sm text-gray-600">
+              Popular Topics
+            </div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-teal-600 mb-1">24h</div>
-            <div className="text-sm text-gray-600">Response Time</div>
+            <div className="text-lg sm:text-xl lg:text-2xl font-bold text-red-500 mb-1">
+              24h
+            </div>
+            <div className="text-xs sm:text-sm text-gray-600">
+              Response Time
+            </div>
           </div>
         </div>
       </div>
 
       {/* Popular FAQs */}
       {!searchQuery && !selectedCategory && (
-        <div className="mb-8">
-          <h3 className="text-xl font-semibold text-gray-900 mb-6">
+        <div className="mb-6 sm:mb-8">
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">
             Popular Questions
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {popularFAQs.map((faq) => (
               <motion.div
                 key={faq.id}
-                className="bg-white rounded-lg p-6 border border-gray-200 cursor-pointer transition-all duration-200 hover:border-teal-200"
+                className="bg-white rounded-lg p-4 sm:p-6 border border-gray-200 cursor-pointer transition-all duration-200 hover:border-red-200"
                 whileHover={{ scale: 1.02 }}
                 onClick={() => handleQuestionClick(faq.question)}
               >
-                <h4 className="font-semibold text-gray-900 mb-3 line-clamp-2">
+                <h4 className="font-semibold text-gray-900 mb-2 sm:mb-3 line-clamp-2 text-sm sm:text-base">
                   {faq.question}
                 </h4>
-                <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+                <p className="text-xs sm:text-sm text-gray-600 line-clamp-3 leading-relaxed">
                   {faq.answer}
                 </p>
-                <div className="mt-4 flex items-center text-sm text-teal-600 font-medium">
+                <div className="mt-3 sm:mt-4 flex items-center text-xs sm:text-sm text-red-500 font-medium">
                   <span>Contact support →</span>
                 </div>
               </motion.div>
@@ -446,15 +467,15 @@ function EnhancedFAQSection({
       )}
 
       {/* FAQ List */}
-      <div className="space-y-4">
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold text-gray-900">
+      <div className="space-y-3 sm:space-y-4">
+        <div className="mb-4 sm:mb-6">
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
             {allFilteredFAQs.length}{' '}
             {allFilteredFAQs.length === 1
-              ? tForm('pagination.questionFound')
-              : tForm('pagination.questionsFound')}
+              ? t('pagination.questionFound')
+              : t('pagination.questionsFound')}
             {filteredFAQs.length < allFilteredFAQs.length && (
-              <span className="text-sm font-normal text-gray-500 ml-2">
+              <span className="text-xs sm:text-sm font-normal text-gray-500 ml-1 sm:ml-2">
                 (
                 {t('pagination.showingQuestions', {
                   current: filteredFAQs.length,
@@ -483,26 +504,26 @@ function EnhancedFAQSection({
               >
                 <button
                   onClick={() => toggleExpanded(faq.id)}
-                  className="w-full px-6 py-6 text-left hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset"
+                  className="w-full px-4 sm:px-6 py-4 sm:py-6 text-left hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-inset"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-start space-x-4 flex-1">
+                    <div className="flex items-start space-x-3 sm:space-x-4 flex-1">
                       <div className="flex-shrink-0">
-                        <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
-                          <Icon className="w-5 h-5 text-teal-600" />
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                          <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-gray-900 pr-4 text-left text-lg leading-tight">
+                        <h4 className="font-semibold text-gray-900 pr-2 sm:pr-4 text-left text-sm sm:text-base lg:text-lg leading-tight">
                           {faq.question}
                         </h4>
-                        <div className="flex items-center space-x-4 mt-3">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
+                        <div className="flex items-center flex-wrap gap-2 sm:gap-4 mt-2 sm:mt-3">
+                          <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                             {faq.category
                               .replace('-', ' ')
                               .replace(/\b\w/g, (l) => l.toUpperCase())}
                           </span>
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                             {faq.priority === 'high' ? 'Popular' : faq.priority}
                           </span>
                           <span className="text-xs text-gray-500">
@@ -511,11 +532,11 @@ function EnhancedFAQSection({
                         </div>
                       </div>
                     </div>
-                    <div className="flex-shrink-0 ml-4">
+                    <div className="flex-shrink-0 ml-2 sm:ml-4">
                       {isExpanded ? (
-                        <ChevronUp className="w-5 h-5 text-gray-400" />
+                        <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                       ) : (
-                        <ChevronDown className="w-5 h-5 text-gray-400" />
+                        <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                       )}
                     </div>
                   </div>
@@ -530,27 +551,27 @@ function EnhancedFAQSection({
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-6 border-t border-gray-100 bg-gray-50">
-                        <div className="pt-6">
-                          <p className="text-gray-700 leading-relaxed text-base">
+                      <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-gray-100 bg-gray-50">
+                        <div className="pt-4 sm:pt-6">
+                          <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
                             {faq.answer}
                           </p>
-                          <div className="flex flex-wrap gap-2 mt-6">
+                          <div className="flex flex-wrap gap-1 sm:gap-2 mt-4 sm:mt-6">
                             {faq.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="px-3 py-1 bg-white border border-gray-200 text-gray-600 text-xs rounded-full font-medium hover:bg-teal-50 hover:border-teal-200 hover:text-teal-700 transition-colors"
+                                className="px-2 sm:px-3 py-1 bg-white border border-gray-200 text-gray-600 text-xs rounded-full font-medium hover:bg-red-50 hover:border-red-200 hover:text-red-700 transition-colors"
                               >
                                 #{tag.toLowerCase()}
                               </span>
                             ))}
                           </div>
-                          <div className="mt-6 pt-4 border-t border-gray-200">
+                          <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-200">
                             <button
                               onClick={() => handleQuestionClick(faq.question)}
-                              className="inline-flex items-center px-4 py-2 bg-teal-600 text-white text-sm font-semibold rounded-lg hover:bg-teal-700 transition-colors"
+                              className="inline-flex items-center px-3 sm:px-4 py-2 bg-red-500 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-red-600 transition-colors"
                             >
-                              <MessageSquare className="w-4 h-4 mr-2" />
+                              <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                               {tForm('buttons.stillNeedHelp')}
                             </button>
                           </div>
@@ -567,14 +588,14 @@ function EnhancedFAQSection({
         {filteredFAQs.length === 0 && (
           <div className="py-12">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              {tForm('pagination.noQuestionsFound')}
+              {t('pagination.noQuestionsFound')}
             </h3>
             <p className="text-gray-600 mb-4">
-              {tForm('pagination.noQuestionsDescription')}
+              {t('pagination.noQuestionsDescription')}
             </p>
             <button
               onClick={clearFilters}
-              className="text-teal-600 hover:text-teal-700 font-semibold"
+              className="text-red-500 hover:text-red-600 font-semibold"
             >
               {tForm('buttons.clearFilters')}
             </button>
@@ -586,7 +607,7 @@ function EnhancedFAQSection({
           <div className="text-center pt-8 border-t border-gray-200">
             <motion.button
               onClick={loadMoreQuestions}
-              className="inline-flex items-center px-8 py-4 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center px-8 py-4 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all duration-200 shadow-lg hover:shadow-xl"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -595,7 +616,7 @@ function EnhancedFAQSection({
             </motion.button>
             <p className="text-sm text-gray-500 mt-4">
               {allFilteredFAQs.length - filteredFAQs.length}{' '}
-              {tForm('pagination.moreQuestionsAvailable')}
+              {t('pagination.moreQuestionsAvailable')}
             </p>
             <div className="mt-2 text-xs text-gray-400">
               {t('pagination.showingQuestions', {
@@ -697,7 +718,7 @@ export default function SupportPage() {
 
   return (
     <>
-      <Container className="py-16">
+      <Container className="py-8 sm:py-12 lg:py-16">
         <motion.div
           className="max-w-4xl mx-auto"
           variants={containerVariants}
@@ -705,11 +726,14 @@ export default function SupportPage() {
           animate="visible"
         >
           {/* Header */}
-          <motion.div className="mb-16 px-8" variants={itemVariants}>
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl mb-6">
+          <motion.div
+            className="mb-8 sm:mb-12 lg:mb-16 px-4 sm:px-6 lg:px-8"
+            variants={itemVariants}
+          >
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-gray-900 mb-4 sm:mb-6">
               {tForm('title')}
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl leading-relaxed mb-8">
+            <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl leading-relaxed mb-6 sm:mb-8">
               {tForm('subtitle')}
             </p>
             <div className="border-t border-gray-200"></div>
@@ -726,27 +750,32 @@ export default function SupportPage() {
 
           {/* Contact Form Section */}
           <motion.div
-            className="bg-white rounded-2xl border border-gray-200 p-8"
+            className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 p-4 sm:p-6 lg:p-8"
             variants={itemVariants}
           >
-            <div className="mb-8">
-              <h2 className="text-3xl font-semibold tracking-tight text-gray-900 mb-4">
+            <div className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold tracking-tight text-gray-900 mb-3 sm:mb-4">
                 {tForm('stillNeedHelp')}
               </h2>
-              <p className="text-lg text-gray-600">{tForm('formSubtitle')}</p>
+              <p className="text-sm sm:text-base lg:text-lg text-gray-600">
+                {tForm('formSubtitle')}
+              </p>
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4 sm:space-y-6"
+            >
               {/* Personal Information */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900">
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
                   {tForm('sections.personalInfo')}
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm font-semibold text-gray-700 mb-3"
+                      className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3"
                     >
                       {tForm('fields.name.label')}{' '}
                       {tForm('fields.name.required') && '*'}
@@ -755,7 +784,7 @@ export default function SupportPage() {
                       {...register('name')}
                       type="text"
                       id="name"
-                      className={`w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors ${
+                      className={`w-full px-3 py-2 sm:py-2.5 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors text-sm sm:text-base ${
                         errors.name ? 'border-red-300' : 'border-gray-300'
                       }`}
                       placeholder={tForm('fields.name.placeholder')}
@@ -770,7 +799,7 @@ export default function SupportPage() {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-semibold text-gray-700 mb-3"
+                      className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3"
                     >
                       {tForm('fields.email.label')}{' '}
                       {tForm('fields.email.required') && '*'}
@@ -779,7 +808,7 @@ export default function SupportPage() {
                       {...register('email')}
                       type="email"
                       id="email"
-                      className={`w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors ${
+                      className={`w-full px-3 py-2 sm:py-2.5 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors text-sm sm:text-base ${
                         errors.email ? 'border-red-300' : 'border-gray-300'
                       }`}
                       placeholder={tForm('fields.email.placeholder')}
@@ -795,7 +824,7 @@ export default function SupportPage() {
                 <div>
                   <label
                     htmlFor="company"
-                    className="block text-sm font-semibold text-gray-700 mb-3"
+                    className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3"
                   >
                     {tForm('fields.company.label')}{' '}
                     {!tForm('fields.company.required') && '(Optional)'}
@@ -804,82 +833,83 @@ export default function SupportPage() {
                     {...register('company')}
                     type="text"
                     id="company"
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
+                    className="w-full px-3 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors text-sm sm:text-base"
                     placeholder={tForm('fields.company.placeholder')}
                   />
                 </div>
               </div>
 
               {/* Issue Details */}
-              <div className="space-y-4"></div>
-              <h3 className="text-xl font-semibold text-gray-900">
-                {tForm('sections.issueDetails')}
-              </h3>
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+                  {tForm('sections.issueDetails')}
+                </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label
-                    htmlFor="category"
-                    className="block text-sm font-semibold text-gray-700 mb-3"
-                  >
-                    {tForm('fields.category.label')}{' '}
-                    {tForm('fields.category.required') && '*'}
-                  </label>
-                  <select
-                    {...register('category')}
-                    id="category"
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                  >
-                    {supportCategories.map((category) => (
-                      <option key={category.value} value={category.value}>
-                        {tForm(`categories.${category.value}.label`)}
-                      </option>
-                    ))}
-                  </select>
-                  {selectedCategory && (
-                    <p className="mt-2 text-sm text-gray-600">
-                      {tForm(
-                        `categories.${selectedCategory.value}.description`
-                      )}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="priority"
-                    className="block text-sm font-semibold text-gray-700 mb-3"
-                  >
-                    {tForm('fields.priority.label')}{' '}
-                    {tForm('fields.priority.required') && '*'}
-                  </label>
-                  <select
-                    {...register('priority')}
-                    id="priority"
-                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors"
-                  >
-                    {supportPriorities.map((priority) => (
-                      <option key={priority.value} value={priority.value}>
-                        {tForm(`priorities.${priority.value}.label`)}
-                      </option>
-                    ))}
-                  </select>
-                  {selectedPriority && (
-                    <p
-                      className={`mt-2 text-sm font-medium ${selectedPriority.color}`}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <div>
+                    <label
+                      htmlFor="category"
+                      className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3"
                     >
-                      {tForm(
-                        `priorities.${selectedPriority.value}.description`
-                      )}
-                    </p>
-                  )}
+                      {tForm('fields.category.label')}{' '}
+                      {tForm('fields.category.required') && '*'}
+                    </label>
+                    <select
+                      {...register('category')}
+                      id="category"
+                      className="w-full px-3 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors text-sm sm:text-base"
+                    >
+                      {supportCategories.map((category) => (
+                        <option key={category.value} value={category.value}>
+                          {tForm(`categories.${category.value}.label`)}
+                        </option>
+                      ))}
+                    </select>
+                    {selectedCategory && (
+                      <p className="mt-2 text-sm text-gray-600">
+                        {tForm(
+                          `categories.${selectedCategory.value}.description`
+                        )}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="priority"
+                      className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3"
+                    >
+                      {tForm('fields.priority.label')}{' '}
+                      {tForm('fields.priority.required') && '*'}
+                    </label>
+                    <select
+                      {...register('priority')}
+                      id="priority"
+                      className="w-full px-3 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors text-sm sm:text-base"
+                    >
+                      {supportPriorities.map((priority) => (
+                        <option key={priority.value} value={priority.value}>
+                          {tForm(`priorities.${priority.value}.label`)}
+                        </option>
+                      ))}
+                    </select>
+                    {selectedPriority && (
+                      <p
+                        className={`mt-2 text-sm font-medium ${selectedPriority.color}`}
+                      >
+                        {tForm(
+                          `priorities.${selectedPriority.value}.description`
+                        )}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 
               <div>
                 <label
                   htmlFor="subject"
-                  className="block text-sm font-semibold text-gray-700 mb-3"
+                  className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3"
                 >
                   {tForm('fields.subject.label')}{' '}
                   {tForm('fields.subject.required') && '*'}
@@ -888,7 +918,7 @@ export default function SupportPage() {
                   {...register('subject')}
                   type="text"
                   id="subject"
-                  className={`w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors ${
+                  className={`w-full px-3 py-2 sm:py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors text-sm sm:text-base ${
                     errors.subject ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder={tForm('fields.subject.placeholder')}
@@ -901,15 +931,15 @@ export default function SupportPage() {
               </div>
 
               {/* Message */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900">
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
                   {tForm('sections.message')}
                 </h3>
 
                 <div>
                   <label
                     htmlFor="message"
-                    className="block text-sm font-semibold text-gray-700 mb-3"
+                    className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3"
                   >
                     {tForm('fields.message.label')}{' '}
                     {tForm('fields.message.required') && '*'}
@@ -917,13 +947,13 @@ export default function SupportPage() {
                   <textarea
                     {...register('message')}
                     id="message"
-                    rows={6}
-                    className={`w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors resize-none ${
+                    rows={4}
+                    className={`w-full px-3 py-2 sm:py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors resize-none text-sm sm:text-base ${
                       errors.message ? 'border-red-300' : 'border-gray-300'
                     }`}
                     placeholder={tForm('fields.message.placeholder')}
                   />
-                  <div className="mt-2 flex justify-between text-sm text-gray-500">
+                  <div className="mt-2 flex justify-between text-xs sm:text-sm text-gray-500">
                     <span>{tForm('fields.message.minLength')}</span>
                     <span
                       className={
@@ -942,22 +972,22 @@ export default function SupportPage() {
               </div>
 
               {/* Consent */}
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-start space-x-2 sm:space-x-3">
                   <input
                     {...register('consent')}
                     type="checkbox"
                     id="consent"
-                    className="mt-1 h-5 w-5 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
+                    className="mt-1 h-4 w-4 sm:h-5 sm:w-5 text-red-500 focus:ring-red-500 border-gray-300 rounded"
                   />
                   <label
                     htmlFor="consent"
-                    className="text-sm text-gray-700 leading-relaxed"
+                    className="text-xs sm:text-sm text-gray-700 leading-relaxed"
                   >
                     {tForm('fields.consent.label').split('Privacy Policy')[0]}
                     <Link
                       href="/privacy"
-                      className="text-teal-600 hover:text-teal-700 underline font-semibold"
+                      className="text-red-500 hover:text-red-600 underline font-semibold"
                     >
                       Privacy Policy
                     </Link>
@@ -972,11 +1002,11 @@ export default function SupportPage() {
               </div>
 
               {/* Submit Button */}
-              <div className="pt-6 border-t border-gray-200">
+              <div className="pt-4 sm:pt-6 border-t border-gray-200">
                 <motion.button
                   type="submit"
                   disabled={isSubmitting || !isValid}
-                  className="w-full md:w-auto px-6 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center space-x-2"
+                  className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -998,50 +1028,50 @@ export default function SupportPage() {
 
           {/* Contact Information */}
           <motion.div
-            className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8"
+            className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
             variants={itemVariants}
           >
-            <div className="p-8 bg-white rounded-2xl border border-gray-200">
-              <div className="w-16 h-16 bg-teal-100 rounded-2xl mb-6 flex items-center justify-center">
-                <Mail className="w-8 h-8 text-teal-600" />
+            <div className="p-4 sm:p-6 lg:p-8 bg-white rounded-xl sm:rounded-2xl border border-gray-200">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 flex items-center justify-center">
+                <Mail className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
                 {tForm('contactInfo.emailSupport.title')}
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
                 {tForm('contactInfo.emailSupport.email')}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500">
                 {tForm('contactInfo.emailSupport.availability')}
               </p>
             </div>
 
-            <div className="p-8 bg-white rounded-2xl border border-gray-200">
-              <div className="w-16 h-16 bg-teal-100 rounded-2xl mb-6 flex items-center justify-center">
-                <Clock className="w-8 h-8 text-teal-600" />
+            <div className="p-4 sm:p-6 lg:p-8 bg-white rounded-xl sm:rounded-2xl border border-gray-200">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 flex items-center justify-center">
+                <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
                 {tForm('contactInfo.responseTime.title')}
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
                 {tForm('contactInfo.responseTime.time')}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500">
                 {tForm('contactInfo.responseTime.note')}
               </p>
             </div>
 
-            <div className="p-8 bg-white rounded-2xl border border-gray-200">
-              <div className="w-16 h-16 bg-teal-100 rounded-2xl mb-6 flex items-center justify-center">
-                <AlertTriangle className="w-8 h-8 text-teal-600" />
+            <div className="p-4 sm:p-6 lg:p-8 bg-white rounded-xl sm:rounded-2xl border border-gray-200 sm:col-span-2 lg:col-span-1">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
                 {tForm('contactInfo.emergency.title')}
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
                 {tForm('contactInfo.emergency.instruction')}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500">
                 {tForm('contactInfo.emergency.note')}
               </p>
             </div>

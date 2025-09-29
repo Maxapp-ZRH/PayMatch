@@ -66,32 +66,42 @@ export function LanguageSwitcher({
 
   if (variant === 'buttons') {
     return (
-      <div className={`flex gap-2 ${className}`}>
-        {routing.locales.map((loc) => {
-          const config = localeConfig[loc];
-          const isActive = loc === locale;
+      <>
+        <LanguageTransition
+          isTransitioning={isTransitioning}
+          fromLanguage={transitionFrom}
+          toLanguage={transitionTo}
+          onComplete={handleTransitionComplete}
+        />
+        <div className={`flex gap-2 ${className}`}>
+          {routing.locales.map((loc) => {
+            const config = localeConfig[loc];
+            const isActive = loc === locale;
 
-          return (
-            <button
-              key={loc}
-              onClick={() => handleLanguageChange(loc)}
-              className={`
-                px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200
-                ${
-                  isActive
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-                }
-              `}
-              title={config.name}
-            >
-              {showFlags && <span className="mr-2">{config.flag}</span>}
-              <span className="hidden sm:inline">{config.nativeName}</span>
-              <span className="sm:hidden">{config.flag}</span>
-            </button>
-          );
-        })}
-      </div>
+            return (
+              <button
+                key={loc}
+                onClick={() => handleLanguageChange(loc)}
+                className={`
+                  flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md 
+                  transition-colors duration-200 min-w-0 flex-1 justify-center
+                  ${
+                    isActive
+                      ? 'bg-red-500 text-white shadow-sm'
+                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                  }
+                `}
+                title={config.name}
+              >
+                {showFlags && (
+                  <span className="text-base flex-shrink-0">{config.flag}</span>
+                )}
+                <span className="truncate">{config.nativeName}</span>
+              </button>
+            );
+          })}
+        </div>
+      </>
     );
   }
 
@@ -109,7 +119,7 @@ export function LanguageSwitcher({
           className="
           flex items-center justify-between w-48 px-3 py-2 text-sm font-medium text-gray-700 
           bg-white border border-gray-300 rounded-md
-          hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500
+          hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500
           transition-colors duration-200
         "
           aria-expanded={isOpen}
@@ -152,7 +162,7 @@ export function LanguageSwitcher({
                       className={`
                       w-full flex items-center gap-3 px-4 py-3 text-sm text-left
                       hover:bg-gray-100 transition-colors duration-200
-                      ${isActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700'}
+                      ${isActive ? 'bg-red-50 text-red-700 font-medium' : 'text-gray-700'}
                     `}
                     >
                       {showFlags && (
@@ -165,7 +175,7 @@ export function LanguageSwitcher({
                         </div>
                       </div>
                       {isActive && (
-                        <CheckIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        <CheckIcon className="w-4 h-4 text-red-500 dark:text-red-400" />
                       )}
                     </button>
                   );

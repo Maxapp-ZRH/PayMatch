@@ -138,7 +138,7 @@ export const pricingPlansWithCurrencies: PricingPlanWithCurrencies[] = [
       CHF: { monthly: 50, annual: 480 },
       EUR: { monthly: 50, annual: 480 },
     },
-    logomarkClassName: 'fill-teal-600',
+    logomarkClassName: 'fill-red-500',
   },
   {
     name: 'Enterprise',
@@ -172,7 +172,7 @@ export const pricingPlansData: PricingPlanData[] = [
     featured: true,
     monthlyPrice: 50,
     annualPrice: 480,
-    logomarkClassName: 'fill-teal-600',
+    logomarkClassName: 'fill-red-500',
   },
   {
     name: 'Enterprise',
@@ -185,6 +185,25 @@ export const pricingPlansData: PricingPlanData[] = [
 
 // Legacy pricing plans (deprecated - use with translations)
 export const pricingPlans: PricingPlan[] = [
+  {
+    name: 'Free',
+    featured: false,
+    monthlyPrice: 0,
+    annualPrice: 0,
+    description: 'Perfect for getting started with Swiss invoicing.',
+    button: {
+      label: 'Get Started',
+      href: '/register',
+    },
+    features: [
+      '5 invoices per month',
+      'Swiss QR-bill generation',
+      'Payment reconciliation',
+      'Community support',
+      'Basic features',
+    ],
+    logomarkClassName: 'fill-gray-400',
+  },
   {
     name: 'Freelancer',
     featured: false,
@@ -223,7 +242,7 @@ export const pricingPlans: PricingPlan[] = [
       'Organization dashboard',
       'Advanced reporting',
     ],
-    logomarkClassName: 'fill-teal-600',
+    logomarkClassName: 'fill-red-500',
   },
   {
     name: 'Enterprise',

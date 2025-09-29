@@ -27,8 +27,8 @@ export function Footer() {
   return (
     <footer className="border-t border-gray-200">
       <Container>
-        <div className="flex flex-col items-start justify-between gap-y-12 pt-16 pb-6 lg:flex-row lg:items-center lg:py-16">
-          <div>
+        <div className="flex flex-col items-start justify-between gap-y-8 pt-12 pb-6 sm:gap-y-12 sm:pt-16 lg:flex-row lg:items-center lg:py-16">
+          <div className="w-full">
             <div className="flex items-center text-gray-900">
               <Image
                 src="/logo.png"
@@ -39,31 +39,31 @@ export function Footer() {
               />
               <div className="ml-4">
                 <p className="text-base font-semibold">PayMatch</p>
-                <p className="text-sm">{t('description')}</p>
+                <p className="text-sm text-gray-600">{t('description')}</p>
               </div>
             </div>
-            <nav className="mt-8 flex gap-8">
+            <nav className="mt-6 flex flex-wrap gap-6 sm:mt-8 sm:gap-8">
               <NavLinks />
             </nav>
           </div>
-          <div className="group relative -mx-4 flex items-center self-stretch p-4 transition-colors hover:bg-gray-100 sm:self-auto sm:rounded-2xl lg:mx-0 lg:self-auto lg:p-6">
-            <div className="relative flex h-24 w-24 flex-none items-center justify-center">
-              <QrCodeBorder className="absolute inset-0 h-full w-full stroke-gray-300 transition-colors group-hover:stroke-teal-600" />
+          <div className="group relative -mx-4 flex w-full items-center self-stretch p-4 transition-colors hover:bg-gray-100 sm:w-auto sm:self-auto sm:rounded-2xl lg:mx-0 lg:self-auto lg:p-6">
+            <div className="relative flex h-20 w-20 flex-none items-center justify-center sm:h-24 sm:w-24">
+              <QrCodeBorder className="absolute inset-0 h-full w-full stroke-gray-300 transition-colors group-hover:stroke-red-500" />
               <QRCode
                 value="https://paymatch.app"
-                size={80}
+                size={64}
                 className="rounded-lg"
                 alt="QR Code to PayMatch.app"
               />
             </div>
-            <div className="ml-8 lg:w-64">
-              <p className="text-base font-semibold text-gray-900">
+            <div className="ml-6 sm:ml-8 lg:w-64">
+              <p className="text-sm font-semibold text-gray-900 sm:text-base">
                 <I18nLink href="/register">
                   <span className="absolute inset-0 sm:rounded-2xl" />
                   {t('links.startInvoicing')}
                 </I18nLink>
               </p>
-              <p className="mt-1 text-sm text-gray-700">
+              <p className="mt-1 text-xs text-gray-700 sm:text-sm">
                 {t('links.startInvoicingDescription')}
               </p>
             </div>
@@ -71,9 +71,9 @@ export function Footer() {
         </div>
         <div className="border-t border-gray-200 pt-8 pb-12">
           {/* Links Section */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-16">
             {/* Company & Legal Group */}
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
               {/* Company & Support */}
               <div>
                 <h3 className="text-sm font-semibold text-gray-900">
@@ -152,16 +152,16 @@ export function Footer() {
             </div>
 
             {/* Newsletter */}
-            <div className="lg:pl-8">
-              <h3 className="text-sm font-semibold text-gray-900">
+            <div className="mt-8 lg:mt-0 lg:pl-8">
+              <h3 className="text-base font-semibold text-gray-900 sm:text-sm">
                 {t('newsletter.title')}
               </h3>
               <p className="mt-2 text-sm text-gray-600">
                 {t('newsletter.description')}
               </p>
-              <form className="mt-4 space-y-4">
+              <form className="mt-4 space-y-3 sm:space-y-4">
                 {/* Name Fields */}
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-2">
                   <TextField
                     type="text"
                     name="firstName"
@@ -200,24 +200,23 @@ export function Footer() {
                     id="newsletter-consent"
                     name="consent"
                     required
-                    className="mt-1 h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+                    className="mt-1 h-4 w-4 flex-shrink-0 rounded border-gray-300 text-red-500 focus:ring-red-500"
                   />
                   <label
                     htmlFor="newsletter-consent"
                     className="text-xs text-gray-600 leading-relaxed"
                   >
-                    {t('newsletter.consent')}
-                    <br />
+                    {t('newsletter.consent')}{' '}
                     <I18nLink
                       href="/privacy"
-                      className="text-teal-600 hover:text-teal-700 underline"
+                      className="text-red-500 hover:text-red-600 underline"
                     >
                       {t('links.privacy')}
                     </I18nLink>{' '}
                     {t('newsletter.and')}{' '}
                     <I18nLink
                       href="/terms"
-                      className="text-teal-600 hover:text-teal-700 underline"
+                      className="text-red-500 hover:text-red-600 underline"
                     >
                       {t('links.terms')}
                     </I18nLink>{' '}
@@ -226,7 +225,11 @@ export function Footer() {
                 </div>
 
                 {/* Submit Button */}
-                <Button type="submit" color="cyan" className="w-full">
+                <Button
+                  type="submit"
+                  color="cyan"
+                  className="w-full text-sm sm:text-base"
+                >
                   {t('newsletter.subscribe')}
                 </Button>
               </form>
@@ -234,10 +237,10 @@ export function Footer() {
           </div>
 
           {/* Bottom Section */}
-          <div className="mt-8 flex flex-col items-center justify-between border-t border-gray-200 pt-8 md:flex-row">
-            <p className="text-sm text-gray-500">{t('copyright')}</p>
-            <div className="mt-4 flex items-center space-x-4 md:mt-0">
-              <p className="text-sm text-gray-500">
+          <div className="mt-6 flex flex-col items-center justify-between border-t border-gray-200 pt-6 sm:mt-8 sm:pt-8 md:flex-row">
+            <p className="text-xs text-gray-500 sm:text-sm">{t('copyright')}</p>
+            <div className="mt-3 flex items-center space-x-4 sm:mt-4 md:mt-0">
+              <p className="text-xs text-gray-500 sm:text-sm">
                 {t('developedBy')}{' '}
                 <Link
                   href="https://maxappzrh.com"

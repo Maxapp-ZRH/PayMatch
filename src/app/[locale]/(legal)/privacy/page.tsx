@@ -14,39 +14,39 @@ export default function PrivacyPolicyPage() {
 
   return (
     <LegalLayout title={t('title')} lastUpdated={t('lastUpdated')}>
-      <div className="max-w-4xl mx-auto space-y-12">
+      <div className="max-w-4xl mx-auto space-y-8 sm:space-y-12">
         {/* Introduction */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.introduction.title')}
           </h2>
 
-          <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <p className="text-gray-700 leading-relaxed mb-6">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4 sm:mb-6">
                 {t('sections.introduction.content.paragraph1')}
               </p>
-              <p className="text-gray-700 leading-relaxed mb-6">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4 sm:mb-6">
                 {t('sections.introduction.content.paragraph2')}
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">
                     {t('sections.introduction.dataController.title')}
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-sm sm:text-base text-gray-700">
                     {t('sections.introduction.dataController.content')}
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">
                     {t('sections.introduction.dataProtectionOfficer.title')}
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-sm sm:text-base text-gray-700">
                     <a
                       href="mailto:privacy@paymatch.ch"
-                      className="text-teal-600 hover:text-teal-700 transition-colors"
+                      className="text-teal-600 hover:text-teal-700 transition-colors break-all"
                     >
                       {t('sections.introduction.dataProtectionOfficer.content')}
                     </a>
@@ -58,39 +58,39 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* Data Collection */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.dataCollection.title')}
           </h2>
 
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t(
                   'sections.dataCollection.subsections.personalInformation.title'
                 )}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.dataCollection.subsections.personalInformation.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.dataCollection.subsections.usageData.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.dataCollection.subsections.usageData.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.dataCollection.subsections.cookies.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.dataCollection.subsections.cookies.content')}
               </p>
             </div>
@@ -98,35 +98,35 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* Data Usage */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.dataUsage.title')}
           </h2>
 
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.dataUsage.subsections.serviceProvision.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.dataUsage.subsections.serviceProvision.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.dataUsage.subsections.communication.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.dataUsage.subsections.communication.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.dataUsage.subsections.legalCompliance.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.dataUsage.subsections.legalCompliance.content')}
               </p>
             </div>
@@ -134,37 +134,37 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* Data Sharing */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.dataSharing.title')}
           </h2>
 
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.dataSharing.subsections.serviceProviders.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.dataSharing.subsections.serviceProviders.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.dataSharing.subsections.legalRequirements.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.dataSharing.subsections.legalRequirements.content'
                 )}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.dataSharing.subsections.businessTransfers.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t(
                   'sections.dataSharing.subsections.businessTransfers.content'
                 )}
@@ -174,8 +174,8 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* Data Security */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.dataSecurity.title')}
           </h2>
 
@@ -187,53 +187,53 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* Your Rights */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.yourRights.title')}
           </h2>
 
-          <div className="space-y-8">
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+          <div className="space-y-6 sm:space-y-8">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.yourRights.subsections.access.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.yourRights.subsections.access.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.yourRights.subsections.rectification.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.yourRights.subsections.rectification.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.yourRights.subsections.erasure.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.yourRights.subsections.erasure.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.yourRights.subsections.portability.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.yourRights.subsections.portability.content')}
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.yourRights.subsections.objection.title')}
               </h3>
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('sections.yourRights.subsections.objection.content')}
               </p>
             </div>
@@ -241,8 +241,8 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* Data Retention */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.dataRetention.title')}
           </h2>
 
@@ -254,8 +254,8 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* International Transfers */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.internationalTransfers.title')}
           </h2>
 
@@ -267,8 +267,8 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* Children's Privacy */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.childrenPrivacy.title')}
           </h2>
 
@@ -280,8 +280,8 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* Changes */}
-        <section className="border-b border-gray-200 pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+        <section className="border-b border-gray-200 pb-6 sm:pb-8">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.changes.title')}
           </h2>
 
@@ -294,7 +294,7 @@ export default function PrivacyPolicyPage() {
 
         {/* Contact */}
         <section className="pb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 tracking-tight">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 tracking-tight">
             {t('sections.contact.title')}
           </h2>
 
