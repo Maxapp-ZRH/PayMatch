@@ -17,7 +17,6 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import '@/styles/tailwind.css';
-import { UpdateNotification } from '@/components/pwa/UpdateNotification';
 import { ScrollToTop } from '@/components/ui/ScrollToTop';
 import { BannerManager } from '@/components/ui/BannerManager';
 import { PageTransitionWrapper } from '@/components/ui/PageTransitionWrapper';
@@ -168,7 +167,6 @@ export default async function LocaleLayout({ children, params }: Props) {
         <NextIntlClientProvider messages={messages}>
           <PageTransitionWrapper>{children}</PageTransitionWrapper>
           <BannerManager />
-          <UpdateNotification />
           <ScrollToTop />
         </NextIntlClientProvider>
         <Analytics />

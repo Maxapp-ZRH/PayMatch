@@ -4,6 +4,8 @@
  * Coordinates the display of multiple banners (Cookie Banner, PWA Install Banner)
  * to ensure only one banner appears at a time. Manages priority and timing
  * to prevent banner overlap and improve user experience.
+ *
+ * PWA banners are loaded after 2 minutes to avoid immediate popups.
  */
 
 'use client';
@@ -15,20 +17,37 @@ import { usePWA } from '@/hooks/use-pwa';
 
 type BannerType = 'cookie' | 'pwa' | null;
 
+const PWA_BANNER_STORAGE_KEY = 'pwa-banner-dismissed';
+
 export function BannerManager() {
   const { isInstallable, isInstalled } = usePWA();
   const [activeBanner, setActiveBanner] = useState<BannerType>(null);
   const [cookieConsent, setCookieConsent] = useState<string | null>(null);
   const [pwaDismissed, setPwaDismissed] = useState<boolean>(false);
+  const [pwaLoaded, setPwaLoaded] = useState<boolean>(false);
 
   // Check for existing preferences on mount
   useEffect(() => {
     const cookieConsentValue = localStorage.getItem('paymatch-cookie-consent');
-    const pwaDismissedValue = localStorage.getItem('pwa-banner-dismissed');
+    const pwaDismissedValue = localStorage.getItem(PWA_BANNER_STORAGE_KEY);
 
     setCookieConsent(cookieConsentValue);
     setPwaDismissed(pwaDismissedValue === 'true');
   }, []);
+
+  // Load PWA banner after 2 minutes
+  useEffect(() => {
+    if (pwaDismissed) return; // Don't load if already dismissed
+
+    const timer = setTimeout(
+      () => {
+        setPwaLoaded(true);
+      },
+      2 * 60 * 1000
+    ); // 2 minutes
+
+    return () => clearTimeout(timer);
+  }, [pwaDismissed]);
 
   // Determine which banner should be shown
   useEffect(() => {
@@ -38,22 +57,22 @@ export function BannerManager() {
       return;
     }
 
-    // Priority 2: PWA banner (if installable, not installed, and not dismissed)
-    if (isInstallable && !isInstalled && !pwaDismissed) {
+    // Priority 2: PWA banner (if loaded, installable, not installed, and not dismissed)
+    if (pwaLoaded && isInstallable && !isInstalled && !pwaDismissed) {
       setActiveBanner('pwa');
       return;
     }
 
     // No banner should be shown
     setActiveBanner(null);
-  }, [cookieConsent, pwaDismissed, isInstallable, isInstalled]);
+  }, [cookieConsent, pwaLoaded, pwaDismissed, isInstallable, isInstalled]);
 
   // Handle cookie banner dismissal
   const handleCookieBannerDismiss = () => {
     setActiveBanner(null);
     // After a short delay, check if PWA banner should be shown
     setTimeout(() => {
-      if (isInstallable && !isInstalled && !pwaDismissed) {
+      if (pwaLoaded && isInstallable && !isInstalled && !pwaDismissed) {
         setActiveBanner('pwa');
       }
     }, 500);
@@ -63,15 +82,16 @@ export function BannerManager() {
   const handlePwaBannerDismiss = () => {
     setActiveBanner(null);
     setPwaDismissed(true);
+    localStorage.setItem(PWA_BANNER_STORAGE_KEY, 'true');
   };
 
-  // Listen for cookie consent changes
+  // Listen for storage changes
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'paymatch-cookie-consent') {
         setCookieConsent(e.newValue);
       }
-      if (e.key === 'pwa-banner-dismissed') {
+      if (e.key === PWA_BANNER_STORAGE_KEY) {
         setPwaDismissed(e.newValue === 'true');
       }
     };
