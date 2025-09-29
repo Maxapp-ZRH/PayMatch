@@ -184,62 +184,85 @@
     ]
   },
   "pricing": {
-    "title": "Simple, transparent pricing",
-    "subtitle": "Choose the plan that fits your business needs",
+    "title": "Simple pricing for Swiss businesses.",
+    "subtitle": "From freelancers to enterprises, we've got the perfect plan for your invoicing needs. Start with our free plan and upgrade as you grow.",
+    "billingPeriods": {
+      "monthly": "Monthly",
+      "annually": "Annually"
+    },
     "mostPopular": "Most Popular",
     "billedMonthly": "Billed monthly",
-    "billedAnnually": "Billed annually",
+    "billedAnnually": "Billed monthly",
+    "annualBillingBadge": "Save 20% with annual billing",
+    "comparisonTitle": "Compare all features",
+    "comparisonDescription": "See exactly what's included in each plan to choose the perfect fit for your business",
     "features": "Features",
-    "planNames": {
-      "free": "FREE",
-      "freelancer": "FREELANCER",
-      "business": "BUSINESS",
-      "enterprise": "ENTERPRISE"
+    "footerText": "All plans include Swiss QR-bill compliance and payment reconciliation.",
+    "footerLink": "Start with Free plan →",
+    "featureComparison": {
+      "invoices": "Invoices",
+      "clients": "Clients",
+      "users": "Users",
+      "qrBillInvoices": "QR-bill invoices",
+      "paymentReconciliation": "Payment reconciliation",
+      "reminders": "Reminders",
+      "reportsDataExports": "Reports / Data exports",
+      "brandingControl": "Branding control",
+      "teamManagement": "Team management",
+      "support": "Support",
+      "unlimited": "Unlimited",
+      "basic": "Basic",
+      "advanced": "Advanced",
+      "community": "Community",
+      "priority": "Priority",
+      "dedicatedSLA": "Dedicated SLA"
     },
-    "popular": "POPULAR",
-    "free": {
-      "name": "Free",
-      "price": "0",
-      "description": "Perfect for getting started",
-      "features": [
-        "5 invoices per month",
-        "Swiss QR-bill generation",
-        "Basic client management",
-        "Email support"
-      ]
-    },
-    "freelancer": {
-      "name": "Freelancer",
-      "price": "5",
-      "description": "For independent professionals",
-      "features": [
-        "Unlimited invoices",
-        "Advanced reporting",
-        "Payment reminders",
-        "Priority support"
-      ]
-    },
-    "business": {
-      "name": "Business",
-      "price": "50",
-      "description": "For growing businesses",
-      "features": [
-        "Everything in Freelancer",
-        "Team collaboration",
-        "Custom integrations",
-        "Dedicated support"
-      ]
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "price": "150",
-      "description": "For large organizations",
-      "features": [
-        "Everything in Business",
-        "Unlimited users",
-        "Advanced analytics",
-        "White-label options"
-      ]
+    "plans": {
+      "free": {
+        "name": "Free",
+        "description": "Perfect for getting started with Swiss invoicing.",
+        "features": [
+          "5 invoices per month",
+          "Swiss QR-bill generation",
+          "Payment reconciliation",
+          "Community support"
+        ]
+      },
+      "freelancer": {
+        "name": "Freelancer",
+        "description": "For solo professionals who want invoicing without limits.",
+        "features": [
+          "Unlimited invoices & clients",
+          "Swiss QR-bill generation",
+          "Payment reconciliation",
+          "Priority support",
+          "No feature restrictions"
+        ]
+      },
+      "business": {
+        "name": "Business",
+        "description": "For SMEs and fiduciaries that need collaboration and more features.",
+        "features": [
+          "Everything in Freelancer",
+          "Team management (10 users)",
+          "Advanced reminders",
+          "Branding control",
+          "Organization dashboard",
+          "Advanced reporting"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "description": "For large fiduciaries and corporates with advanced needs.",
+        "features": [
+          "Everything in Business",
+          "Unlimited users",
+          "Dedicated support / SLA",
+          "Advanced security",
+          "Early access to AI features",
+          "Custom requests"
+        ]
+      }
     }
   }
 }

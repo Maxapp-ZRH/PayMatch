@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Radio, RadioGroup } from '@headlessui/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
@@ -201,6 +202,37 @@ export function Pricing() {
     'Monthly'
   );
 
+  // Map feature names to translation keys
+  const getFeatureTranslation = (feature: string) => {
+    const featureMap: Record<string, string> = {
+      Invoices: 'featureComparison.invoices',
+      Clients: 'featureComparison.clients',
+      Users: 'featureComparison.users',
+      'QR-bill invoices': 'featureComparison.qrBillInvoices',
+      'Payment reconciliation': 'featureComparison.paymentReconciliation',
+      Reminders: 'featureComparison.reminders',
+      'Reports / Data exports': 'featureComparison.reportsDataExports',
+      'Branding control': 'featureComparison.brandingControl',
+      'Team management': 'featureComparison.teamManagement',
+      Support: 'featureComparison.support',
+    };
+    return t(featureMap[feature] || feature);
+  };
+
+  // Map feature values to translation keys
+  const getFeatureValueTranslation = (value: string | 'check' | 'cross') => {
+    if (value === 'check' || value === 'cross') return value;
+    const valueMap: Record<string, string> = {
+      Unlimited: 'featureComparison.unlimited',
+      Basic: 'featureComparison.basic',
+      Advanced: 'featureComparison.advanced',
+      Community: 'featureComparison.community',
+      Priority: 'featureComparison.priority',
+      'Dedicated SLA': 'featureComparison.dedicatedSLA',
+    };
+    return t(valueMap[value] || value);
+  };
+
   return (
     <section
       id="pricing"
@@ -225,7 +257,7 @@ export function Pricing() {
               onChange={setActivePeriod}
               className="grid grid-cols-2"
             >
-              {pricingConfig.billingPeriods.map((period) => (
+              {['Monthly', 'Annually'].map((period) => (
                 <Radio
                   key={period}
                   value={period}
@@ -236,7 +268,7 @@ export function Pricing() {
                       : '-ml-px rounded-r-lg'
                   )}
                 >
-                  {period}
+                  {t(`billingPeriods.${period.toLowerCase()}`)}
                 </Radio>
               ))}
             </RadioGroup>
@@ -249,7 +281,7 @@ export function Pricing() {
                   : '[clip-path:inset(0_0_0_calc(50%-1px))]'
               )}
             >
-              {pricingConfig.billingPeriods.map((period) => (
+              {['Monthly', 'Annually'].map((period) => (
                 <div
                   key={period}
                   className={clsx(
@@ -257,7 +289,7 @@ export function Pricing() {
                     period === 'Annually' && '-ml-px'
                   )}
                 >
-                  {period}
+                  {t(`billingPeriods.${period.toLowerCase()}`)}
                 </div>
               ))}
             </div>
@@ -267,25 +299,38 @@ export function Pricing() {
         <div className="mt-4 text-center">
           <div className="inline-flex items-center rounded-full bg-green-50 px-3 py-1">
             <span className="text-sm font-medium text-green-700">
-              {pricingConfig.annualBillingBadge}
+              {t('annualBillingBadge')}
             </span>
           </div>
         </div>
 
         <div className="mx-auto mt-16 grid max-w-4xl grid-cols-1 items-start gap-x-8 gap-y-10 sm:mt-20 sm:grid-cols-2 lg:max-w-none lg:grid-cols-3">
-          {pricingConfig.plans.map((plan) => (
-            <Plan key={plan.name} {...plan} activePeriod={activePeriod} t={t} />
-          ))}
+          {pricingConfig.plans.map((plan) => {
+            const planKey = plan.name.toLowerCase();
+            const translatedPlan = {
+              ...plan,
+              description: t(`plans.${planKey}.description`),
+              features: t.raw(`plans.${planKey}.features`),
+            };
+            return (
+              <Plan
+                key={plan.name}
+                {...translatedPlan}
+                activePeriod={activePeriod}
+                t={t}
+              />
+            );
+          })}
         </div>
 
         {/* Feature Comparison Table */}
         <div className="mt-20">
           <div className="text-center mb-12">
             <h3 className="text-3xl font-medium tracking-tight text-gray-900 mb-4">
-              {pricingConfig.comparisonTitle}
+              {t('comparisonTitle')}
             </h3>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              {pricingConfig.comparisonDescription}
+              {t('comparisonDescription')}
             </p>
           </div>
           <div className="overflow-x-auto shadow-lg shadow-gray-900/5 rounded-3xl border border-gray-200">
@@ -298,7 +343,7 @@ export function Pricing() {
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-gray-500 mb-1">
-                        {t('planNames.free')}
+                        {t('plans.free.name').toUpperCase()}
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 0
@@ -308,7 +353,7 @@ export function Pricing() {
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-gray-500 mb-1">
-                        {t('planNames.freelancer')}
+                        {t('plans.freelancer.name').toUpperCase()}
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 5
@@ -318,20 +363,20 @@ export function Pricing() {
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-teal-600 text-lg bg-teal-50">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-teal-600 mb-1">
-                        {t('planNames.business')}
+                        {t('plans.business.name').toUpperCase()}
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 50
                       </span>
                       <span className="text-xs text-teal-600 font-medium mt-1">
-                        {t('popular')}
+                        {t('mostPopular')}
                       </span>
                     </div>
                   </th>
                   <th className="border-b border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg last:rounded-tr-3xl">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-gray-500 mb-1">
-                        {t('planNames.enterprise')}
+                        {t('plans.enterprise.name').toUpperCase()}
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 150
@@ -356,7 +401,7 @@ export function Pricing() {
                           isLastRow ? 'first:rounded-bl-3xl' : ''
                         )}
                       >
-                        {row.feature}
+                        {getFeatureTranslation(row.feature)}
                       </td>
                       <td
                         className={clsx(
@@ -365,7 +410,10 @@ export function Pricing() {
                         )}
                       >
                         <div className="flex items-center justify-center">
-                          <FeatureIcon value={row.free} className="w-5 h-5" />
+                          <FeatureIcon
+                            value={getFeatureValueTranslation(row.free)}
+                            className="w-5 h-5"
+                          />
                         </div>
                       </td>
                       <td
@@ -376,7 +424,7 @@ export function Pricing() {
                       >
                         <div className="flex items-center justify-center">
                           <FeatureIcon
-                            value={row.freelancer}
+                            value={getFeatureValueTranslation(row.freelancer)}
                             className="w-5 h-5"
                           />
                         </div>
@@ -389,7 +437,7 @@ export function Pricing() {
                       >
                         <div className="flex items-center justify-center">
                           <FeatureIcon
-                            value={row.business}
+                            value={getFeatureValueTranslation(row.business)}
                             className="w-5 h-5"
                           />
                         </div>
@@ -402,7 +450,7 @@ export function Pricing() {
                       >
                         <div className="flex items-center justify-center">
                           <FeatureIcon
-                            value={row.enterprise}
+                            value={getFeatureValueTranslation(row.enterprise)}
                             className="w-5 h-5"
                           />
                         </div>
@@ -414,14 +462,14 @@ export function Pricing() {
             </table>
           </div>
           <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600">{pricingConfig.footerText}</p>
+            <p className="text-sm text-gray-600">{t('footerText')}</p>
             <p className="mt-2 text-sm text-gray-500">
-              <a
-                href={pricingConfig.footerLink.href}
+              <Link
+                href="/register"
                 className="text-teal-600 hover:text-teal-700 font-medium"
               >
-                {pricingConfig.footerLink.text}
-              </a>
+                {t('footerLink')}
+              </Link>
             </p>
           </div>
         </div>
