@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Radio, RadioGroup } from '@headlessui/react';
 import clsx from 'clsx';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 
 import { Button } from '@/components/marketing_pages/Button';
@@ -13,9 +13,10 @@ import {
   pricingConfig,
   calculateMonthlyPricing,
   createFeatureIcon,
-  pricingPlansData,
   PRICING_CONSTANTS,
   featureComparisonData,
+  getPricingPlansForLocale,
+  getCurrencySymbol,
 } from '@/config/pricing';
 
 function CheckIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
@@ -74,6 +75,7 @@ function Plan({
   logomarkClassName,
   featured = false,
   t,
+  currencySymbol,
 }: {
   name: string;
   monthlyPrice: number;
@@ -88,6 +90,7 @@ function Plan({
   logomarkClassName?: string;
   featured?: boolean;
   t: (key: string) => string;
+  currencySymbol: string;
 }) {
   return (
     <div className="relative">
@@ -124,7 +127,7 @@ function Plan({
                 featured ? 'text-white' : 'text-gray-900'
               )}
             >
-              {pricingConfig.currency} {monthlyPrice}
+              {currencySymbol} {monthlyPrice}
             </span>
             <span
               aria-hidden={activePeriod === 'Monthly'}
@@ -135,10 +138,10 @@ function Plan({
                 featured ? 'text-white' : 'text-gray-900'
               )}
             >
-              {pricingConfig.currency}{' '}
+              {currencySymbol}{' '}
               {calculateMonthlyPricing(
                 annualPrice,
-                pricingConfig.annualDiscountPercent
+                PRICING_CONSTANTS.annualDiscountPercent
               )}
             </span>
           </div>
@@ -201,9 +204,14 @@ function Plan({
 
 export function Pricing() {
   const t = useTranslations('pricing');
+  const locale = useLocale();
   const [activePeriod, setActivePeriod] = useState<'Monthly' | 'Annually'>(
     'Monthly'
   );
+
+  // Get pricing data and currency for current locale
+  const pricingPlans = getPricingPlansForLocale(locale);
+  const currencySymbol = getCurrencySymbol(locale);
 
   // Map feature names to translation keys
   const getFeatureTranslation = (featureKey: string) => {
@@ -301,12 +309,16 @@ export function Pricing() {
         </div>
 
         <div className="mx-auto mt-16 grid max-w-4xl grid-cols-1 items-start gap-x-8 gap-y-10 sm:mt-20 sm:grid-cols-2 lg:max-w-none lg:grid-cols-3">
-          {pricingConfig.plans.map((plan) => {
+          {pricingPlans.map((plan) => {
             const planKey = plan.name.toLowerCase();
             const translatedPlan = {
               ...plan,
               description: t(`plans.${planKey}.description`),
               features: t.raw(`plans.${planKey}.features`),
+              button: {
+                label: t('common.getStarted'),
+                href: '/register',
+              },
             };
             return (
               <Plan
@@ -314,6 +326,7 @@ export function Pricing() {
                 {...translatedPlan}
                 activePeriod={activePeriod}
                 t={t}
+                currencySymbol={currencySymbol}
               />
             );
           })}
@@ -336,8 +349,8 @@ export function Pricing() {
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-left font-semibold text-gray-900 text-lg first:rounded-tl-3xl">
                     {t('features')}
                   </th>
-                  {pricingPlansData.map((plan, index) => {
-                    const isLast = index === pricingPlansData.length - 1;
+                  {pricingPlans.map((plan, index) => {
+                    const isLast = index === pricingPlans.length - 1;
                     const isFeatured = plan.featured;
                     const monthlyPrice =
                       activePeriod === 'Monthly'
@@ -365,7 +378,7 @@ export function Pricing() {
                             {plan.name.toUpperCase()}
                           </span>
                           <span className="text-2xl font-bold">
-                            {PRICING_CONSTANTS.currency} {monthlyPrice}
+                            {currencySymbol} {monthlyPrice}
                           </span>
                           {isFeatured && (
                             <span className="text-xs text-teal-600 font-medium mt-1">
@@ -403,9 +416,8 @@ export function Pricing() {
                       >
                         {getFeatureTranslation(row.featureKey)}
                       </td>
-                      {pricingPlansData.map((plan, planIndex) => {
-                        const isLast =
-                          planIndex === pricingPlansData.length - 1;
+                      {pricingPlans.map((plan, planIndex) => {
+                        const isLast = planIndex === pricingPlans.length - 1;
                         const isFeatured = plan.featured;
                         const value = planValues[planIndex];
 

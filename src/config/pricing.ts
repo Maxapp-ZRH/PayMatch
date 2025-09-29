@@ -43,6 +43,22 @@ export interface PricingPlanData {
   logomarkClassName: string;
 }
 
+export interface PricingPlanWithCurrencies {
+  name: string;
+  featured: boolean;
+  prices: {
+    CHF: {
+      monthly: number;
+      annual: number;
+    };
+    EUR: {
+      monthly: number;
+      annual: number;
+    };
+  };
+  logomarkClassName: string;
+}
+
 export interface FeatureComparisonRow {
   feature: string;
   free: string | 'check' | 'cross';
@@ -95,7 +111,47 @@ export function createFeatureIcon(type: 'check' | 'cross', className?: string) {
   return { Icon, className: `w-4 h-4 ${colorClass} ${className || ''}` };
 }
 
-// Pricing plans data (without text content - handled by translations)
+// Pricing plans data with multiple currencies
+export const pricingPlansWithCurrencies: PricingPlanWithCurrencies[] = [
+  {
+    name: 'Free',
+    featured: false,
+    prices: {
+      CHF: { monthly: 0, annual: 0 },
+      EUR: { monthly: 0, annual: 0 },
+    },
+    logomarkClassName: 'fill-gray-400',
+  },
+  {
+    name: 'Freelancer',
+    featured: false,
+    prices: {
+      CHF: { monthly: 5, annual: 48 },
+      EUR: { monthly: 5, annual: 48 },
+    },
+    logomarkClassName: 'fill-gray-500',
+  },
+  {
+    name: 'Business',
+    featured: true,
+    prices: {
+      CHF: { monthly: 50, annual: 480 },
+      EUR: { monthly: 50, annual: 480 },
+    },
+    logomarkClassName: 'fill-teal-600',
+  },
+  {
+    name: 'Enterprise',
+    featured: false,
+    prices: {
+      CHF: { monthly: 150, annual: 1440 },
+      EUR: { monthly: 150, annual: 1440 },
+    },
+    logomarkClassName: 'fill-red-600',
+  },
+];
+
+// Legacy pricing plans data (without text content - handled by translations)
 export const pricingPlansData: PricingPlanData[] = [
   {
     name: 'Free',
@@ -359,12 +415,83 @@ export const featureComparison: FeatureComparisonRow[] = [
   },
 ];
 
+// Currency configuration
+export const CURRENCY_CONFIG = {
+  CHF: {
+    symbol: 'CHF',
+    code: 'CHF',
+    region: 'CH',
+    locales: ['de-CH', 'en-CH'],
+  },
+  EUR: {
+    symbol: '€',
+    code: 'EUR',
+    region: 'EU',
+    locales: ['en', 'de', 'fr', 'it'],
+  },
+} as const;
+
 // Pricing configuration constants (non-text data)
 export const PRICING_CONSTANTS = {
   annualDiscountPercent: 20,
-  currency: 'CHF',
+  defaultCurrency: 'CHF',
   billingPeriods: ['Monthly', 'Annually'],
 } as const;
+
+// Helper function to get currency based on locale
+export function getCurrencyForLocale(
+  locale: string
+): keyof typeof CURRENCY_CONFIG {
+  // Swiss locales use CHF
+  if (locale === 'de-CH' || locale === 'en-CH') {
+    return 'CHF';
+  }
+  // All other locales use EUR
+  return 'EUR';
+}
+
+// Helper function to get currency symbol
+export function getCurrencySymbol(locale: string): string {
+  const currency = getCurrencyForLocale(locale);
+  return CURRENCY_CONFIG[currency].symbol;
+}
+
+// Helper function to get currency code
+export function getCurrencyCode(locale: string): string {
+  const currency = getCurrencyForLocale(locale);
+  return CURRENCY_CONFIG[currency].code;
+}
+
+// Helper function to get pricing plans for a specific locale
+export function getPricingPlansForLocale(locale: string): PricingPlanData[] {
+  const currency = getCurrencyForLocale(locale);
+
+  return pricingPlansWithCurrencies.map((plan) => ({
+    name: plan.name,
+    featured: plan.featured,
+    monthlyPrice: plan.prices[currency].monthly,
+    annualPrice: plan.prices[currency].annual,
+    logomarkClassName: plan.logomarkClassName,
+  }));
+}
+
+// Helper function to get a specific plan's price for a locale
+export function getPlanPriceForLocale(
+  planName: string,
+  locale: string,
+  period: 'monthly' | 'annual'
+): number {
+  const currency = getCurrencyForLocale(locale);
+  const plan = pricingPlansWithCurrencies.find(
+    (p) => p.name.toLowerCase() === planName.toLowerCase()
+  );
+
+  if (!plan) return 0;
+
+  return period === 'monthly'
+    ? plan.prices[currency].monthly
+    : plan.prices[currency].annual;
+}
 
 // Legacy pricing configuration (deprecated - use with translations)
 export const pricingConfig: PricingConfig = {
@@ -466,3 +593,4 @@ export { pricingPlans as plans };
 export { featureComparison as comparisonTable };
 export { pricingPlansData as plansData };
 export { featureComparisonData as comparisonTableData };
+export { pricingPlansWithCurrencies as plansWithCurrencies };
