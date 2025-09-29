@@ -348,7 +348,7 @@ export function Pricing() {
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-gray-500 mb-1">
-                        {t('plans.free.name').toUpperCase()}
+                        FREE
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 0
@@ -358,7 +358,7 @@ export function Pricing() {
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-gray-500 mb-1">
-                        {t('plans.freelancer.name').toUpperCase()}
+                        FREELANCER
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 5
@@ -368,7 +368,7 @@ export function Pricing() {
                   <th className="border-b border-r border-gray-200 px-6 py-4 text-center font-semibold text-teal-600 text-lg bg-teal-50">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-teal-600 mb-1">
-                        {t('plans.business.name').toUpperCase()}
+                        BUSINESS
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 50
@@ -381,7 +381,7 @@ export function Pricing() {
                   <th className="border-b border-gray-200 px-6 py-4 text-center font-semibold text-gray-900 text-lg last:rounded-tr-3xl">
                     <div className="flex flex-col items-center">
                       <span className="text-sm font-medium text-gray-500 mb-1">
-                        {t('plans.enterprise.name').toUpperCase()}
+                        ENTERPRISE
                       </span>
                       <span className="text-2xl font-bold">
                         {pricingConfig.currency} 150
