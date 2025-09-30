@@ -41,6 +41,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
       supportMessages,
       faqMessages,
       indexMessages,
+      validationMessages,
+      pwaMessages,
     ] = await Promise.all([
       import(`./messages/${locale}/common.json`)
         .then((m) => m.default)
@@ -75,12 +77,19 @@ export default getRequestConfig(async ({ requestLocale }) => {
       import(`./messages/${locale}/index.json`)
         .then((m) => m.default)
         .catch(() => ({})),
+      import(`./messages/${locale}/validation.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/pwa.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
     ]);
 
     // Merge all messages into a single object
     messages = {
       common: commonMessages,
       utils: utilsMessages,
+      validation: validationMessages,
       legal: {
         ...legalIndexMessages,
         privacy: {
@@ -106,6 +115,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       },
       support: supportMessages,
       faq: faqMessages,
+      pwa: pwaMessages,
       ...indexMessages, // Main page content
     };
   } catch {
@@ -126,6 +136,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
         supportMessages,
         faqMessages,
         indexMessages,
+        validationMessages,
+        pwaMessages,
       ] = await Promise.all([
         import(`./messages/en/common.json`)
           .then((m) => m.default)
@@ -160,11 +172,18 @@ export default getRequestConfig(async ({ requestLocale }) => {
         import(`./messages/en/index.json`)
           .then((m) => m.default)
           .catch(() => ({})),
+        import(`./messages/en/validation.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en/pwa.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
       ]);
 
       messages = {
         common: commonMessages,
         utils: utilsMessages,
+        validation: validationMessages,
         legal: {
           ...legalIndexMessages,
           privacy: {
@@ -190,6 +209,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
         },
         support: supportMessages,
         faq: faqMessages,
+        pwa: pwaMessages,
         ...indexMessages,
       };
     } catch (fallbackError) {

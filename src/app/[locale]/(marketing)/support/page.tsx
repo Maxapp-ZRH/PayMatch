@@ -38,6 +38,7 @@ import {
 
 import { Container } from '@/components/marketing_pages/Container';
 import { Button } from '@/components/marketing_pages/Button';
+import FileUpload, { type FileData } from '@/components/ui/FileUpload';
 import {
   supportFormSchema,
   supportCategories,
@@ -634,10 +635,12 @@ function EnhancedFAQSection({
 export default function SupportPage() {
   const tForm = useTranslations('support.form');
   const t = useTranslations('support');
+  const tValidation = useTranslations('validation');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [attachments, setAttachments] = useState<FileData[]>([]);
 
   const {
     register,
@@ -669,12 +672,23 @@ export default function SupportPage() {
     setErrorMessage('');
 
     try {
+      // Include attachments in the form data
+      const formDataWithAttachments = {
+        ...data,
+        attachments: attachments.map((file) => ({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          url: file.url,
+        })),
+      };
+
       const response = await fetch('/api/support', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(formDataWithAttachments),
       });
 
       if (!response.ok) {
@@ -791,7 +805,7 @@ export default function SupportPage() {
                     />
                     {errors.name && (
                       <p className="mt-2 text-sm text-red-600 font-medium">
-                        {tForm(`validation.${errors.name.message}`)}
+                        {tValidation(errors.name.message)}
                       </p>
                     )}
                   </div>
@@ -815,7 +829,7 @@ export default function SupportPage() {
                     />
                     {errors.email && (
                       <p className="mt-2 text-sm text-red-600 font-medium">
-                        {tForm(`validation.${errors.email.message}`)}
+                        {tValidation(errors.email.message)}
                       </p>
                     )}
                   </div>
@@ -925,7 +939,7 @@ export default function SupportPage() {
                 />
                 {errors.subject && (
                   <p className="mt-2 text-sm text-red-600 font-medium">
-                    {tForm(`validation.${errors.subject.message}`)}
+                    {tValidation(errors.subject.message)}
                   </p>
                 )}
               </div>
@@ -965,10 +979,31 @@ export default function SupportPage() {
                   </div>
                   {errors.message && (
                     <p className="mt-2 text-sm text-red-600 font-medium">
-                      {tForm(`validation.${errors.message.message}`)}
+                      {tValidation(errors.message.message)}
                     </p>
                   )}
                 </div>
+              </div>
+
+              {/* File Attachments */}
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+                  {tForm('sections.attachments')}
+                </h3>
+
+                <FileUpload
+                  files={attachments}
+                  onFilesChange={setAttachments}
+                  maxFiles={5}
+                  maxSize={5 * 1024 * 1024} // 5MB
+                  disabled={isSubmitting}
+                />
+
+                {errors.attachments && (
+                  <p className="text-sm text-red-600 font-medium">
+                    {tValidation(errors.attachments.message)}
+                  </p>
+                )}
               </div>
 
               {/* Consent */}
@@ -996,7 +1031,7 @@ export default function SupportPage() {
                 </div>
                 {errors.consent && (
                   <p className="text-sm text-red-600 font-medium">
-                    {tForm(`validation.${errors.consent.message}`)}
+                    {tValidation(errors.consent.message)}
                   </p>
                 )}
               </div>

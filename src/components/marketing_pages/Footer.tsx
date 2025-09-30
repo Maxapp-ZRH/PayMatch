@@ -4,28 +4,82 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
 import { TextField } from '@/components/marketing_pages/Fields';
 import { NavLinks } from '@/components/marketing_pages/NavLinks';
-import { QRCode } from '@/components/ui/QRCode';
 import { Link as I18nLink } from '@/i18n/navigation';
-
-function QrCodeBorder(props: React.ComponentPropsWithoutRef<'svg'>) {
-  return (
-    <svg viewBox="0 0 96 96" fill="none" aria-hidden="true" {...props}>
-      <path
-        d="M1 17V9a8 8 0 0 1 8-8h8M95 17V9a8 8 0 0 0-8-8h-8M1 79v8a8 8 0 0 0 8 8h8M95 79v8a8 8 0 0 1-8 8h-8"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
+import {
+  newsletterSchema,
+  type NewsletterFormData,
+} from '@/schemas/newsletter';
 
 export function Footer() {
   const t = useTranslations('common.footer');
+  const tValidation = useTranslations('validation');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+  } = useForm<NewsletterFormData>({
+    resolver: zodResolver(newsletterSchema),
+    mode: 'onChange',
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      consent: false,
+    },
+  });
+
+  const onSubmit = async (data: NewsletterFormData) => {
+    setIsSubmitting(true);
+    setShowError(false);
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to subscribe to newsletter');
+      }
+
+      setShowSuccess(true);
+      reset();
+
+      // Hide success message after 5 seconds
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 5000);
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Failed to subscribe to newsletter'
+      );
+      setShowError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <footer className="border-t border-gray-200">
@@ -58,33 +112,6 @@ export function Footer() {
             <nav className="mt-6 flex flex-wrap gap-6 sm:mt-8 sm:gap-8">
               <NavLinks />
             </nav>
-          </motion.div>
-          <motion.div
-            className="group relative -mx-4 flex w-full items-center self-stretch p-4 transition-colors hover:bg-gray-100 sm:w-auto sm:self-auto sm:rounded-2xl lg:mx-0 lg:self-auto lg:p-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
-          >
-            <div className="relative flex h-24 w-24 flex-none items-center justify-center sm:h-28 sm:w-28">
-              <QrCodeBorder className="absolute inset-0 h-full w-full stroke-gray-300 transition-colors group-hover:stroke-red-500" />
-              <QRCode
-                value="https://paymatch.app"
-                size={80}
-                className="rounded-lg"
-                alt="QR Code to PayMatch.app"
-              />
-            </div>
-            <div className="ml-6 sm:ml-8 lg:w-64">
-              <p className="text-sm font-semibold text-gray-900 sm:text-base">
-                <I18nLink href="/register">
-                  <span className="absolute inset-0 sm:rounded-2xl" />
-                  {t('links.startInvoicing')}
-                </I18nLink>
-              </p>
-              <p className="mt-1 text-xs text-gray-700 sm:text-sm">
-                {t('links.startInvoicingDescription')}
-              </p>
-            </div>
           </motion.div>
         </motion.div>
         <motion.div
@@ -119,6 +146,22 @@ export function Footer() {
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
                       {t('links.support')}
+                    </I18nLink>
+                  </li>
+                  <li>
+                    <I18nLink
+                      href={{ pathname: '/pwa' }}
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      {t('links.pwa')}
+                    </I18nLink>
+                  </li>
+                  <li>
+                    <I18nLink
+                      href={{ pathname: '/integrations' }}
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      {t('links.integrations')}
                     </I18nLink>
                   </li>
                 </ul>
@@ -182,48 +225,128 @@ export function Footer() {
               <p className="mt-2 text-sm text-gray-600">
                 {t('newsletter.description')}
               </p>
-              <form className="mt-4 space-y-3 sm:space-y-4">
+
+              {/* Success Message */}
+              {showSuccess && (
+                <motion.div
+                  className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex items-center">
+                    <svg
+                      className="w-5 h-5 text-green-600 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <p className="text-sm text-green-800 font-medium">
+                      Successfully subscribed! Check your email for a welcome
+                      message.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Error Message */}
+              {showError && (
+                <motion.div
+                  className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex items-center">
+                    <svg
+                      className="w-5 h-5 text-red-600 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                    <p className="text-sm text-red-800 font-medium">
+                      {errorMessage}
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="mt-4 space-y-3 sm:space-y-4"
+              >
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-2">
-                  <TextField
-                    type="text"
-                    name="firstName"
-                    aria-label={t('newsletter.firstName')}
-                    placeholder={t('newsletter.firstName')}
-                    autoComplete="given-name"
-                    required
-                    className="min-w-0"
-                  />
-                  <TextField
-                    type="text"
-                    name="lastName"
-                    aria-label={t('newsletter.lastName')}
-                    placeholder={t('newsletter.lastName')}
-                    autoComplete="family-name"
-                    required
-                    className="min-w-0"
-                  />
+                  <div className="min-w-0">
+                    <TextField
+                      {...register('firstName')}
+                      type="text"
+                      aria-label={t('newsletter.firstName')}
+                      placeholder={t('newsletter.firstName')}
+                      autoComplete="given-name"
+                      className={`min-w-0 ${errors.firstName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    />
+                    {errors.firstName && (
+                      <p className="mt-1 text-xs text-red-600">
+                        {tValidation(errors.firstName.message)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <TextField
+                      {...register('lastName')}
+                      type="text"
+                      aria-label={t('newsletter.lastName')}
+                      placeholder={t('newsletter.lastName')}
+                      autoComplete="family-name"
+                      className={`min-w-0 ${errors.lastName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    />
+                    {errors.lastName && (
+                      <p className="mt-1 text-xs text-red-600">
+                        {tValidation(errors.lastName.message)}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Email Field */}
-                <TextField
-                  type="email"
-                  name="email"
-                  aria-label={t('newsletter.email')}
-                  placeholder={t('newsletter.emailPlaceholder')}
-                  autoComplete="email"
-                  required
-                  className="w-full"
-                />
+                <div className="w-full">
+                  <TextField
+                    {...register('email')}
+                    type="email"
+                    aria-label={t('newsletter.email')}
+                    placeholder={t('newsletter.emailPlaceholder')}
+                    autoComplete="email"
+                    className={`w-full ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {tValidation(errors.email.message)}
+                    </p>
+                  )}
+                </div>
 
                 {/* Consent Checkbox */}
                 <div className="flex items-start space-x-3">
                   <input
+                    {...register('consent')}
                     type="checkbox"
                     id="newsletter-consent"
-                    name="consent"
-                    required
-                    className="mt-1 h-4 w-4 flex-shrink-0 rounded border-gray-300 text-red-500 focus:ring-red-500"
+                    className={`mt-1 h-4 w-4 flex-shrink-0 rounded border-gray-300 text-red-500 focus:ring-red-500 ${errors.consent ? 'border-red-500' : ''}`}
                   />
                   <label
                     htmlFor="newsletter-consent"
@@ -246,14 +369,27 @@ export function Footer() {
                     {t('newsletter.apply')}.
                   </label>
                 </div>
+                {errors.consent && (
+                  <p className="text-xs text-red-600">
+                    {tValidation(errors.consent.message)}
+                  </p>
+                )}
 
                 {/* Submit Button */}
                 <Button
                   type="submit"
                   color="cyan"
+                  disabled={isSubmitting || !isValid}
                   className="w-full text-sm sm:text-base"
                 >
-                  {t('newsletter.subscribe')}
+                  {isSubmitting ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Subscribing...
+                    </div>
+                  ) : (
+                    t('newsletter.subscribe')
+                  )}
                 </Button>
               </form>
             </div>

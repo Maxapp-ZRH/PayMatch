@@ -18,6 +18,13 @@ import {
 } from '@react-email/components';
 import * as React from 'react';
 
+interface Attachment {
+  name: string;
+  size: number;
+  type: string;
+  url: string;
+}
+
 interface SupportTeamNotificationEmailProps {
   userName: string;
   userEmail: string;
@@ -26,6 +33,7 @@ interface SupportTeamNotificationEmailProps {
   priority: string;
   subject: string;
   message: string;
+  attachments?: Attachment[];
   appUrl: string;
 }
 
@@ -37,6 +45,7 @@ export const SupportTeamNotificationEmail = ({
   priority,
   subject,
   message,
+  attachments = [],
   appUrl,
 }: SupportTeamNotificationEmailProps) => {
   const priorityColor =
@@ -114,6 +123,30 @@ export const SupportTeamNotificationEmail = ({
               <Heading style={h2}>Message</Heading>
               <Text style={messageText}>{message}</Text>
             </Section>
+
+            {/* Attachments */}
+            {attachments && attachments.length > 0 && (
+              <Section style={infoBox}>
+                <Heading style={h2}>Attachments ({attachments.length})</Heading>
+                {attachments.map((attachment, index) => (
+                  <Text key={index} style={text}>
+                    <strong>{index + 1}.</strong> {attachment.name} (
+                    {(attachment.size / 1024 / 1024).toFixed(2)} MB)
+                  </Text>
+                ))}
+                <Text
+                  style={{
+                    ...text,
+                    fontSize: '12px',
+                    color: '#666',
+                    marginTop: '8px',
+                  }}
+                >
+                  Note: Attachments are included as email attachments and can be
+                  downloaded directly.
+                </Text>
+              </Section>
+            )}
 
             {/* Footer */}
             <Section style={footer}>

@@ -20,7 +20,7 @@ interface QRCodeProps {
 
 export function QRCode({
   value,
-  size = 200,
+  size,
   className = '',
   alt = 'QR Code',
 }: QRCodeProps) {
@@ -32,8 +32,10 @@ export function QRCode({
     const generateQR = async () => {
       try {
         setError(null);
+        // Use a high resolution for better quality when scaling
+        const qrSize = size || 400;
         const dataURL = await QRCodeLib.toDataURL(value, {
-          width: size,
+          width: qrSize,
           margin: 2,
           color: {
             dark: '#000000',
@@ -58,7 +60,7 @@ export function QRCode({
     return (
       <div
         className={`bg-gray-100 rounded-lg flex items-center justify-center ${className}`}
-        style={{ width: size, height: size }}
+        style={size ? { width: size, height: size } : undefined}
       >
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
       </div>
@@ -69,7 +71,7 @@ export function QRCode({
     return (
       <div
         className={`bg-red-50 border border-red-200 rounded-lg flex items-center justify-center ${className}`}
-        style={{ width: size, height: size }}
+        style={size ? { width: size, height: size } : undefined}
       >
         <div className="text-center p-4">
           <div className="text-red-600 text-sm font-medium">QR Code Error</div>
@@ -80,14 +82,14 @@ export function QRCode({
   }
 
   return (
-    <div className={`inline-block ${className}`}>
+    <div className={`${size ? 'inline-block' : 'block'} ${className}`}>
       <Image
         src={qrDataURL}
         alt={alt}
-        width={size}
-        height={size}
-        className="rounded-lg"
-        style={{ width: size, height: size }}
+        width={size || 400}
+        height={size || 400}
+        className="rounded-lg w-full h-full object-cover"
+        style={size ? { width: size, height: size } : undefined}
         unoptimized
       />
     </div>

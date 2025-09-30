@@ -3,6 +3,7 @@
     "features": "Features",
     "reviews": "Reviews",
     "pricing": "Pricing",
+    "integrations": "Integrations",
     "faqs": "FAQs",
     "login": "Login",
     "register": "Register"
@@ -15,10 +16,10 @@
   "footer": {
     "description": "Swiss invoicing made simple. Create, send, and track invoices with QR-bill compliance.",
     "links": {
-      "startInvoicing": "Start Invoicing",
-      "startInvoicingDescription": "Scan QR code to get started with PayMatch",
       "company": "Company",
       "support": "Support",
+      "pwa": "PWA",
+      "integrations": "Integrations",
       "legal": "Legal",
       "privacy": "Privacy Policy",
       "terms": "Terms of Service",

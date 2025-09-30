@@ -12,6 +12,7 @@ import { supportFormSchema } from '@/schemas/support';
 import { SupportConfirmationEmail } from '@/emails/support-confirmation';
 import { SupportTeamNotificationEmail } from '@/emails/support-team-notification';
 import { render } from '@react-email/render';
+import { cleanupAfterEmailProcessing } from '@/utils/file-cleanup';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -45,6 +46,20 @@ Issue Details:
 Message:
 ${validatedData.message}
 
+${
+  validatedData.attachments && validatedData.attachments.length > 0
+    ? `
+Attachments (${validatedData.attachments.length}):
+${validatedData.attachments
+  .map(
+    (file, index) =>
+      `${index + 1}. ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`
+  )
+  .join('\n')}
+`
+    : ''
+}
+
 ---
 This message was sent via the PayMatch support form.
     `.trim();
@@ -59,9 +74,18 @@ This message was sent via the PayMatch support form.
         priority: validatedData.priority,
         subject: validatedData.subject,
         message: validatedData.message,
+        attachments: validatedData.attachments || [],
         appUrl: APP_URL,
       })
     );
+
+    // Prepare email attachments
+    const emailAttachments =
+      validatedData.attachments?.map((file) => ({
+        filename: file.name,
+        content: file.url, // In a real implementation, this would be the actual file content
+        contentType: file.type,
+      })) || [];
 
     // Send support email to team
     const supportEmailResult = await resend.emails.send({
@@ -71,6 +95,7 @@ This message was sent via the PayMatch support form.
       subject: `[${validatedData.priority.toUpperCase()}] ${validatedData.subject}`,
       text: supportEmailContent,
       html: supportTeamEmailHtml,
+      attachments: emailAttachments,
     });
 
     if (supportEmailResult.error) {
@@ -106,6 +131,16 @@ This message was sent via the PayMatch support form.
       console.error('Confirmation email error:', confirmationEmailResult.error);
       // Don't fail the request if confirmation email fails, just log it
       console.warn('Support request was sent but confirmation email failed');
+    }
+
+    // Clean up temporary files after successful email processing
+    if (validatedData.attachments && validatedData.attachments.length > 0) {
+      try {
+        await cleanupAfterEmailProcessing(validatedData.attachments);
+      } catch (cleanupError) {
+        console.error('File cleanup error:', cleanupError);
+        // Don't fail the request if cleanup fails, just log it
+      }
     }
 
     return NextResponse.json(

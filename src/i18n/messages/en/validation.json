@@ -1,0 +1,50 @@
+{
+  "firstName": {
+    "minLength": "First name must be at least 2 characters",
+    "maxLength": "First name must be less than 100 characters",
+    "invalidChars": "First name contains invalid characters"
+  },
+  "lastName": {
+    "minLength": "Last name must be at least 2 characters",
+    "maxLength": "Last name must be less than 100 characters",
+    "invalidChars": "Last name contains invalid characters"
+  },
+  "name": {
+    "minLength": "Name must be at least 2 characters",
+    "maxLength": "Name must be less than 100 characters",
+    "invalidChars": "Name contains invalid characters"
+  },
+  "email": {
+    "invalid": "Please enter a valid email address",
+    "maxLength": "Email address is too long"
+  },
+  "company": {
+    "maxLength": "Company name is too long"
+  },
+  "subject": {
+    "minLength": "Subject must be at least 5 characters",
+    "maxLength": "Subject must be less than 200 characters",
+    "invalidChars": "Subject contains invalid characters"
+  },
+  "message": {
+    "minLength": "Message must be at least 10 characters",
+    "maxLength": "Message must be less than 2000 characters",
+    "invalidContent": "Message must contain valid content"
+  },
+  "category": {
+    "invalid": "Please select a valid category"
+  },
+  "priority": {
+    "invalid": "Please select a valid priority"
+  },
+  "consent": {
+    "required": "You must agree to the terms and conditions"
+  },
+  "attachments": {
+    "maxFiles": "Maximum 5 attachments allowed",
+    "nameRequired": "File name is required",
+    "fileTooLarge": "File size must be less than 5MB",
+    "invalidType": "File type not supported. Allowed: images, PDF, Office docs, archives, text files",
+    "invalidUrl": "Invalid file URL"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "badge": "Progressive Web App",
+  "hero": {
+    "title": "PayMatch auf Ihrem Gerät",
+    "description": "Installieren Sie PayMatch als native App auf Ihrem Telefon, Tablet oder Computer. Erhalten Sie sofortigen Zugang zur Schweizer Rechnungsstellung mit Offline-Funktionen, Push-Benachrichtigungen und blitzschneller Leistung."
+  },
+  "features": {
+    "title": "Warum unsere PWA wählen?",
+    "description": "Erleben Sie die Kraft einer nativen App mit der Bequemlichkeit des Webs.",
+    "offline": {
+      "title": "Funktioniert offline",
+      "description": "Erstellen Sie Rechnungen und verwalten Sie Ihr Unternehmen auch ohne Internetverbindung. Alle Änderungen werden automatisch synchronisiert, wenn Sie wieder online sind."
+    },
+    "notifications": {
+      "title": "Push-Benachrichtigungen",
+      "description": "Erhalten Sie sofortige Benachrichtigungen für Zahlungseingänge, überfällige Rechnungen und wichtige Updates direkt auf Ihr Gerät."
+    },
+    "fast": {
+      "title": "Blitzschnell",
+      "description": "Gecachte Inhalte laden sofort. Kein Warten mehr auf das Laden von Seiten - alles ist für Geschwindigkeit optimiert."
+    },
+    "secure": {
+      "title": "Sicher & Privat",
+      "description": "Ihre Daten bleiben sicher mit Ende-zu-Ende-Verschlüsselung und Schweizer Datenschutzstandards. Keine Daten werden unnötig auf Ihrem Gerät gespeichert."
+    }
+  },
+  "benefits": {
+    "title": "Perfekt für Schweizer Unternehmen",
+    "description": "Speziell für Schweizer Unternehmen entwickelt, die zuverlässige, konforme Rechnungslösungen benötigen.",
+    "invoicing": {
+      "title": "Schweizer QR-Rechnung",
+      "description": "Erstellen Sie konforme Schweizer QR-Rechnungen mit automatischen Steuerberechnungen und professioneller Formatierung."
+    },
+    "payments": {
+      "title": "Zahlungsabgleich",
+      "description": "Laden Sie CAMT-Dateien hoch und gleichen Sie automatisch Zahlungen mit Rechnungen nach Schweizer Bankstandards ab."
+    },
+    "analytics": {
+      "title": "Geschäftsanalysen",
+      "description": "Verfolgen Sie Ihre Rechnungsleistung mit detaillierten Berichten und Erkenntnissen, die für Schweizer Unternehmen zugeschnitten sind."
+    },
+    "management": {
+      "title": "Kundenverwaltung",
+      "description": "Verwalten Sie Ihre Schweizer Kunden mit Adressvalidierung, Steuer-ID-Behandlung und Compliance-Funktionen."
+    }
+  },
+  "devices": {
+    "title": "Funktioniert auf allen Ihren Geräten",
+    "description": "Installieren Sie PayMatch auf jedem Gerät und greifen Sie nahtlos auf Ihre Daten auf allen Plattformen zu.",
+    "mobile": "Mobil",
+    "mobileDescription": "Vollständige mobile App mit touch-optimierter Benutzeroberfläche zum Erstellen von Rechnungen unterwegs.",
+    "tablet": "Tablet",
+    "tabletDescription": "Perfekt für Präsentationen und detaillierte Arbeit mit größerer Bildschirmfläche.",
+    "desktop": "Desktop",
+    "desktopDescription": "Vollständige Desktop-Erfahrung mit Tastenkürzeln und erweiterten Funktionen."
+  },
+  "installation": {
+    "title": "So installieren Sie",
+    "description": "Holen Sie sich PayMatch auf Ihr Gerät in nur wenigen einfachen Schritten.",
+    "mobile": {
+      "title": "Mobil & Tablet",
+      "step1": "Öffnen Sie PayMatch in Ihrem mobilen Browser (Chrome, Safari oder Edge)",
+      "step2": "Suchen Sie nach der Option 'Zum Startbildschirm hinzufügen' in Ihrem Browser-Menü",
+      "step3": "Tippen Sie auf 'Hinzufügen' und PayMatch wird wie eine native App installiert"
+    },
+    "desktop": {
+      "title": "Desktop & Laptop",
+      "step1": "Öffnen Sie PayMatch in Chrome, Edge oder Safari",
+      "step2": "Klicken Sie auf die Installationsschaltfläche in der Adressleiste oder im Menü Ihres Browsers",
+      "step3": "Folgen Sie den Anweisungen, um PayMatch als Desktop-App zu installieren"
+    }
+  },
+  "cta": {
+    "title": "Bereit loszulegen?",
+    "description": "Schließen Sie sich Tausenden von Schweizer Unternehmen an, die PayMatch für ihre Rechnungsanforderungen vertrauen.",
+    "getStarted": "Kostenlose Testversion starten"
+  },
+  "installNow": "Jetzt installieren",
+  "installing": "Installiere...",
+  "installed": "Bereits installiert",
+  "online": "Online",
+  "offline": "Offline"
+}

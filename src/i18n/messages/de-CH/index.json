@@ -9,7 +9,7 @@
   "features": {
     "title": "Alles was Sie für Schweizer Rechnungen brauchen",
     "subtitle": "Speziell für den Schweizer Markt mit Fokus auf Konformität und Effizienz entwickelt",
-    "disclaimer": "* PayMatch ist eine Webanwendung, die auf Desktop- und Mobilbrowsern zugänglich ist. Die oben gezeigte mobile Oberfläche dient nur zur Demonstration.",
+    "disclaimer": "* PayMatch ist eine Progressive Web App (PWA), die auf Desktop- und Mobilgeräten installiert werden kann. Die oben gezeigte mobile Oberfläche dient nur zur Demonstration.",
     "features": [
       {
         "name": "Kunden hinzufügen & verwalten",
@@ -70,9 +70,9 @@
         "name": "Kundenverwaltung",
         "description": "Organisieren Sie Ihre Kunden und verfolgen Sie deren Zahlungshistorie an einem Ort."
       },
-      "notifications": {
-        "name": "Echtzeit-Benachrichtigungen",
-        "description": "Erhalten Sie sofortige Benachrichtigungen, wenn Rechnungen angesehen, bezahlt oder überfällig werden."
+      "pwa": {
+        "name": "Progressive Web App",
+        "description": "Installieren Sie PayMatch auf jedem Gerät für eine native App-ähnliche Erfahrung mit Offline-Funktionen."
       },
       "collaboration": {
         "name": "Team-Zusammenarbeit",
@@ -265,6 +265,107 @@
           "Früher Zugang zu KI-Funktionen",
           "Benutzerdefinierte Anfragen"
         ]
+      }
+    }
+  },
+  "integrations": {
+    "title": "Leistungsstarke Integrationen für nahtloses Rechnungswesen",
+    "subtitle": "Verbinden Sie sich mit Schweizer Banken, Zahlungsabwicklern und Geschäftstools, um Ihren gesamten Rechnungsablauf zu automatisieren.",
+    "badge": "Schweizer Banken-Integration",
+    "cta": "Kostenlos starten",
+    "learnMore": "Mehr erfahren",
+    "blinkHighlight": {
+      "title": "bLink Open Banking Integration",
+      "description": "Echtzeit-Zahlungsabgleich mit allen grossen Schweizer Banken über den offiziellen bLink Open Banking Standard. Automatisches Abgleichen eingehender Zahlungen mit Ihren Rechnungen ohne manuelle Arbeit.",
+      "benefits": {
+        "realTime": "Echtzeit-Zahlungserkennung",
+        "automatic": "Automatischer Rechnungsabgleich",
+        "secure": "Banken-Level-Sicherheit",
+        "compliant": "Schweizer Konformitätsstandards"
+      }
+    },
+    "allIntegrations": "Alle Integrationen",
+    "allIntegrationsDescription": "Umfassendes Ökosystem von Integrationen, die speziell für Schweizer Unternehmen entwickelt wurden",
+    "ctaSection": {
+      "title": "Bereit, Ihr Rechnungswesen zu optimieren?",
+      "description": "Schliessen Sie sich Tausenden von Schweizer Unternehmen an, die PayMatch bereits für nahtloses Rechnungswesen und Zahlungsabgleich nutzen."
+    },
+    "integrations": {
+      "blink": {
+        "name": "bLink Open Banking",
+        "description": "Echtzeit-Zahlungsabgleich mit Schweizer Banken über den offiziellen bLink Standard.",
+        "features": {
+          "realTime": "Echtzeit-Zahlungserkennung",
+          "automatic": "Automatischer Rechnungsabgleich",
+          "secure": "Banken-Level-Sicherheit",
+          "compliant": "Schweizer Konformitätsstandards"
+        }
+      },
+      "camt": {
+        "name": "CAMT.053 Import",
+        "description": "Manueller Bankauszug-Import als Fallback für Zahlungsabgleich.",
+        "features": {
+          "manual": "Manueller Datei-Upload",
+          "import": "CAMT.053-Parsing",
+          "matching": "Zahlungsabgleich-Algorithmen",
+          "fallback": "Zuverlässige Fallback-Option"
+        }
+      },
+      "stripe": {
+        "name": "Stripe Billing",
+        "description": "Abonnementverwaltung und Zahlungsabwicklung für Ihr Unternehmen.",
+        "features": {
+          "billing": "Abonnement-Abrechnung",
+          "subscriptions": "Plan-Verwaltung",
+          "payments": "Zahlungsabwicklung",
+          "tax": "Steuerberechnungen"
+        }
+      },
+      "resend": {
+        "name": "Resend E-Mail",
+        "description": "Zuverlässige transaktionale E-Mail-Zustellung für Rechnungen und Benachrichtigungen.",
+        "features": {
+          "transactional": "Transaktionale E-Mails",
+          "branded": "Branded Templates",
+          "reliable": "Hohe Zustellbarkeit",
+          "tracking": "E-Mail-Tracking"
+        }
+      },
+      "qrBill": {
+        "name": "Swiss QR-Bill",
+        "description": "Konforme Swiss QR-Bill-Generierung für professionelle Rechnungen.",
+        "features": {
+          "swiss": "Schweizer Konformität",
+          "compliant": "QR-Bill Standard",
+          "pdf": "PDF-Generierung",
+          "multilingual": "Mehrsprachige Unterstützung"
+        }
+      },
+      "api": {
+        "name": "REST API",
+        "description": "Umfassende API für benutzerdefinierte Integrationen und Automatisierung.",
+        "features": {
+          "restful": "RESTful Endpoints",
+          "webhooks": "Echtzeit-Webhooks",
+          "documentation": "Vollständige Dokumentation",
+          "sdk": "SDK-Unterstützung"
+        }
+      }
+    },
+    "technicalDetails": {
+      "title": "Technische Exzellenz",
+      "subtitle": "Entwickelt mit Enterprise-Grade-Sicherheit und Schweizer Konformitätsstandards",
+      "security": {
+        "title": "Banken-Level-Sicherheit",
+        "description": "Alle Integrationen verwenden Enterprise-Grade-Verschlüsselung und folgen Schweizer Bankensicherheitsstandards."
+      },
+      "compliance": {
+        "title": "Schweizer Konformität",
+        "description": "Entwickelt, um Schweizer QR-Bill-, DSGVO- und Bankenregulierungen von Anfang an zu erfüllen."
+      },
+      "reliability": {
+        "title": "99,9% Verfügbarkeit",
+        "description": "Zuverlässige Infrastruktur sorgt dafür, dass Ihr Rechnungsablauf nie stoppt."
       }
     }
   }

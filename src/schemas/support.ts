@@ -10,18 +10,15 @@ import { z } from 'zod';
 export const supportFormSchema = z.object({
   name: z
     .string()
-    .min(2, 'validation.name.minLength')
-    .max(100, 'validation.name.maxLength')
-    .regex(/^[\p{L}\s\-'\.]+$/u, 'validation.name.invalidChars'),
+    .min(2, 'name.minLength')
+    .max(100, 'name.maxLength')
+    .regex(/^[\p{L}\s\-'\.]+$/u, 'name.invalidChars'),
 
-  email: z
-    .string()
-    .email('validation.email.invalid')
-    .max(255, 'validation.email.maxLength'),
+  email: z.string().email('email.invalid').max(255, 'email.maxLength'),
 
   company: z
     .string()
-    .max(100, 'validation.company.maxLength')
+    .max(100, 'company.maxLength')
     .optional()
     .or(z.literal('')),
 
@@ -37,33 +34,46 @@ export const supportFormSchema = z.object({
       'other',
     ],
     {
-      errorMap: () => ({ message: 'validation.category.invalid' }),
+      errorMap: () => ({ message: 'category.invalid' }),
     }
   ),
 
   priority: z.enum(['low', 'medium', 'high', 'urgent'], {
-    errorMap: () => ({ message: 'validation.priority.invalid' }),
+    errorMap: () => ({ message: 'priority.invalid' }),
   }),
 
   subject: z
     .string()
-    .min(5, 'validation.subject.minLength')
-    .max(200, 'validation.subject.maxLength')
-    .regex(/^[\p{L}\p{N}\s\-_.,!?]+$/u, 'validation.subject.invalidChars'),
+    .min(5, 'subject.minLength')
+    .max(200, 'subject.maxLength')
+    .regex(/^[\p{L}\p{N}\s\-_.,!?]+$/u, 'subject.invalidChars'),
 
   message: z
     .string()
-    .min(10, 'validation.message.minLength')
-    .max(2000, 'validation.message.maxLength')
-    .regex(
-      /^[\s\S]*[\p{L}\p{N}][\s\S]*$/u,
-      'validation.message.invalidContent'
-    ),
+    .min(10, 'message.minLength')
+    .max(2000, 'message.maxLength')
+    .regex(/^[\s\S]*[\p{L}\p{N}][\s\S]*$/u, 'message.invalidContent'),
 
-  attachments: z.array(z.string()).max(5, 'Maximum 5 attachments allowed'),
+  attachments: z
+    .array(
+      z.object({
+        name: z.string().min(1, 'attachments.nameRequired'),
+        size: z.number().max(5 * 1024 * 1024, 'attachments.fileTooLarge'), // 5MB max
+        type: z
+          .string()
+          .regex(
+            /^(image\/(jpeg|jpg|png|gif|webp)|application\/(pdf|msword|vnd\.openxmlformats-officedocument\.wordprocessingml\.document|vnd\.ms-excel|vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet|vnd\.ms-powerpoint|vnd\.openxmlformats-officedocument\.presentationml\.presentation|zip|rar|7z)|text\/(plain|csv))$/,
+            'attachments.invalidType'
+          ),
+        url: z.string().url('attachments.invalidUrl'),
+      })
+    )
+    .max(5, 'attachments.maxFiles')
+    .optional()
+    .default([]),
 
   consent: z.boolean().refine((val) => val === true, {
-    message: 'validation.consent.required',
+    message: 'consent.required',
   }),
 });
 

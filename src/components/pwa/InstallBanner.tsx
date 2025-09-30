@@ -1,17 +1,18 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { X, Download, Smartphone } from 'lucide-react';
+import { X, Download, Smartphone, Info } from 'lucide-react';
 import { usePWA } from '@/hooks/use-pwa';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 interface InstallBannerProps {
   onDismiss?: () => void;
 }
 
 const PWA_BANNER_STORAGE_KEY = 'pwa-banner-dismissed';
-const PWA_BANNER_DELAY = 2 * 60 * 1000; // 2 minutes in milliseconds
+const PWA_BANNER_DELAY = 30 * 1000; // 30 seconds in milliseconds
 
 export function InstallBanner({ onDismiss }: InstallBannerProps) {
   const t = useTranslations('utils.installBanner');
@@ -72,7 +73,10 @@ export function InstallBanner({ onDismiss }: InstallBannerProps) {
       >
         <div className="flex items-start space-x-4">
           <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: '#E4262A' }}
+            >
               <Smartphone className="w-5 h-5 text-white" />
             </div>
           </div>
@@ -83,21 +87,46 @@ export function InstallBanner({ onDismiss }: InstallBannerProps) {
             </h3>
             <p className="mt-1 text-sm text-gray-600">{t('description')}</p>
 
-            <div className="mt-4 flex space-x-3">
-              <button
-                onClick={handleInstall}
-                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-colors"
-              >
-                <Download className="w-3 h-3 mr-1" />
-                {t('install')}
-              </button>
+            <div className="mt-4 space-y-2">
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleInstall}
+                  className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-medium text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors"
+                  style={{ backgroundColor: '#E4262A' }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = '#C21E1E')
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = '#E4262A')
+                  }
+                >
+                  <Download className="w-3 h-3 mr-1" />
+                  {t('install')}
+                </button>
 
-              <button
+                <button
+                  onClick={handleDismiss}
+                  className="px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                >
+                  {t('notNow')}
+                </button>
+              </div>
+
+              <Link
+                href="/pwa"
                 onClick={handleDismiss}
-                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                className="w-full inline-flex items-center justify-center px-3 py-2 text-xs font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors"
+                style={{ color: '#E4262A', backgroundColor: '#FEF2F2' }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = '#FEE2E2')
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = '#FEF2F2')
+                }
               >
-                {t('notNow')}
-              </button>
+                <Info className="w-3 h-3 mr-1" />
+                {t('learnMore')}
+              </Link>
             </div>
           </div>
 

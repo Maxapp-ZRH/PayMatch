@@ -1,0 +1,83 @@
+{
+  "badge": "Progressive Web App",
+  "hero": {
+    "title": "PayMatch on Your Device",
+    "description": "Install PayMatch as a native app on your phone, tablet, or computer. Get instant access to Swiss invoicing with offline capabilities, push notifications, and lightning-fast performance."
+  },
+  "features": {
+    "title": "Why Choose Our PWA?",
+    "description": "Experience the power of a native app with the convenience of the web.",
+    "offline": {
+      "title": "Works Offline",
+      "description": "Create invoices and manage your business even without an internet connection. All changes sync automatically when you're back online."
+    },
+    "notifications": {
+      "title": "Push Notifications",
+      "description": "Get instant alerts for payment receipts, overdue invoices, and important updates directly to your device."
+    },
+    "fast": {
+      "title": "Lightning Fast",
+      "description": "Cached content loads instantly. No more waiting for pages to load - everything is optimized for speed."
+    },
+    "secure": {
+      "title": "Secure & Private",
+      "description": "Your data stays secure with end-to-end encryption and Swiss privacy standards. No data is stored on your device unnecessarily."
+    }
+  },
+  "benefits": {
+    "title": "Perfect for Swiss Businesses",
+    "description": "Designed specifically for Swiss companies who need reliable, compliant invoicing solutions.",
+    "invoicing": {
+      "title": "Swiss QR-Bill Invoicing",
+      "description": "Create compliant Swiss QR-bill invoices with automatic tax calculations and professional formatting."
+    },
+    "payments": {
+      "title": "Payment Reconciliation",
+      "description": "Upload CAMT files and automatically match payments to invoices with Swiss banking standards."
+    },
+    "analytics": {
+      "title": "Business Analytics",
+      "description": "Track your invoicing performance with detailed reports and insights tailored for Swiss businesses."
+    },
+    "management": {
+      "title": "Client Management",
+      "description": "Manage your Swiss clients with address validation, tax ID handling, and compliance features."
+    }
+  },
+  "devices": {
+    "title": "Works on All Your Devices",
+    "description": "Install PayMatch on any device and access your data seamlessly across all platforms.",
+    "mobile": "Mobile",
+    "mobileDescription": "Full-featured mobile app with touch-optimized interface for creating invoices on the go.",
+    "tablet": "Tablet",
+    "tabletDescription": "Perfect for presentations and detailed work with larger screen real estate.",
+    "desktop": "Desktop",
+    "desktopDescription": "Complete desktop experience with keyboard shortcuts and advanced features."
+  },
+  "installation": {
+    "title": "How to Install",
+    "description": "Get PayMatch on your device in just a few simple steps.",
+    "mobile": {
+      "title": "Mobile & Tablet",
+      "step1": "Open PayMatch in your mobile browser (Chrome, Safari, or Edge)",
+      "step2": "Look for the 'Add to Home Screen' option in your browser menu",
+      "step3": "Tap 'Add' and PayMatch will be installed like a native app"
+    },
+    "desktop": {
+      "title": "Desktop & Laptop",
+      "step1": "Open PayMatch in Chrome, Edge, or Safari",
+      "step2": "Click the install button in your browser's address bar or menu",
+      "step3": "Follow the prompts to install PayMatch as a desktop app"
+    }
+  },
+  "cta": {
+    "title": "Ready to Get Started?",
+    "description": "Join thousands of Swiss businesses who trust PayMatch for their invoicing needs.",
+    "getStarted": "Start Free Trial"
+  },
+  "installNow": "Install Now",
+  "installing": "Installing...",
+  "installed": "Already Installed",
+  "online": "Online",
+  "offline": "Offline"
+}
