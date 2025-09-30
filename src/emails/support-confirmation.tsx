@@ -11,7 +11,6 @@ import {
   Head,
   Heading,
   Html,
-  Img,
   Link,
   Preview,
   Section,
@@ -178,10 +177,6 @@ const container = {
 const header = {
   padding: '20px 30px',
   borderBottom: '1px solid #e5e7eb',
-};
-
-const logo = {
-  margin: '0 auto',
 };
 
 const content = {
