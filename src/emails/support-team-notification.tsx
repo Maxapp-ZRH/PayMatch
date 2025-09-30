@@ -16,7 +16,6 @@ import {
   Text,
 } from '@react-email/components';
 import * as React from 'react';
-import { getEmailLogoConfig, generateCombinedLogo } from './logo-utils';
 
 interface Attachment {
   name: string;
@@ -34,7 +33,6 @@ interface SupportTeamNotificationEmailProps {
   subject: string;
   message: string;
   attachments?: Attachment[];
-  appUrl: string;
 }
 
 export const SupportTeamNotificationEmail = ({
@@ -46,10 +44,7 @@ export const SupportTeamNotificationEmail = ({
   subject,
   message,
   attachments = [],
-  appUrl,
 }: SupportTeamNotificationEmailProps) => {
-  const logoConfig = getEmailLogoConfig(appUrl, 'large');
-
   const priorityColor =
     {
       urgent: '#dc2626',
@@ -74,17 +69,11 @@ export const SupportTeamNotificationEmail = ({
         <Container style={container}>
           {/* Header */}
           <Section style={header}>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: generateCombinedLogo(logoConfig, 'PayMatch', '#E4262A'),
-              }}
-            />
+            <Heading style={h1}>New Support Request</Heading>
           </Section>
 
           {/* Main Content */}
           <Section style={content}>
-            <Heading style={h1}>New Support Request</Heading>
-
             {/* Personal Information */}
             <Section style={infoBox}>
               <Heading style={h2}>Personal Information</Heading>

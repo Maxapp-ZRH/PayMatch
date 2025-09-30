@@ -75,7 +75,6 @@ This message was sent via the PayMatch support form.
         subject: validatedData.subject,
         message: validatedData.message,
         attachments: validatedData.attachments || [],
-        appUrl: APP_URL,
       })
     );
 
