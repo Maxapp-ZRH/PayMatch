@@ -32,7 +32,7 @@ export function TextField({
         {...props}
         className={clsx(
           formClasses,
-          'className' in props ? props.className : undefined
+          'className' in props ? (props.className as string) : undefined
         )}
       />
     </div>

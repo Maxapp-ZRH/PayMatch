@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -12,6 +12,7 @@ import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
 import { TextField } from '@/components/marketing_pages/Fields';
 import { NavLinks } from '@/components/marketing_pages/NavLinks';
+import { Tooltip } from '@/components/ui/Tooltip';
 import { Link as I18nLink } from '@/i18n/navigation';
 import {
   newsletterSchema,
@@ -25,12 +26,16 @@ export function Footer() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showTooltips, setShowTooltips] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, touchedFields },
     reset,
+    watch,
+    trigger,
+    setValue,
   } = useForm<NewsletterFormData>({
     resolver: zodResolver(newsletterSchema),
     mode: 'onChange',
@@ -42,10 +47,48 @@ export function Footer() {
     },
   });
 
+  // Watch form values for real-time validation
+  const watchedValues = watch();
+
+  // Real-time validation for individual fields
+  useEffect(() => {
+    const validateField = async (fieldName: keyof NewsletterFormData) => {
+      if (touchedFields[fieldName]) {
+        await trigger(fieldName);
+      }
+    };
+
+    // Validate fields as user types (debounced)
+    const timeoutId = setTimeout(() => {
+      if (watchedValues.firstName) validateField('firstName');
+      if (watchedValues.lastName) validateField('lastName');
+      if (watchedValues.email) validateField('email');
+      // Always validate consent when it changes
+      if (touchedFields.consent) validateField('consent');
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [
+    watchedValues.firstName,
+    watchedValues.lastName,
+    watchedValues.email,
+    watchedValues.consent,
+    trigger,
+    touchedFields,
+  ]);
+
+  // Show tooltips when form is submitted with errors
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      setShowTooltips(true);
+    }
+  }, [errors]);
+
   const onSubmit = async (data: NewsletterFormData) => {
     setIsSubmitting(true);
     setShowError(false);
     setErrorMessage('');
+    setShowTooltips(false);
 
     try {
       const response = await fetch('/api/newsletter', {
@@ -76,9 +119,38 @@ export function Footer() {
           : 'Failed to subscribe to newsletter'
       );
       setShowError(true);
+      setShowTooltips(true); // Show tooltips for validation errors
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Handle form submission with validation
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Force validation of all fields including consent
+    const validationResults = await Promise.all([
+      trigger('firstName'),
+      trigger('lastName'),
+      trigger('email'),
+      trigger('consent'),
+    ]);
+
+    const isValid = validationResults.every((result) => result);
+
+    if (!isValid) {
+      setShowTooltips(true);
+      // Scroll to first error field
+      const firstErrorField = document.querySelector('[aria-invalid="true"]');
+      if (firstErrorField) {
+        firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        (firstErrorField as HTMLElement).focus();
+      }
+      return;
+    }
+
+    handleSubmit(onSubmit)(e);
   };
 
   return (
@@ -149,20 +221,20 @@ export function Footer() {
                     </I18nLink>
                   </li>
                   <li>
-                    <I18nLink
-                      href={{ pathname: '/pwa' }}
+                    <a
+                      href="#pwa"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
                       {t('links.pwa')}
-                    </I18nLink>
+                    </a>
                   </li>
                   <li>
-                    <I18nLink
-                      href={{ pathname: '/integrations' }}
+                    <a
+                      href="#integrations"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
                       {t('links.integrations')}
-                    </I18nLink>
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -286,38 +358,72 @@ export function Footer() {
               )}
 
               <form
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={handleFormSubmit}
                 className="mt-4 space-y-3 sm:space-y-4"
               >
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-2">
                   <div className="min-w-0">
-                    <TextField
-                      {...register('firstName')}
-                      type="text"
-                      aria-label={t('newsletter.firstName')}
-                      placeholder={t('newsletter.firstName')}
-                      autoComplete="given-name"
-                      className={`min-w-0 ${errors.firstName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    />
+                    <Tooltip
+                      content={
+                        errors.firstName
+                          ? tValidation(errors.firstName.message || '')
+                          : ''
+                      }
+                      variant="error"
+                      disabled={!errors.firstName || !showTooltips}
+                    >
+                      <TextField
+                        {...register('firstName')}
+                        type="text"
+                        aria-label={t('newsletter.firstName')}
+                        placeholder={t('newsletter.firstName')}
+                        autoComplete="given-name"
+                        className={`min-w-0 ${errors.firstName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                        aria-invalid={!!errors.firstName}
+                        aria-describedby={
+                          errors.firstName ? 'firstName-error' : undefined
+                        }
+                      />
+                    </Tooltip>
                     {errors.firstName && (
-                      <p className="mt-1 text-xs text-red-600">
-                        {tValidation(errors.firstName.message)}
+                      <p
+                        id="firstName-error"
+                        className="mt-1 text-xs text-red-600"
+                      >
+                        {tValidation(errors.firstName.message || '')}
                       </p>
                     )}
                   </div>
                   <div className="min-w-0">
-                    <TextField
-                      {...register('lastName')}
-                      type="text"
-                      aria-label={t('newsletter.lastName')}
-                      placeholder={t('newsletter.lastName')}
-                      autoComplete="family-name"
-                      className={`min-w-0 ${errors.lastName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                    />
+                    <Tooltip
+                      content={
+                        errors.lastName
+                          ? tValidation(errors.lastName.message || '')
+                          : ''
+                      }
+                      variant="error"
+                      disabled={!errors.lastName || !showTooltips}
+                    >
+                      <TextField
+                        {...register('lastName')}
+                        type="text"
+                        aria-label={t('newsletter.lastName')}
+                        placeholder={t('newsletter.lastName')}
+                        autoComplete="family-name"
+                        className={`min-w-0 ${errors.lastName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                        aria-invalid={!!errors.lastName}
+                        aria-describedby={
+                          errors.lastName ? 'lastName-error' : undefined
+                        }
+                      />
+                    </Tooltip>
                     {errors.lastName && (
-                      <p className="mt-1 text-xs text-red-600">
-                        {tValidation(errors.lastName.message)}
+                      <p
+                        id="lastName-error"
+                        className="mt-1 text-xs text-red-600"
+                      >
+                        {tValidation(errors.lastName.message || '')}
                       </p>
                     )}
                   </div>
@@ -325,72 +431,130 @@ export function Footer() {
 
                 {/* Email Field */}
                 <div className="w-full">
-                  <TextField
-                    {...register('email')}
-                    type="email"
-                    aria-label={t('newsletter.email')}
-                    placeholder={t('newsletter.emailPlaceholder')}
-                    autoComplete="email"
-                    className={`w-full ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  />
+                  <Tooltip
+                    content={
+                      errors.email
+                        ? tValidation(errors.email.message || '')
+                        : ''
+                    }
+                    variant="error"
+                    disabled={!errors.email || !showTooltips}
+                  >
+                    <TextField
+                      {...register('email')}
+                      type="email"
+                      aria-label={t('newsletter.email')}
+                      placeholder={t('newsletter.emailPlaceholder')}
+                      autoComplete="email"
+                      className={`w-full ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                      aria-invalid={!!errors.email}
+                      aria-describedby={
+                        errors.email ? 'email-error' : undefined
+                      }
+                    />
+                  </Tooltip>
                   {errors.email && (
-                    <p className="mt-1 text-xs text-red-600">
-                      {tValidation(errors.email.message)}
+                    <p id="email-error" className="mt-1 text-xs text-red-600">
+                      {tValidation(errors.email.message || '')}
                     </p>
                   )}
                 </div>
 
                 {/* Consent Checkbox */}
-                <div className="flex items-start space-x-3">
-                  <input
-                    {...register('consent')}
-                    type="checkbox"
-                    id="newsletter-consent"
-                    className={`mt-1 h-4 w-4 flex-shrink-0 rounded border-gray-300 text-red-500 focus:ring-red-500 ${errors.consent ? 'border-red-500' : ''}`}
-                  />
-                  <label
-                    htmlFor="newsletter-consent"
-                    className="text-xs text-gray-600 leading-relaxed"
-                  >
-                    {t('newsletter.consent')}{' '}
-                    <I18nLink
-                      href="/privacy"
-                      className="text-red-500 hover:text-red-600 underline"
+                <div className="space-y-2">
+                  <div className="flex items-start space-x-3">
+                    <Tooltip
+                      content={
+                        errors.consent
+                          ? tValidation(errors.consent.message || '')
+                          : ''
+                      }
+                      variant="error"
+                      disabled={!errors.consent || !showTooltips}
+                      position="right"
                     >
-                      {t('links.privacy')}
-                    </I18nLink>{' '}
-                    {t('newsletter.and')}{' '}
-                    <I18nLink
-                      href="/terms"
-                      className="text-red-500 hover:text-red-600 underline"
-                    >
-                      {t('links.terms')}
-                    </I18nLink>{' '}
-                    {t('newsletter.apply')}.
-                  </label>
+                      <div className="flex items-center">
+                        <input
+                          {...register('consent')}
+                          type="checkbox"
+                          id="newsletter-consent"
+                          className={`h-4 w-4 flex-shrink-0 rounded border-gray-300 text-red-500 focus:ring-2 focus:ring-red-200 ${
+                            errors.consent
+                              ? 'border-red-500 ring-2 ring-red-200'
+                              : 'border-gray-300'
+                          }`}
+                          aria-invalid={!!errors.consent}
+                          aria-describedby={
+                            errors.consent ? 'consent-error' : undefined
+                          }
+                          onChange={(e) => {
+                            setValue('consent', e.target.checked);
+                            trigger('consent');
+                          }}
+                        />
+                      </div>
+                    </Tooltip>
+                    <div className="flex-1 min-w-0">
+                      <label
+                        htmlFor="newsletter-consent"
+                        className="text-xs text-gray-600 leading-relaxed cursor-pointer block"
+                      >
+                        {t('newsletter.consent')}{' '}
+                        <I18nLink
+                          href="/privacy"
+                          className="text-red-500 hover:text-red-600 underline font-medium"
+                        >
+                          {t('links.privacy')}
+                        </I18nLink>{' '}
+                        {t('newsletter.and')}{' '}
+                        <I18nLink
+                          href="/terms"
+                          className="text-red-500 hover:text-red-600 underline font-medium"
+                        >
+                          {t('links.terms')}
+                        </I18nLink>{' '}
+                        {t('newsletter.apply')}.
+                      </label>
+                    </div>
+                  </div>
+                  {errors.consent && (
+                    <div className="ml-7">
+                      <p
+                        id="consent-error"
+                        className="text-xs text-red-600 font-medium"
+                      >
+                        {tValidation(errors.consent.message || '')}
+                      </p>
+                    </div>
+                  )}
                 </div>
-                {errors.consent && (
-                  <p className="text-xs text-red-600">
-                    {tValidation(errors.consent.message)}
-                  </p>
-                )}
 
                 {/* Submit Button */}
-                <Button
-                  type="submit"
-                  color="cyan"
-                  disabled={isSubmitting || !isValid}
-                  className="w-full text-sm sm:text-base"
+                <Tooltip
+                  content={
+                    !isValid && Object.keys(errors).length > 0
+                      ? 'Please fix the errors above before submitting'
+                      : ''
+                  }
+                  variant="warning"
+                  disabled={isValid || !showTooltips}
                 >
-                  {isSubmitting ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Subscribing...
-                    </div>
-                  ) : (
-                    t('newsletter.subscribe')
-                  )}
-                </Button>
+                  <Button
+                    type="submit"
+                    color="cyan"
+                    disabled={isSubmitting || !isValid}
+                    className="w-full text-sm sm:text-base"
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Subscribing...
+                      </div>
+                    ) : (
+                      t('newsletter.subscribe')
+                    )}
+                  </Button>
+                </Tooltip>
               </form>
             </div>
           </div>

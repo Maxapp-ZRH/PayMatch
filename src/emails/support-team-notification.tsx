@@ -11,12 +11,12 @@ import {
   Head,
   Heading,
   Html,
-  Img,
   Preview,
   Section,
   Text,
 } from '@react-email/components';
 import * as React from 'react';
+import { getEmailLogoConfig, generateCombinedLogo } from './logo-utils';
 
 interface Attachment {
   name: string;
@@ -48,6 +48,8 @@ export const SupportTeamNotificationEmail = ({
   attachments = [],
   appUrl,
 }: SupportTeamNotificationEmailProps) => {
+  const logoConfig = getEmailLogoConfig(appUrl, 'large');
+
   const priorityColor =
     {
       urgent: '#dc2626',
@@ -72,12 +74,10 @@ export const SupportTeamNotificationEmail = ({
         <Container style={container}>
           {/* Header */}
           <Section style={header}>
-            <Img
-              src={`${appUrl}/logo.png`}
-              width="120"
-              height="40"
-              alt="PayMatch"
-              style={logo}
+            <div
+              dangerouslySetInnerHTML={{
+                __html: generateCombinedLogo(logoConfig, 'PayMatch', '#E4262A'),
+              }}
             />
           </Section>
 
@@ -184,21 +184,17 @@ const header = {
   borderBottom: '1px solid #e5e7eb',
 };
 
-const logo = {
-  margin: '0 auto',
-};
-
 const content = {
   padding: '30px',
 };
 
 const h1 = {
-  color: '#0d9488',
+  color: '#E4262A',
   fontSize: '24px',
   fontWeight: 'bold',
   margin: '0 0 20px 0',
   lineHeight: '1.25',
-  borderBottom: '2px solid #0d9488',
+  borderBottom: '2px solid #E4262A',
   paddingBottom: '10px',
 };
 

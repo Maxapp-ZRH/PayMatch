@@ -68,9 +68,7 @@ export const supportFormSchema = z.object({
         url: z.string().url('attachments.invalidUrl'),
       })
     )
-    .max(5, 'attachments.maxFiles')
-    .optional()
-    .default([]),
+    .max(5, 'attachments.maxFiles'),
 
   consent: z.boolean().refine((val) => val === true, {
     message: 'consent.required',

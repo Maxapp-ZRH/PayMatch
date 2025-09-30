@@ -12,13 +12,13 @@ import {
   Head,
   Heading,
   Html,
-  Img,
   Link,
   Preview,
   Section,
   Text,
 } from '@react-email/components';
 import * as React from 'react';
+import { getEmailLogoConfig, generateCombinedLogo } from './logo-utils';
 
 interface NewsletterWelcomeEmailProps {
   firstName: string;
@@ -30,9 +30,13 @@ interface NewsletterWelcomeEmailProps {
 
 export const NewsletterWelcomeEmail = ({
   firstName,
+  lastName,
+  userEmail,
   unsubscribeUrl,
   appUrl,
 }: NewsletterWelcomeEmailProps) => {
+  const logoConfig = getEmailLogoConfig(appUrl, 'medium');
+
   return (
     <Html>
       <Head />
@@ -44,24 +48,31 @@ export const NewsletterWelcomeEmail = ({
         <Container style={container}>
           {/* Header */}
           <Section style={header}>
-            <Img
-              src={`${appUrl}/logo.png`}
-              width="40"
-              height="40"
-              alt="PayMatch"
-              style={logo}
+            <div
+              dangerouslySetInnerHTML={{
+                __html: generateCombinedLogo(logoConfig, 'PayMatch', '#E4262A'),
+              }}
             />
             <Heading style={h1}>Welcome to PayMatch!</Heading>
           </Section>
 
           {/* Main Content */}
           <Section style={content}>
-            <Text style={text}>Hi {firstName},</Text>
+            <Text style={text}>
+              Dear {firstName} {lastName},
+            </Text>
 
             <Text style={text}>
               Thank you for subscribing to the PayMatch newsletter! We&apos;re
               excited to have you join our community of Swiss businesses and
               freelancers who are revolutionizing their invoicing process.
+            </Text>
+
+            <Text style={text}>
+              We&apos;ll be sending all future updates and communications to{' '}
+              <strong style={{ color: '#E4262A' }}>{userEmail}</strong>. If you
+              need to update your email address or preferences, you can do so
+              anytime using the unsubscribe link at the bottom of this email.
             </Text>
 
             <Text style={text}>You&apos;ll receive regular updates about:</Text>
@@ -95,6 +106,11 @@ export const NewsletterWelcomeEmail = ({
             </Text>
 
             <Text style={text}>
+              Welcome aboard, {firstName}! We&apos;re thrilled to have you as
+              part of the PayMatch community.
+            </Text>
+
+            <Text style={text}>
               Best regards,
               <br />
               The PayMatch Team
@@ -104,8 +120,8 @@ export const NewsletterWelcomeEmail = ({
           {/* Footer */}
           <Section style={footer}>
             <Text style={footerText}>
-              You&apos;re receiving this email because you subscribed to the
-              PayMatch newsletter.
+              You&apos;re receiving this email because {firstName} {lastName}(
+              {userEmail}) subscribed to the PayMatch newsletter.
             </Text>
             <Text style={footerText}>
               <Link href={unsubscribeUrl} style={unsubscribeLink}>
@@ -146,11 +162,6 @@ const header = {
   textAlign: 'center' as const,
 };
 
-const logo = {
-  margin: '0 auto',
-  marginBottom: '16px',
-};
-
 const h1 = {
   color: '#1f2937',
   fontSize: '24px',
@@ -189,7 +200,7 @@ const buttonContainer = {
 };
 
 const button = {
-  backgroundColor: '#0891b2',
+  backgroundColor: '#E4262A',
   borderRadius: '8px',
   color: '#ffffff',
   fontSize: '16px',
@@ -221,7 +232,7 @@ const unsubscribeLink = {
 };
 
 const link = {
-  color: '#0891b2',
+  color: '#E4262A',
   textDecoration: 'underline',
 };
 

@@ -1,10 +1,12 @@
 {
   "firstName": {
+    "required": "Vorname ist erforderlich",
     "minLength": "Vorname muss mindestens 2 Zeichen lang sein",
     "maxLength": "Vorname darf nicht länger als 100 Zeichen sein",
     "invalidChars": "Vorname enthält ungültige Zeichen"
   },
   "lastName": {
+    "required": "Nachname ist erforderlich",
     "minLength": "Nachname muss mindestens 2 Zeichen lang sein",
     "maxLength": "Nachname darf nicht länger als 100 Zeichen sein",
     "invalidChars": "Nachname enthält ungültige Zeichen"
@@ -15,6 +17,7 @@
     "invalidChars": "Name enthält ungültige Zeichen"
   },
   "email": {
+    "required": "E-Mail-Adresse ist erforderlich",
     "invalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
     "maxLength": "E-Mail-Adresse ist zu lang"
   },
@@ -38,7 +41,8 @@
     "invalid": "Bitte wählen Sie eine gültige Priorität"
   },
   "consent": {
-    "required": "Sie müssen den Allgemeinen Geschäftsbedingungen zustimmen"
+    "required": "Sie müssen den Allgemeinen Geschäftsbedingungen zustimmen",
+    "mustAccept": "Bitte aktivieren Sie das Kontrollkästchen für die Allgemeinen Geschäftsbedingungen"
   },
   "attachments": {
     "maxFiles": "Maximal 5 Anhänge erlaubt",

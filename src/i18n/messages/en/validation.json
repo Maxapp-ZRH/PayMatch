@@ -1,10 +1,12 @@
 {
   "firstName": {
+    "required": "First name is required",
     "minLength": "First name must be at least 2 characters",
     "maxLength": "First name must be less than 100 characters",
     "invalidChars": "First name contains invalid characters"
   },
   "lastName": {
+    "required": "Last name is required",
     "minLength": "Last name must be at least 2 characters",
     "maxLength": "Last name must be less than 100 characters",
     "invalidChars": "Last name contains invalid characters"
@@ -15,6 +17,7 @@
     "invalidChars": "Name contains invalid characters"
   },
   "email": {
+    "required": "Email address is required",
     "invalid": "Please enter a valid email address",
     "maxLength": "Email address is too long"
   },
@@ -38,7 +41,8 @@
     "invalid": "Please select a valid priority"
   },
   "consent": {
-    "required": "You must agree to the terms and conditions"
+    "required": "You must agree to the terms and conditions",
+    "mustAccept": "Please check the terms and conditions checkbox to continue"
   },
   "attachments": {
     "maxFiles": "Maximum 5 attachments allowed",
