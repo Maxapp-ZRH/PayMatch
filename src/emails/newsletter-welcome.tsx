@@ -18,7 +18,6 @@ import {
   Text,
 } from '@react-email/components';
 import * as React from 'react';
-import { getEmailLogoConfig, generateCombinedLogo } from './logo-utils';
 
 interface NewsletterWelcomeEmailProps {
   firstName: string;
@@ -35,8 +34,6 @@ export const NewsletterWelcomeEmail = ({
   unsubscribeUrl,
   appUrl,
 }: NewsletterWelcomeEmailProps) => {
-  const logoConfig = getEmailLogoConfig(appUrl, 'medium');
-
   return (
     <Html>
       <Head />
@@ -48,11 +45,6 @@ export const NewsletterWelcomeEmail = ({
         <Container style={container}>
           {/* Header */}
           <Section style={header}>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: generateCombinedLogo(logoConfig, 'PayMatch', '#E4262A'),
-              }}
-            />
             <Heading style={h1}>Welcome to PayMatch!</Heading>
           </Section>
 
