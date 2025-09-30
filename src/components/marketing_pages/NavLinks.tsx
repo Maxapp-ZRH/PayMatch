@@ -14,6 +14,7 @@ export function NavLinks() {
     [t('features'), '/#features'],
     [t('reviews'), '/#reviews'],
     [t('pricing'), '/#pricing'],
+    [t('integrations'), '/integrations'],
     [t('faqs'), '/#faqs'],
   ].map(([label, href], index) => (
     <Link

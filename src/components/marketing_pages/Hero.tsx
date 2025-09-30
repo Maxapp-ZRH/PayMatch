@@ -203,8 +203,7 @@ export function Hero() {
                         <div className="w-12 h-12 sm:w-16 sm:h-16 rounded border border-gray-200 overflow-hidden">
                           <QRCode
                             value="https://paymatch.app"
-                            size={48}
-                            className="w-full h-full"
+                            className="w-full h-full object-cover"
                             alt="QR Code to PayMatch.app"
                           />
                         </div>

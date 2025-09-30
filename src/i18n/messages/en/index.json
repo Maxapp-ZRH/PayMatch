@@ -9,7 +9,7 @@
   "features": {
     "title": "Everything you need for Swiss invoicing",
     "subtitle": "Built specifically for the Swiss market with compliance and efficiency in mind",
-    "disclaimer": "* PayMatch is a web application accessible on desktop and mobile browsers. The mobile interface shown above is for demonstration purposes.",
+    "disclaimer": "* PayMatch is a Progressive Web App (PWA) that can be installed on desktop and mobile devices. The mobile interface shown above is for demonstration purposes.",
     "features": [
       {
         "name": "Add & manage clients",
@@ -70,9 +70,9 @@
         "name": "Client management",
         "description": "Organize your clients and track their payment history in one place."
       },
-      "notifications": {
-        "name": "Real-time notifications",
-        "description": "Get instant alerts when invoices are viewed, paid, or become overdue."
+      "pwa": {
+        "name": "Progressive Web App",
+        "description": "Install PayMatch on any device for native app-like experience with offline capabilities."
       },
       "collaboration": {
         "name": "Team collaboration",
@@ -265,6 +265,107 @@
           "Early access to AI features",
           "Custom requests"
         ]
+      }
+    }
+  },
+  "integrations": {
+    "title": "Powerful integrations for seamless invoicing",
+    "subtitle": "Connect with Swiss banks, payment processors, and business tools to automate your entire invoicing workflow.",
+    "badge": "Swiss Banking Integration",
+    "cta": "Start for Free",
+    "learnMore": "Learn More",
+    "blinkHighlight": {
+      "title": "bLink Open Banking Integration",
+      "description": "Real-time payment reconciliation with all major Swiss banks through the official bLink Open Banking standard. Automatically match incoming payments to your invoices without manual work.",
+      "benefits": {
+        "realTime": "Real-time payment detection",
+        "automatic": "Automatic invoice matching",
+        "secure": "Bank-grade security",
+        "compliant": "Swiss compliance standards"
+      }
+    },
+    "allIntegrations": "All Integrations",
+    "allIntegrationsDescription": "Comprehensive ecosystem of integrations designed specifically for Swiss businesses",
+    "ctaSection": {
+      "title": "Ready to streamline your invoicing?",
+      "description": "Join thousands of Swiss businesses already using PayMatch for seamless invoicing and payment reconciliation."
+    },
+    "integrations": {
+      "blink": {
+        "name": "bLink Open Banking",
+        "description": "Real-time payment reconciliation with Swiss banks using the official bLink standard.",
+        "features": {
+          "realTime": "Real-time payment detection",
+          "automatic": "Automatic invoice matching",
+          "secure": "Bank-grade security",
+          "compliant": "Swiss compliance standards"
+        }
+      },
+      "camt": {
+        "name": "CAMT.053 Import",
+        "description": "Manual bank statement import as fallback for payment reconciliation.",
+        "features": {
+          "manual": "Manual file upload",
+          "import": "CAMT.053 parsing",
+          "matching": "Payment matching algorithms",
+          "fallback": "Reliable fallback option"
+        }
+      },
+      "stripe": {
+        "name": "Stripe Billing",
+        "description": "Subscription management and payment processing for your business.",
+        "features": {
+          "billing": "Subscription billing",
+          "subscriptions": "Plan management",
+          "payments": "Payment processing",
+          "tax": "Tax calculations"
+        }
+      },
+      "resend": {
+        "name": "Resend Email",
+        "description": "Reliable transactional email delivery for invoices and notifications.",
+        "features": {
+          "transactional": "Transactional emails",
+          "branded": "Branded templates",
+          "reliable": "High deliverability",
+          "tracking": "Email tracking"
+        }
+      },
+      "qrBill": {
+        "name": "Swiss QR-Bill",
+        "description": "Compliant Swiss QR-bill generation for professional invoices.",
+        "features": {
+          "swiss": "Swiss compliance",
+          "compliant": "QR-bill standard",
+          "pdf": "PDF generation",
+          "multilingual": "Multi-language support"
+        }
+      },
+      "api": {
+        "name": "REST API",
+        "description": "Comprehensive API for custom integrations and automation.",
+        "features": {
+          "restful": "RESTful endpoints",
+          "webhooks": "Real-time webhooks",
+          "documentation": "Complete documentation",
+          "sdk": "SDK support"
+        }
+      }
+    },
+    "technicalDetails": {
+      "title": "Technical Excellence",
+      "subtitle": "Built with enterprise-grade security and Swiss compliance standards",
+      "security": {
+        "title": "Bank-Grade Security",
+        "description": "All integrations use enterprise-grade encryption and follow Swiss banking security standards."
+      },
+      "compliance": {
+        "title": "Swiss Compliance",
+        "description": "Built to meet Swiss QR-bill, GDPR, and banking regulations from day one."
+      },
+      "reliability": {
+        "title": "99.9% Uptime",
+        "description": "Reliable infrastructure ensures your invoicing workflow never stops."
       }
     }
   }

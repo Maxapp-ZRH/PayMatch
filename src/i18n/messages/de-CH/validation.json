@@ -1,0 +1,50 @@
+{
+  "firstName": {
+    "minLength": "Vorname muss mindestens 2 Zeichen lang sein",
+    "maxLength": "Vorname darf nicht länger als 100 Zeichen sein",
+    "invalidChars": "Vorname enthält ungültige Zeichen"
+  },
+  "lastName": {
+    "minLength": "Nachname muss mindestens 2 Zeichen lang sein",
+    "maxLength": "Nachname darf nicht länger als 100 Zeichen sein",
+    "invalidChars": "Nachname enthält ungültige Zeichen"
+  },
+  "name": {
+    "minLength": "Name muss mindestens 2 Zeichen lang sein",
+    "maxLength": "Name darf nicht länger als 100 Zeichen sein",
+    "invalidChars": "Name enthält ungültige Zeichen"
+  },
+  "email": {
+    "invalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "maxLength": "E-Mail-Adresse ist zu lang"
+  },
+  "company": {
+    "maxLength": "Firmenname ist zu lang"
+  },
+  "subject": {
+    "minLength": "Betreff muss mindestens 5 Zeichen lang sein",
+    "maxLength": "Betreff darf nicht länger als 200 Zeichen sein",
+    "invalidChars": "Betreff enthält ungültige Zeichen"
+  },
+  "message": {
+    "minLength": "Nachricht muss mindestens 10 Zeichen lang sein",
+    "maxLength": "Nachricht darf nicht länger als 2000 Zeichen sein",
+    "invalidContent": "Nachricht muss gültigen Inhalt enthalten"
+  },
+  "category": {
+    "invalid": "Bitte wählen Sie eine gültige Kategorie"
+  },
+  "priority": {
+    "invalid": "Bitte wählen Sie eine gültige Priorität"
+  },
+  "consent": {
+    "required": "Sie müssen den Allgemeinen Geschäftsbedingungen zustimmen"
+  },
+  "attachments": {
+    "maxFiles": "Maximal 5 Anhänge erlaubt",
+    "nameRequired": "Dateiname ist erforderlich",
+    "fileTooLarge": "Dateigröße muss weniger als 5MB sein",
+    "invalidType": "Dateityp nicht unterstützt. Erlaubt: Bilder, PDF, Office-Dokumente, Archive, Textdateien",
+    "invalidUrl": "Ungültige Datei-URL"
+  }
+}

@@ -31,7 +31,9 @@
     "sections": {
       "personalInfo": "Persönliche Informationen",
       "issueDetails": "Problemdetails",
-      "message": "Nachricht"
+      "message": "Nachricht",
+      "attachments": "Dateianhänge",
+      "attachmentsDescription": "Laden Sie Screenshots, Dokumente oder andere Dateien hoch, die uns helfen könnten, Ihr Problem besser zu verstehen. Maximal 5 Dateien, je 5MB."
     },
     "fields": {
       "name": {

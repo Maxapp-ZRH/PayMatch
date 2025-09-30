@@ -3,6 +3,7 @@
     "features": "Funktionen",
     "reviews": "Bewertungen",
     "pricing": "Preise",
+    "integrations": "Integrationen",
     "faqs": "Häufige Fragen",
     "login": "Anmelden",
     "register": "Registrieren"
@@ -15,10 +16,10 @@
   "footer": {
     "description": "Schweizer Rechnungsstellung einfach gemacht. Erstellen, senden und verfolgen Sie Rechnungen mit QR-Rechnung-Compliance.",
     "links": {
-      "startInvoicing": "Rechnungen erstellen",
-      "startInvoicingDescription": "QR-Code scannen, um mit PayMatch zu beginnen",
       "company": "Unternehmen",
       "support": "Support",
+      "pwa": "PWA",
+      "integrations": "Integrationen",
       "legal": "Rechtliches",
       "privacy": "Datenschutz",
       "terms": "Nutzungsbedingungen",

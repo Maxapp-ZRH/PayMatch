@@ -31,7 +31,9 @@
     "sections": {
       "personalInfo": "Personal Information",
       "issueDetails": "Issue Details",
-      "message": "Message"
+      "message": "Message",
+      "attachments": "File Attachments",
+      "attachmentsDescription": "Upload screenshots, documents, or other files that might help us understand your issue better. Maximum 5 files, 5MB each."
     },
     "fields": {
       "name": {

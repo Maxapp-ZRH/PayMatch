@@ -18,9 +18,9 @@ const getFeatures = (t: (key: string) => string) => [
     icon: DeviceCardsIcon,
   },
   {
-    name: t('features.notifications.name'),
-    description: t('features.notifications.description'),
-    icon: DeviceClockIcon,
+    name: t('features.pwa.name'),
+    description: t('features.pwa.description'),
+    icon: DevicePwaIcon,
   },
   {
     name: t('features.collaboration.name'),
@@ -95,22 +95,50 @@ function DeviceCardsIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   );
 }
 
-function DeviceClockIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
+function DevicePwaIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
+  const id = useId();
+
   return (
     <svg viewBox="0 0 32 32" aria-hidden="true" {...props}>
-      <circle cx={16} cy={16} r={16} fill="#A3A3A3" fillOpacity={0.2} />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M5 4a4 4 0 014-4h14a4 4 0 014 4v10h-2V4a2 2 0 00-2-2h-1.382a1 1 0 00-.894.553l-.448.894a1 1 0 01-.894.553h-6.764a1 1 0 01-.894-.553l-.448-.894A1 1 0 0010.382 2H9a2 2 0 00-2 2v24a2 2 0 002 2h5v2H9a4 4 0 01-4-4V4z"
+        d="M9 0a4 4 0 00-4 4v24a4 4 0 004 4h14a4 4 0 004-4V4a4 4 0 00-4-4H9zm0 2a2 2 0 00-2 2v24a2 2 0 002 2h14a2 2 0 002-2V4a2 2 0 00-2-2h-1.382a1 1 0 00-.894.553l-.448.894a1 1 0 01-.894.553h-6.764a1 1 0 01-.894-.553l-.448-.894A1 1 0 0010.382 2H9z"
         fill="#737373"
       />
+      {/* PWA App Icon */}
+      <rect x={10} y={6} width={12} height={8} rx={1.5} fill="#171717" />
+      {/* PWA Symbol - Download/Install Arrow */}
       <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M24 32a8 8 0 100-16 8 8 0 000 16zm1-8.414V19h-2v5.414l4 4L28.414 27 25 23.586z"
-        fill="#171717"
+        d="M14 10l2-2m0 0l2 2m-2-2v4"
+        stroke="#737373"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
+      {/* PWA Features - Grid of dots representing app features */}
+      <circle cx={12} cy={18} r={1} fill={`url(#${id}-gradient)`} />
+      <circle cx={16} cy={18} r={1} fill={`url(#${id}-gradient)`} />
+      <circle cx={20} cy={18} r={1} fill={`url(#${id}-gradient)`} />
+      <circle cx={12} cy={22} r={1} fill={`url(#${id}-gradient)`} />
+      <circle cx={16} cy={22} r={1} fill={`url(#${id}-gradient)`} />
+      <circle cx={20} cy={22} r={1} fill={`url(#${id}-gradient)`} />
+      {/* PWA Status Indicator */}
+      <circle cx={20} cy={8} r={1.5} fill="#10B981" />
+      <circle cx={16} cy={16} r={16} fill="#A3A3A3" fillOpacity={0.2} />
+      <defs>
+        <linearGradient
+          id={`${id}-gradient`}
+          x1={16}
+          y1={16}
+          x2={16}
+          y2={24}
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#737373" />
+          <stop offset={1} stopColor="#737373" stopOpacity={0.6} />
+        </linearGradient>
+      </defs>
     </svg>
   );
 }
