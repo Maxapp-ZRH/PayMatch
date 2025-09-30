@@ -39,6 +39,7 @@ import {
 import { Container } from '@/components/marketing_pages/Container';
 import { Button } from '@/components/marketing_pages/Button';
 import FileUpload, { type FileData } from '@/components/ui/FileUpload';
+import { Tooltip } from '@/components/ui/Tooltip';
 import {
   supportFormSchema,
   supportCategories,
@@ -641,6 +642,7 @@ export default function SupportPage() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [attachments, setAttachments] = useState<FileData[]>([]);
+  const [showTooltips, setShowTooltips] = useState(false);
 
   const {
     register,
@@ -670,6 +672,7 @@ export default function SupportPage() {
   const onSubmit = async (data: SupportFormData) => {
     setIsSubmitting(true);
     setErrorMessage('');
+    setShowTooltips(false);
 
     try {
       // Include attachments in the form data
@@ -703,6 +706,7 @@ export default function SupportPage() {
         error instanceof Error ? error.message : tForm('modals.error.message')
       );
       setShowErrorModal(true);
+      setShowTooltips(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -805,7 +809,7 @@ export default function SupportPage() {
                     />
                     {errors.name && (
                       <p className="mt-2 text-sm text-red-600 font-medium">
-                        {tValidation(errors.name.message)}
+                        {tValidation(errors.name.message || '')}
                       </p>
                     )}
                   </div>
@@ -829,7 +833,7 @@ export default function SupportPage() {
                     />
                     {errors.email && (
                       <p className="mt-2 text-sm text-red-600 font-medium">
-                        {tValidation(errors.email.message)}
+                        {tValidation(errors.email.message || '')}
                       </p>
                     )}
                   </div>
@@ -932,14 +936,14 @@ export default function SupportPage() {
                   {...register('subject')}
                   type="text"
                   id="subject"
-                  className={`w-full px-3 py-2 sm:py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors text-sm sm:text-base ${
+                  className={`w-full px-3 py-2 sm:py-2.5 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors text-sm sm:text-base ${
                     errors.subject ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder={tForm('fields.subject.placeholder')}
                 />
                 {errors.subject && (
                   <p className="mt-2 text-sm text-red-600 font-medium">
-                    {tValidation(errors.subject.message)}
+                    {tValidation(errors.subject.message || '')}
                   </p>
                 )}
               </div>
@@ -962,7 +966,7 @@ export default function SupportPage() {
                     {...register('message')}
                     id="message"
                     rows={4}
-                    className={`w-full px-3 py-2 sm:py-2.5 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-colors resize-none text-sm sm:text-base ${
+                    className={`w-full px-3 py-2 sm:py-2.5 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors resize-none text-sm sm:text-base ${
                       errors.message ? 'border-red-300' : 'border-gray-300'
                     }`}
                     placeholder={tForm('fields.message.placeholder')}
@@ -979,7 +983,7 @@ export default function SupportPage() {
                   </div>
                   {errors.message && (
                     <p className="mt-2 text-sm text-red-600 font-medium">
-                      {tValidation(errors.message.message)}
+                      {tValidation(errors.message.message || '')}
                     </p>
                   )}
                 </div>
@@ -1001,39 +1005,75 @@ export default function SupportPage() {
 
                 {errors.attachments && (
                   <p className="text-sm text-red-600 font-medium">
-                    {tValidation(errors.attachments.message)}
+                    {tValidation(errors.attachments.message || '')}
                   </p>
                 )}
               </div>
 
               {/* Consent */}
               <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-start space-x-2 sm:space-x-3">
-                  <input
-                    {...register('consent')}
-                    type="checkbox"
-                    id="consent"
-                    className="mt-1 h-4 w-4 sm:h-5 sm:w-5 text-red-500 focus:ring-red-500 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor="consent"
-                    className="text-xs sm:text-sm text-gray-700 leading-relaxed"
-                  >
-                    {tForm('fields.consent.label').split('Privacy Policy')[0]}
-                    <Link
-                      href="/privacy"
-                      className="text-red-500 hover:text-red-600 underline font-semibold"
+                <div className="space-y-2">
+                  <div className="flex items-start space-x-3">
+                    <Tooltip
+                      content={
+                        errors.consent
+                          ? tValidation(errors.consent.message || '')
+                          : ''
+                      }
+                      disabled={!(errors.consent && showTooltips)}
                     >
-                      Privacy Policy
-                    </Link>
-                    {tForm('fields.consent.label').split('Privacy Policy')[1]}
-                  </label>
+                      <div className="flex items-center">
+                        <input
+                          {...register('consent')}
+                          type="checkbox"
+                          id="consent"
+                          className={`h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 rounded border-gray-300 text-red-500 focus:ring-2 focus:ring-red-200 ${
+                            errors.consent
+                              ? 'border-red-500 ring-2 ring-red-200'
+                              : 'border-gray-300'
+                          }`}
+                          aria-invalid={!!errors.consent}
+                          aria-describedby={
+                            errors.consent ? 'consent-error' : undefined
+                          }
+                        />
+                      </div>
+                    </Tooltip>
+                    <div className="flex-1 min-w-0">
+                      <label
+                        htmlFor="consent"
+                        className="text-xs sm:text-sm text-gray-700 leading-relaxed cursor-pointer block"
+                      >
+                        {
+                          tForm('fields.consent.label').split(
+                            'Privacy Policy'
+                          )[0]
+                        }
+                        <Link
+                          href="/privacy"
+                          className="text-red-500 hover:text-red-600 underline font-semibold"
+                        >
+                          Privacy Policy
+                        </Link>
+                        {
+                          tForm('fields.consent.label').split(
+                            'Privacy Policy'
+                          )[1]
+                        }
+                      </label>
+                    </div>
+                  </div>
+                  {errors.consent && !showTooltips && (
+                    <div className="ml-7">
+                      <p
+                        id="consent-error"
+                        className="text-sm text-red-600 font-medium"
+                      >
+                        {tValidation(errors.consent.message || '')}
+                      </p>
+                    </div>
+                  )}
                 </div>
-                {errors.consent && (
-                  <p className="text-sm text-red-600 font-medium">
-                    {tValidation(errors.consent.message)}
-                  </p>
-                )}
               </div>
 
               {/* Submit Button */}

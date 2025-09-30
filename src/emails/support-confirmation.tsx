@@ -18,6 +18,7 @@ import {
   Text,
 } from '@react-email/components';
 import * as React from 'react';
+import { getEmailLogoConfig, generateCombinedLogo } from './logo-utils';
 
 interface SupportConfirmationEmailProps {
   userName: string;
@@ -38,6 +39,8 @@ export const SupportConfirmationEmail = ({
   supportEmail,
   appUrl,
 }: SupportConfirmationEmailProps) => {
+  const logoConfig = getEmailLogoConfig(appUrl, 'large');
+
   const priorityColor =
     {
       urgent: '#dc2626',
@@ -62,12 +65,10 @@ export const SupportConfirmationEmail = ({
         <Container style={container}>
           {/* Header */}
           <Section style={header}>
-            <Img
-              src={`${appUrl}/logo.png`}
-              width="120"
-              height="40"
-              alt="PayMatch"
-              style={logo}
+            <div
+              dangerouslySetInnerHTML={{
+                __html: generateCombinedLogo(logoConfig, 'PayMatch', '#E4262A'),
+              }}
             />
           </Section>
 
@@ -188,7 +189,7 @@ const content = {
 };
 
 const h1 = {
-  color: '#0d9488',
+  color: '#E4262A',
   fontSize: '24px',
   fontWeight: 'bold',
   margin: '0 0 20px 0',
@@ -248,7 +249,7 @@ const linksBox = {
 };
 
 const link = {
-  color: '#0d9488',
+  color: '#E4262A',
   textDecoration: 'underline',
   fontWeight: 'bold',
 };
