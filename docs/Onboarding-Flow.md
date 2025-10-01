@@ -423,15 +423,15 @@ export const resend = new Resend(process.env.RESEND_API_KEY);
 export const emailTemplates = {
   verification: {
     subject: 'Verify your PayMatch account',
-    from: 'PayMatch <noreply@paymatch.ch>',
+    from: 'PayMatch <noreply@paymatch.app>',
   },
   passwordReset: {
     subject: 'Reset your PayMatch password',
-    from: 'PayMatch <noreply@paymatch.ch>',
+    from: 'PayMatch <noreply@paymatch.app>',
   },
   welcome: {
     subject: 'Welcome to PayMatch!',
-    from: 'PayMatch <noreply@paymatch.ch>',
+    from: 'PayMatch <noreply@paymatch.app>',
   },
 };
 ```
@@ -498,7 +498,7 @@ serve(async (req) => {
 
   // Send verification email via Resend
   const { data, error } = await resend.emails.send({
-    from: 'PayMatch <noreply@paymatch.ch>',
+    from: 'PayMatch <noreply@paymatch.app>',
     to: [email],
     subject: 'Verify your PayMatch account',
     html: `

@@ -29,7 +29,7 @@ import {
 
 import { Container } from '@/components/marketing_pages/Container';
 import { Button } from '@/components/marketing_pages/Button';
-import { usePWA } from '@/hooks/use-pwa';
+import { usePWA } from '@/features/pwa/hooks/use-pwa';
 
 export default function PWAPage() {
   const t = useTranslations('pwa');

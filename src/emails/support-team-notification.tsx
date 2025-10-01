@@ -76,34 +76,24 @@ export const SupportTeamNotificationEmail = ({
           <Section style={content}>
             {/* Personal Information */}
             <Section style={infoBox}>
-              <Heading style={h2}>Personal Information</Heading>
+              <Heading style={h2}>Contact</Heading>
               <Text style={text}>
-                <strong>Name:</strong> {userName}
+                <strong>{userName}</strong> • {userEmail}
+                {userCompany && ` • ${userCompany}`}
               </Text>
-              <Text style={text}>
-                <strong>Email:</strong> {userEmail}
-              </Text>
-              {userCompany && (
-                <Text style={text}>
-                  <strong>Company:</strong> {userCompany}
-                </Text>
-              )}
             </Section>
 
             {/* Issue Details */}
             <Section style={infoBox}>
-              <Heading style={h2}>Issue Details</Heading>
+              <Heading style={h2}>Issue</Heading>
               <Text style={text}>
-                <strong>Category:</strong> {category}
-              </Text>
-              <Text style={text}>
-                <strong>Priority:</strong>{' '}
+                <strong>{category}</strong> •{' '}
                 <span style={{ color: priorityColor, fontWeight: 'bold' }}>
                   {priorityLabel}
                 </span>
               </Text>
               <Text style={text}>
-                <strong>Subject:</strong> {subject}
+                <strong>{subject}</strong>
               </Text>
             </Section>
 
@@ -119,31 +109,17 @@ export const SupportTeamNotificationEmail = ({
                 <Heading style={h2}>Attachments ({attachments.length})</Heading>
                 {attachments.map((attachment, index) => (
                   <Text key={index} style={text}>
-                    <strong>{index + 1}.</strong> {attachment.name} (
-                    {(attachment.size / 1024 / 1024).toFixed(2)} MB)
+                    {attachment.name} (
+                    {(attachment.size / 1024 / 1024).toFixed(1)} MB)
                   </Text>
                 ))}
-                <Text
-                  style={{
-                    ...text,
-                    fontSize: '12px',
-                    color: '#666',
-                    marginTop: '8px',
-                  }}
-                >
-                  Note: Attachments are included as email attachments and can be
-                  downloaded directly.
-                </Text>
               </Section>
             )}
 
             {/* Footer */}
             <Section style={footer}>
               <Text style={footerText}>
-                This message was sent via the PayMatch support form.
-              </Text>
-              <Text style={footerText}>
-                Reply directly to this email to respond to the user.
+                PayMatch support form • Reply to respond
               </Text>
             </Section>
           </Section>

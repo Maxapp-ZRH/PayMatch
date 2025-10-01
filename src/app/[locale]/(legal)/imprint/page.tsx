@@ -62,7 +62,7 @@ export default function ImprintPage() {
               </h3>
               <p className="text-sm sm:text-base text-gray-700">
                 <a
-                  href="mailto:info@paymatch.ch"
+                  href="mailto:info@paymatch.app"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
                 >
                   {t('sections.companyInformation.subsections.email.content')}
@@ -76,7 +76,7 @@ export default function ImprintPage() {
               </h3>
               <p className="text-sm sm:text-base text-gray-700">
                 <a
-                  href="https://paymatch.ch"
+                  href="https://paymatch.app"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -276,7 +276,7 @@ export default function ImprintPage() {
               </h3>
               <p className="text-sm sm:text-base text-gray-700">
                 <a
-                  href="mailto:info@paymatch.ch"
+                  href="mailto:info@paymatch.app"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
                 >
                   {t('sections.contact.subsections.generalInquiries.content')}
@@ -290,7 +290,7 @@ export default function ImprintPage() {
               </h3>
               <p className="text-sm sm:text-base text-gray-700">
                 <a
-                  href="mailto:support@paymatch.ch"
+                  href="mailto:support@paymatch.app"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
                 >
                   {t('sections.contact.subsections.support.content')}
@@ -304,7 +304,7 @@ export default function ImprintPage() {
               </h3>
               <p className="text-sm sm:text-base text-gray-700">
                 <a
-                  href="mailto:privacy@paymatch.ch"
+                  href="mailto:privacy@paymatch.app"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
                 >
                   {t('sections.contact.subsections.privacy.content')}
@@ -318,7 +318,7 @@ export default function ImprintPage() {
               </h3>
               <p className="text-sm sm:text-base text-gray-700">
                 <a
-                  href="mailto:legal@paymatch.ch"
+                  href="mailto:legal@paymatch.app"
                   className="text-teal-600 hover:text-teal-700 transition-colors"
                 >
                   {t('sections.contact.subsections.legal.content')}

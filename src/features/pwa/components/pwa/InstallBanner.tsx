@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { X, Download, Smartphone, Info } from 'lucide-react';
-import { usePWA } from '@/hooks/use-pwa';
+import { usePWA } from '@/features/pwa/hooks/use-pwa';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';

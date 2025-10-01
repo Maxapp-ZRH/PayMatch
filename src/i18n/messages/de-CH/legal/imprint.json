@@ -19,11 +19,11 @@
         },
         "email": {
           "title": "E-Mail",
-          "content": "info@paymatch.ch"
+          "content": "info@paymatch.app"
         },
         "website": {
           "title": "Website",
-          "content": "https://paymatch.ch"
+          "content": "https://paymatch.app"
         }
       }
     },
@@ -94,19 +94,19 @@
       "subsections": {
         "generalInquiries": {
           "title": "Allgemeine Anfragen",
-          "content": "info@paymatch.ch"
+          "content": "info@paymatch.app"
         },
         "support": {
           "title": "Technischer Support",
-          "content": "support@paymatch.ch"
+          "content": "support@paymatch.app"
         },
         "privacy": {
           "title": "Datenschutz und Datenschutz",
-          "content": "privacy@paymatch.ch"
+          "content": "privacy@paymatch.app"
         },
         "legal": {
           "title": "Rechtliche Angelegenheiten",
-          "content": "legal@paymatch.ch"
+          "content": "legal@paymatch.app"
         }
       }
     },

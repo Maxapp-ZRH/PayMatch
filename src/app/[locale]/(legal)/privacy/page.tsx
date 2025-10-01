@@ -45,7 +45,7 @@ export default function PrivacyPolicyPage() {
                   </h3>
                   <p className="text-sm sm:text-base text-gray-700">
                     <a
-                      href="mailto:privacy@paymatch.ch"
+                      href="mailto:privacy@paymatch.app"
                       className="text-teal-600 hover:text-teal-700 transition-colors break-all"
                     >
                       {t('sections.introduction.dataProtectionOfficer.content')}

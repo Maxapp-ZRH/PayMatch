@@ -94,7 +94,7 @@
     },
     "dataProtectionOfficer": {
       "title": "6. Data Protection Officer",
-      "content": "We have appointed a Data Protection Officer (DPO) who can be contacted at privacy@paymatch.ch for any questions regarding data protection and your rights under GDPR."
+      "content": "We have appointed a Data Protection Officer (DPO) who can be contacted at privacy@paymatch.app for any questions regarding data protection and your rights under GDPR."
     },
     "internationalTransfers": {
       "title": "7. International Data Transfers",
@@ -106,7 +106,7 @@
     },
     "contact": {
       "title": "9. Contact Us About GDPR",
-      "content": "If you have any questions about your rights under GDPR or our data processing practices, please contact us at privacy@paymatch.ch or write to us at Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
+      "content": "If you have any questions about your rights under GDPR or our data processing practices, please contact us at privacy@paymatch.app or write to us at Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
     }
   }
 }

@@ -12,8 +12,8 @@
 
 import { useState, useEffect } from 'react';
 import { CookieBanner } from './CookieBanner';
-import { InstallBanner } from '@/components/pwa/InstallBanner';
-import { usePWA } from '@/hooks/use-pwa';
+import { InstallBanner } from '@/features/pwa/components/pwa/InstallBanner';
+import { usePWA } from '@/features/pwa/hooks/use-pwa';
 
 type BannerType = 'cookie' | 'pwa' | null;
 

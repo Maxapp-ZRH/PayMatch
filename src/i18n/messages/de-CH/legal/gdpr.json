@@ -94,7 +94,7 @@
     },
     "dataProtectionOfficer": {
       "title": "6. Datenschutzbeauftragter",
-      "content": "Wir haben einen Datenschutzbeauftragten (DSB) ernannt, der unter privacy@paymatch.ch für Fragen zum Datenschutz und Ihren Rechten unter der DSGVO kontaktiert werden kann."
+      "content": "Wir haben einen Datenschutzbeauftragten (DSB) ernannt, der unter privacy@paymatch.app für Fragen zum Datenschutz und Ihren Rechten unter der DSGVO kontaktiert werden kann."
     },
     "internationalTransfers": {
       "title": "7. Internationale Datenübertragungen",
@@ -106,7 +106,7 @@
     },
     "contact": {
       "title": "9. Kontaktieren Sie uns bezüglich der DSGVO",
-      "content": "Wenn Sie Fragen zu Ihren Rechten unter der DSGVO oder unseren Datenverarbeitungspraktiken haben, kontaktieren Sie uns bitte unter privacy@paymatch.ch oder schreiben Sie uns an Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
+      "content": "Wenn Sie Fragen zu Ihren Rechten unter der DSGVO oder unseren Datenverarbeitungspraktiken haben, kontaktieren Sie uns bitte unter privacy@paymatch.app oder schreiben Sie uns an Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
     }
   }
 }

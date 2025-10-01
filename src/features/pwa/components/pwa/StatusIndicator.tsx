@@ -1,6 +1,6 @@
 'use client';
 
-import { usePWA } from '@/hooks/use-pwa';
+import { usePWA } from '@/features/pwa/hooks/use-pwa';
 import { Wifi, WifiOff, Download, CheckCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
