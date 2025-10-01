@@ -29,7 +29,6 @@ This document defines the complete navigation structure and page specifications 
 - **Invoice Defaults & Templates** - Invoice customization
 - **Team Members** - Team management (Business Plan only)
 - **Billing & Subscription** - Plan and payment management
-- **Integrations** - External service connections
 - **Notifications & Reminders** - Communication settings
 
 ### Footer

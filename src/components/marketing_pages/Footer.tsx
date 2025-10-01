@@ -14,9 +14,9 @@ import { TextField } from '@/components/marketing_pages/Fields';
 import { NavLinks } from '@/components/marketing_pages/NavLinks';
 import { Link as I18nLink } from '@/i18n/navigation';
 import {
-  newsletterSchema,
-  type NewsletterFormData,
-} from '@/schemas/newsletter';
+  newsletterSubscriptionSchema,
+  type NewsletterSubscriptionData,
+} from '@/features/email/schemas';
 
 export function Footer() {
   const t = useTranslations('common.footer');
@@ -34,8 +34,8 @@ export function Footer() {
     watch,
     trigger,
     setValue,
-  } = useForm<NewsletterFormData>({
-    resolver: zodResolver(newsletterSchema),
+  } = useForm<NewsletterSubscriptionData>({
+    resolver: zodResolver(newsletterSubscriptionSchema),
     mode: 'onChange',
     defaultValues: {
       firstName: '',
@@ -50,7 +50,9 @@ export function Footer() {
 
   // Real-time validation for individual fields
   useEffect(() => {
-    const validateField = async (fieldName: keyof NewsletterFormData) => {
+    const validateField = async (
+      fieldName: keyof NewsletterSubscriptionData
+    ) => {
       if (touchedFields[fieldName]) {
         await trigger(fieldName);
       }
@@ -75,13 +77,13 @@ export function Footer() {
     touchedFields,
   ]);
 
-  const onSubmit = async (data: NewsletterFormData) => {
+  const onSubmit = async (data: NewsletterSubscriptionData) => {
     setIsSubmitting(true);
     setShowError(false);
     setErrorMessage('');
 
     try {
-      const response = await fetch('/api/newsletter', {
+      const response = await fetch('/api/email/newsletter', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

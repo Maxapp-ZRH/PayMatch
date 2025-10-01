@@ -14,7 +14,7 @@
       },
       "dataProtectionOfficer": {
         "title": "Datenschutzbeauftragter",
-        "content": "privacy@paymatch.ch"
+        "content": "privacy@paymatch.app"
       }
     },
     "dataCollection": {
@@ -115,7 +115,7 @@
     },
     "contact": {
       "title": "11. Kontaktieren Sie uns",
-      "content": "Wenn Sie Fragen zu dieser Datenschutzerklärung oder unseren Datenpraktiken haben, kontaktieren Sie uns bitte unter privacy@paymatch.ch oder schreiben Sie uns an Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
+      "content": "Wenn Sie Fragen zu dieser Datenschutzerklärung oder unseren Datenpraktiken haben, kontaktieren Sie uns bitte unter privacy@paymatch.app oder schreiben Sie uns an Maxapp ZRH, Birkenstrasse 49, 6343 Rotkreuz, Schweiz."
     }
   }
 }

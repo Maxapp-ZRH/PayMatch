@@ -5,18 +5,9 @@
  * Sent to users after they submit a support form.
  */
 
-import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Section,
-  Text,
-} from '@react-email/components';
+import { Heading, Link, Section, Text } from '@react-email/components';
 import * as React from 'react';
+import { EmailLayout } from './components/EmailLayout';
 
 interface SupportConfirmationEmailProps {
   userName: string;
@@ -26,6 +17,7 @@ interface SupportConfirmationEmailProps {
   priority: string;
   supportEmail: string;
   appUrl: string;
+  unsubscribeUrl?: string;
 }
 
 export const SupportConfirmationEmail = ({
@@ -36,6 +28,7 @@ export const SupportConfirmationEmail = ({
   priority,
   supportEmail,
   appUrl,
+  unsubscribeUrl,
 }: SupportConfirmationEmailProps) => {
   const priorityColor =
     {
@@ -54,124 +47,98 @@ export const SupportConfirmationEmail = ({
     }[priority] || 'Low';
 
   return (
-    <Html>
-      <Head />
-      <Preview>We&apos;ve received your support request - PayMatch</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          {/* Header */}
-          <Section style={header}>
-            <Heading style={h1}>Support Request Received</Heading>
-          </Section>
+    <EmailLayout
+      preview="We've received your support request - PayMatch"
+      appUrl={appUrl}
+      unsubscribeUrl={unsubscribeUrl}
+      showUnsubscribe={!!unsubscribeUrl}
+    >
+      {/* Header */}
+      <Section style={header}>
+        <Heading style={h1}>Support Request Received</Heading>
+      </Section>
 
-          {/* Main Content */}
-          <Section style={content}>
-            <Text style={text}>Hi {userName},</Text>
+      {/* Main Content */}
+      <Section style={content}>
+        <Text style={text}>Hi {userName},</Text>
 
-            <Text style={text}>
-              Thank you for contacting PayMatch support! We&apos;ve received
-              your request and our team will get back to you as soon as
-              possible.
-            </Text>
+        <Text style={text}>
+          We&apos;ve received your support request and will respond within 24
+          hours.
+        </Text>
 
-            {/* Request Details */}
-            <Section style={detailsBox}>
-              <Heading style={h2}>Your Request Details</Heading>
+        {/* Request Details */}
+        <Section style={detailsBox}>
+          <Heading style={h2}>Your Request Details</Heading>
 
-              <Text style={detailText}>
-                <strong>Subject:</strong> {subject}
-              </Text>
-              <Text style={detailText}>
-                <strong>Category:</strong> {category}
-              </Text>
-              <Text style={detailText}>
-                <strong>Priority:</strong>{' '}
-                <span style={{ color: priorityColor, fontWeight: 'bold' }}>
-                  {priorityLabel}
-                </span>
-              </Text>
-              <Text style={detailText}>
-                <strong>Submitted:</strong>{' '}
-                {new Date().toLocaleString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  timeZoneName: 'short',
-                })}
-              </Text>
-            </Section>
+          <Text style={detailText}>
+            <strong>Subject:</strong> {subject}
+          </Text>
+          <Text style={detailText}>
+            <strong>Category:</strong> {category}
+          </Text>
+          <Text style={detailText}>
+            <strong>Priority:</strong>{' '}
+            <span style={{ color: priorityColor, fontWeight: 'bold' }}>
+              {priorityLabel}
+            </span>
+          </Text>
+          <Text style={detailText}>
+            <strong>Submitted:</strong>{' '}
+            {new Date().toLocaleString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              timeZoneName: 'short',
+            })}
+          </Text>
+        </Section>
 
-            {/* Response Time Info */}
-            <Section style={responseTimeBox}>
-              <Heading style={h3}>What happens next?</Heading>
-              <Text style={text}>
-                • Our support team will review your request within 24 hours •
-                You&apos;ll receive a response at <strong>{userEmail}</strong>•
-                For urgent issues, we&apos;ll prioritize your request • You can
-                always reach us directly at {supportEmail}
-              </Text>
-            </Section>
+        {/* Response Time Info */}
+        <Section style={responseTimeBox}>
+          <Heading style={h3}>Next Steps</Heading>
+          <Text style={text}>
+            • Response within 24 hours to <strong>{userEmail}</strong>
+            <br />
+            • Urgent issues prioritized
+            <br />• Direct contact: {supportEmail}
+          </Text>
+        </Section>
 
-            {/* Helpful Links */}
-            <Section style={linksBox}>
-              <Heading style={h3}>Need immediate help?</Heading>
-              <Text style={text}>
-                Check out our{' '}
-                <Link href={`${appUrl}/support`} style={link}>
-                  FAQ section
-                </Link>{' '}
-                for quick answers to common questions.
-              </Text>
-            </Section>
-          </Section>
+        {/* Helpful Links */}
+        <Section style={linksBox}>
+          <Text style={text}>
+            Quick answers:{' '}
+            <Link href={`${appUrl}/support`} style={link}>
+              FAQ
+            </Link>
+          </Text>
+        </Section>
+      </Section>
 
-          {/* Footer */}
-          <Section style={footer}>
-            <Text style={footerText}>
-              This is an automated confirmation. Please do not reply to this
-              email.
-            </Text>
-            <Text style={footerText}>
-              If you need to add more information to your request, please reply
-              to our support team at {supportEmail}.
-            </Text>
-            <Text style={footerText}>
-              Best regards,
-              <br />
-              The PayMatch Team
-            </Text>
-          </Section>
-        </Container>
-      </Body>
-    </Html>
+      {/* Additional Info */}
+      <Section style={additionalInfo}>
+        <Text style={additionalInfoText}>
+          Automated confirmation. Don&apos;t reply to this email.
+        </Text>
+        <Text style={additionalInfoText}>Add info: {supportEmail}</Text>
+        <Text style={additionalInfoText}>— PayMatch Team</Text>
+      </Section>
+    </EmailLayout>
   );
 };
 
 // Styles
-const main = {
-  backgroundColor: '#f6f9fc',
-  fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-};
-
-const container = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '20px 0 48px',
-  marginBottom: '64px',
-  maxWidth: '600px',
-};
-
 const header = {
-  padding: '20px 30px',
-  borderBottom: '1px solid #e5e7eb',
+  padding: '0 0 24px 0',
+  textAlign: 'center' as const,
 };
 
 const content = {
-  padding: '30px',
+  padding: '0',
 };
 
 const h1 = {
@@ -240,17 +207,17 @@ const link = {
   fontWeight: 'bold',
 };
 
-const footer = {
-  padding: '20px 30px',
+const additionalInfo = {
   borderTop: '1px solid #e5e7eb',
-  backgroundColor: '#f9fafb',
+  padding: '24px 0 0 0',
+  marginTop: '24px',
 };
 
-const footerText = {
+const additionalInfoText = {
   color: '#6b7280',
   fontSize: '14px',
   lineHeight: '1.5',
-  margin: '0 0 8px 0',
+  margin: '0 0 8px',
 };
 
 export default SupportConfirmationEmail;

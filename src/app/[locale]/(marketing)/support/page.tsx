@@ -44,7 +44,7 @@ import {
   supportCategories,
   supportPriorities,
   type SupportFormData,
-} from '@/schemas/support';
+} from '@/features/support/schemas/support';
 import {
   faqData,
   faqCategories,
@@ -683,7 +683,7 @@ export default function SupportPage() {
         })),
       };
 
-      const response = await fetch('/api/support', {
+      const response = await fetch('/api/email/support', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,8 +1,9 @@
 /**
- * Newsletter Unsubscribe Page
+ * Unified Unsubscribe Page
  *
- * Handles newsletter unsubscription with token validation and user feedback.
+ * Handles unsubscription for all email types with token validation and user feedback.
  * Provides confirmation and success/error states for unsubscribe process.
+ * Supports newsletter, support, and transactional email unsubscription.
  */
 
 'use client';
@@ -17,22 +18,68 @@ import Link from 'next/link';
 
 interface Subscriber {
   email: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   isActive: boolean;
+  emailType: 'newsletter' | 'support' | 'transactional';
+}
+
+interface UnsubscribeResponse {
+  success: boolean;
+  message: string;
+  subscriber: Subscriber;
+  alreadyUnsubscribed?: boolean;
+  error?: string;
 }
 
 export default function UnsubscribePage() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
+  const errorParam = searchParams.get('error');
 
   const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUnsubscribing, setIsUnsubscribing] = useState(false);
   const [isUnsubscribed, setIsUnsubscribed] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [emailType, setEmailType] = useState<
+    'newsletter' | 'support' | 'transactional'
+  >('newsletter');
+
+  // Helper function to get user-friendly error messages
+  const getErrorMessage = (errorCode: string): string => {
+    switch (errorCode) {
+      case 'invalid-token':
+        return 'Invalid or expired unsubscribe link. Please request a new one.';
+      case 'server-error':
+        return 'Server error occurred. Please try again later.';
+      default:
+        return 'An error occurred. Please try again.';
+    }
+  };
+
+  // Helper function to get email type display name
+  const getEmailTypeDisplayName = (type: string): string => {
+    switch (type) {
+      case 'newsletter':
+        return 'PayMatch Newsletter';
+      case 'support':
+        return 'Support Emails';
+      case 'transactional':
+        return 'Transactional Emails';
+      default:
+        return 'Email Updates';
+    }
+  };
 
   useEffect(() => {
+    // Handle error from URL parameters
+    if (errorParam) {
+      setError(getErrorMessage(errorParam));
+      setIsLoading(false);
+      return;
+    }
+
     if (!token) {
       setError('Invalid unsubscribe link');
       setIsLoading(false);
@@ -42,17 +89,17 @@ export default function UnsubscribePage() {
     // Fetch subscriber data
     const fetchSubscriber = async () => {
       try {
-        const response = await fetch(
-          `/api/newsletter/unsubscribe?token=${token}`
-        );
-        const data = await response.json();
+        const response = await fetch(`/api/email/unsubscribe?token=${token}`);
+        const data: UnsubscribeResponse = await response.json();
 
         if (!response.ok) {
           throw new Error(data.error || 'Failed to fetch subscription data');
         }
 
         setSubscriber(data.subscriber);
-        if (data.subscriber.alreadyUnsubscribed) {
+        setEmailType(data.subscriber.emailType);
+
+        if (data.alreadyUnsubscribed) {
           setIsUnsubscribed(true);
         }
       } catch (err) {
@@ -67,7 +114,7 @@ export default function UnsubscribePage() {
     };
 
     fetchSubscriber();
-  }, [token]);
+  }, [token, errorParam]);
 
   const handleUnsubscribe = async () => {
     if (!token) return;
@@ -76,7 +123,7 @@ export default function UnsubscribePage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/newsletter/unsubscribe', {
+      const response = await fetch('/api/email/unsubscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +131,7 @@ export default function UnsubscribePage() {
         body: JSON.stringify({ token }),
       });
 
-      const data = await response.json();
+      const data: UnsubscribeResponse = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to unsubscribe');
@@ -179,8 +226,9 @@ export default function UnsubscribePage() {
               Unsubscribed Successfully
             </h1>
             <p className="text-gray-600 mb-6">
-              You have been unsubscribed from the PayMatch newsletter. You will
-              no longer receive updates from us.
+              You have been unsubscribed from{' '}
+              {getEmailTypeDisplayName(emailType)}. You will no longer receive{' '}
+              {emailType === 'newsletter' ? 'updates' : 'emails'} from us.
             </p>
             <div className="space-y-3">
               <Link href="/" className="block">
@@ -223,20 +271,30 @@ export default function UnsubscribePage() {
               className="mx-auto mb-4"
             />
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Unsubscribe from Newsletter
+              Unsubscribe from {getEmailTypeDisplayName(emailType)}
             </h1>
             <p className="text-gray-600">
-              Are you sure you want to unsubscribe from the PayMatch newsletter?
+              Are you sure you want to unsubscribe from{' '}
+              {getEmailTypeDisplayName(emailType).toLowerCase()}?
             </p>
           </div>
 
           {subscriber && (
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <p className="text-sm text-gray-600 mb-1">Subscribed as:</p>
-              <p className="font-medium text-gray-900">
-                {subscriber.firstName} {subscriber.lastName}
+              <p className="text-sm text-gray-600 mb-1">
+                {emailType === 'newsletter'
+                  ? 'Subscribed as:'
+                  : 'Email address:'}
               </p>
+              {(subscriber.firstName || subscriber.lastName) && (
+                <p className="font-medium text-gray-900">
+                  {subscriber.firstName} {subscriber.lastName}
+                </p>
+              )}
               <p className="text-sm text-gray-600">{subscriber.email}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Type: {getEmailTypeDisplayName(subscriber.emailType)}
+              </p>
             </div>
           )}
 
@@ -263,8 +321,9 @@ export default function UnsubscribePage() {
 
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-500">
-              You can always resubscribe by visiting our website and using the
-              newsletter signup form.
+              {emailType === 'newsletter'
+                ? 'You can always resubscribe by visiting our website and using the newsletter signup form.'
+                : 'You can always re-enable these emails by contacting our support team.'}
             </p>
           </div>
         </motion.div>

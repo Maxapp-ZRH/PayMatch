@@ -238,9 +238,9 @@ You agree to indemnify and hold harmless PayMatch AG from any claims, damages, o
 
 **PayMatch AG**  
 Address: [Company Address]  
-Email: legal@paymatch.ch  
+Email: legal@paymatch.app  
 Phone: [Phone Number]  
-Website: https://paymatch.ch
+Website: https://paymatch.app
 
 ## 13. Changes to This Agreement
 

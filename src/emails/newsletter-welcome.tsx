@@ -5,19 +5,9 @@
  * Includes branding, feature highlights, and clear unsubscribe functionality.
  */
 
-import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Section,
-  Text,
-} from '@react-email/components';
+import { Button, Heading, Link, Section, Text } from '@react-email/components';
 import * as React from 'react';
+import { EmailLayout } from './components/EmailLayout';
 
 interface NewsletterWelcomeEmailProps {
   firstName: string;
@@ -35,122 +25,82 @@ export const NewsletterWelcomeEmail = ({
   appUrl,
 }: NewsletterWelcomeEmailProps) => {
   return (
-    <Html>
-      <Head />
-      <Preview>
-        Welcome to PayMatch! Get the latest updates on Swiss invoicing and
-        QR-bill compliance.
-      </Preview>
-      <Body style={main}>
-        <Container style={container}>
-          {/* Header */}
-          <Section style={header}>
-            <Heading style={h1}>Welcome to PayMatch!</Heading>
-          </Section>
+    <EmailLayout
+      preview="Welcome to PayMatch! Get the latest updates on Swiss invoicing and QR-bill compliance."
+      appUrl={appUrl}
+    >
+      {/* Header */}
+      <Section style={header}>
+        <Heading style={h1}>Welcome to PayMatch!</Heading>
+      </Section>
 
-          {/* Main Content */}
-          <Section style={content}>
-            <Text style={text}>
-              Dear {firstName} {lastName},
-            </Text>
+      {/* Main Content */}
+      <Section style={content}>
+        <Text style={text}>
+          Dear {firstName} {lastName},
+        </Text>
 
-            <Text style={text}>
-              Thank you for subscribing to the PayMatch newsletter! We&apos;re
-              excited to have you join our community of Swiss businesses and
-              freelancers who are revolutionizing their invoicing process.
-            </Text>
+        <Text style={text}>
+          Welcome to PayMatch! You&apos;re now part of Switzerland&apos;s
+          leading invoicing community.
+        </Text>
 
-            <Text style={text}>
-              We&apos;ll be sending all future updates and communications to{' '}
-              <strong style={{ color: '#E4262A' }}>{userEmail}</strong>. If you
-              need to update your email address or preferences, you can do so
-              anytime using the unsubscribe link at the bottom of this email.
-            </Text>
+        <Text style={text}>
+          Updates sent to{' '}
+          <strong style={{ color: '#E4262A' }}>{userEmail}</strong>. Update
+          preferences anytime via unsubscribe link below.
+        </Text>
 
-            <Text style={text}>You&apos;ll receive regular updates about:</Text>
+        <Text style={text}>You&apos;ll receive regular updates about:</Text>
 
-            <ul style={list}>
-              <li style={listItem}>New PayMatch features and improvements</li>
-              <li style={listItem}>
-                Swiss invoicing regulations and compliance updates
-              </li>
-              <li style={listItem}>QR-bill best practices and tips</li>
-              <li style={listItem}>Success stories from our community</li>
-              <li style={listItem}>
-                Exclusive offers and early access to new features
-              </li>
-            </ul>
+        <ul style={list}>
+          <li style={listItem}>New features & improvements</li>
+          <li style={listItem}>Swiss invoicing compliance updates</li>
+          <li style={listItem}>QR-bill best practices</li>
+          <li style={listItem}>Community success stories</li>
+          <li style={listItem}>Exclusive offers & early access</li>
+        </ul>
 
-            <Text style={text}>
-              Ready to get started? Create your first invoice in minutes with
-              our Swiss QR-bill compliant system.
-            </Text>
+        <Text style={text}>
+          Ready? Create your first Swiss QR-bill invoice in minutes.
+        </Text>
 
-            <Section style={buttonContainer}>
-              <Button style={button} href={`${appUrl}/register`}>
-                Start Invoicing Now
-              </Button>
-            </Section>
+        <Section style={buttonContainer}>
+          <Button style={button} href={`${appUrl}/register`}>
+            Start Invoicing Now
+          </Button>
+        </Section>
 
-            <Text style={text}>
-              If you have any questions, feel free to reach out to our support
-              team. We&apos;re here to help!
-            </Text>
+        <Text style={text}>Questions? Our support team is here to help.</Text>
 
-            <Text style={text}>
-              Welcome aboard, {firstName}! We&apos;re thrilled to have you as
-              part of the PayMatch community.
-            </Text>
+        <Text style={text}>Welcome aboard, {firstName}!</Text>
 
-            <Text style={text}>
-              Best regards,
-              <br />
-              The PayMatch Team
-            </Text>
-          </Section>
+        <Text style={text}>
+          Best regards,
+          <br />
+          The PayMatch Team
+        </Text>
+      </Section>
 
-          {/* Footer */}
-          <Section style={footer}>
-            <Text style={footerText}>
-              You&apos;re receiving this email because {firstName} {lastName}(
-              {userEmail}) subscribed to the PayMatch newsletter.
-            </Text>
-            <Text style={footerText}>
-              <Link href={unsubscribeUrl} style={unsubscribeLink}>
-                Unsubscribe from this newsletter
-              </Link>
-            </Text>
-            <Text style={footerText}>
-              PayMatch - Swiss invoicing made simple
-              <br />
-              <Link href={appUrl} style={link}>
-                {appUrl}
-              </Link>
-            </Text>
-          </Section>
-        </Container>
-      </Body>
-    </Html>
+      {/* Unsubscribe Section */}
+      <Section style={unsubscribeSection}>
+        <Text style={unsubscribeText}>
+          You&apos;re receiving this email because {firstName} {lastName} (
+          {userEmail}) subscribed to the PayMatch newsletter.
+        </Text>
+        <Text style={unsubscribeText}>
+          <Link href={unsubscribeUrl} style={unsubscribeLink}>
+            Unsubscribe from this newsletter
+          </Link>
+        </Text>
+      </Section>
+    </EmailLayout>
   );
 };
 
 // Styles
-const main = {
-  backgroundColor: '#f6f9fc',
-  fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-};
-
-const container = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '20px 0 48px',
-  marginBottom: '64px',
-  maxWidth: '600px',
-};
-
 const header = {
-  padding: '32px 24px 0',
+  padding: '0 0 24px 0',
   textAlign: 'center' as const,
 };
 
@@ -164,7 +114,7 @@ const h1 = {
 };
 
 const content = {
-  padding: '0 24px',
+  padding: '0',
 };
 
 const text = {
@@ -205,13 +155,13 @@ const button = {
   cursor: 'pointer',
 };
 
-const footer = {
+const unsubscribeSection = {
   borderTop: '1px solid #e5e7eb',
-  padding: '24px',
-  textAlign: 'center' as const,
+  padding: '24px 0 0 0',
+  marginTop: '24px',
 };
 
-const footerText = {
+const unsubscribeText = {
   color: '#6b7280',
   fontSize: '14px',
   lineHeight: '1.5',
@@ -220,11 +170,6 @@ const footerText = {
 
 const unsubscribeLink = {
   color: '#dc2626',
-  textDecoration: 'underline',
-};
-
-const link = {
-  color: '#E4262A',
   textDecoration: 'underline',
 };
 

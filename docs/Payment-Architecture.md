@@ -116,7 +116,7 @@ qrBill.attachTo(pdf);
 
 // Send via Resend
 await resend.emails.send({
-  from: 'invoices@paymatch.ch',
+  from: 'invoices@paymatch.app',
   to: client.email,
   subject: `Invoice #${invoiceNumber}`,
   attachments: [{ filename: 'invoice.pdf', content: pdfBuffer }],
