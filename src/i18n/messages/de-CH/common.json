@@ -39,7 +39,7 @@
       "apply": "zu, die gelten",
       "subscribe": "Abonnieren"
     },
-    "copyright": "© 2024 PayMatch. Alle Rechte vorbehalten.",
+    "copyright": "© {year} PayMatch. Alle Rechte vorbehalten.",
     "developedBy": "Entwickelt von"
   }
 }

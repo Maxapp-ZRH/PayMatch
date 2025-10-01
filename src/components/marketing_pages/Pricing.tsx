@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Radio, RadioGroup } from '@headlessui/react';
 import clsx from 'clsx';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Gift, User, Building2, Crown } from 'lucide-react';
@@ -11,14 +11,16 @@ import { Gift, User, Building2, Crown } from 'lucide-react';
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
 import {
-  pricingConfig,
   calculateMonthlyPricing,
-  createFeatureIcon,
   PRICING_CONSTANTS,
-  featureComparisonData,
-  getPricingPlansForLocale,
   getCurrencySymbol,
 } from '@/config/pricing';
+import {
+  getFeatureComparison,
+  getPlanComparisonData,
+  getPlanPricingInCHF,
+  type PlanName,
+} from '@/config/plans';
 
 function CheckIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -74,18 +76,26 @@ function FeatureIcon({
   textColor?: string;
 }) {
   if (value === 'check') {
-    const { Icon, className: iconClassName } = createFeatureIcon(
-      'check',
-      className
+    return (
+      <CheckIcon className={`h-4 w-4 text-green-600 ${className || ''}`} />
     );
-    return <Icon className={iconClassName} />;
   }
   if (value === 'cross') {
-    const { Icon, className: iconClassName } = createFeatureIcon(
-      'cross',
-      className
+    return (
+      <svg
+        className={`h-4 w-4 text-red-600 ${className || ''}`}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
     );
-    return <Icon className={iconClassName} />;
   }
   return <span className={textColor}>{value}</span>;
 }
@@ -178,10 +188,7 @@ function Plan({
                   {currencySymbol}
                   {activePeriod === 'Monthly'
                     ? monthlyPrice
-                    : calculateMonthlyPricing(
-                        annualPrice,
-                        PRICING_CONSTANTS.annualDiscountPercent
-                      )}
+                    : calculateMonthlyPricing(annualPrice)}
                 </span>
                 <span
                   className={clsx(
@@ -189,7 +196,7 @@ function Plan({
                     featured ? 'text-gray-300' : 'text-gray-500'
                   )}
                 >
-                  /{activePeriod === 'Monthly' ? 'month' : 'month'}
+                  /month
                 </span>
               </motion.div>
             </AnimatePresence>
@@ -239,7 +246,7 @@ function Plan({
                     : 'divide-gray-200 text-gray-700'
                 )}
               >
-                {featureComparisonData.map((row, index) => {
+                {getFeatureComparison().map((row, index) => {
                   const planValues = [
                     row.free,
                     row.freelancer,
@@ -303,7 +310,7 @@ function Plan({
           href={button.href}
           color={featured ? 'swiss' : 'gray'}
           className="mt-4 sm:mt-6 text-sm sm:text-base"
-          aria-label={`Get started with the ${name} plan for ${pricingConfig.currency} ${activePeriod === 'Monthly' ? monthlyPrice : calculateMonthlyPricing(annualPrice, pricingConfig.annualDiscountPercent)}`}
+          aria-label={`Get started with the ${name} plan for ${currencySymbol} ${activePeriod === 'Monthly' ? monthlyPrice : calculateMonthlyPricing(annualPrice)}`}
         >
           {button.label}
         </Button>
@@ -315,7 +322,6 @@ function Plan({
 export function Pricing() {
   const t = useTranslations('pricing');
   const tCommon = useTranslations('common');
-  const locale = useLocale();
   const [activePeriod, setActivePeriod] = useState<'Monthly' | 'Annually'>(
     'Monthly'
   );
@@ -324,8 +330,9 @@ export function Pricing() {
   );
 
   // Get pricing data and currency for current locale
-  const pricingPlans = getPricingPlansForLocale(locale);
-  const currencySymbol = getCurrencySymbol(locale);
+  const comparisonData = getPlanComparisonData();
+  const pricingPlans = comparisonData.plans;
+  const currencySymbol = getCurrencySymbol();
 
   // Map feature names to translation keys
   const getFeatureTranslation = (featureKey: string) => {
@@ -333,11 +340,16 @@ export function Pricing() {
   };
 
   // Map feature values to translation keys
-  const getFeatureValueTranslation = (value: string | 'check' | 'cross') => {
+  const getFeatureValueTranslation = (
+    value: string | 'check' | 'cross' | undefined
+  ) => {
+    // Handle undefined or null values
+    if (!value) return 'cross';
+
     if (value === 'check' || value === 'cross') return value;
 
     // Handle numeric values and other non-translatable values
-    if (value === '1' || value === '10 max' || value === 'Unlimited') {
+    if (value === 'Unlimited' || /^\d+$/.test(value) || value === '10 max') {
       return value;
     }
 
@@ -348,7 +360,13 @@ export function Pricing() {
       Priority: 'featureComparison.priority',
       'Dedicated SLA': 'featureComparison.dedicatedSLA',
     };
-    return t(valueMap[value] || value);
+
+    const translationKey = valueMap[value];
+    if (translationKey) {
+      return t(translationKey);
+    }
+
+    return value;
   };
 
   // Get plan index for feature comparison
@@ -463,7 +481,7 @@ export function Pricing() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
           {pricingPlans.map((plan, index) => {
-            const planKey = plan.name.toLowerCase();
+            const planKey = plan.name as PlanName;
             const translatedPlan = {
               ...plan,
               description: t(`plans.${planKey}.description`),
@@ -478,7 +496,7 @@ export function Pricing() {
                 key={plan.name}
                 className={clsx(
                   // Show Free plan only on mobile (hidden on sm and up)
-                  plan.name === 'Free' ? 'block sm:hidden' : 'block'
+                  plan.name === 'free' ? 'block sm:hidden' : 'block'
                 )}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -489,8 +507,14 @@ export function Pricing() {
                 }}
               >
                 <Plan
-                  {...translatedPlan}
+                  name={plan.displayName}
+                  monthlyPrice={getPlanPricingInCHF(planKey, 'monthly')}
+                  annualPrice={getPlanPricingInCHF(planKey, 'annual')}
+                  description={translatedPlan.description}
+                  button={translatedPlan.button}
+                  features={translatedPlan.features}
                   activePeriod={activePeriod}
+                  featured={plan.featured}
                   t={t}
                   currencySymbol={currencySymbol}
                   planIndex={getPlanIndex(plan.name)}
@@ -546,13 +570,11 @@ export function Pricing() {
                   {pricingPlans.map((plan, index) => {
                     const isLast = index === pricingPlans.length - 1;
                     const isFeatured = plan.featured;
+                    const planKey = plan.name as PlanName;
                     const monthlyPrice =
                       activePeriod === 'Monthly'
-                        ? plan.monthlyPrice
-                        : calculateMonthlyPricing(
-                            plan.annualPrice,
-                            PRICING_CONSTANTS.annualDiscountPercent
-                          );
+                        ? getPlanPricingInCHF(planKey, 'monthly')
+                        : calculateMonthlyPricing(plan.pricing.annual);
 
                     return (
                       <th
@@ -569,7 +591,7 @@ export function Pricing() {
                               isFeatured ? 'text-red-500' : 'text-gray-500'
                             }`}
                           >
-                            {plan.name.toUpperCase()}
+                            {plan.displayName.toUpperCase()}
                           </span>
                           <div className="text-center">
                             <div className="flex items-baseline justify-center">
@@ -620,7 +642,7 @@ export function Pricing() {
                               >
                                 {activePeriod === 'Monthly'
                                   ? t('billedMonthly')
-                                  : `${t('billedAnnually')} (${currencySymbol}${plan.annualPrice})`}
+                                  : `${t('billedAnnually')} (${currencySymbol}${getPlanPricingInCHF(planKey, 'annual')})`}
                               </motion.div>
                             </AnimatePresence>
                           </div>
@@ -631,13 +653,14 @@ export function Pricing() {
                 </tr>
               </thead>
               <tbody>
-                {featureComparisonData.map((row, index) => {
-                  const isLastRow = index === featureComparisonData.length - 1;
+                {comparisonData.features.map((row, index) => {
+                  const isLastRow =
+                    index === comparisonData.features.length - 1;
                   const planValues = [
-                    row.free,
-                    row.freelancer,
-                    row.business,
-                    row.enterprise,
+                    row.values.free,
+                    row.values.freelancer,
+                    row.values.business,
+                    row.values.enterprise,
                   ];
 
                   return (
@@ -653,7 +676,7 @@ export function Pricing() {
                           isLastRow ? 'rounded-bl-3xl' : ''
                         )}
                       >
-                        {getFeatureTranslation(row.featureKey)}
+                        {getFeatureTranslation(row.key)}
                       </td>
                       {pricingPlans.map((plan, planIndex) => {
                         const isLast = planIndex === pricingPlans.length - 1;

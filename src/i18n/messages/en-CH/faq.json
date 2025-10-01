@@ -13,11 +13,11 @@
     },
     "whatIsPayMatch": {
       "question": "What is PayMatch?",
-      "answer": "PayMatch is a Swiss QR-bill invoicing platform designed specifically for Swiss businesses. It helps you create, send, and reconcile Swiss QR-bill compliant invoices effortlessly, with built-in payment matching and Swiss tax compliance features."
+      "answer": "PayMatch is a Swiss QR-bill invoicing platform designed exclusively for Swiss businesses. It helps you create, send, and reconcile Swiss QR-bill compliant invoices effortlessly, with built-in payment matching and Swiss tax compliance features."
     },
     "whoCanUse": {
       "question": "Who can use PayMatch?",
-      "answer": "PayMatch is designed for Swiss businesses, freelancers, and SMEs who need to create Swiss QR-bill compliant invoices. We support businesses in Switzerland, Germany, France, and Italy, with plans for individual freelancers and enterprise teams."
+      "answer": "PayMatch is designed exclusively for Swiss businesses, freelancers, and SMEs who need to create Swiss QR-bill compliant invoices. We support businesses registered in Switzerland with plans for individual freelancers and enterprise teams."
     },
     "pricingPlans": {
       "question": "What pricing plans do you offer?",
@@ -49,7 +49,7 @@
     },
     "invoiceLanguages": {
       "question": "What languages are supported for invoices?",
-      "answer": "We support German, French, Italian, and English for invoice creation. The Swiss QR-bill section is automatically generated in the appropriate language based on your client's location."
+      "answer": "We support Swiss German (de-CH) and Swiss English (en-CH) for invoice creation. The Swiss QR-bill section is automatically generated in the appropriate language based on your client's location."
     },
     "recurringInvoices": {
       "question": "Can I create recurring invoices?",
@@ -57,7 +57,7 @@
     },
     "paymentMethods": {
       "question": "What payment methods do you support?",
-      "answer": "We support all major Swiss payment methods including bank transfers, credit cards, and digital wallets. Payments are processed securely through Stripe with Swiss banking integration."
+      "answer": "We support all major Swiss payment methods including bank transfers, credit cards, and digital wallets. All payments are processed in Swiss Francs (CHF) through Stripe with Swiss banking integration."
     },
     "paymentMatching": {
       "question": "How does payment matching work?",
@@ -85,7 +85,7 @@
     },
     "apiAccess": {
       "question": "Do you provide API access?",
-      "answer": "API access is available for Business and Enterprise plans. Our REST API allows you to integrate PayMatch with your existing business systems and automate invoice creation."
+      "answer": "API access is not currently available. We focus on providing a comprehensive web-based solution for Swiss businesses with all necessary features built-in."
     },
     "qrBillCompliance": {
       "question": "Is PayMatch Swiss QR-bill compliant?",
@@ -113,7 +113,7 @@
     },
     "currenciesSupported": {
       "question": "What currencies does PayMatch support?",
-      "answer": "PayMatch supports Swiss Francs (CHF) and Euros (EUR), which covers the majority of Swiss and European business transactions. All currency conversions and calculations are handled automatically."
+      "answer": "PayMatch exclusively supports Swiss Francs (CHF), which is the standard currency for Swiss business transactions. All pricing, invoicing, and payment processing is handled in CHF."
     },
     "paymentReconciliationHomepage": {
       "question": "How does payment reconciliation work?",

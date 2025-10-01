@@ -139,43 +139,43 @@ export default getRequestConfig(async ({ requestLocale }) => {
         validationMessages,
         pwaMessages,
       ] = await Promise.all([
-        import(`./messages/en/common.json`)
+        import(`./messages/en-CH/common.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/utils.json`)
+        import(`./messages/en-CH/utils.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/legal/index.json`)
+        import(`./messages/en-CH/legal/index.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/legal/privacy.json`)
+        import(`./messages/en-CH/legal/privacy.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/legal/terms.json`)
+        import(`./messages/en-CH/legal/terms.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/legal/cookies.json`)
+        import(`./messages/en-CH/legal/cookies.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/legal/gdpr.json`)
+        import(`./messages/en-CH/legal/gdpr.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/legal/imprint.json`)
+        import(`./messages/en-CH/legal/imprint.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/support.json`)
+        import(`./messages/en-CH/support.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/faq.json`)
+        import(`./messages/en-CH/faq.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/index.json`)
+        import(`./messages/en-CH/index.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/validation.json`)
+        import(`./messages/en-CH/validation.json`)
           .then((m) => m.default)
           .catch(() => ({})),
-        import(`./messages/en/pwa.json`)
+        import(`./messages/en-CH/pwa.json`)
           .then((m) => m.default)
           .catch(() => ({})),
       ]);
@@ -222,15 +222,15 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale,
     messages,
 
-    // Time zone for Swiss market
+    // Swiss time zone and formatting
     timeZone: 'Europe/Zurich',
 
-    // Global formats for consistent formatting
+    // Swiss-specific formats for consistent Swiss formatting
     formats: {
       dateTime: {
         short: {
-          day: 'numeric',
-          month: 'short',
+          day: '2-digit',
+          month: '2-digit',
           year: 'numeric',
         },
         medium: {
@@ -244,6 +244,15 @@ export default getRequestConfig(async ({ requestLocale }) => {
           month: 'long',
           year: 'numeric',
         },
+        full: {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZoneName: 'short',
+        },
       },
       number: {
         currency: {
@@ -255,6 +264,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
         currencyEUR: {
           style: 'currency',
           currency: 'EUR',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        },
+        decimal: {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         },

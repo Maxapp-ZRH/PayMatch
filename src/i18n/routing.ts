@@ -2,19 +2,19 @@
  * Internationalization Routing Configuration
  *
  * Defines supported locales and routing behavior for the PayMatch application.
- * Supports Swiss market with German, French, Italian, and English languages.
+ * Supports Swiss market with German and English languages (Switzerland only).
  */
 
 import { defineRouting } from 'next-intl/routing';
 
 export const routing = defineRouting({
-  // Supported locales for Swiss market
-  locales: ['en', 'de-CH'],
+  // Supported locales for Swiss market (Switzerland only)
+  locales: ['en-CH', 'de-CH'],
 
-  // Default locale (English)
-  defaultLocale: 'en',
+  // Default locale (Swiss English)
+  defaultLocale: 'en-CH',
 
-  // Locale prefix strategy
+  // Locale prefix strategy - no prefix for default locale
   localePrefix: 'as-needed', // Only add prefix when not default locale
 
   // Locale detection settings
@@ -34,48 +34,48 @@ export const routing = defineRouting({
 
     // Authentication
     '/login': {
-      en: '/login',
+      'en-CH': '/login',
       'de-CH': '/anmelden',
     },
     '/register': {
-      en: '/register',
+      'en-CH': '/register',
       'de-CH': '/registrieren',
     },
 
     // Legal pages
     '/privacy': {
-      en: '/privacy',
+      'en-CH': '/privacy',
       'de-CH': '/datenschutz',
     },
     '/terms': {
-      en: '/terms',
+      'en-CH': '/terms',
       'de-CH': '/agb',
     },
     '/imprint': {
-      en: '/imprint',
+      'en-CH': '/imprint',
       'de-CH': '/impressum',
     },
     '/cookies': {
-      en: '/cookies',
+      'en-CH': '/cookies',
       'de-CH': '/cookies',
     },
     '/gdpr': {
-      en: '/gdpr',
+      'en-CH': '/gdpr',
       'de-CH': '/dsgvo',
     },
 
     // Main pages
     '/support': {
-      en: '/support',
+      'en-CH': '/support',
       'de-CH': '/support',
     },
-    '/downloads': {
-      en: '/downloads',
-      'de-CH': '/downloads',
+    '/pwa': {
+      'en-CH': '/pwa',
+      'de-CH': '/pwa',
     },
-    '/brand': {
-      en: '/brand',
-      'de-CH': '/marke',
+    '/integrations': {
+      'en-CH': '/integrations',
+      'de-CH': '/integrationen',
     },
   },
 });

@@ -38,8 +38,7 @@ import {
 
 import { Container } from '@/components/marketing_pages/Container';
 import { Button } from '@/components/marketing_pages/Button';
-import FileUpload, { type FileData } from '@/components/ui/FileUpload';
-import { Tooltip } from '@/components/ui/Tooltip';
+import FileUpload, { type FileData } from '@/components/common/FileUpload';
 import {
   supportFormSchema,
   supportCategories,
@@ -642,7 +641,6 @@ export default function SupportPage() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [attachments, setAttachments] = useState<FileData[]>([]);
-  const [showTooltips, setShowTooltips] = useState(false);
 
   const {
     register,
@@ -672,7 +670,6 @@ export default function SupportPage() {
   const onSubmit = async (data: SupportFormData) => {
     setIsSubmitting(true);
     setErrorMessage('');
-    setShowTooltips(false);
 
     try {
       // Include attachments in the form data
@@ -706,7 +703,6 @@ export default function SupportPage() {
         error instanceof Error ? error.message : tForm('modals.error.message')
       );
       setShowErrorModal(true);
-      setShowTooltips(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -1014,31 +1010,22 @@ export default function SupportPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-start space-x-3">
-                    <Tooltip
-                      content={
-                        errors.consent
-                          ? tValidation(errors.consent.message || '')
-                          : ''
-                      }
-                      disabled={!(errors.consent && showTooltips)}
-                    >
-                      <div className="flex items-center">
-                        <input
-                          {...register('consent')}
-                          type="checkbox"
-                          id="consent"
-                          className={`h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 rounded border-gray-300 text-red-500 focus:ring-2 focus:ring-red-200 ${
-                            errors.consent
-                              ? 'border-red-500 ring-2 ring-red-200'
-                              : 'border-gray-300'
-                          }`}
-                          aria-invalid={!!errors.consent}
-                          aria-describedby={
-                            errors.consent ? 'consent-error' : undefined
-                          }
-                        />
-                      </div>
-                    </Tooltip>
+                    <div className="flex items-center">
+                      <input
+                        {...register('consent')}
+                        type="checkbox"
+                        id="consent"
+                        className={`h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 rounded border-gray-300 text-red-500 focus:ring-2 focus:ring-red-200 ${
+                          errors.consent
+                            ? 'border-red-500 ring-2 ring-red-200'
+                            : 'border-gray-300'
+                        }`}
+                        aria-invalid={!!errors.consent}
+                        aria-describedby={
+                          errors.consent ? 'consent-error' : undefined
+                        }
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <label
                         htmlFor="consent"
@@ -1063,7 +1050,7 @@ export default function SupportPage() {
                       </label>
                     </div>
                   </div>
-                  {errors.consent && !showTooltips && (
+                  {errors.consent && (
                     <div className="ml-7">
                       <p
                         id="consent-error"

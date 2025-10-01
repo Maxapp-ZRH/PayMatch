@@ -14,7 +14,6 @@ import {
   CreditCard,
   Mail,
   QrCode,
-  Code,
 } from 'lucide-react';
 
 import { Container } from '@/components/marketing_pages/Container';
@@ -85,19 +84,6 @@ const getIntegrations = (t: (key: string) => string) => [
     icon: <QrCode className="w-6 h-6" />,
     status: 'available',
     color: 'red',
-  },
-  {
-    name: t('integrations.api.name'),
-    description: t('integrations.api.description'),
-    features: [
-      t('integrations.api.features.restful'),
-      t('integrations.api.features.webhooks'),
-      t('integrations.api.features.documentation'),
-      t('integrations.api.features.sdk'),
-    ],
-    icon: <Code className="w-6 h-6" />,
-    status: 'coming-soon',
-    color: 'gray',
   },
 ];
 

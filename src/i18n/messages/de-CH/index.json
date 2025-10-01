@@ -212,6 +212,7 @@
       "reportsDataExports": "Berichte / Datenexporte",
       "brandingControl": "Branding-Kontrolle",
       "teamManagement": "Team-Management",
+      "storage": "Speicher",
       "support": "Support",
       "unlimited": "Unbegrenzt",
       "basic": "Basis",
@@ -226,6 +227,8 @@
         "description": "Perfekt für den Einstieg in die Schweizer Rechnungsstellung.",
         "features": [
           "5 Rechnungen pro Monat",
+          "10 Kunden",
+          "5 MB Speicher",
           "Swiss QR-Bill-Generierung",
           "Zahlungsabgleich",
           "Community-Support"
@@ -235,11 +238,12 @@
         "name": "Freelancer",
         "description": "Für Solo-Profis, die Rechnungsstellung ohne Grenzen wollen.",
         "features": [
-          "Unbegrenzte Rechnungen & Kunden",
+          "Unbegrenzte Rechnungen",
+          "50 Kunden max",
+          "50 MB Speicher",
           "Swiss QR-Bill-Generierung",
           "Zahlungsabgleich",
-          "Prioritäts-Support",
-          "Keine Funktionsbeschränkungen"
+          "Prioritäts-Support"
         ]
       },
       "business": {
@@ -247,10 +251,11 @@
         "description": "Für KMU und Treuhänder, die Zusammenarbeit und mehr Funktionen benötigen.",
         "features": [
           "Alles aus Freelancer",
+          "Unbegrenzte Kunden",
+          "100 MB Speicher",
           "Team-Management (10 Benutzer)",
           "Erweiterte Erinnerungen",
           "Branding-Kontrolle",
-          "Organisations-Dashboard",
           "Erweiterte Berichte"
         ]
       },
@@ -260,6 +265,7 @@
         "features": [
           "Alles aus Business",
           "Unbegrenzte Benutzer",
+          "150 MB Speicher",
           "Dedizierter Support / SLA",
           "Erweiterte Sicherheit",
           "Früher Zugang zu KI-Funktionen",
@@ -292,7 +298,7 @@
     },
     "integrations": {
       "blink": {
-        "name": "bLink Open Banking",
+        "name": "bLink Open Banking (Bald verfügbar)",
         "description": "Echtzeit-Zahlungsabgleich mit Schweizer Banken über den offiziellen bLink Standard.",
         "features": {
           "realTime": "Echtzeit-Zahlungserkennung",
@@ -339,16 +345,6 @@
           "compliant": "QR-Bill Standard",
           "pdf": "PDF-Generierung",
           "multilingual": "Mehrsprachige Unterstützung"
-        }
-      },
-      "api": {
-        "name": "REST API",
-        "description": "Umfassende API für benutzerdefinierte Integrationen und Automatisierung.",
-        "features": {
-          "restful": "RESTful Endpoints",
-          "webhooks": "Echtzeit-Webhooks",
-          "documentation": "Vollständige Dokumentation",
-          "sdk": "SDK-Unterstützung"
         }
       }
     },

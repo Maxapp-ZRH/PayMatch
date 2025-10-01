@@ -25,9 +25,9 @@
   },
   "form": {
     "title": "Support erhalten",
-    "subtitle": "Wir sind hier, um zu helfen! Finden Sie Antworten in unserem FAQ-Bereich oder senden Sie uns eine Nachricht und wir melden uns so schnell wie möglich bei Ihnen.",
+    "subtitle": "Wir sind hier, um Schweizer Unternehmen zu helfen! Finden Sie Antworten in unserem FAQ-Bereich oder senden Sie uns eine Nachricht und wir melden uns so schnell wie möglich bei Ihnen.",
     "stillNeedHelp": "Brauchen Sie noch Hilfe?",
-    "formSubtitle": "Senden Sie uns eine Nachricht und unser Team meldet sich innerhalb von 24 Stunden bei Ihnen.",
+    "formSubtitle": "Senden Sie uns eine Nachricht und unser schweizfokussiertes Support-Team meldet sich innerhalb von 24 Stunden bei Ihnen.",
     "sections": {
       "personalInfo": "Persönliche Informationen",
       "issueDetails": "Problemdetails",
@@ -87,7 +87,7 @@
     "categories": {
       "general": {
         "label": "Allgemeine Anfrage",
-        "description": "Allgemeine Fragen zu PayMatch"
+        "description": "Allgemeine Fragen zu PayMatch für Schweizer Unternehmen"
       },
       "technical": {
         "label": "Technischer Support",
@@ -95,7 +95,7 @@
       },
       "billing": {
         "label": "Abrechnung & Zahlungen",
-        "description": "Fragen zu Preisen oder Zahlungen"
+        "description": "Fragen zu CHF-Preisen oder Schweizer Zahlungsmethoden"
       },
       "feature-request": {
         "label": "Funktionsanfrage",
@@ -111,7 +111,7 @@
       },
       "integration": {
         "label": "Integrationshilfe",
-        "description": "Hilfe bei Drittanbieter-Integrationen"
+        "description": "Hilfe bei Schweizer Bank- und Zahlungsintegrationen"
       },
       "other": {
         "label": "Sonstiges",
@@ -163,7 +163,7 @@
     "modals": {
       "success": {
         "title": "Nachricht erfolgreich gesendet!",
-        "message": "Vielen Dank für Ihre Kontaktaufnahme. Wir haben Ihre Nachricht erhalten und unser Team wird sich innerhalb von 24 Stunden bei Ihnen melden.",
+        "message": "Vielen Dank für Ihre Kontaktaufnahme. Wir haben Ihre Nachricht erhalten und unser schweizfokussiertes Support-Team wird sich innerhalb von 24 Stunden bei Ihnen melden.",
         "responseTime": "Typische Antwortzeit: 24 Stunden",
         "button": "Verstanden, danke!"
       },
