@@ -10,29 +10,118 @@ This document outlines the complete user onboarding experience from signup to fi
 
 ### User Journey
 
-- User signs up (email + password or SSO)
-- System creates organization (default plan = none yet)
-- User receives verification email
+- User signs up with email + password using Supabase Auth
+- System creates organization automatically (default plan = free)
+- User receives verification email via Resend
 - After verifying → redirected to Plan Selection
 
 ### Technical Implementation
 
 ```typescript
-// Signup flow
-POST /api/auth/signup
-{
-  "email": "user@example.com",
-  "password": "secure_password",
-  "name": "John Doe"
-}
+// Signup flow using Supabase Auth
+import { createClient } from '@/lib/supabase/client'
+
+const supabase = createClient()
+
+// User signup
+const { data, error } = await supabase.auth.signUp({
+  email: 'user@example.com',
+  password: 'secure_password',
+  options: {
+    data: {
+      name: 'John Doe'
+    }
+  }
+})
 
 // Response
 {
-  "user_id": "uuid",
-  "org_id": "uuid",
-  "verification_sent": true,
-  "next_step": "verify_email"
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "email_confirmed_at": null,
+    "user_metadata": {
+      "name": "John Doe"
+    }
+  },
+  "session": null, // Will be set after email verification
+  "organization": {
+    "id": "uuid",
+    "name": "John Doe's Organization",
+    "plan": "free"
+  }
 }
+```
+
+### Email Verification Flow
+
+```typescript
+// Email verification using Resend
+// Supabase automatically sends verification email via Resend
+// User clicks link in email → redirected to /auth/callback
+
+// Callback handler
+export async function GET(request: Request) {
+  const { searchParams, origin } = new URL(request.url);
+  const code = searchParams.get('code');
+  const next = searchParams.get('next') ?? '/dashboard';
+
+  if (code) {
+    const supabase = createClient();
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (!error) {
+      // Create organization for user
+      await createUserOrganization();
+
+      // Redirect to plan selection
+      return NextResponse.redirect(`${origin}/plan-selection`);
+    }
+  }
+
+  // Error redirect
+  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
+}
+```
+
+### Password Reset Flow
+
+```typescript
+// Password reset using Supabase Auth + Resend
+import { createClient } from '@/lib/supabase/client';
+
+const supabase = createClient();
+
+// Request password reset
+const { error } = await supabase.auth.resetPasswordForEmail(
+  'user@example.com',
+  {
+    redirectTo: `${origin}/auth/reset-password`,
+  }
+);
+
+// Password reset handler
+export async function POST(request: Request) {
+  const { email } = await request.json();
+
+  const supabase = createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/auth/reset-password`,
+  });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  return NextResponse.json({
+    message: 'Password reset email sent',
+  });
+}
+
+// Update password after reset
+const { error } = await supabase.auth.updateUser({
+  password: 'new_password',
+});
 ```
 
 ---
@@ -277,6 +366,76 @@ const checklistItems: ChecklistItem[] = [
 
 ## 6. Technical Implementation
 
+### Supabase Auth Configuration
+
+```typescript
+// src/lib/supabase/client.ts
+import { createBrowserClient } from '@supabase/ssr';
+
+export function createClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
+
+// src/lib/supabase/server.ts
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+
+export function createClient() {
+  const cookieStore = cookies();
+
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            );
+          } catch {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
+      },
+    }
+  );
+}
+```
+
+### Resend Email Configuration
+
+```typescript
+// src/lib/resend.ts
+import { Resend } from 'resend';
+
+export const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Email templates
+export const emailTemplates = {
+  verification: {
+    subject: 'Verify your PayMatch account',
+    from: 'PayMatch <noreply@paymatch.ch>',
+  },
+  passwordReset: {
+    subject: 'Reset your PayMatch password',
+    from: 'PayMatch <noreply@paymatch.ch>',
+  },
+  welcome: {
+    subject: 'Welcome to PayMatch!',
+    from: 'PayMatch <noreply@paymatch.ch>',
+  },
+};
+```
+
 ### Database Schema Updates
 
 ```sql
@@ -287,11 +446,20 @@ ALTER TABLE organizations ADD COLUMN onboarding_step INTEGER DEFAULT 1;
 -- Checklist progress tracking
 CREATE TABLE user_checklist_progress (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   org_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
   checklist_item_id TEXT NOT NULL,
   completed_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- User profiles (extends auth.users)
+CREATE TABLE user_profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT,
+  avatar_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
 );
 ```
 
@@ -306,7 +474,72 @@ POST /api/orgs/:orgId/checklist/:itemId/complete
 
 // Get checklist items for plan
 GET /api/plans/:planId/checklist-items
+
+// Auth endpoints (handled by Supabase Auth)
+POST /auth/signup
+POST /auth/signin
+POST /auth/signout
+POST /auth/reset-password
+GET /auth/callback
 ```
+
+### Edge Functions for Auth
+
+```typescript
+// supabase/functions/send-verification-email/index.ts
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { Resend } from 'https://esm.sh/resend@2.0.0';
+
+const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+
+serve(async (req) => {
+  const { email, token } = await req.json();
+
+  // Send verification email via Resend
+  const { data, error } = await resend.emails.send({
+    from: 'PayMatch <noreply@paymatch.ch>',
+    to: [email],
+    subject: 'Verify your PayMatch account',
+    html: `
+      <h1>Welcome to PayMatch!</h1>
+      <p>Please verify your email address by clicking the link below:</p>
+      <a href="${Deno.env.get('SUPABASE_URL')}/auth/v1/verify?token=${token}">
+        Verify Email
+      </a>
+    `,
+  });
+
+  return new Response(JSON.stringify({ success: !error }));
+});
+```
+
+### Authentication Flow Summary
+
+```mermaid
+graph TD
+    A[User visits /register] --> B[Fill signup form]
+    B --> C[Supabase Auth signUp]
+    C --> D[Resend sends verification email]
+    D --> E[User clicks email link]
+    E --> F[Redirected to /auth/callback]
+    F --> G[Supabase exchanges code for session]
+    G --> H[Create user organization]
+    H --> I[Redirect to /plan-selection]
+    I --> J[User selects plan]
+    J --> K[Redirect to onboarding wizard]
+    K --> L[Complete company setup]
+    L --> M[Redirect to dashboard]
+```
+
+### Key Benefits of Supabase Auth + Resend
+
+- **No OTP complexity**: Direct email verification links
+- **Swiss compliance**: Resend handles Swiss email regulations
+- **Reliable delivery**: Resend's high deliverability rates
+- **Branded emails**: Custom email templates with PayMatch branding
+- **Security**: Supabase handles all auth security concerns
+- **Scalability**: Built-in rate limiting and abuse prevention
 
 ---
 
@@ -368,6 +601,13 @@ GET /api/plans/:planId/checklist-items
 
 ## 9. Success Metrics
 
+### Authentication Success
+
+- **Email Verification Rate:** 85% verify within 24 hours
+- **Password Reset Success:** 90% successful resets
+- **Auth Error Rate:** < 2% authentication failures
+- **Email Delivery Rate:** 99%+ via Resend
+
 ### Onboarding Completion
 
 - **Target:** 80% complete onboarding wizard
@@ -385,6 +625,7 @@ GET /api/plans/:planId/checklist-items
 - **Time to First Invoice:** < 30 minutes
 - **Checklist Completion:** < 7 days
 - **Feature Adoption:** 70% use core features
+- **Session Duration:** 5+ minutes average
 
 ---
 

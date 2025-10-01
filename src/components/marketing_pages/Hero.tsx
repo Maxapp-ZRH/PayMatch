@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
-import { QRCode } from '@/components/ui/QRCode';
+import { QRCode } from '@/components/common/QRCode';
 import logoBbc from '@/assets/logos/bbc.svg';
 import logoCbs from '@/assets/logos/cbs.svg';
 import logoCnn from '@/assets/logos/cnn.svg';

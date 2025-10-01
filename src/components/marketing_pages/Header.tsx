@@ -13,7 +13,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
 import { NavLinks } from '@/components/marketing_pages/NavLinks';
-import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { Link } from '@/i18n/navigation';
 
 function MenuIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
@@ -145,10 +145,7 @@ export function Header() {
                             <div className="text-sm font-medium text-gray-900 mb-3">
                               Language
                             </div>
-                            <LanguageSwitcher
-                              variant="buttons"
-                              className="w-full"
-                            />
+                            <LanguageSwitcher className="w-full" />
                           </div>
                           <div className="mt-8 flex flex-col gap-4">
                             <Button href="/login" variant="outline">

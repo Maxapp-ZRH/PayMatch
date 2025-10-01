@@ -101,7 +101,8 @@ export function LanguageTransition({
               transition={{ delay: 0.2, duration: 0.5 }}
               className="text-6xl"
             >
-              {fromLanguage === 'en' ? '🇺🇸' : '🇨🇭'}
+              {fromLanguage === 'en-CH' ? '🇨🇭' : '🇨🇭'}{' '}
+              {/* Swiss flag for both languages */}
             </motion.div>
 
             <motion.div
@@ -119,7 +120,8 @@ export function LanguageTransition({
               transition={{ delay: 0.8, duration: 0.5 }}
               className="text-6xl"
             >
-              {toLanguage === 'en' ? '🇺🇸' : '🇨🇭'}
+              {toLanguage === 'en-CH' ? '🇨🇭' : '🇨🇭'}{' '}
+              {/* Swiss flag for both languages */}
             </motion.div>
           </div>
 
@@ -131,12 +133,13 @@ export function LanguageTransition({
             className="mb-8"
           >
             <div className="text-2xl font-semibold text-gray-800 mb-2">
-              Switching to {toLanguage === 'en' ? 'English' : 'Deutsch'}
+              Switching to{' '}
+              {toLanguage === 'en-CH' ? 'Swiss English' : 'Swiss German'}
             </div>
             <div className="text-sm text-gray-600">
-              {toLanguage === 'en'
-                ? 'Switching to English...'
-                : 'Wechseln zu Deutsch...'}
+              {toLanguage === 'en-CH'
+                ? 'Switching to Swiss English...'
+                : 'Wechseln zu Schweizer Deutsch...'}
             </div>
           </motion.div>
 

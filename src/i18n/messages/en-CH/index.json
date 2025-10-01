@@ -212,6 +212,7 @@
       "reportsDataExports": "Reports / Data exports",
       "brandingControl": "Branding control",
       "teamManagement": "Team management",
+      "storage": "Storage",
       "support": "Support",
       "unlimited": "Unlimited",
       "basic": "Basic",
@@ -226,6 +227,8 @@
         "description": "Perfect for getting started with Swiss invoicing.",
         "features": [
           "5 invoices per month",
+          "10 clients",
+          "5 MB storage",
           "Swiss QR-bill generation",
           "Payment reconciliation",
           "Community support"
@@ -235,11 +238,12 @@
         "name": "Freelancer",
         "description": "For solo professionals who want invoicing without limits.",
         "features": [
-          "Unlimited invoices & clients",
+          "Unlimited invoices",
+          "50 clients max",
+          "50 MB storage",
           "Swiss QR-bill generation",
           "Payment reconciliation",
-          "Priority support",
-          "No feature restrictions"
+          "Priority support"
         ]
       },
       "business": {
@@ -247,10 +251,11 @@
         "description": "For SMEs and fiduciaries that need collaboration and more features.",
         "features": [
           "Everything in Freelancer",
+          "Unlimited clients",
+          "100 MB storage",
           "Team management (10 users)",
           "Advanced reminders",
           "Branding control",
-          "Organization dashboard",
           "Advanced reporting"
         ]
       },
@@ -260,6 +265,7 @@
         "features": [
           "Everything in Business",
           "Unlimited users",
+          "150 MB storage",
           "Dedicated support / SLA",
           "Advanced security",
           "Early access to AI features",
@@ -292,7 +298,7 @@
     },
     "integrations": {
       "blink": {
-        "name": "bLink Open Banking",
+        "name": "bLink Open Banking (Upcoming)",
         "description": "Real-time payment reconciliation with Swiss banks using the official bLink standard.",
         "features": {
           "realTime": "Real-time payment detection",
@@ -339,16 +345,6 @@
           "compliant": "QR-bill standard",
           "pdf": "PDF generation",
           "multilingual": "Multi-language support"
-        }
-      },
-      "api": {
-        "name": "REST API",
-        "description": "Comprehensive API for custom integrations and automation.",
-        "features": {
-          "restful": "RESTful endpoints",
-          "webhooks": "Real-time webhooks",
-          "documentation": "Complete documentation",
-          "sdk": "SDK support"
         }
       }
     },

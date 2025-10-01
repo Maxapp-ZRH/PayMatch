@@ -12,7 +12,6 @@ import { Button } from '@/components/marketing_pages/Button';
 import { Container } from '@/components/marketing_pages/Container';
 import { TextField } from '@/components/marketing_pages/Fields';
 import { NavLinks } from '@/components/marketing_pages/NavLinks';
-import { Tooltip } from '@/components/ui/Tooltip';
 import { Link as I18nLink } from '@/i18n/navigation';
 import {
   newsletterSchema,
@@ -26,7 +25,6 @@ export function Footer() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [showTooltips, setShowTooltips] = useState(false);
 
   const {
     register,
@@ -77,18 +75,10 @@ export function Footer() {
     touchedFields,
   ]);
 
-  // Show tooltips when form is submitted with errors
-  useEffect(() => {
-    if (Object.keys(errors).length > 0) {
-      setShowTooltips(true);
-    }
-  }, [errors]);
-
   const onSubmit = async (data: NewsletterFormData) => {
     setIsSubmitting(true);
     setShowError(false);
     setErrorMessage('');
-    setShowTooltips(false);
 
     try {
       const response = await fetch('/api/newsletter', {
@@ -119,7 +109,6 @@ export function Footer() {
           : 'Failed to subscribe to newsletter'
       );
       setShowError(true);
-      setShowTooltips(true); // Show tooltips for validation errors
     } finally {
       setIsSubmitting(false);
     }
@@ -140,7 +129,6 @@ export function Footer() {
     const isValid = validationResults.every((result) => result);
 
     if (!isValid) {
-      setShowTooltips(true);
       // Scroll to first error field
       const firstErrorField = document.querySelector('[aria-invalid="true"]');
       if (firstErrorField) {
@@ -226,14 +214,6 @@ export function Footer() {
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
                       {t('links.pwa')}
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#integrations"
-                      className="text-sm text-gray-600 hover:text-gray-900"
-                    >
-                      {t('links.integrations')}
                     </a>
                   </li>
                 </ul>
@@ -364,28 +344,18 @@ export function Footer() {
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-2">
                   <div className="min-w-0">
-                    <Tooltip
-                      content={
-                        errors.firstName
-                          ? tValidation(errors.firstName.message || '')
-                          : ''
+                    <TextField
+                      {...register('firstName')}
+                      type="text"
+                      aria-label={t('newsletter.firstName')}
+                      placeholder={t('newsletter.firstName')}
+                      autoComplete="given-name"
+                      className={`min-w-0 ${errors.firstName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                      aria-invalid={!!errors.firstName}
+                      aria-describedby={
+                        errors.firstName ? 'firstName-error' : undefined
                       }
-                      variant="error"
-                      disabled={!errors.firstName || !showTooltips}
-                    >
-                      <TextField
-                        {...register('firstName')}
-                        type="text"
-                        aria-label={t('newsletter.firstName')}
-                        placeholder={t('newsletter.firstName')}
-                        autoComplete="given-name"
-                        className={`min-w-0 ${errors.firstName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                        aria-invalid={!!errors.firstName}
-                        aria-describedby={
-                          errors.firstName ? 'firstName-error' : undefined
-                        }
-                      />
-                    </Tooltip>
+                    />
                     {errors.firstName && (
                       <p
                         id="firstName-error"
@@ -396,28 +366,18 @@ export function Footer() {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <Tooltip
-                      content={
-                        errors.lastName
-                          ? tValidation(errors.lastName.message || '')
-                          : ''
+                    <TextField
+                      {...register('lastName')}
+                      type="text"
+                      aria-label={t('newsletter.lastName')}
+                      placeholder={t('newsletter.lastName')}
+                      autoComplete="family-name"
+                      className={`min-w-0 ${errors.lastName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                      aria-invalid={!!errors.lastName}
+                      aria-describedby={
+                        errors.lastName ? 'lastName-error' : undefined
                       }
-                      variant="error"
-                      disabled={!errors.lastName || !showTooltips}
-                    >
-                      <TextField
-                        {...register('lastName')}
-                        type="text"
-                        aria-label={t('newsletter.lastName')}
-                        placeholder={t('newsletter.lastName')}
-                        autoComplete="family-name"
-                        className={`min-w-0 ${errors.lastName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                        aria-invalid={!!errors.lastName}
-                        aria-describedby={
-                          errors.lastName ? 'lastName-error' : undefined
-                        }
-                      />
-                    </Tooltip>
+                    />
                     {errors.lastName && (
                       <p
                         id="lastName-error"
@@ -431,28 +391,16 @@ export function Footer() {
 
                 {/* Email Field */}
                 <div className="w-full">
-                  <Tooltip
-                    content={
-                      errors.email
-                        ? tValidation(errors.email.message || '')
-                        : ''
-                    }
-                    variant="error"
-                    disabled={!errors.email || !showTooltips}
-                  >
-                    <TextField
-                      {...register('email')}
-                      type="email"
-                      aria-label={t('newsletter.email')}
-                      placeholder={t('newsletter.emailPlaceholder')}
-                      autoComplete="email"
-                      className={`w-full ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                      aria-invalid={!!errors.email}
-                      aria-describedby={
-                        errors.email ? 'email-error' : undefined
-                      }
-                    />
-                  </Tooltip>
+                  <TextField
+                    {...register('email')}
+                    type="email"
+                    aria-label={t('newsletter.email')}
+                    placeholder={t('newsletter.emailPlaceholder')}
+                    autoComplete="email"
+                    className={`w-full ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? 'email-error' : undefined}
+                  />
                   {errors.email && (
                     <p id="email-error" className="mt-1 text-xs text-red-600">
                       {tValidation(errors.email.message || '')}
@@ -463,37 +411,26 @@ export function Footer() {
                 {/* Consent Checkbox */}
                 <div className="space-y-2">
                   <div className="flex items-start space-x-3">
-                    <Tooltip
-                      content={
-                        errors.consent
-                          ? tValidation(errors.consent.message || '')
-                          : ''
-                      }
-                      variant="error"
-                      disabled={!errors.consent || !showTooltips}
-                      position="right"
-                    >
-                      <div className="flex items-center">
-                        <input
-                          {...register('consent')}
-                          type="checkbox"
-                          id="newsletter-consent"
-                          className={`h-4 w-4 flex-shrink-0 rounded border-gray-300 text-red-500 focus:ring-2 focus:ring-red-200 ${
-                            errors.consent
-                              ? 'border-red-500 ring-2 ring-red-200'
-                              : 'border-gray-300'
-                          }`}
-                          aria-invalid={!!errors.consent}
-                          aria-describedby={
-                            errors.consent ? 'consent-error' : undefined
-                          }
-                          onChange={(e) => {
-                            setValue('consent', e.target.checked);
-                            trigger('consent');
-                          }}
-                        />
-                      </div>
-                    </Tooltip>
+                    <div className="flex items-center">
+                      <input
+                        {...register('consent')}
+                        type="checkbox"
+                        id="newsletter-consent"
+                        className={`h-4 w-4 flex-shrink-0 rounded border-gray-300 text-red-500 focus:ring-2 focus:ring-red-200 ${
+                          errors.consent
+                            ? 'border-red-500 ring-2 ring-red-200'
+                            : 'border-gray-300'
+                        }`}
+                        aria-invalid={!!errors.consent}
+                        aria-describedby={
+                          errors.consent ? 'consent-error' : undefined
+                        }
+                        onChange={(e) => {
+                          setValue('consent', e.target.checked);
+                          trigger('consent');
+                        }}
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <label
                         htmlFor="newsletter-consent"
@@ -530,38 +467,30 @@ export function Footer() {
                 </div>
 
                 {/* Submit Button */}
-                <Tooltip
-                  content={
-                    !isValid && Object.keys(errors).length > 0
-                      ? 'Please fix the errors above before submitting'
-                      : ''
-                  }
-                  variant="warning"
-                  disabled={isValid || !showTooltips}
+                <Button
+                  type="submit"
+                  color="cyan"
+                  disabled={isSubmitting || !isValid}
+                  className="w-full text-sm sm:text-base"
                 >
-                  <Button
-                    type="submit"
-                    color="cyan"
-                    disabled={isSubmitting || !isValid}
-                    className="w-full text-sm sm:text-base"
-                  >
-                    {isSubmitting ? (
-                      <div className="flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Subscribing...
-                      </div>
-                    ) : (
-                      t('newsletter.subscribe')
-                    )}
-                  </Button>
-                </Tooltip>
+                  {isSubmitting ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Subscribing...
+                    </div>
+                  ) : (
+                    t('newsletter.subscribe')
+                  )}
+                </Button>
               </form>
             </div>
           </div>
 
           {/* Bottom Section */}
           <div className="mt-6 flex flex-col items-center justify-between border-t border-gray-200 pt-6 sm:mt-8 sm:pt-8 md:flex-row">
-            <p className="text-xs text-gray-500 sm:text-sm">{t('copyright')}</p>
+            <p className="text-xs text-gray-500 sm:text-sm">
+              {t('copyright', { year: new Date().getFullYear() })}
+            </p>
             <div className="mt-3 flex items-center space-x-4 sm:mt-4 md:mt-0">
               <p className="text-xs text-gray-500 sm:text-sm">
                 {t('developedBy')}{' '}

@@ -13,11 +13,11 @@
     },
     "whatIsPayMatch": {
       "question": "Was ist PayMatch?",
-      "answer": "PayMatch ist eine Schweizer QR-Rechnungsplattform, die speziell für Schweizer Unternehmen entwickelt wurde. Sie hilft Ihnen dabei, Swiss QR-Bill-konforme Rechnungen mühelos zu erstellen, zu versenden und abzugleichen, mit integrierter Zahlungsabstimmung und Schweizer Steuerkonformität."
+      "answer": "PayMatch ist eine Schweizer QR-Rechnungsplattform, die ausschließlich für Schweizer Unternehmen entwickelt wurde. Sie hilft Ihnen dabei, Swiss QR-Bill-konforme Rechnungen mühelos zu erstellen, zu versenden und abzugleichen, mit integrierter Zahlungsabstimmung und Schweizer Steuerkonformität."
     },
     "whoCanUse": {
       "question": "Wer kann PayMatch verwenden?",
-      "answer": "PayMatch ist für Schweizer Unternehmen, Freelancer und KMU konzipiert, die Swiss QR-Bill-konforme Rechnungen erstellen müssen. Wir unterstützen Unternehmen in der Schweiz, Deutschland, Frankreich und Italien mit Plänen für einzelne Freelancer und Enterprise-Teams."
+      "answer": "PayMatch ist ausschließlich für Schweizer Unternehmen, Freelancer und KMU konzipiert, die Swiss QR-Bill-konforme Rechnungen erstellen müssen. Wir unterstützen Unternehmen, die in der Schweiz registriert sind, mit Plänen für einzelne Freelancer und Enterprise-Teams."
     },
     "pricingPlans": {
       "question": "Welche Preismodelle bieten Sie an?",
@@ -49,7 +49,7 @@
     },
     "invoiceLanguages": {
       "question": "Welche Sprachen werden für Rechnungen unterstützt?",
-      "answer": "Wir unterstützen Deutsch, Französisch, Italienisch und Englisch für die Rechnungserstellung. Der Swiss QR-Bill-Bereich wird automatisch in der entsprechenden Sprache basierend auf dem Standort Ihres Kunden generiert."
+      "answer": "Wir unterstützen Schweizer Deutsch (de-CH) und Schweizer Englisch (en-CH) für die Rechnungserstellung. Der Swiss QR-Bill-Bereich wird automatisch in der entsprechenden Sprache basierend auf dem Standort Ihres Kunden generiert."
     },
     "recurringInvoices": {
       "question": "Kann ich wiederkehrende Rechnungen erstellen?",
@@ -57,7 +57,7 @@
     },
     "paymentMethods": {
       "question": "Welche Zahlungsmethoden unterstützen Sie?",
-      "answer": "Wir unterstützen alle wichtigen Schweizer Zahlungsmethoden einschließlich Banküberweisungen, Kreditkarten und digitalen Geldbörsen. Zahlungen werden sicher über Stripe mit Schweizer Bankintegration verarbeitet."
+      "answer": "Wir unterstützen alle wichtigen Schweizer Zahlungsmethoden einschließlich Banküberweisungen, Kreditkarten und digitalen Geldbörsen. Alle Zahlungen werden in Schweizer Franken (CHF) über Stripe mit Schweizer Bankintegration verarbeitet."
     },
     "paymentMatching": {
       "question": "Wie funktioniert die Zahlungsabstimmung?",
@@ -85,7 +85,7 @@
     },
     "apiAccess": {
       "question": "Bieten Sie API-Zugang?",
-      "answer": "API-Zugang ist für Business- und Enterprise-Pläne verfügbar. Unsere REST-API ermöglicht es Ihnen, PayMatch in Ihre bestehenden Geschäftssysteme zu integrieren und die Rechnungserstellung zu automatisieren."
+      "answer": "API-Zugang ist derzeit nicht verfügbar. Wir konzentrieren uns darauf, eine umfassende webbasierte Lösung für Schweizer Unternehmen mit allen notwendigen Funktionen zu bieten."
     },
     "qrBillCompliance": {
       "question": "Ist PayMatch Swiss QR-Bill-konform?",
@@ -113,7 +113,7 @@
     },
     "currenciesSupported": {
       "question": "Welche Währungen unterstützt PayMatch?",
-      "answer": "PayMatch unterstützt Schweizer Franken (CHF) und Euro (EUR), was die Mehrheit der Schweizer und europäischen Geschäftstransaktionen abdeckt. Alle Währungsumrechnungen und -berechnungen werden automatisch durchgeführt."
+      "answer": "PayMatch unterstützt ausschließlich Schweizer Franken (CHF), die Standardwährung für Schweizer Geschäftstransaktionen. Alle Preisgestaltung, Rechnungserstellung und Zahlungsabwicklung erfolgt in CHF."
     },
     "paymentReconciliationHomepage": {
       "question": "Wie funktioniert die Zahlungsabstimmung?",

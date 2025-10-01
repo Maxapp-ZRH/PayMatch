@@ -31,7 +31,7 @@ Since **September 2022**, QR-bills are mandatory in Switzerland, replacing old p
 1. **Invoice Creation & Sending**
    - **Swiss QR-bill generation** for compliant invoice creation and management.
    - **PDF generation** with integrated Swiss QR-bill codes.
-   - Branded invoices in DE/FR/IT/EN.
+   - Branded invoices in Swiss German and Swiss English.
    - Recurring invoices for rent, subscriptions, or member fees.
    - **Swiss tax calculations** for automatic compliance.
 
@@ -44,7 +44,7 @@ Since **September 2022**, QR-bills are mandatory in Switzerland, replacing old p
 
 3. **Business Features**
    - Client & project tracking.
-   - Multi-currency support (CHF, EUR).
+   - Swiss currency support (CHF only).
    - **Resend** for all email communications (auth, invoices, reminders).
    - **Swiss QR-bill** for complete invoice lifecycle management.
 
@@ -56,7 +56,7 @@ Since **September 2022**, QR-bills are mandatory in Switzerland, replacing old p
 - **Simplicity first:** Easy for freelancers; powerful enough for SMEs.
 - **Affordable:** Fraction of ERP costs (CHF 10–30/month).
 - **Bank-ready:** Real-time payment reconciliation via Open Banking (bLink) across all major Swiss banks.
-- **Multilingual:** DE, FR, IT, EN out of the box.
+- **Multilingual:** Swiss German (de-CH) and Swiss English (en-CH).
 
 ---
 
@@ -653,40 +653,36 @@ supabase/functions/
 
 ---
 
-## 8.5. Regional Strategy & Market Focus
+## 8.5. Switzerland-Only Market Focus
 
 **Geographic Focus:**
 
-- **Primary Market:** Switzerland (CHF, German/French/Italian/English)
-- **Secondary Markets:** France, Italy (EUR, local languages)
-- **Region Locking:** App restricted to Switzerland + France/Italy regions
+- **Primary Market:** Switzerland only (CHF, German/English)
+- **Region Locking:** App restricted to Switzerland region only
+- **Language Support:** Swiss German (de-CH) and Swiss English (en-CH)
 
-**Why Region Locking:**
+**Why Switzerland-Only:**
 
-- **Compliance:** Swiss QR-bill and EU invoicing regulations are complex and region-specific
-- **Support Quality:** Native language support and local business hours
-- **Payment Processing:** Stripe Tax optimized for specific tax jurisdictions
-- **Legal Requirements:** Each country has unique invoicing and tax requirements
-- **Market Validation:** Focus on proving product-market fit in core markets first
+- **Compliance:** Swiss QR-bill regulations are complex and unique to Switzerland
+- **Support Quality:** Native Swiss language support and local business hours
+- **Payment Processing:** Optimized for Swiss banking and QR-bill standards
+- **Legal Requirements:** Swiss invoicing and tax requirements are highly specific
+- **Market Focus:** Concentrate on dominating the Swiss SME market first
 
-**Regional Features:**
+**Swiss-Specific Features:**
 
-- **Switzerland:** Full QR-bill compliance, Swiss tax rates, multi-language (DE/FR/IT/EN)
-- **France:** EU invoicing standards, French tax rates, French language
-- **Italy:** EU invoicing standards, Italian tax rates, Italian language
-
-**Expansion Strategy:**
-
-1. **Phase 1:** Dominate Swiss market (CHF, QR-bill focus)
-2. **Phase 2:** Add France (EUR, EU standards, French language)
-3. **Phase 3:** Add Italy (EUR, EU standards, Italian language)
+- **Switzerland:** Full QR-bill compliance, Swiss tax rates, Swiss German/English
+- **Currency:** CHF only (no EUR support)
+- **Banking:** Swiss Open Banking (bLink) integration
+- **Compliance:** Swiss VAT rates, Swiss business regulations
+- **Language:** Swiss German (de-CH) and Swiss English (en-CH)
 
 **Technical Implementation:**
 
-- **IP Geolocation:** Block signups from outside target regions
-- **Currency Restrictions:** CHF for Switzerland, EUR for EU markets
-- **Language Detection:** Auto-detect and default to local language
-- **Tax Configuration:** Region-specific tax rates and compliance rules
+- **IP Geolocation:** Block signups from outside Switzerland
+- **Currency Restrictions:** CHF only
+- **Language Detection:** Auto-detect Swiss users → de-CH, others → en-CH
+- **Tax Configuration:** Swiss-specific tax rates and compliance rules
 
 ---
 
@@ -699,7 +695,7 @@ supabase/functions/
 - **Stripe Billing:** Subscription management for Freelancer (CHF 5/month), Business (CHF 50/month), and Enterprise (CHF 150/month) plans
 - **Stripe Customer Portal:** Self-service subscription management
 - **Stripe Webhooks:** Real-time subscription events (created, updated, cancelled)
-- **Multi-currency Support:** CHF and EUR for subscription billing
+- **Swiss Currency Support:** CHF only for subscription billing
 
 ### Invoice Payments (Swiss QR-Bill)
 
@@ -732,7 +728,7 @@ supabase/functions/
 - **Invoice Payments:** Swiss QR-bill for direct bank transfers
 - **Email Service:** Resend for all transactional emails (auth, invoices, reminders)
 - **QR-bill:** `node-swiss-qr-bill` for Swiss compliance integration
-- **Bank Integration:** Open Banking (bLink) for real-time payments, ISO 20022 (CAMT.053) as fallback
+- **Bank Integration:** Swiss Open Banking (bLink) for real-time payments, ISO 20022 (CAMT.053) as fallback
 - **Hosting:** Vercel (frontend), Supabase (backend & database)
 - **Type Safety:** TypeScript with generated database types
 
@@ -747,17 +743,17 @@ supabase/functions/
 ✅ Core Edge Functions (QR-bill, invoice processing)
 
 **Phase 2 (Launch – 6 months)**  
-✅ Open Banking (bLink) integration (Edge Functions)  
+✅ Swiss Open Banking (bLink) integration (Edge Functions)  
 ✅ CAMT.053 reconciliation (Edge Functions) as fallback  
 ✅ Recurring invoices  
-✅ Multi-language support  
+✅ Swiss German/English language support  
 ✅ Email notification system (Edge Functions)  
 ✅ Stripe webhook integration (Edge Functions)
 
 **Phase 3 (Scale – 12 months)**  
-✅ Advanced Open Banking features (multi-bank support)  
+✅ Advanced Swiss Open Banking features (multi-bank support)  
 ✅ Mobile app  
-✅ White-label for fiduciaries  
+✅ White-label for Swiss fiduciaries  
 ✅ Advanced analytics (Edge Functions)  
 ✅ AI-powered payment matching (Edge Functions)
 
@@ -777,8 +773,8 @@ supabase/functions/
 
 ## 12. Exit Potential
 
-- **Acquisition:** Swiss banks, fiduciary networks, ERP firms (Bexio, Abacus).
-- **IPO/Scale:** European expansion (SEPA invoicing + PSD2).
+- **Acquisition:** Swiss banks, Swiss fiduciary networks, Swiss ERP firms (Bexio, Abacus).
+- **IPO/Scale:** Swiss market dominance with potential for European expansion.
 
 ---
 
@@ -787,7 +783,7 @@ supabase/functions/
 1. **Presentation Layer (Frontend):** Web app → invoices, dashboard, reconciliation.
 2. **Application Layer (Edge Functions):** Invoice/QR generation, reconciliation logic, webhooks, email notifications.
 3. **Data Layer (DB/Storage):** Invoices, clients, users, CAMT.053, PDFs.
-4. **Integration Layer:** Open Banking (bLink), banks (CAMT.053, EBICS, APIs), email/SMS, Stripe billing.
+4. **Integration Layer:** Swiss Open Banking (bLink), Swiss banks (CAMT.053, EBICS, APIs), email/SMS, Stripe billing.
 
 ---
 
@@ -804,11 +800,11 @@ supabase/functions/
 
 **Phase 1 – MVP (Open Banking Integration → Real-Time Matching)**
 
-- Sign up & onboard → Add client → Create invoice → Send → Client pays → Open Banking (bLink) automatically detects payment → Real-time reconciliation → Dashboard updates → Send reminders.
+- Sign up & onboard → Add client → Create invoice → Send → Client pays → Swiss Open Banking (bLink) automatically detects payment → Real-time reconciliation → Dashboard updates → Send reminders.
 
 **Phase 2 – Advanced Automation (Multi-Bank → AI-Powered)**
 
-- Multi-bank Open Banking integration → AI-powered payment matching → Real-time cash flow dashboard → Automated bulk reminders → Predictive analytics.
+- Multi-bank Swiss Open Banking integration → AI-powered payment matching → Real-time cash flow dashboard → Automated bulk reminders → Predictive analytics.
 
 ---
 
@@ -828,7 +824,7 @@ supabase/functions/
 - Saves time (hours → minutes).
 - Reduces errors (structured QR reference).
 - Cash flow visibility (know who paid).
-- Professional invoices (branded, multilingual).
+- Professional invoices (branded, Swiss German/English).
 - Scales across freelancers, SMEs, associations, accountants.
 
 ---

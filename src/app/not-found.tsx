@@ -4,7 +4,9 @@ import { Container } from '@/components/marketing_pages/Container';
 
 export default function NotFound() {
   return (
-    <html lang="en">
+    <html lang="en-CH">
+      {' '}
+      {/* Swiss English default */}
       <body>
         <Container className="relative isolate flex h-full flex-col items-center justify-center py-20 text-center sm:py-32">
           <CirclesBackground className="absolute top-1/2 left-1/2 -z-10 mt-44 w-272.5 -translate-x-1/2 -translate-y-1/2 mask-[linear-gradient(to_bottom,white_20%,transparent_75%)] stroke-gray-300/30" />

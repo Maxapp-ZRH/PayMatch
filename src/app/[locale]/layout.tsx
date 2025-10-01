@@ -17,9 +17,9 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import '@/styles/tailwind.css';
-import { ScrollToTop } from '@/components/ui/ScrollToTop';
-import { BannerManager } from '@/components/ui/BannerManager';
-import { PageTransitionWrapper } from '@/components/ui/PageTransitionWrapper';
+import { ScrollToTop } from '@/components/common/ScrollToTop';
+import { BannerManager } from '@/components/common/BannerManager';
+import { PageTransitionWrapper } from '@/components/common/PageTransitionWrapper';
 
 const geistSans = GeistSans;
 
@@ -77,7 +77,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     openGraph: {
       type: 'website',
-      locale: locale === 'en' ? 'en_US' : `${locale}_CH`,
+      locale: locale === 'en-CH' ? 'en_CH' : 'de_CH', // Swiss locales only
       url: 'https://paymatch.app',
       siteName: 'PayMatch',
       title: 'PayMatch - Swiss QR-bill invoicing made simple',
