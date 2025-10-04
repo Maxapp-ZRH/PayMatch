@@ -14,7 +14,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/marketing_pages/Button';
 import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
 import { sendPasswordResetEmail } from '../server/actions/password-reset';
-import { sendPendingPasswordResetEmail } from '../server/actions/pending-password-reset';
 import { authToasts } from '@/lib/toast';
 import {
   forgotPasswordSchema,
@@ -37,23 +36,14 @@ export function ForgotPasswordForm() {
     setIsLoading(true);
 
     try {
-      // Try regular password reset first (for existing users)
-      const regularResult = await sendPasswordResetEmail(data.email);
+      // Send password reset email for existing users
+      const result = await sendPasswordResetEmail(data.email);
 
-      if (regularResult.success) {
-        authToasts.passwordResetSent(data.email);
-        setSuccess(true);
-        return;
-      }
-
-      // If regular reset failed, try pending registration reset
-      const pendingResult = await sendPendingPasswordResetEmail(data.email);
-
-      if (pendingResult.success) {
+      if (result.success) {
         authToasts.passwordResetSent(data.email);
         setSuccess(true);
       } else {
-        authToasts.passwordResetError(pendingResult.message);
+        authToasts.passwordResetError(result.message);
       }
     } catch (error) {
       console.error('Password reset error:', error);

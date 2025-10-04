@@ -25,7 +25,7 @@ export function generateToken(length: number = 32): string {
 export function generateVerificationToken(
   expirationHours: number = 24
 ): TokenData {
-  const token = generateToken(32);
+  const token = generateUrlSafeToken(32);
   const expiresAt = new Date(Date.now() + expirationHours * 60 * 60 * 1000);
 
   return {
@@ -40,7 +40,7 @@ export function generateVerificationToken(
 export function generatePasswordResetToken(
   expirationHours: number = 1
 ): TokenData {
-  const token = generateToken(32);
+  const token = generateUrlSafeToken(32);
   const expiresAt = new Date(Date.now() + expirationHours * 60 * 60 * 1000);
 
   return {
@@ -58,6 +58,7 @@ export function isTokenExpired(expiresAt: Date): boolean {
 
 /**
  * Generate a URL-safe token
+ * Useful for email verification and password reset links
  */
 export function generateUrlSafeToken(length: number = 32): string {
   const token = generateToken(length);

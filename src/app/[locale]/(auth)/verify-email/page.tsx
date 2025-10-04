@@ -9,6 +9,7 @@ import { type Metadata } from 'next';
 
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
 import { VerifyEmailForm } from '@/features/auth/components/VerifyEmailForm';
+import { SetPasswordForm } from '@/features/auth/components/SetPasswordForm';
 
 export const metadata: Metadata = {
   title: 'Verify Email - PayMatch',
@@ -22,12 +23,31 @@ export default async function VerifyEmail({
     verified?: string;
     email?: string;
     showResend?: string;
+    setPassword?: string;
   }>;
 }) {
   const resolvedSearchParams = await searchParams;
   const isVerified = resolvedSearchParams.verified === 'true';
   const emailFromUrl = resolvedSearchParams.email;
   const showResend = resolvedSearchParams.showResend === 'true';
+  const needsPassword = resolvedSearchParams.setPassword === 'true';
+
+  // If user needs to set password (clicked verification link), show password form
+  if (needsPassword && emailFromUrl) {
+    return (
+      <AuthLayout
+        title="Complete your registration"
+        subtitle={
+          <>
+            Your email has been verified! Now set a secure password to complete
+            your PayMatch account setup.
+          </>
+        }
+      >
+        <SetPasswordForm email={emailFromUrl} />
+      </AuthLayout>
+    );
+  }
 
   // With deferred account creation, users won't have accounts until verification
   // So we always show the verification page for unauthenticated users

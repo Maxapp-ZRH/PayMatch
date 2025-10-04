@@ -11,10 +11,8 @@ import { redirect } from 'next/navigation';
 
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
 import { ResetPasswordForm } from '@/features/auth/components/ResetPasswordForm';
-import { PendingPasswordResetForm } from '@/features/auth/components/PendingPasswordResetForm';
 import { handleAuthPageLogic } from '@/features/auth/helpers';
 import { verifyResetToken } from '@/features/auth/server/actions/password-reset';
-import { verifyPendingResetToken } from '@/features/auth/server/actions/pending-password-reset';
 
 export const metadata: Metadata = {
   title: 'Reset Password - PayMatch',
@@ -36,27 +34,16 @@ export default async function ResetPassword({
     redirect(redirectUrl);
   }
 
-  // Determine which type of password reset to show
-  let resetType: 'regular' | 'pending' | 'unknown' = 'unknown';
+  // Check if it's a valid password reset token
+  let isValidToken = false;
 
   if (resolvedSearchParams.token) {
     try {
-      // Check if it's a regular password reset token
-      const regularResult = await verifyResetToken(resolvedSearchParams.token);
-      if (regularResult.valid) {
-        resetType = 'regular';
-      } else {
-        // Check if it's a pending password reset token
-        const pendingResult = await verifyPendingResetToken(
-          resolvedSearchParams.token
-        );
-        if (pendingResult.valid) {
-          resetType = 'pending';
-        }
-      }
+      const result = await verifyResetToken(resolvedSearchParams.token);
+      isValidToken = result.valid;
     } catch (error) {
-      console.error('Error determining reset type:', error);
-      resetType = 'unknown';
+      console.error('Error verifying reset token:', error);
+      isValidToken = false;
     }
   }
 
@@ -73,9 +60,9 @@ export default async function ResetPassword({
         </>
       }
     >
-      {resetType === 'regular' && <ResetPasswordForm />}
-      {resetType === 'pending' && <PendingPasswordResetForm />}
-      {resetType === 'unknown' && (
+      {isValidToken ? (
+        <ResetPasswordForm />
+      ) : (
         <div className="text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
             <svg

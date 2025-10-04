@@ -12,6 +12,10 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/marketing_pages/Button';
 import { authToasts } from '@/lib/toast';
+import {
+  resendVerificationEmail,
+  resendPendingVerificationEmail,
+} from '@/features/auth/server/actions/registration';
 
 interface VerifyEmailFormProps {
   userEmail: string;
@@ -71,16 +75,38 @@ export function VerifyEmailForm({
   }, [supabase, router, emailVerified]);
 
   const handleResendVerification = async () => {
+    if (!currentEmail) {
+      authToasts.error(
+        'No email address provided. Please go back to the registration page and try again.'
+      );
+      return;
+    }
+
     setIsResending(true);
 
     try {
-      // For pending registrations, we need to resend from the registration flow
-      // This is a simplified version - in production you might want to store
-      // the verification token and resend with the same token
-      authToasts.warning(
-        'Resend not available',
-        'Please register again to receive a new verification email.'
-      );
+      // Since we're using deferred account creation, users coming from registration
+      // will always have pending registrations. Try pending registration first.
+      const pendingResult = await resendPendingVerificationEmail(currentEmail);
+
+      if (pendingResult.success) {
+        authToasts.success('Verification email sent!', pendingResult.message);
+        return;
+      }
+
+      // If pending registration resend failed, try existing users as fallback
+      // (in case the user was created but not verified)
+      const existingUserResult = await resendVerificationEmail(currentEmail);
+
+      if (existingUserResult.success) {
+        authToasts.success(
+          'Verification email sent!',
+          existingUserResult.message
+        );
+      } else {
+        // Show the error from pending registration (more likely scenario)
+        authToasts.error(pendingResult.message);
+      }
     } catch (error) {
       console.error('Error resending verification:', error);
       authToasts.verificationError(
@@ -191,7 +217,7 @@ export function VerifyEmailForm({
           </Button>
         ) : (
           <>
-            {currentEmail && (
+            {currentEmail ? (
               <Button
                 onClick={handleResendVerification}
                 disabled={isResending || isChecking}
@@ -204,6 +230,20 @@ export function VerifyEmailForm({
                     ? 'Resend verification email now'
                     : 'Resend verification email'}
               </Button>
+            ) : (
+              <div className="text-center p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-sm text-gray-600 mb-3">
+                  No email address found. Please go back to the registration
+                  page to start over.
+                </p>
+                <Button
+                  onClick={() => router.push('/register')}
+                  color="cyan"
+                  className="w-full"
+                >
+                  Go to Registration
+                </Button>
+              </div>
             )}
 
             <Button

@@ -11,7 +11,7 @@ import { userExistsByEmail } from './user-operations';
 
 export interface PendingRegistrationData {
   email: string;
-  password: string;
+  password?: string; // Optional for GDPR compliance
   firstName: string;
   lastName: string;
   language: string;
@@ -21,6 +21,7 @@ export interface PendingRegistrationResult {
   success: boolean;
   message: string;
   verificationToken?: string;
+  email?: string;
   error?: string;
 }
 
@@ -85,13 +86,12 @@ export async function storePendingRegistration(
     // Generate verification token
     const { token: verificationToken, expiresAt } = generateVerificationToken();
 
-    // Store pending registration with plain password
-    // SECURITY NOTE: Plain password is temporarily stored (max 24 hours)
-    // This is necessary because Supabase expects plain passwords for user creation
-    // The record is automatically deleted after verification or expiration
+    // Store pending registration WITHOUT password (GDPR-compliant)
+    // The password will be collected again during email verification
+    // when the user is created in Supabase Auth
     const { error } = await supabase.from('pending_registrations').insert({
       email: data.email,
-      password_hash: data.password, // Temporarily store plain password
+      password_hash: null, // No password stored for GDPR compliance
       user_metadata: {
         first_name: data.firstName,
         last_name: data.lastName,
@@ -134,22 +134,52 @@ export async function verifyPendingRegistration(
   try {
     const supabase = supabaseAdmin;
 
+    console.log(
+      'Verifying pending registration with token:',
+      token.substring(0, 10) + '...'
+    );
+
     // Get pending registration by token
     const { data: pendingReg, error: fetchError } = await supabase
       .from('pending_registrations')
       .select('*')
       .eq('verification_token', token)
-      .single();
+      .maybeSingle();
 
-    if (fetchError || !pendingReg) {
+    if (fetchError) {
+      console.error(
+        'Database error fetching pending registration:',
+        fetchError
+      );
+      return {
+        success: false,
+        message: 'Database error. Please try again.',
+        error: fetchError.message,
+      };
+    }
+
+    if (!pendingReg) {
+      console.log('No pending registration found for token');
       return {
         success: false,
         message: 'Invalid or expired verification link.',
       };
     }
 
+    console.log('Found pending registration for email:', pendingReg.email);
+
     // Check if token has expired
-    if (new Date() > new Date(pendingReg.expires_at)) {
+    const now = new Date();
+    const expiresAt = new Date(pendingReg.expires_at);
+    console.log(
+      'Token expiration check - Now:',
+      now.toISOString(),
+      'Expires:',
+      expiresAt.toISOString()
+    );
+
+    if (now > expiresAt) {
+      console.log('Token has expired, cleaning up pending registration');
       // Clean up expired registration
       await supabase
         .from('pending_registrations')
@@ -162,48 +192,17 @@ export async function verifyPendingRegistration(
       };
     }
 
-    // Create Supabase user (without email confirmation to trigger the database trigger)
-    const { data: newUser, error: createError } =
-      await supabaseAdmin.auth.admin.createUser({
-        email: pendingReg.email,
-        password: pendingReg.password_hash,
-        email_confirm: false, // Don't confirm yet - let the trigger handle it
-        user_metadata: pendingReg.user_metadata,
-      });
+    console.log('Token is valid, proceeding with verification');
 
-    if (createError || !newUser.user) {
-      console.error('Error creating Supabase user:', createError);
-      return {
-        success: false,
-        message: 'Failed to create account. Please try again.',
-      };
-    }
-
-    // Update user to confirm email - this will trigger the database trigger
-    // which will create the user profile, organization, and organization membership
-    const { error: confirmError } =
-      await supabaseAdmin.auth.admin.updateUserById(newUser.user.id, {
-        email_confirm: true,
-      });
-
-    if (confirmError) {
-      console.error('Error confirming email:', confirmError);
-      return {
-        success: false,
-        message:
-          'Account created but failed to confirm email. Please contact support.',
-      };
-    }
-
-    // Clean up pending registration (removes plain password from database)
-    await supabase
-      .from('pending_registrations')
-      .delete()
-      .eq('id', pendingReg.id);
+    // For GDPR compliance, we don't create the user immediately
+    // Instead, we return the email so the user can set their password
+    // The user will be created when they set their password
 
     return {
       success: true,
-      message: 'Account created successfully! You can now sign in.',
+      message:
+        'Email verified successfully! Please set your password to complete registration.',
+      email: pendingReg.email,
     };
   } catch (error) {
     console.error('Error in verifyPendingRegistration:', error);

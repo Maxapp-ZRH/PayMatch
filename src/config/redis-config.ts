@@ -9,7 +9,7 @@ export const REDIS_CONFIG = {
   RATE_LIMITS: {
     // Email verification resend
     EMAIL_VERIFICATION: {
-      limit: 3,
+      limit: 10,
       windowMs: 5 * 60 * 1000, // 5 minutes
     },
     // Password reset

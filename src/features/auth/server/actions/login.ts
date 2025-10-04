@@ -10,6 +10,7 @@
 import {
   checkPendingRegistration,
   cleanupExpiredPendingRegistrations,
+  findUserByEmail,
 } from '../utils/user-operations';
 
 /**
@@ -20,6 +21,29 @@ export async function checkUserPendingRegistration(email: string): Promise<{
   error?: string;
 }> {
   return await checkPendingRegistration(email);
+}
+
+/**
+ * Check if user exists in Supabase Auth
+ */
+export async function checkUserExistsInAuth(email: string): Promise<{
+  exists: boolean;
+  error?: string;
+}> {
+  try {
+    const { user, error } = await findUserByEmail(email);
+
+    if (error) {
+      return { exists: false, error: error };
+    }
+
+    return { exists: !!user };
+  } catch (error) {
+    return {
+      exists: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
 }
 
 /**

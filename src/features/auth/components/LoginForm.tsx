@@ -22,7 +22,10 @@ import {
   userHasOrganizationClient,
   userHasCompletedOnboardingClient,
 } from '../helpers/client-auth-helpers';
-import { checkUserPendingRegistration } from '../server/actions/login';
+import {
+  checkUserPendingRegistration,
+  checkUserExistsInAuth,
+} from '../server/actions/login';
 
 interface LoginFormProps {
   redirectTo?: string;
@@ -55,24 +58,9 @@ export function LoginForm({
       });
 
       if (error) {
-        console.log('Login error:', error.message);
-
-        // Check if user has pending registration (not yet verified)
-        const { hasPendingRegistration } = await checkUserPendingRegistration(
-          data.email
-        );
-        console.log('Has pending registration:', hasPendingRegistration);
-
-        if (hasPendingRegistration) {
-          // User exists in pending registrations but not verified yet
-          console.log(
-            'Redirecting to verify-email page for pending registration'
-          );
-          const emailParam = encodeURIComponent(data.email);
-          router.push(`/verify-email?showResend=true&email=${emailParam}`);
-          router.refresh();
-          return;
-        }
+        console.log('Login error:', error);
+        console.log('Error message:', error.message);
+        console.log('Error code:', error.status);
 
         // Handle specific error cases for existing users
         if (
@@ -86,6 +74,40 @@ export function LoginForm({
           router.push(`/verify-email?showResend=true&email=${emailParam}`);
           router.refresh();
           return;
+        }
+
+        // For "Invalid login credentials" error, check if user exists in Supabase Auth
+        // If user doesn't exist, they might have a pending registration
+        if (
+          error.message.includes('Invalid login credentials') ||
+          error.message.includes('invalid_credentials')
+        ) {
+          // Check if user exists in Supabase Auth by searching for them
+          const { exists: userExists, error: userError } =
+            await checkUserExistsInAuth(data.email);
+
+          // If user doesn't exist in Supabase Auth, check for pending registration
+          if (userError || !userExists) {
+            const { hasPendingRegistration } =
+              await checkUserPendingRegistration(data.email);
+            console.log(
+              'User not found in Supabase Auth, has pending registration:',
+              hasPendingRegistration
+            );
+
+            if (hasPendingRegistration) {
+              // User exists in pending registrations - redirect to verify-email
+              // GDPR-Compliant: We don't validate passwords for pending registrations
+              // The password will be validated when the user is created in Supabase Auth
+              console.log(
+                'Pending registration found, redirecting to verify-email page'
+              );
+              const emailParam = encodeURIComponent(data.email);
+              router.push(`/verify-email?showResend=true&email=${emailParam}`);
+              router.refresh();
+              return;
+            }
+          }
         }
 
         // Handle other errors with generic message for security

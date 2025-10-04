@@ -16,14 +16,16 @@ import { checkRateLimit } from '../services/rate-limiting';
 import {
   findUserByEmail,
   checkPendingRegistration,
+  getPendingRegistration,
 } from '../utils/user-operations';
 import { generateVerificationToken } from '../utils/token-operations';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export interface RegisterUserData {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
+  password?: string; // Optional for GDPR compliance
   referralSource?: string;
 }
 
@@ -59,10 +61,10 @@ export async function registerUser(
       };
     }
 
-    // Store pending registration data temporarily
+    // Store pending registration data temporarily (GDPR-compliant, no password stored)
     const pendingResult = await storePendingRegistration({
       email: data.email,
-      password: data.password,
+      // password: data.password, // Not stored for GDPR compliance
       firstName: data.firstName,
       lastName: data.lastName,
       language: 'de', // Default to German for Swiss market
@@ -95,7 +97,7 @@ export async function registerUser(
     return {
       success: true,
       message:
-        'Registration successful! Please check your email to verify your account.',
+        'Registration successful! Please check your email to verify your account. You will be asked to set your password during verification.',
     };
   } catch (error) {
     console.error('Registration error:', error);
@@ -163,6 +165,150 @@ export async function resendVerificationEmail(
     };
   } catch (error) {
     console.error('Error resending verification email:', error);
+    return {
+      success: false,
+      message: 'Failed to resend verification email. Please try again.',
+    };
+  }
+}
+
+/**
+ * Set password for pending registration during email verification
+ * This is called when user clicks verification link and needs to set their password
+ */
+export async function setPendingRegistrationPassword(
+  email: string,
+  password: string
+): Promise<RegisterResult> {
+  try {
+    // Check if there's a pending registration for this email
+    const pendingRegistration = await getPendingRegistration(email);
+    if (!pendingRegistration) {
+      return {
+        success: false,
+        message: 'No pending registration found. Please register first.',
+      };
+    }
+
+    // Create Supabase user with the provided password
+    const { error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email: email,
+      password: password, // Supabase will hash this properly
+      email_confirm: true, // Mark as verified since they clicked the link
+      user_metadata: pendingRegistration.user_metadata,
+    });
+
+    if (authError) {
+      console.error('Error creating user during verification:', authError);
+      return {
+        success: false,
+        message: 'Failed to create account. Please try again.',
+      };
+    }
+
+    // Delete the pending registration since user is now created
+    const { error: deleteError } = await supabaseAdmin
+      .from('pending_registrations')
+      .delete()
+      .eq('email', email);
+
+    if (deleteError) {
+      console.error('Error cleaning up pending registration:', deleteError);
+      // Don't fail the operation, just log the error
+    }
+
+    return {
+      success: true,
+      message: 'Account created successfully! You can now sign in.',
+    };
+  } catch (error) {
+    console.error('Error setting pending registration password:', error);
+    return {
+      success: false,
+      message: 'Failed to create account. Please try again.',
+    };
+  }
+}
+
+/**
+ * Resend verification email for pending registrations
+ * This handles users who have pending registrations but haven't verified their email yet
+ */
+export async function resendPendingVerificationEmail(
+  email: string
+): Promise<RegisterResult> {
+  try {
+    // Check rate limit using centralized config
+    if (!(await checkRateLimit(email, 'EMAIL_VERIFICATION'))) {
+      return {
+        success: false,
+        message:
+          'Too many verification emails sent. Please wait before trying again.',
+      };
+    }
+
+    // Check if there's a pending registration for this email
+    const pendingRegistration = await getPendingRegistration(email);
+    if (!pendingRegistration) {
+      return {
+        success: false,
+        message:
+          'Unable to resend verification email. Please try registering again.',
+      };
+    }
+
+    // Generate new verification token
+    const { token: verificationToken, expiresAt } = generateVerificationToken();
+
+    // Update the pending registration with the new token
+    const { error: updateError } = await supabaseAdmin
+      .from('pending_registrations')
+      .update({
+        verification_token: verificationToken,
+        expires_at: expiresAt.toISOString(),
+      })
+      .eq('email', email);
+
+    if (updateError) {
+      console.error('Error updating verification token:', updateError);
+      return {
+        success: false,
+        message: 'Failed to update verification token. Please try again.',
+      };
+    }
+
+    // Send verification email using the same function as registration
+    // Get the name from user_metadata or construct from first_name/last_name
+    const name =
+      pendingRegistration.user_metadata?.first_name &&
+      pendingRegistration.user_metadata?.last_name
+        ? `${pendingRegistration.user_metadata.first_name} ${pendingRegistration.user_metadata.last_name}`
+        : pendingRegistration.first_name && pendingRegistration.last_name
+          ? `${pendingRegistration.first_name} ${pendingRegistration.last_name}`
+          : email;
+
+    const result = await sendVerificationEmail(email, verificationToken, name);
+
+    if (!result.success) {
+      console.error(
+        'Failed to send verification email for pending registration:',
+        result.error
+      );
+      return {
+        success: false,
+        message: 'Failed to send verification email. Please try again.',
+      };
+    }
+
+    return {
+      success: true,
+      message: 'Verification email sent successfully!',
+    };
+  } catch (error) {
+    console.error(
+      'Error resending verification email for pending registration:',
+      error
+    );
     return {
       success: false,
       message: 'Failed to resend verification email. Please try again.',

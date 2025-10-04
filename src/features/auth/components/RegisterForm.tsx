@@ -15,7 +15,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/marketing_pages/Button';
 import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
 import { EnhancedSelectField } from '@/components/ui/enhanced-select-field';
-import { PasswordField } from '@/components/ui/password-field';
 import { registerUser } from '../server/actions/registration';
 import { checkUserPendingRegistration } from '../server/actions/login';
 import { authToasts } from '@/lib/toast';
@@ -32,13 +31,12 @@ export function RegisterForm() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
 
-  const passwordValue = watch('password');
+  // Password will be collected during email verification
 
   const onSubmit = async (data: RegisterFormData) => {
     // Prevent double submission
@@ -74,14 +72,14 @@ export function RegisterForm() {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
-        password: data.password,
         referralSource: data.referralSource,
       });
 
       if (result.success) {
-        // Show success toast and redirect
+        // Show success toast and redirect with email parameter
         authToasts.registrationSuccess(data.email);
-        router.push('/verify-email');
+        const emailParam = encodeURIComponent(data.email);
+        router.push(`/verify-email?email=${emailParam}&showResend=true`);
       } else {
         // Show error toast
         authToasts.registrationError(result.message);
@@ -128,25 +126,7 @@ export function RegisterForm() {
           error={errors.email?.message}
         />
 
-        <PasswordField
-          className="col-span-full"
-          label="Password"
-          autoComplete="new-password"
-          required
-          showRequirements
-          value={passwordValue || ''}
-          {...register('password')}
-          error={errors.password?.message}
-        />
-
-        <PasswordField
-          className="col-span-full"
-          label="Confirm Password"
-          autoComplete="new-password"
-          required
-          {...register('confirmPassword')}
-          error={errors.confirmPassword?.message}
-        />
+        {/* Password will be collected during email verification for GDPR compliance */}
 
         <EnhancedSelectField
           className="col-span-full"
@@ -168,7 +148,9 @@ export function RegisterForm() {
         className="w-full"
         disabled={isLoading || isSubmitting}
       >
-        {isLoading ? 'Creating account...' : 'Start invoicing with PayMatch'}
+        {isLoading
+          ? 'Sending verification email...'
+          : 'Get started with PayMatch'}
       </Button>
     </form>
   );

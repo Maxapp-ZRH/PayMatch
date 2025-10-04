@@ -135,6 +135,53 @@ export async function checkPendingRegistration(email: string): Promise<{
 }
 
 /**
+ * Get pending registration data for an email
+ * @param email - User's email address
+ * @returns Pending registration data or null if not found/expired
+ */
+export async function getPendingRegistration(email: string): Promise<{
+  id: string;
+  email: string;
+  first_name: string | null;
+  last_name: string | null;
+  user_metadata: Record<string, unknown>;
+  password_hash: string;
+  expires_at: string;
+  created_at: string;
+} | null> {
+  try {
+    console.log('Getting pending registration for email:', email);
+
+    const { data, error } = await supabaseAdmin
+      .from('pending_registrations')
+      .select(
+        'id, email, first_name, last_name, user_metadata, password_hash, expires_at, created_at'
+      )
+      .eq('email', email)
+      .single();
+
+    if (error) {
+      console.log('No pending registration found:', error.message);
+      return null;
+    }
+
+    // Check if not expired
+    const isExpired = new Date() > new Date(data.expires_at);
+    console.log('Pending registration found, expired:', isExpired);
+
+    if (isExpired) {
+      return null;
+    }
+
+    console.log('Valid pending registration found');
+    return data;
+  } catch (error) {
+    console.log('Error getting pending registration:', error);
+    return null;
+  }
+}
+
+/**
  * Clean up expired pending registrations
  * @returns Number of cleaned up registrations
  */

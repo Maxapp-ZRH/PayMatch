@@ -15,7 +15,13 @@ export const metadata: Metadata = {
   description: 'There was an error with your authentication. Please try again.',
 };
 
-export default function AuthCodeError() {
+export default async function AuthCodeError({
+  searchParams,
+}: {
+  searchParams: Promise<{ email?: string }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const emailFromUrl = resolvedSearchParams.email;
   return (
     <AuthLayout
       title="Authentication Error"
@@ -45,7 +51,13 @@ export default function AuthCodeError() {
           new one to continue.
         </p>
         <div className="mt-8">
-          <Link href="/verify-email">
+          <Link
+            href={
+              emailFromUrl
+                ? `/verify-email?email=${encodeURIComponent(emailFromUrl)}&showResend=true`
+                : '/verify-email'
+            }
+          >
             <Button color="cyan" className="w-full">
               Get new verification link
             </Button>
