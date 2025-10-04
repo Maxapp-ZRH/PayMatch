@@ -2,7 +2,7 @@
 
 ## 🎯 **System Architecture**
 
-The PayMatch email system is a **consolidated, type-safe, and scalable** solution that handles all email communications with proper unsubscribe functionality, database integration, and Swiss compliance.
+The PayMatch email system is a **hybrid, type-safe, and scalable** solution that handles all email communications with proper unsubscribe functionality, database integration, and Swiss compliance. It uses **Server Actions for authentication emails** and **API Routes for external-facing email operations**.
 
 ## 🏗️ **Core Components**
 
@@ -24,7 +24,24 @@ The PayMatch email system is a **consolidated, type-safe, and scalable** solutio
 - ✅ **Database Integration** - Supabase for data persistence
 - ✅ **Error Handling** - Comprehensive error management
 
-### 2. **Unsubscribe System** (`src/features/email/unsubscribe.ts`)
+### 2. **Authentication Server Actions** (`src/server/actions/auth.ts`)
+
+**Server-Side Email Operations:**
+
+- `registerUser()` - User registration with email verification
+- `changeUserEmail()` - Email change during verification
+- `resendVerificationEmail()` - Resend verification emails
+- `sendPasswordResetEmail()` - Password reset functionality
+
+**Key Features:**
+
+- ✅ **Server-Side Security** - Access to environment variables
+- ✅ **Rate Limiting** - Built-in abuse prevention
+- ✅ **Type Safety** - Full TypeScript support
+- ✅ **Error Handling** - Comprehensive error management
+- ✅ **No Network Overhead** - Direct function calls
+
+### 3. **Unsubscribe System** (`src/features/email/unsubscribe.ts`)
 
 **Token Management:**
 
@@ -39,7 +56,7 @@ The PayMatch email system is a **consolidated, type-safe, and scalable** solutio
 - ✅ **One-Click Unsubscribe** - RFC 8058 compliance
 - ✅ **Token Verification** - Secure token validation
 
-### 3. **API Endpoints** (`src/app/api/email/`)
+### 4. **API Endpoints** (`src/app/api/email/`)
 
 **Organized Structure:**
 
@@ -57,7 +74,7 @@ The PayMatch email system is a **consolidated, type-safe, and scalable** solutio
 - ✅ **Unified Error Handling** - Consistent response formats
 - ✅ **Type Validation** - Zod schemas for input validation
 
-### 4. **Email Templates** (`src/emails/`)
+### 5. **Email Templates** (`src/emails/`)
 
 **React Email Templates:**
 
@@ -73,7 +90,7 @@ The PayMatch email system is a **consolidated, type-safe, and scalable** solutio
 - ✅ **Responsive Design** - Mobile-friendly layouts
 - ✅ **Brand Consistency** - PayMatch styling
 
-### 5. **Database Schema**
+### 6. **Database Schema**
 
 **Tables:**
 
@@ -86,6 +103,44 @@ The PayMatch email system is a **consolidated, type-safe, and scalable** solutio
 - ✅ **Performance Optimized** - Proper indexes
 - ✅ **Audit Trail** - Created/updated timestamps
 - ✅ **Type Support** - Newsletter, support, transactional
+
+## 🏛️ **Email Architecture Patterns**
+
+### **Server Actions vs API Routes**
+
+**Server Actions** (`src/server/actions/auth.ts`):
+
+- ✅ **Authentication emails** - Registration, verification, password reset
+- ✅ **Server-side security** - Access to environment variables
+- ✅ **Rate limiting** - Built-in abuse prevention
+- ✅ **Direct function calls** - No network overhead
+- ✅ **Type safety** - Full TypeScript support
+
+**API Routes** (`src/app/api/email/`):
+
+- ✅ **External-facing emails** - Newsletter, support, marketing
+- ✅ **Public endpoints** - Can be called from external sources
+- ✅ **RESTful design** - Standard HTTP methods
+- ✅ **CORS support** - Cross-origin requests
+- ✅ **Webhook integration** - External service integration
+
+### **When to Use Each Pattern**
+
+**Use Server Actions for:**
+
+- User authentication flows
+- Password reset emails
+- Email verification
+- Account-related notifications
+- Internal system emails
+
+**Use API Routes for:**
+
+- Newsletter subscriptions
+- Support requests
+- Marketing campaigns
+- External integrations
+- Webhook handlers
 
 ## 📧 **Email Types & Flows**
 
@@ -121,7 +176,23 @@ The PayMatch email system is a **consolidated, type-safe, and scalable** solutio
 - ✅ **Attachment Support** - File upload handling
 - ✅ **Reply-to Setup** - Team can reply directly
 
-### 3. **Transactional Emails**
+### 3. **Authentication Emails** (Server Actions)
+
+**Flow:**
+
+1. User triggers auth action (register, reset password, etc.)
+2. Server action calls `registerUser()` or `sendPasswordResetEmail()`
+3. Email sent via unified email service
+4. User redirected to appropriate page
+
+**Features:**
+
+- ✅ **Server-Side Security** - Environment variables protected
+- ✅ **Rate Limiting** - Built-in abuse prevention
+- ✅ **Type Safety** - Full TypeScript support
+- ✅ **Direct Integration** - No API overhead
+
+### 4. **Transactional Emails**
 
 **Flow:**
 
@@ -161,23 +232,73 @@ The PayMatch email system is a **consolidated, type-safe, and scalable** solutio
 
 ## 🚀 **Usage Examples**
 
-### **Sending Newsletter Email**
+### **Authentication Emails** (Server Actions)
 
 ```typescript
-import { EmailService } from '@/lib/email-service';
+// User registration with email verification
+import { registerUser } from '@/features/auth/server/auth';
 
-await EmailService.sendEmailWithComponent({
-  to: 'user@example.com',
-  subject: 'Weekly Newsletter',
-  emailType: 'newsletter',
-  component: NewsletterTemplate({ content: '...' }),
+const result = await registerUser({
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'user@example.com',
+  password: 'securepassword123',
+  referralSource: 'google',
 });
+
+if (result.success) {
+  // User will be redirected to verify-email page
+  router.push('/verify-email');
+}
 ```
 
-### **Support Request**
+```typescript
+// Password reset email
+import { sendPasswordResetEmail } from '@/features/auth/server/auth';
+
+const result = await sendPasswordResetEmail('user@example.com');
+if (result.success) {
+  // User will receive password reset email
+  setMessage('Password reset email sent!');
+}
+```
 
 ```typescript
-// Frontend form submission
+// Resend verification email
+import { resendVerificationEmail } from '@/features/auth/server/auth';
+
+const result = await resendVerificationEmail('user@example.com');
+if (result.success) {
+  // User will receive new verification email
+  setMessage('Verification email sent!');
+}
+```
+
+### **Newsletter Emails** (API Routes)
+
+```typescript
+// Newsletter subscription
+const response = await fetch('/api/email/newsletter', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    email: 'user@example.com',
+    firstName: 'John',
+    lastName: 'Doe',
+  }),
+});
+
+const result = await response.json();
+if (result.success) {
+  // User subscribed successfully
+  setMessage('Successfully subscribed to newsletter!');
+}
+```
+
+### **Support Emails** (API Routes)
+
+```typescript
+// Support request
 const response = await fetch('/api/email/support', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
@@ -190,9 +311,15 @@ const response = await fetch('/api/email/support', {
     priority: 'medium',
   }),
 });
+
+const result = await response.json();
+if (result.success) {
+  // Support request submitted successfully
+  setMessage('Support request submitted!');
+}
 ```
 
-### **Unsubscribe Handling**
+### **Unsubscribe Handling** (API Routes)
 
 ```typescript
 // Token-based unsubscribe
@@ -208,21 +335,44 @@ const response = await fetch('/api/email/unsubscribe/one-click?token=...', {
 });
 ```
 
+### **Direct Email Service Usage**
+
+```typescript
+// For server-side operations (Edge Functions, etc.)
+import { sendEmailWithComponent } from '@/features/email/email-service';
+import { EmailVerification } from '@/emails/email-verification';
+
+await sendEmailWithComponent({
+  to: 'user@example.com',
+  subject: 'Verify your account',
+  emailType: 'transactional',
+  userId: 'user-id',
+  component: EmailVerification({
+    verificationUrl: 'https://app.paymatch.app/verify?token=...',
+    userName: 'John Doe',
+    appUrl: 'https://app.paymatch.app',
+  }),
+});
+```
+
 ## 📊 **System Benefits**
 
 ### **For Developers**
 
-- ✅ **Single Source of Truth** - All email logic centralized
-- ✅ **Type Safety** - Full TypeScript support
-- ✅ **Easy Testing** - Mockable service classes
+- ✅ **Hybrid Architecture** - Server Actions for auth, API Routes for external
+- ✅ **Type Safety** - Full TypeScript support across all patterns
+- ✅ **Easy Testing** - Mockable service classes and functions
 - ✅ **Consistent APIs** - Unified patterns across all email types
+- ✅ **Security by Design** - Server Actions protect sensitive operations
+- ✅ **Performance** - Direct function calls for auth, HTTP for external
 
 ### **For Users**
 
 - ✅ **Unified Experience** - Consistent unsubscribe process
 - ✅ **Email Control** - Manage preferences by type
 - ✅ **Compliance** - Proper unsubscribe functionality
-- ✅ **Reliability** - Robust error handling
+- ✅ **Reliability** - Robust error handling and rate limiting
+- ✅ **Security** - Protected authentication flows
 
 ### **For Business**
 
@@ -230,6 +380,8 @@ const response = await fetch('/api/email/unsubscribe/one-click?token=...', {
 - ✅ **Scalable Architecture** - Easy to add new email types
 - ✅ **Audit Trail** - Complete email history
 - ✅ **Performance** - Optimized database queries
+- ✅ **Security** - Server-side protection for sensitive operations
+- ✅ **Flexibility** - Choose the right pattern for each use case
 
 ## 🔧 **Configuration**
 
@@ -295,4 +447,4 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_key
 
 ---
 
-The PayMatch email system provides a **robust, scalable, and compliant** foundation for all email communications, ensuring both technical excellence and user satisfaction while meeting Swiss market requirements.
+The PayMatch email system provides a **hybrid, robust, scalable, and compliant** foundation for all email communications. By using **Server Actions for authentication emails** and **API Routes for external-facing operations**, it ensures both technical excellence and user satisfaction while meeting Swiss market requirements and maintaining optimal security and performance.

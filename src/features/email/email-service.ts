@@ -5,6 +5,8 @@
  * unsubscribe functionality, error handling, and database operations.
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import React from 'react';
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
@@ -16,18 +18,40 @@ import {
 import { getStandardEmailAttachments } from './email-assets';
 import { renderEmailToHtml } from './email-renderer';
 
-// Initialize clients
-const resend = new Resend(process.env.RESEND_API_KEY);
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Initialize clients lazily to ensure environment variables are loaded
+let resend: Resend | null = null;
+let supabase: ReturnType<typeof createClient> | null = null;
+
+function getResendClient() {
+  if (!resend) {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      throw new Error('RESEND_API_KEY environment variable is not set');
+    }
+    resend = new Resend(apiKey);
+  }
+  return resend;
+}
+
+function getSupabaseClient() {
+  if (!supabase) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!url || !serviceKey) {
+      throw new Error('Supabase environment variables are not set');
+    }
+
+    supabase = createClient(url, serviceKey);
+  }
+  return supabase;
+}
 
 // Environment variables with fallbacks
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'noreply@paymatch.app';
 const FROM_NAME = process.env.RESEND_FROM_NAME || 'PayMatch';
 
-export type EmailType = 'newsletter' | 'support' | 'transactional';
+export type EmailType = 'newsletter' | 'support' | 'transactional' | 'auth';
 
 export interface EmailOptions {
   to: string | string[];
@@ -82,25 +106,43 @@ export async function sendEmail(options: EmailOptions) {
     attachments = [],
   } = options;
 
-  // Generate unsubscribe URL
-  const unsubscribeUrl = generateUnsubscribeUrl(
-    Array.isArray(to) ? to[0] : to,
-    emailType,
-    userId
-  );
+  // Generate unsubscribe URL (only for non-auth emails and if environment variable is available)
+  let unsubscribeUrl: string | undefined;
+  let headers: Record<string, string> = {};
 
-  // Get unsubscribe headers for transactional emails
-  const headers =
-    emailType === 'transactional'
-      ? getUnsubscribeHeaders(Array.isArray(to) ? to[0] : to, emailType, userId)
-      : {};
+  // Skip unsubscribe URLs for authentication emails (verification, password reset, etc.)
+  if (emailType !== 'auth') {
+    try {
+      unsubscribeUrl = generateUnsubscribeUrl(
+        Array.isArray(to) ? to[0] : to,
+        emailType,
+        userId
+      );
+
+      // Get unsubscribe headers for transactional emails
+      headers =
+        emailType === 'transactional'
+          ? getUnsubscribeHeaders(
+              Array.isArray(to) ? to[0] : to,
+              emailType,
+              userId
+            )
+          : {};
+    } catch (error) {
+      // If unsubscribe URL generation fails (e.g., missing env var), continue without it
+      console.warn('Could not generate unsubscribe URL:', error);
+      unsubscribeUrl = undefined;
+      headers = {};
+    }
+  }
 
   // Get standard email attachments (logo, etc.)
   const standardAttachments = getStandardEmailAttachments();
   const allAttachments = [...standardAttachments, ...attachments];
 
   try {
-    const result = await resend.emails.send({
+    const resendClient = getResendClient();
+    const result = await resendClient.emails.send({
       from,
       to: Array.isArray(to) ? to : [to],
       subject,
@@ -109,11 +151,7 @@ export async function sendEmail(options: EmailOptions) {
       replyTo: replyTo,
       headers,
       attachments: allAttachments.length > 0 ? allAttachments : undefined,
-      tags: [
-        { name: 'email_type', value: emailType },
-        { name: 'unsubscribe_url', value: unsubscribeUrl },
-        ...tags,
-      ],
+      tags: [{ name: 'email_type', value: emailType }, ...tags],
     });
 
     return {
@@ -140,18 +178,32 @@ export async function sendEmailWithComponent(
 ) {
   const { component, ...emailOptions } = options;
 
-  // Generate unsubscribe URL for the email
-  const unsubscribeUrl = generateUnsubscribeUrl(
-    Array.isArray(emailOptions.to) ? emailOptions.to[0] : emailOptions.to,
-    emailOptions.emailType || 'transactional',
-    emailOptions.userId
-  );
+  // Generate unsubscribe URL for the email (only for non-auth emails and if environment variable is available)
+  let unsubscribeUrl: string | undefined;
+  const emailType = emailOptions.emailType || 'transactional';
 
-  // Clone the component and add unsubscribe URL as a prop
-  const componentWithUnsubscribe = React.cloneElement(
-    component as React.ReactElement<{ unsubscribeUrl?: string }>,
-    { unsubscribeUrl }
-  );
+  // Skip unsubscribe URLs for authentication emails (verification, password reset, etc.)
+  if (emailType !== 'auth') {
+    try {
+      unsubscribeUrl = generateUnsubscribeUrl(
+        Array.isArray(emailOptions.to) ? emailOptions.to[0] : emailOptions.to,
+        emailType,
+        emailOptions.userId
+      );
+    } catch (error) {
+      // If unsubscribe URL generation fails (e.g., missing env var), continue without it
+      console.warn('Could not generate unsubscribe URL:', error);
+      unsubscribeUrl = undefined;
+    }
+  }
+
+  // Clone the component and add unsubscribe URL as a prop only if it exists
+  const componentWithUnsubscribe = unsubscribeUrl
+    ? React.cloneElement(
+        component as React.ReactElement<{ unsubscribeUrl?: string }>,
+        { unsubscribeUrl }
+      )
+    : component;
 
   const html = await renderEmailToHtml(componentWithUnsubscribe);
 
@@ -174,7 +226,8 @@ export class NewsletterService {
     lastName: string;
   }) {
     // Check if email already exists and is active
-    const { data: existingSubscriber, error: checkError } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data: existingSubscriber, error: checkError } = await supabaseClient
       .from('newsletter_subscribers')
       .select('id, is_active, email')
       .eq('email', data.email)
@@ -184,8 +237,15 @@ export class NewsletterService {
       throw new Error('Failed to check subscription status');
     }
 
+    // Type the subscriber data properly
+    const subscriber = existingSubscriber as {
+      id: string;
+      is_active: boolean;
+      email: string;
+    } | null;
+
     // If subscriber exists and is active, return success
-    if (existingSubscriber && existingSubscriber.is_active) {
+    if (subscriber && subscriber.is_active) {
       return {
         success: true,
         message: 'Successfully subscribed to newsletter',
@@ -194,8 +254,8 @@ export class NewsletterService {
     }
 
     // If subscriber exists but is inactive, reactivate them
-    if (existingSubscriber && !existingSubscriber.is_active) {
-      const { error: updateError } = await supabase
+    if (subscriber && !subscriber.is_active) {
+      const { error: updateError } = await (supabaseClient as any)
         .from('newsletter_subscribers')
         .update({
           first_name: data.firstName,
@@ -205,7 +265,7 @@ export class NewsletterService {
           unsubscribed_at: null,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', existingSubscriber.id);
+        .eq('id', subscriber.id);
 
       if (updateError) {
         throw new Error('Failed to reactivate subscription');
@@ -223,7 +283,9 @@ export class NewsletterService {
     }
 
     // Create new subscription
-    const { data: newSubscriber, error: insertError } = await supabase
+    const { data: newSubscriber, error: insertError } = await (
+      supabaseClient as any
+    )
       .from('newsletter_subscribers')
       .insert({
         first_name: data.firstName,
@@ -249,7 +311,8 @@ export class NewsletterService {
    * Unsubscribe from newsletter
    */
   static async unsubscribe(email: string) {
-    const { data: subscriber, error: findError } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data: subscriber, error: findError } = await (supabaseClient as any)
       .from('newsletter_subscribers')
       .select('id, email, first_name, last_name, is_active')
       .eq('email', email)
@@ -274,7 +337,7 @@ export class NewsletterService {
     }
 
     // Unsubscribe the user
-    const { error: updateError } = await supabase
+    const { error: updateError } = await (supabaseClient as any)
       .from('newsletter_subscribers')
       .update({
         is_active: false,
@@ -303,7 +366,8 @@ export class NewsletterService {
    * Get newsletter subscriber info
    */
   static async getSubscriberInfo(email: string) {
-    const { data: subscriber, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data: subscriber, error } = await (supabaseClient as any)
       .from('newsletter_subscribers')
       .select('id, email, first_name, last_name, is_active')
       .eq('email', email)
@@ -334,14 +398,17 @@ export class EmailPreferencesService {
    * Unsubscribe from specific email type
    */
   static async unsubscribe(email: string, type: EmailType, userId?: string) {
-    const { error } = await supabase.from('email_preferences').upsert({
-      email,
-      user_id: userId,
-      email_type: type,
-      is_active: false,
-      unsubscribed_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
+    const supabaseClient = getSupabaseClient();
+    const { error } = await (supabaseClient as any)
+      .from('email_preferences')
+      .upsert({
+        email,
+        user_id: userId,
+        email_type: type,
+        is_active: false,
+        unsubscribed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
 
     if (error) {
       throw new Error(`Failed to unsubscribe from ${type} emails`);
@@ -361,7 +428,8 @@ export class EmailPreferencesService {
    * Get email preferences info
    */
   static async getPreferences(email: string, type: EmailType) {
-    const { data: preferences, error } = await supabase
+    const supabaseClient = getSupabaseClient();
+    const { data: preferences, error } = await (supabaseClient as any)
       .from('email_preferences')
       .select('email, email_type, is_active')
       .eq('email', email)

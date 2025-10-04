@@ -1,76 +1,57 @@
+/**
+ * Register Page
+ *
+ * User registration page with Supabase Auth integration.
+ * Handles signup, email verification, and redirects to onboarding.
+ */
+
 import { type Metadata } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
-import { Button } from '@/components/marketing_pages/Button';
-import { SelectField, TextField } from '@/components/marketing_pages/Fields';
+import { RegisterForm } from '@/features/auth/components/RegisterForm';
+import { createClient } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {
   title: 'Sign Up - PayMatch',
+  description:
+    'Create your PayMatch account to start Swiss invoicing with QR-bill compliance.',
 };
 
-export default function Register() {
+export default async function Register() {
+  const supabase = await createClient();
+
+  // Check if user is already authenticated (using getUser for security)
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (user && !error) {
+    // Check if user's email is verified
+    if (!user.email_confirmed_at) {
+      redirect('/verify-email');
+    }
+
+    // Redirect to dashboard if already authenticated and verified
+    redirect('/dashboard');
+  }
+
   return (
     <AuthLayout
       title="Create your PayMatch account"
       subtitle={
         <>
           Already registered?{' '}
-          <Link href="/login" className="text-red-500">
+          <Link href="/login" className="text-red-500 hover:text-red-600">
             Sign in
           </Link>{' '}
           to your account.
         </>
       }
     >
-      <form>
-        <div className="grid grid-cols-2 gap-6">
-          <TextField
-            label="First name"
-            name="first_name"
-            type="text"
-            autoComplete="given-name"
-            required
-          />
-          <TextField
-            label="Last name"
-            name="last_name"
-            type="text"
-            autoComplete="family-name"
-            required
-          />
-          <TextField
-            className="col-span-full"
-            label="Email address"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-          />
-          <TextField
-            className="col-span-full"
-            label="Password"
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            required
-          />
-          <SelectField
-            className="col-span-full"
-            label="How did you hear about us?"
-            name="referral_source"
-          >
-            <option>Google search</option>
-            <option>Social media</option>
-            <option>Referral from colleague</option>
-            <option>Swiss business directory</option>
-            <option>Other</option>
-          </SelectField>
-        </div>
-        <Button type="submit" color="cyan" className="mt-8 w-full">
-          Start invoicing with PayMatch
-        </Button>
-      </form>
+      <RegisterForm />
     </AuthLayout>
   );
 }

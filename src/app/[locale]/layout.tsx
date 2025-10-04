@@ -15,6 +15,7 @@ import { GeistSans } from 'geist/font/sans';
 import clsx from 'clsx';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Toaster } from 'sonner';
 
 import '@/styles/tailwind.css';
 import { ScrollToTop } from '@/components/common/ScrollToTop';
@@ -168,6 +169,12 @@ export default async function LocaleLayout({ children, params }: Props) {
           <PageTransitionWrapper>{children}</PageTransitionWrapper>
           <BannerManager />
           <ScrollToTop />
+          <Toaster
+            position="top-right"
+            expand={true}
+            richColors={true}
+            closeButton={true}
+          />
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />

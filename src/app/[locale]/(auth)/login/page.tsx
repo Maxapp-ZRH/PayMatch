@@ -1,49 +1,78 @@
+/**
+ * Login Page
+ *
+ * User authentication page with Supabase Auth integration.
+ * Handles login, password reset, and redirects to dashboard or onboarding.
+ */
+
 import { type Metadata } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
-import { Button } from '@/components/marketing_pages/Button';
-import { TextField } from '@/components/marketing_pages/Fields';
+import { LoginForm } from '@/features/auth/components/LoginForm';
+import { createClient } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {
   title: 'Sign In - PayMatch',
+  description:
+    'Sign in to your PayMatch account to manage your Swiss invoicing.',
 };
 
-export default function Login() {
+interface LoginPageProps {
+  searchParams: Promise<{
+    redirectTo?: string;
+    verified?: string;
+  }>;
+}
+
+export default async function Login({ searchParams }: LoginPageProps) {
+  const supabase = await createClient();
+  const resolvedSearchParams = await searchParams;
+
+  // Check if user is already authenticated (using getUser for security)
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (user && !error) {
+    // Check if user's email is verified
+    if (!user.email_confirmed_at) {
+      redirect('/verify-email');
+    }
+
+    // Redirect to dashboard or intended destination
+    const redirectTo = resolvedSearchParams.redirectTo || '/dashboard';
+    redirect(redirectTo);
+  }
+
   return (
     <AuthLayout
-      title="Sign in to account"
+      title="Sign in to your account"
       subtitle={
         <>
           Don&apos;t have an account?{' '}
-          <Link href="/register" className="text-red-500">
+          <Link href="/register" className="text-red-500 hover:text-red-600">
             Sign up
           </Link>{' '}
           to start invoicing.
         </>
       }
     >
-      <form>
-        <div className="space-y-6">
-          <TextField
-            label="Email address"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-          />
-          <TextField
-            label="Password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-          />
-        </div>
-        <Button type="submit" color="cyan" className="mt-8 w-full">
-          Sign in to PayMatch
-        </Button>
-      </form>
+      <LoginForm
+        redirectTo={resolvedSearchParams.redirectTo}
+        showVerifiedMessage={resolvedSearchParams.verified === 'true'}
+      />
+
+      <div className="mt-6 text-center">
+        <Link
+          href="/forgot-password"
+          className="text-sm text-gray-600 hover:text-gray-900"
+        >
+          Forgot your password?
+        </Link>
+      </div>
     </AuthLayout>
   );
 }

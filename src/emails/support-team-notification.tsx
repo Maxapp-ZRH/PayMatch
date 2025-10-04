@@ -147,6 +147,7 @@ const container = {
 const header = {
   padding: '20px 30px',
   borderBottom: '1px solid #e5e7eb',
+  textAlign: 'center' as const,
 };
 
 const content = {

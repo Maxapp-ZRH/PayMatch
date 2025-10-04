@@ -81,12 +81,253 @@ export type Database = {
         };
         Relationships: [];
       };
+      organization_users: {
+        Row: {
+          accepted_at: string | null;
+          created_at: string | null;
+          id: string;
+          invited_at: string | null;
+          invited_by: string | null;
+          org_id: string | null;
+          role: string;
+          status: string;
+          updated_at: string | null;
+          user_id: string | null;
+        };
+        Insert: {
+          accepted_at?: string | null;
+          created_at?: string | null;
+          id?: string;
+          invited_at?: string | null;
+          invited_by?: string | null;
+          org_id?: string | null;
+          role?: string;
+          status?: string;
+          updated_at?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
+          accepted_at?: string | null;
+          created_at?: string | null;
+          id?: string;
+          invited_at?: string | null;
+          invited_by?: string | null;
+          org_id?: string | null;
+          role?: string;
+          status?: string;
+          updated_at?: string | null;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'organization_users_org_id_fkey';
+            columns: ['org_id'];
+            isOneToOne: false;
+            referencedRelation: 'organizations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      organizations: {
+        Row: {
+          canton: string | null;
+          city: string | null;
+          country: string | null;
+          created_at: string | null;
+          default_currency: string | null;
+          default_language: string | null;
+          default_payment_terms_days: number | null;
+          default_vat_rates: Json | null;
+          iban: string | null;
+          id: string;
+          legal_name: string | null;
+          logo_url: string | null;
+          name: string;
+          onboarding_completed: boolean | null;
+          onboarding_step: number | null;
+          plan: string | null;
+          qr_iban: string | null;
+          street: string | null;
+          stripe_customer_id: string | null;
+          uid: string | null;
+          updated_at: string | null;
+          vat_number: string | null;
+          zip: string | null;
+        };
+        Insert: {
+          canton?: string | null;
+          city?: string | null;
+          country?: string | null;
+          created_at?: string | null;
+          default_currency?: string | null;
+          default_language?: string | null;
+          default_payment_terms_days?: number | null;
+          default_vat_rates?: Json | null;
+          iban?: string | null;
+          id?: string;
+          legal_name?: string | null;
+          logo_url?: string | null;
+          name: string;
+          onboarding_completed?: boolean | null;
+          onboarding_step?: number | null;
+          plan?: string | null;
+          qr_iban?: string | null;
+          street?: string | null;
+          stripe_customer_id?: string | null;
+          uid?: string | null;
+          updated_at?: string | null;
+          vat_number?: string | null;
+          zip?: string | null;
+        };
+        Update: {
+          canton?: string | null;
+          city?: string | null;
+          country?: string | null;
+          created_at?: string | null;
+          default_currency?: string | null;
+          default_language?: string | null;
+          default_payment_terms_days?: number | null;
+          default_vat_rates?: Json | null;
+          iban?: string | null;
+          id?: string;
+          legal_name?: string | null;
+          logo_url?: string | null;
+          name?: string;
+          onboarding_completed?: boolean | null;
+          onboarding_step?: number | null;
+          plan?: string | null;
+          qr_iban?: string | null;
+          street?: string | null;
+          stripe_customer_id?: string | null;
+          uid?: string | null;
+          updated_at?: string | null;
+          vat_number?: string | null;
+          zip?: string | null;
+        };
+        Relationships: [];
+      };
+      pending_registrations: {
+        Row: {
+          created_at: string | null;
+          email: string;
+          expires_at: string;
+          first_name: string | null;
+          id: string;
+          last_name: string | null;
+          password_hash: string;
+          updated_at: string | null;
+          user_metadata: Json | null;
+          verification_token: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          email: string;
+          expires_at: string;
+          first_name?: string | null;
+          id?: string;
+          last_name?: string | null;
+          password_hash: string;
+          updated_at?: string | null;
+          user_metadata?: Json | null;
+          verification_token: string;
+        };
+        Update: {
+          created_at?: string | null;
+          email?: string;
+          expires_at?: string;
+          first_name?: string | null;
+          id?: string;
+          last_name?: string | null;
+          password_hash?: string;
+          updated_at?: string | null;
+          user_metadata?: Json | null;
+          verification_token?: string;
+        };
+        Relationships: [];
+      };
+      user_checklist_progress: {
+        Row: {
+          checklist_item_id: string;
+          completed_at: string | null;
+          created_at: string | null;
+          id: string;
+          org_id: string | null;
+          user_id: string | null;
+        };
+        Insert: {
+          checklist_item_id: string;
+          completed_at?: string | null;
+          created_at?: string | null;
+          id?: string;
+          org_id?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
+          checklist_item_id?: string;
+          completed_at?: string | null;
+          created_at?: string | null;
+          id?: string;
+          org_id?: string | null;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user_checklist_progress_org_id_fkey';
+            columns: ['org_id'];
+            isOneToOne: false;
+            referencedRelation: 'organizations';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      user_profiles: {
+        Row: {
+          avatar_url: string | null;
+          created_at: string | null;
+          id: string;
+          name: string | null;
+          onboarding_completed: boolean;
+          onboarding_completed_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          avatar_url?: string | null;
+          created_at?: string | null;
+          id: string;
+          name?: string | null;
+          onboarding_completed?: boolean;
+          onboarding_completed_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          avatar_url?: string | null;
+          created_at?: string | null;
+          id?: string;
+          name?: string | null;
+          onboarding_completed?: boolean;
+          onboarding_completed_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      get_user_organizations: {
+        Args: { user_uuid: string };
+        Returns: {
+          org_id: string;
+          org_name: string;
+          role: string;
+          status: string;
+        }[];
+      };
+      user_has_org_access: {
+        Args: { org_uuid: string; user_uuid: string };
+        Returns: boolean;
+      };
     };
     Enums: {
       [_ in never]: never;

@@ -1,0 +1,178 @@
+/**
+ * Login Form Component
+ *
+ * Handles user login with email and password using Supabase Auth.
+ * Includes form validation, error handling, and loading states.
+ */
+
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Button } from '@/components/marketing_pages/Button';
+import { createClient } from '@/lib/supabase/client';
+import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
+import { PasswordField } from '@/components/ui/password-field';
+import { authToasts } from '@/lib/toast';
+import { loginSchema, type LoginFormData } from '../schemas/login-schema';
+import {
+  userHasOrganizationClient,
+  userHasCompletedOnboardingClient,
+} from '../helpers/client-auth-helpers';
+
+interface LoginFormProps {
+  redirectTo?: string;
+  showVerifiedMessage?: boolean;
+}
+
+export function LoginForm({
+  redirectTo,
+  showVerifiedMessage = false,
+}: LoginFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const supabase = createClient();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+
+    try {
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error) {
+        // Handle specific error cases
+        if (
+          error.message.includes('Email not confirmed') ||
+          error.message.includes('email_not_confirmed') ||
+          error.message.includes('Sign-in failed: email not confirmed') ||
+          error.message.includes('not confirmed')
+        ) {
+          // User exists but email not verified, redirect to verify-email page with resend option
+          const emailParam = encodeURIComponent(data.email);
+          router.push(`/verify-email?showResend=true&email=${emailParam}`);
+          router.refresh();
+          return;
+        }
+
+        // Handle other errors with generic message for security
+        authToasts.loginError('Invalid email or password');
+        return;
+      }
+
+      // At this point, user is authenticated and email is verified
+
+      // Email is verified, check if user has organization
+      const hasOrg = await userHasOrganizationClient(authData.user.id);
+
+      if (!hasOrg) {
+        // User is verified but doesn't have organization - this shouldn't happen
+        // as organization is created during email verification, but handle gracefully
+        console.warn(
+          'User is verified but has no organization - redirecting to onboarding'
+        );
+        router.push('/onboarding');
+        router.refresh();
+        return;
+      }
+
+      // Check if user has completed onboarding
+      const hasCompletedOnboarding = await userHasCompletedOnboardingClient(
+        authData.user.id
+      );
+
+      if (!hasCompletedOnboarding) {
+        authToasts.warning(
+          'Onboarding Required',
+          'Please complete your account setup to access the dashboard.'
+        );
+        router.push('/onboarding');
+        router.refresh();
+        return;
+      }
+
+      // Everything is set up, show success and redirect
+      authToasts.loginSuccess();
+      const destination = redirectTo || '/dashboard';
+      router.push(destination);
+      router.refresh();
+    } catch {
+      authToasts.loginError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {showVerifiedMessage && (
+        <div className="rounded-md bg-green-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-green-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-green-800">
+                Email Verified Successfully!
+              </h3>
+              <div className="mt-2 text-sm text-green-700">
+                <p>Your email has been verified. Please sign in to continue.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <EnhancedTextField
+          label="Email address"
+          type="email"
+          autoComplete="email"
+          required
+          {...register('email')}
+          error={errors.email?.message}
+        />
+
+        <PasswordField
+          label="Password"
+          autoComplete="current-password"
+          required
+          {...register('password')}
+          error={errors.password?.message}
+        />
+
+        <Button
+          type="submit"
+          color="cyan"
+          className="w-full"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Signing in...' : 'Sign in to PayMatch'}
+        </Button>
+      </form>
+    </div>
+  );
+}

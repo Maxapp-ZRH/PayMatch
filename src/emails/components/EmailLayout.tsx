@@ -43,7 +43,7 @@ export const EmailLayout = ({
           <Section style={header}>
             <Link href={appUrl} style={logoLink}>
               <Img
-                src="cid:paymatch-logo"
+                src={`${appUrl}/logo.png`}
                 alt="PayMatch"
                 width="40"
                 height="40"
