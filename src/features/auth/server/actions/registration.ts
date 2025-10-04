@@ -13,7 +13,10 @@ import {
   sendVerificationEmail,
 } from '../services/email-service';
 import { checkRateLimit } from '../services/rate-limiting';
-import { findUserByEmail } from '../utils/user-operations';
+import {
+  findUserByEmail,
+  checkPendingRegistration,
+} from '../utils/user-operations';
 import { generateVerificationToken } from '../utils/token-operations';
 
 export interface RegisterUserData {
@@ -39,6 +42,22 @@ export async function registerUser(
 ): Promise<RegisterResult> {
   try {
     console.log('Starting registration for email:', data.email);
+
+    // Check if user already has a pending registration
+    const { hasPendingRegistration } = await checkPendingRegistration(
+      data.email
+    );
+
+    if (hasPendingRegistration) {
+      console.log(
+        'User already has pending registration, preventing duplicate registration'
+      );
+      return {
+        success: false,
+        message:
+          'You already have a pending registration. Please check your email and verify your account.',
+      };
+    }
 
     // Store pending registration data temporarily
     const pendingResult = await storePendingRegistration({
@@ -95,9 +114,8 @@ export async function resendVerificationEmail(
   email: string
 ): Promise<RegisterResult> {
   try {
-    // Check rate limit
-    if (!checkRateLimit(`resend_${email}`, 3, 5 * 60 * 1000)) {
-      // 3 attempts per 5 minutes
+    // Check rate limit using centralized config
+    if (!(await checkRateLimit(email, 'EMAIL_VERIFICATION'))) {
       return {
         success: false,
         message:

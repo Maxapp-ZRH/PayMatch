@@ -2,92 +2,122 @@
  * Rate Limiting Service
  *
  * Provides rate limiting functionality for auth operations.
- * Currently uses in-memory storage, but can be easily migrated to Redis.
+ * Uses Redis for persistent, distributed rate limiting.
  */
 
-// Simple in-memory rate limiting (in production, use Redis or database)
-const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+import {
+  getRedisKey,
+  setRedisKey,
+  incrementRedisCounter,
+  expireRedisKey,
+} from './redis';
+import { REDIS_CONFIG, type RateLimitType } from '@/config/redis-config';
 
 /**
- * Check if an operation is within rate limits
+ * Check if an operation is within rate limits using centralized config
  * @param identifier - Unique identifier for the rate limit (e.g., email, IP)
- * @param limit - Maximum number of attempts allowed
- * @param windowMs - Time window in milliseconds
+ * @param rateLimitType - Type of rate limit from config
  * @returns true if within limits, false if rate limited
  */
-export function checkRateLimit(
+export async function checkRateLimit(
   identifier: string,
-  limit = 5,
-  windowMs = 15 * 60 * 1000
-): boolean {
-  const now = Date.now();
-  const key = `rate_limit_${identifier}`;
+  rateLimitType: RateLimitType
+): Promise<boolean> {
+  const config = REDIS_CONFIG.RATE_LIMITS[rateLimitType];
+  const key = `${REDIS_CONFIG.KEY_PREFIXES.RATE_LIMIT}:${rateLimitType}:${identifier}`;
+  const windowSeconds = Math.floor(config.windowMs / 1000);
 
-  const current = rateLimitMap.get(key);
+  try {
+    // Get current count
+    const currentCount = await getRedisKey(key);
 
-  if (!current) {
-    rateLimitMap.set(key, { count: 1, lastReset: now });
+    if (!currentCount) {
+      // First request - set count to 1 and set expiration
+      await setRedisKey(key, '1', windowSeconds);
+      return true;
+    }
+
+    const count = parseInt(currentCount, 10);
+
+    // Check if within limit
+    if (count >= config.limit) {
+      return false;
+    }
+
+    // Increment count
+    const newCount = await incrementRedisCounter(key);
+
+    // Set expiration if this is the first increment after key creation
+    if (newCount === 1) {
+      await expireRedisKey(key, windowSeconds);
+    }
+
+    return newCount <= config.limit;
+  } catch (error) {
+    console.error('Rate limit check error:', error);
+    // On error, allow the request (fail open)
     return true;
   }
-
-  // Reset if window has passed
-  if (now - current.lastReset > windowMs) {
-    rateLimitMap.set(key, { count: 1, lastReset: now });
-    return true;
-  }
-
-  // Check if within limit
-  if (current.count >= limit) {
-    return false;
-  }
-
-  // Increment count
-  current.count++;
-  rateLimitMap.set(key, current);
-  return true;
 }
 
 /**
- * Get remaining attempts for an identifier
+ * Get remaining attempts for an identifier using centralized config
  * @param identifier - Unique identifier for the rate limit
- * @param limit - Maximum number of attempts allowed
- * @param windowMs - Time window in milliseconds
+ * @param rateLimitType - Type of rate limit from config
  * @returns number of remaining attempts
  */
-export function getRemainingAttempts(
+export async function getRemainingAttempts(
   identifier: string,
-  limit = 5,
-  windowMs = 15 * 60 * 1000
-): number {
-  const now = Date.now();
-  const key = `rate_limit_${identifier}`;
+  rateLimitType: RateLimitType
+): Promise<number> {
+  const config = REDIS_CONFIG.RATE_LIMITS[rateLimitType];
+  const key = `${REDIS_CONFIG.KEY_PREFIXES.RATE_LIMIT}:${rateLimitType}:${identifier}`;
 
-  const current = rateLimitMap.get(key);
+  try {
+    const currentCount = await getRedisKey(key);
 
-  if (!current) {
-    return limit;
+    if (!currentCount) {
+      return config.limit;
+    }
+
+    const count = parseInt(currentCount, 10);
+    return Math.max(0, config.limit - count);
+  } catch (error) {
+    console.error('Get remaining attempts error:', error);
+    return config.limit; // On error, assume full limit available
   }
-
-  // Reset if window has passed
-  if (now - current.lastReset > windowMs) {
-    return limit;
-  }
-
-  return Math.max(0, limit - current.count);
 }
 
 /**
- * Clear rate limit for an identifier
+ * Clear rate limit for an identifier using centralized config
  * @param identifier - Unique identifier for the rate limit
+ * @param rateLimitType - Type of rate limit from config
  */
-export function clearRateLimit(identifier: string): void {
-  const key = `rate_limit_${identifier}`;
-  rateLimitMap.delete(key);
+export async function clearRateLimit(
+  identifier: string,
+  rateLimitType: RateLimitType
+): Promise<void> {
+  const key = `${REDIS_CONFIG.KEY_PREFIXES.RATE_LIMIT}:${rateLimitType}:${identifier}`;
+
+  try {
+    await setRedisKey(key, '0', 1); // Set to 0 with 1 second TTL
+  } catch (error) {
+    console.error('Clear rate limit error:', error);
+  }
 }
 
 /**
  * Clear all rate limits (useful for testing)
+ * Note: This is a destructive operation - use with caution
  */
-export function clearAllRateLimits(): void {
-  rateLimitMap.clear();
+export async function clearAllRateLimits(): Promise<void> {
+  try {
+    // This would require a Redis SCAN operation to find all rate_limit:* keys
+    // For now, we'll just log a warning
+    console.warn(
+      'clearAllRateLimits: This operation requires Redis SCAN - not implemented'
+    );
+  } catch (error) {
+    console.error('Clear all rate limits error:', error);
+  }
 }

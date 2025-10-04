@@ -22,6 +22,7 @@ import {
   userHasOrganizationClient,
   userHasCompletedOnboardingClient,
 } from '../helpers/client-auth-helpers';
+import { checkUserPendingRegistration } from '../server/actions/login';
 
 interface LoginFormProps {
   redirectTo?: string;
@@ -54,7 +55,26 @@ export function LoginForm({
       });
 
       if (error) {
-        // Handle specific error cases
+        console.log('Login error:', error.message);
+
+        // Check if user has pending registration (not yet verified)
+        const { hasPendingRegistration } = await checkUserPendingRegistration(
+          data.email
+        );
+        console.log('Has pending registration:', hasPendingRegistration);
+
+        if (hasPendingRegistration) {
+          // User exists in pending registrations but not verified yet
+          console.log(
+            'Redirecting to verify-email page for pending registration'
+          );
+          const emailParam = encodeURIComponent(data.email);
+          router.push(`/verify-email?showResend=true&email=${emailParam}`);
+          router.refresh();
+          return;
+        }
+
+        // Handle specific error cases for existing users
         if (
           error.message.includes('Email not confirmed') ||
           error.message.includes('email_not_confirmed') ||

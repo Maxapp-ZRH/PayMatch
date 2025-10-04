@@ -12,6 +12,12 @@ import { sendPasswordResetEmail as sendPasswordResetEmailService } from '../serv
 import { checkRateLimit } from '../services/rate-limiting';
 import { findUserByEmail } from '../utils/user-operations';
 import { generatePasswordResetToken } from '../utils/token-operations';
+import {
+  setRedisObject,
+  getRedisObject,
+  deleteRedisKey,
+} from '../services/redis';
+import { REDIS_CONFIG } from '@/config/redis-config';
 
 export interface PasswordResetResult {
   success: boolean;
@@ -25,10 +31,11 @@ export interface PasswordResetToken {
   userId: string;
   email: string;
   expiresAt: Date;
+  [key: string]: unknown;
 }
 
-// In-memory storage for password reset tokens (use Redis in production)
-const passwordResetTokens = new Map<string, PasswordResetToken>();
+// Redis storage for password reset tokens
+const PASSWORD_RESET_PREFIX = REDIS_CONFIG.KEY_PREFIXES.PASSWORD_RESET;
 
 /**
  * Send password reset email
@@ -37,9 +44,8 @@ export async function sendPasswordResetEmail(
   email: string
 ): Promise<PasswordResetResult> {
   try {
-    // Check rate limit
-    if (!checkRateLimit(`password_reset_${email}`, 3, 15 * 60 * 1000)) {
-      // 3 attempts per 15 minutes
+    // Check rate limit using centralized config
+    if (!(await checkRateLimit(email, 'PASSWORD_RESET'))) {
       return {
         success: false,
         message:
@@ -69,13 +75,18 @@ export async function sendPasswordResetEmail(
     // Generate reset token
     const { token: resetToken, expiresAt } = generatePasswordResetToken();
 
-    // Store token
-    passwordResetTokens.set(resetToken, {
+    // Store token in Redis
+    const tokenData: PasswordResetToken = {
       token: resetToken,
       userId: user.id,
       email: user.email!,
       expiresAt,
-    });
+    };
+
+    const tokenKey = `${PASSWORD_RESET_PREFIX}:${resetToken}`;
+    const ttlSeconds = Math.floor((expiresAt.getTime() - Date.now()) / 1000);
+
+    await setRedisObject(tokenKey, tokenData, ttlSeconds);
 
     // Send reset email
     const result = await sendPasswordResetEmailService(
@@ -114,8 +125,10 @@ export async function resetPassword(
   newPassword: string
 ): Promise<PasswordResetResult> {
   try {
-    // Get token from storage
-    const resetData = passwordResetTokens.get(token);
+    // Get token from Redis
+    const tokenKey = `${PASSWORD_RESET_PREFIX}:${token}`;
+    const resetData = await getRedisObject<PasswordResetToken>(tokenKey);
+
     if (!resetData) {
       return {
         success: false,
@@ -125,7 +138,7 @@ export async function resetPassword(
 
     // Check if token has expired
     if (new Date() > resetData.expiresAt) {
-      passwordResetTokens.delete(token);
+      await deleteRedisKey(tokenKey);
       return {
         success: false,
         message: 'Reset token has expired. Please request a new one.',
@@ -146,8 +159,8 @@ export async function resetPassword(
       };
     }
 
-    // Clean up token
-    passwordResetTokens.delete(token);
+    // Clean up token from Redis
+    await deleteRedisKey(tokenKey);
 
     return {
       success: true,
@@ -170,7 +183,9 @@ export async function verifyResetToken(
   token: string
 ): Promise<{ valid: boolean; error?: string }> {
   try {
-    const resetData = passwordResetTokens.get(token);
+    const tokenKey = `${PASSWORD_RESET_PREFIX}:${token}`;
+    const resetData = await getRedisObject<PasswordResetToken>(tokenKey);
+
     if (!resetData) {
       return {
         valid: false,
@@ -179,7 +194,7 @@ export async function verifyResetToken(
     }
 
     if (new Date() > resetData.expiresAt) {
-      passwordResetTokens.delete(token);
+      await deleteRedisKey(tokenKey);
       return {
         valid: false,
         error: 'Reset token has expired.',

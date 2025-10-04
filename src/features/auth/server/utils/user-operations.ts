@@ -94,3 +94,72 @@ export async function getUserMetadata(
   const { user } = await findUserByEmail(email);
   return user?.user_metadata || null;
 }
+
+/**
+ * Check if a user has a pending registration (not yet verified)
+ * @param email - User's email address
+ * @returns Object with hasPendingRegistration boolean and optional error
+ */
+export async function checkPendingRegistration(email: string): Promise<{
+  hasPendingRegistration: boolean;
+  error?: string;
+}> {
+  try {
+    console.log('Checking pending registration for email:', email);
+
+    const { data, error } = await supabaseAdmin
+      .from('pending_registrations')
+      .select('id, email, expires_at')
+      .eq('email', email)
+      .single();
+
+    if (error) {
+      console.log('No pending registration found:', error.message);
+      return { hasPendingRegistration: false };
+    }
+
+    // Check if not expired
+    const isExpired = new Date() > new Date(data.expires_at);
+    console.log('Pending registration found, expired:', isExpired);
+
+    if (isExpired) {
+      return { hasPendingRegistration: false };
+    }
+
+    console.log('Valid pending registration found');
+    return { hasPendingRegistration: true };
+  } catch (error) {
+    console.log('Error checking pending registration:', error);
+    return { hasPendingRegistration: false };
+  }
+}
+
+/**
+ * Clean up expired pending registrations
+ * @returns Number of cleaned up registrations
+ */
+export async function cleanupExpiredPendingRegistrations(): Promise<{
+  cleanedCount: number;
+  error?: string;
+}> {
+  try {
+    const now = new Date().toISOString();
+
+    const { data, error } = await supabaseAdmin
+      .from('pending_registrations')
+      .delete()
+      .lt('expires_at', now)
+      .select('id');
+
+    if (error) {
+      return { cleanedCount: 0, error: error.message };
+    }
+
+    return { cleanedCount: data?.length || 0 };
+  } catch (error) {
+    return {
+      cleanedCount: 0,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}

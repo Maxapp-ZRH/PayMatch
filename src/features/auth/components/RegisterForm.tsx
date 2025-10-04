@@ -17,6 +17,7 @@ import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
 import { EnhancedSelectField } from '@/components/ui/enhanced-select-field';
 import { PasswordField } from '@/components/ui/password-field';
 import { registerUser } from '../server/actions/registration';
+import { checkUserPendingRegistration } from '../server/actions/login';
 import { authToasts } from '@/lib/toast';
 import {
   registerSchema,
@@ -49,6 +50,25 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
+      // Check if user already has a pending registration
+      const { hasPendingRegistration } = await checkUserPendingRegistration(
+        data.email
+      );
+
+      if (hasPendingRegistration) {
+        // User already has pending registration, redirect to verify-email page
+        console.log(
+          'User already has pending registration, redirecting to verify-email'
+        );
+        authToasts.warning(
+          'Registration Already in Progress',
+          'You already have a pending registration. Please check your email and verify your account.'
+        );
+        const emailParam = encodeURIComponent(data.email);
+        router.push(`/verify-email?showResend=true&email=${emailParam}`);
+        return;
+      }
+
       // Use server action for registration and email sending
       const result = await registerUser({
         firstName: data.firstName,

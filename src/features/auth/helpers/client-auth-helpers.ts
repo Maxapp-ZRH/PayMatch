@@ -16,6 +16,7 @@ export async function userHasOrganizationClient(
   userId: string
 ): Promise<boolean> {
   try {
+    console.log('userHasOrganizationClient called with userId:', userId);
     const supabase = createClient();
 
     // Check if user is authenticated
@@ -24,24 +25,53 @@ export async function userHasOrganizationClient(
       error: authError,
     } = await supabase.auth.getUser();
 
+    console.log('Auth check result:', { user: user?.id, authError });
+
     if (authError || !user) {
+      console.log('No authenticated user found');
       return false;
     }
 
-    // Query organization membership
-    const { data, error } = await supabase
-      .from('organization_users')
+    // First check if user has a profile (this should work with RLS)
+    console.log('Checking user profile...');
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profiles')
       .select('id')
-      .eq('user_id', userId)
-      .eq('status', 'active')
-      .limit(1);
+      .eq('id', userId)
+      .single();
+
+    console.log('Profile check result:', { profile, profileError });
+
+    if (profileError || !profile) {
+      console.log('No user profile found, user likely not fully set up');
+      return false;
+    }
+
+    console.log(
+      'Querying organization membership using database function for userId:',
+      userId
+    );
+
+    // Use the database function that bypasses RLS to check organization membership
+    const { data, error } = await supabase.rpc('user_has_organization', {
+      user_uuid: userId,
+    });
+
+    console.log('Organization function result:', { data, error });
 
     if (error) {
-      console.error('Error checking user organization:', error);
+      console.error('Error checking user organization (function):', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
       return false;
     }
 
-    return Boolean(data && data.length > 0);
+    const result = Boolean(data);
+    console.log('Final organization check result (function):', result);
+    return result;
   } catch (error) {
     console.error('Exception in userHasOrganizationClient:', error);
     return false;

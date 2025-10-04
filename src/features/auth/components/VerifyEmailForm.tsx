@@ -12,10 +12,6 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/marketing_pages/Button';
 import { authToasts } from '@/lib/toast';
-import {
-  userHasOrganizationClient,
-  userHasCompletedOnboardingClient,
-} from '../helpers/client-auth-helpers';
 
 interface VerifyEmailFormProps {
   userEmail: string;
@@ -40,61 +36,24 @@ export function VerifyEmailForm({
     const checkVerificationStatus = async () => {
       setIsChecking(true);
       try {
-        const {
-          data: { user },
-          error,
-        } = await supabase.auth.getUser();
+        // With deferred account creation, we don't check for user session here
+        // because the user doesn't exist in Supabase Auth until after email verification
+        // Instead, we'll check if the user has been verified by looking at the URL params
+        // or by checking if they can access the dashboard
 
-        if (error) {
-          // Only log as error if it's not the expected "Auth session missing" error
-          if (!error.message.includes('Auth session missing')) {
-            console.error('Error checking verification status:', error);
-          }
-
-          // Handle JWT error by clearing session
-          if (
-            error.message.includes('User from sub claim in JWT does not exist')
-          ) {
-            console.log(
-              '🔍 VerifyEmailForm - Clearing stale session due to JWT error'
-            );
-            await supabase.auth.signOut();
-            authToasts.warning(
-              'Session expired',
-              'Your session has expired. Please refresh the page and try again.'
-            );
-            // Don't return, continue with unauthenticated state
-          } else if (error.message.includes('Auth session missing')) {
-            // This is expected for unverified users - no action needed
-            console.log(
-              '🔍 VerifyEmailForm - No session (expected for unverified users)'
-            );
-          } else {
-            return;
-          }
-        }
-
-        if (user?.email_confirmed_at) {
+        // If we have a verified param in the URL, mark as verified
+        if (emailVerified) {
           setIsVerified(true);
-
-          // Check if user has organization and onboarding completed
-          const hasOrg = await userHasOrganizationClient(user.id);
-          const hasCompletedOnboarding = await userHasCompletedOnboardingClient(
-            user.id
-          );
-
-          // Redirect based on completion status
+          // Redirect to login after a short delay
           setTimeout(() => {
-            if (!hasOrg) {
-              // This shouldn't happen as organization is created during email verification
-              router.push('/verify-email');
-            } else if (!hasCompletedOnboarding) {
-              router.push('/onboarding');
-            } else {
-              router.push('/dashboard');
-            }
+            router.push('/login');
           }, 2000);
+          return;
         }
+
+        // For now, we'll rely on the user clicking the verification link
+        // which will redirect them to the auth callback and then to the appropriate page
+        console.log('🔍 VerifyEmailForm - Waiting for email verification...');
       } catch (error) {
         console.error('Error checking verification status:', error);
       } finally {
@@ -105,11 +64,11 @@ export function VerifyEmailForm({
     // Check immediately
     checkVerificationStatus();
 
-    // Check every 5 seconds
-    const interval = setInterval(checkVerificationStatus, 5000);
+    // Check every 10 seconds (less frequent since we're not checking auth state)
+    const interval = setInterval(checkVerificationStatus, 10000);
 
     return () => clearInterval(interval);
-  }, [supabase, router]);
+  }, [supabase, router, emailVerified]);
 
   const handleResendVerification = async () => {
     setIsResending(true);
@@ -202,7 +161,7 @@ export function VerifyEmailForm({
               <span className="font-medium text-gray-900">{currentEmail}</span>
             </>
           ) : (
-            'We&apos;ve sent a verification link to your email address.'
+            "We've sent a verification link to your email address."
           )}
         </p>
         {showResend && !isVerified && (
