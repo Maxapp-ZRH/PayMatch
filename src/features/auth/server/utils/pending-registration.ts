@@ -11,10 +11,11 @@ import { userExistsByEmail } from './user-operations';
 
 export interface PendingRegistrationData {
   email: string;
-  password?: string; // Optional for GDPR compliance
   firstName: string;
   lastName: string;
   language: string;
+  referralSource?: string;
+  browserLocale?: string;
 }
 
 export interface PendingRegistrationResult {
@@ -91,11 +92,12 @@ export async function storePendingRegistration(
     // when the user is created in Supabase Auth
     const { error } = await supabase.from('pending_registrations').insert({
       email: data.email,
-      password_hash: null, // No password stored for GDPR compliance
+      first_name: data.firstName,
+      last_name: data.lastName,
       user_metadata: {
-        first_name: data.firstName,
-        last_name: data.lastName,
         language: data.language,
+        referral_source: data.referralSource,
+        browser_locale: data.browserLocale,
       },
       verification_token: verificationToken,
       expires_at: expiresAt.toISOString(),

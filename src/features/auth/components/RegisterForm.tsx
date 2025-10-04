@@ -73,6 +73,7 @@ export function RegisterForm() {
         lastName: data.lastName,
         email: data.email,
         referralSource: data.referralSource,
+        browserLocale: navigator.language || 'de-CH',
       });
 
       if (result.success) {

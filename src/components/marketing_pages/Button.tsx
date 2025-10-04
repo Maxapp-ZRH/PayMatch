@@ -38,10 +38,15 @@ type ButtonProps = (
     | Omit<React.ComponentPropsWithoutRef<typeof Link>, 'color'>
     | (Omit<React.ComponentPropsWithoutRef<'button'>, 'color'> & {
         href?: undefined;
+        disabled?: boolean;
       })
   );
 
-export function Button({ className, ...props }: ButtonProps) {
+export function Button({
+  className,
+  disabled,
+  ...props
+}: ButtonProps & { disabled?: boolean }) {
   props.variant ??= 'solid';
   props.color ??= 'gray';
 
@@ -52,11 +57,12 @@ export function Button({ className, ...props }: ButtonProps) {
       : props.variant === 'solid'
         ? variantStyles.solid[props.color]
         : undefined,
+    disabled && 'opacity-50 cursor-not-allowed',
     className
   );
 
   return typeof props.href === 'undefined' ? (
-    <button className={className} {...props} />
+    <button className={className} disabled={disabled} {...props} />
   ) : (
     <Link className={className} {...props} />
   );

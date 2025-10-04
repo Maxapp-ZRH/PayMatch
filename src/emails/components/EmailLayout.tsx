@@ -100,7 +100,6 @@ const container = {
   backgroundColor: '#ffffff',
   margin: '0 auto',
   padding: '20px 0 48px',
-  marginBottom: '64px',
   maxWidth: '600px',
 };
 

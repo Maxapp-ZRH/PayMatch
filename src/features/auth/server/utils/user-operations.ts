@@ -145,7 +145,6 @@ export async function getPendingRegistration(email: string): Promise<{
   first_name: string | null;
   last_name: string | null;
   user_metadata: Record<string, unknown>;
-  password_hash: string;
   expires_at: string;
   created_at: string;
 } | null> {
@@ -155,7 +154,7 @@ export async function getPendingRegistration(email: string): Promise<{
     const { data, error } = await supabaseAdmin
       .from('pending_registrations')
       .select(
-        'id, email, first_name, last_name, user_metadata, password_hash, expires_at, created_at'
+        'id, email, first_name, last_name, user_metadata, expires_at, created_at'
       )
       .eq('email', email)
       .single();

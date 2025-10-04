@@ -10,7 +10,7 @@
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { sendPasswordResetEmail as sendPasswordResetEmailService } from '../services/email-service';
 import { checkRateLimit } from '../services/rate-limiting';
-import { findUserByEmail } from '../utils/user-operations';
+import { findUserByEmail, getPendingRegistration } from '../utils/user-operations';
 import { generatePasswordResetToken } from '../utils/token-operations';
 import {
   setRedisObject,
@@ -36,6 +36,33 @@ export interface PasswordResetToken {
 
 // Redis storage for password reset tokens
 const PASSWORD_RESET_PREFIX = REDIS_CONFIG.KEY_PREFIXES.PASSWORD_RESET;
+
+/**
+ * Check if user has pending registration for password reset flow
+ */
+export async function checkPendingRegistrationForPasswordReset(email: string): Promise<{
+  hasPendingRegistration: boolean;
+  firstName?: string;
+  error?: string;
+}> {
+  try {
+    const pendingRegistration = await getPendingRegistration(email);
+    
+    if (!pendingRegistration) {
+      return { hasPendingRegistration: false };
+    }
+
+    return {
+      hasPendingRegistration: true,
+      firstName: pendingRegistration.first_name || undefined,
+    };
+  } catch (error) {
+    return {
+      hasPendingRegistration: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
 
 /**
  * Send password reset email

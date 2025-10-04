@@ -13,8 +13,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
-import { sendPasswordResetEmail } from '../server/actions/password-reset';
+import {
+  sendPasswordResetEmail,
+  checkPendingRegistrationForPasswordReset,
+} from '../server/actions/password-reset';
 import { authToasts } from '@/lib/toast';
+import { useRouter } from 'next/navigation';
 import {
   forgotPasswordSchema,
   type ForgotPasswordFormData,
@@ -23,6 +27,7 @@ import {
 export function ForgotPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -36,6 +41,20 @@ export function ForgotPasswordForm() {
     setIsLoading(true);
 
     try {
+      // First check if user has a pending registration
+      const pendingCheck = await checkPendingRegistrationForPasswordReset(
+        data.email
+      );
+
+      if (pendingCheck.hasPendingRegistration) {
+        // Redirect to verify-email page with appropriate message
+        const emailParam = encodeURIComponent(data.email);
+        router.push(
+          `/verify-email?email=${emailParam}&showResend=true&pendingPasswordReset=true`
+        );
+        return;
+      }
+
       // Send password reset email for existing users
       const result = await sendPasswordResetEmail(data.email);
 

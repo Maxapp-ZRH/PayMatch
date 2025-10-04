@@ -10,6 +10,7 @@ import { type Metadata } from 'next';
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
 import { VerifyEmailForm } from '@/features/auth/components/VerifyEmailForm';
 import { SetPasswordForm } from '@/features/auth/components/SetPasswordForm';
+import { getPendingUserName } from '@/features/auth/server/actions/registration';
 
 export const metadata: Metadata = {
   title: 'Verify Email - PayMatch',
@@ -24,13 +25,31 @@ export default async function VerifyEmail({
     email?: string;
     showResend?: string;
     setPassword?: string;
+    pendingPasswordReset?: string;
   }>;
 }) {
   const resolvedSearchParams = await searchParams;
   const isVerified = resolvedSearchParams.verified === 'true';
-  const emailFromUrl = resolvedSearchParams.email;
+  const emailFromUrl = resolvedSearchParams.email
+    ? decodeURIComponent(resolvedSearchParams.email)
+    : undefined;
   const showResend = resolvedSearchParams.showResend === 'true';
   const needsPassword = resolvedSearchParams.setPassword === 'true';
+  const isPendingPasswordReset =
+    resolvedSearchParams.pendingPasswordReset === 'true';
+
+  console.log('VerifyEmail page - resolvedSearchParams:', resolvedSearchParams);
+  console.log('VerifyEmail page - emailFromUrl (decoded):', emailFromUrl);
+  console.log('VerifyEmail page - showResend:', showResend);
+
+  // Fetch user's first name for personalized greeting
+  let firstName = null;
+  if (emailFromUrl) {
+    const nameResult = await getPendingUserName(emailFromUrl);
+    if (nameResult.success) {
+      firstName = nameResult.firstName;
+    }
+  }
 
   // If user needs to set password (clicked verification link), show password form
   if (needsPassword && emailFromUrl) {
@@ -60,6 +79,17 @@ export default async function VerifyEmail({
             Your email has been verified! You can now sign in to access your
             PayMatch account.
           </>
+        ) : isPendingPasswordReset ? (
+          <>
+            You have a pending registration{firstName ? `, ${firstName}` : ''}.
+            Please verify your email first to complete your account setup.
+          </>
+        ) : firstName ? (
+          <>
+            Hi {firstName}! We&apos;ve sent a verification link to your email
+            address. Please check your email and click the link to verify your
+            account.
+          </>
         ) : emailFromUrl ? (
           <>
             We&apos;ve sent a verification link to{' '}
@@ -78,6 +108,7 @@ export default async function VerifyEmail({
         userEmail={emailFromUrl || ''}
         isVerified={isVerified}
         showResend={showResend}
+        firstName={firstName}
       />
     </AuthLayout>
   );

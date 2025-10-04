@@ -27,6 +27,7 @@ export interface RegisterUserData {
   email: string;
   password?: string; // Optional for GDPR compliance
   referralSource?: string;
+  browserLocale?: string;
 }
 
 export interface RegisterResult {
@@ -64,10 +65,11 @@ export async function registerUser(
     // Store pending registration data temporarily (GDPR-compliant, no password stored)
     const pendingResult = await storePendingRegistration({
       email: data.email,
-      // password: data.password, // Not stored for GDPR compliance
       firstName: data.firstName,
       lastName: data.lastName,
       language: 'de', // Default to German for Swiss market
+      referralSource: data.referralSource,
+      browserLocale: data.browserLocale,
     });
 
     console.log('Pending registration result:', pendingResult);
@@ -195,7 +197,11 @@ export async function setPendingRegistrationPassword(
       email: email,
       password: password, // Supabase will hash this properly
       email_confirm: true, // Mark as verified since they clicked the link
-      user_metadata: pendingRegistration.user_metadata,
+      user_metadata: {
+        first_name: pendingRegistration.first_name,
+        last_name: pendingRegistration.last_name,
+        ...pendingRegistration.user_metadata,
+      },
     });
 
     if (authError) {
@@ -278,14 +284,10 @@ export async function resendPendingVerificationEmail(
     }
 
     // Send verification email using the same function as registration
-    // Get the name from user_metadata or construct from first_name/last_name
-    const name =
-      pendingRegistration.user_metadata?.first_name &&
-      pendingRegistration.user_metadata?.last_name
-        ? `${pendingRegistration.user_metadata.first_name} ${pendingRegistration.user_metadata.last_name}`
-        : pendingRegistration.first_name && pendingRegistration.last_name
-          ? `${pendingRegistration.first_name} ${pendingRegistration.last_name}`
-          : email;
+    // Construct name from first_name and last_name columns
+    const name = pendingRegistration.first_name && pendingRegistration.last_name
+      ? `${pendingRegistration.first_name} ${pendingRegistration.last_name}`
+      : email;
 
     const result = await sendVerificationEmail(email, verificationToken, name);
 
@@ -312,6 +314,44 @@ export async function resendPendingVerificationEmail(
     return {
       success: false,
       message: 'Failed to resend verification email. Please try again.',
+    };
+  }
+}
+
+/**
+ * Get pending user's first name for personalized messages
+ */
+export async function getPendingUserName(email: string) {
+  try {
+    if (!email) {
+      return { success: false, firstName: null, error: 'No email provided' };
+    }
+
+    const { data: pendingRegistration, error } = await supabaseAdmin
+      .from('pending_registrations')
+      .select('first_name')
+      .eq('email', email)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching pending user name:', error);
+      return { success: false, firstName: null, error: error.message };
+    }
+
+    if (!pendingRegistration) {
+      return { success: false, firstName: null, error: 'No pending registration found' };
+    }
+
+    return {
+      success: true,
+      firstName: pendingRegistration.first_name || null,
+    };
+  } catch (error) {
+    console.error('Error in getPendingUserName:', error);
+    return {
+      success: false,
+      firstName: null,
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }
