@@ -57,25 +57,28 @@ export default async function middleware(request: NextRequest) {
   }
 
   // Define protected routes (require authentication and email verification)
-  const protectedRoutes = ['/dashboard', '/settings'];
+  // Note: /dashboard/* will be handled by the dashboard route group
+  // Future nested routes like /dashboard/settings, /dashboard/profile will be automatically protected
+  const protectedRoutes = ['/dashboard'];
   // Define onboarding route (requires auth and email verification, but not onboarding completion)
   const onboardingRoute = '/onboarding';
   // Define auth routes (redirect if already authenticated and verified)
-  const authRoutes = [
-    '/login',
-    '/register',
-    '/forgot-password',
-    '/reset-password',
-  ];
+  const authRoutes = ['/login', '/register', '/forgot-password'];
+  // Define token-protected routes (require valid token parameter)
+  const tokenProtectedRoutes = ['/reset-password'];
   // Define special routes that need custom handling
   const specialRoutes = ['/verify-email'];
 
   // Check if the current path is protected
+  // Handle nested dashboard routes (e.g., /dashboard/settings, /dashboard/profile, etc.)
   const isProtectedRoute = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+  const isOnboardingRoute = pathname.startsWith(onboardingRoute);
+  const isAuthRoute = authRoutes.some((route) => pathname.includes(route));
+  const isTokenProtectedRoute = tokenProtectedRoutes.some((route) =>
     pathname.includes(route)
   );
-  const isOnboardingRoute = pathname.includes(onboardingRoute);
-  const isAuthRoute = authRoutes.some((route) => pathname.includes(route));
   const isSpecialRoute = specialRoutes.some((route) =>
     pathname.includes(route)
   );
@@ -161,6 +164,19 @@ export default async function middleware(request: NextRequest) {
     // The onboarding page will handle redirecting to dashboard if already completed
   }
 
+  if (isTokenProtectedRoute) {
+    // Check if the route has a valid token parameter
+    const token = request.nextUrl.searchParams.get('token');
+
+    if (!token) {
+      // No token provided, redirect to forgot-password page
+      return NextResponse.redirect(new URL('/forgot-password', request.url));
+    }
+
+    // Token is present, allow access (the page will validate the token)
+    // No authentication check needed as this is for password reset
+  }
+
   if (isAuthRoute) {
     // Check if user is already authenticated (using getUser for security)
     const {
@@ -192,8 +208,21 @@ export default async function middleware(request: NextRequest) {
     // Handle special routes that need custom authentication logic
     if (pathname.includes('/verify-email')) {
       // With deferred account creation, users won't have accounts until verification
-      // So verify-email page should always be accessible to unauthenticated users
-      // No need to check authentication - the page handles all cases
+      // However, we should still check if they have a valid email parameter
+      // or are coming from a legitimate flow (registration, login, forgot-password)
+      const email = request.nextUrl.searchParams.get('email');
+      const showResend = request.nextUrl.searchParams.get('showResend');
+      const pendingPasswordReset = request.nextUrl.searchParams.get(
+        'pendingPasswordReset'
+      );
+
+      // If no email parameter and no showResend flag, redirect to registration
+      // This prevents direct access to verify-email without context
+      if (!email && !showResend && !pendingPasswordReset) {
+        return NextResponse.redirect(new URL('/register', request.url));
+      }
+
+      // Allow access if they have email parameter or are coming from legitimate flows
     }
   }
 

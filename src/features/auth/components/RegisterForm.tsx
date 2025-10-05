@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
@@ -153,6 +154,24 @@ export function RegisterForm() {
           ? 'Sending verification email...'
           : 'Get started with PayMatch'}
       </Button>
+
+      <p className="text-xs text-gray-500 text-center">
+        By signing up, you agree to our{' '}
+        <Link
+          href="/terms"
+          className="text-cyan-600 hover:text-cyan-700 underline transition-colors duration-200 hover:underline-offset-2"
+        >
+          Terms and Conditions
+        </Link>{' '}
+        and{' '}
+        <Link
+          href="/privacy"
+          className="text-cyan-600 hover:text-cyan-700 underline transition-colors duration-200 hover:underline-offset-2"
+        >
+          Privacy Policy
+        </Link>
+        .
+      </p>
     </form>
   );
 }

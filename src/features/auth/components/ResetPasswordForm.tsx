@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { PasswordField } from '@/components/ui/password-field';
@@ -122,20 +123,8 @@ export function ResetPasswordForm() {
   if (isValidToken === null) {
     return (
       <div className="text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-          <svg
-            className="h-6 w-6 text-blue-600 animate-spin"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-teal-100">
+          <Loader2 className="h-6 w-6 text-teal-600 animate-spin" />
         </div>
         <h3 className="mt-4 text-lg font-medium text-gray-900">
           Validating reset link...
@@ -152,19 +141,7 @@ export function ResetPasswordForm() {
     return (
       <div className="text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-          <svg
-            className="h-6 w-6 text-red-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <XCircle className="h-6 w-6 text-red-600" />
         </div>
         <h3 className="mt-4 text-lg font-medium text-gray-900">
           Invalid reset link
@@ -186,19 +163,7 @@ export function ResetPasswordForm() {
     return (
       <div className="text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-          <svg
-            className="h-6 w-6 text-green-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
+          <CheckCircle className="h-6 w-6 text-green-600" />
         </div>
         <h3 className="mt-4 text-lg font-medium text-gray-900">
           Password updated successfully

@@ -10,6 +10,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { CheckCircle } from 'lucide-react';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
@@ -78,19 +79,7 @@ export function ForgotPasswordForm() {
     return (
       <div className="text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-          <svg
-            className="h-6 w-6 text-green-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
+          <CheckCircle className="h-6 w-6 text-green-600" />
         </div>
         <h3 className="mt-4 text-lg font-medium text-gray-900">
           Check your email

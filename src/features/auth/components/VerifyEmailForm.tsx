@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/marketing_pages/Button';
 import { authToasts } from '@/lib/toast';
+import { CheckCircle, Mail, Loader2 } from 'lucide-react';
 import {
   resendVerificationEmail,
   resendPendingVerificationEmail,
@@ -39,84 +40,23 @@ export function VerifyEmailForm({
   const [resendCooldown, setResendCooldown] = useState(0);
   const [needsEmailInput, setNeedsEmailInput] = useState(false);
   const [emailInput, setEmailInput] = useState('');
-  const [hasAutoSent, setHasAutoSent] = useState(() => {
-    // Check if we've already auto-sent for this email in this session
-    if (typeof window !== 'undefined' && currentEmail) {
-      const autoSentKey = `auto-sent-${currentEmail}`;
-      return sessionStorage.getItem(autoSentKey) === 'true';
-    }
-    return false;
-  });
   const router = useRouter();
   const supabase = createClient();
 
-  // Auto-send verification email when user lands on verify-email page
+  // Initialize UI state based on props (no auto-send since registration already sends email)
   useEffect(() => {
-    console.log(
-      'VerifyEmailForm - showResend:',
-      showResend,
-      'currentEmail:',
-      currentEmail,
-      'isVerified:',
-      isVerified
-    );
-    if (showResend && !isVerified && currentEmail && !hasAutoSent) {
-      console.log('Auto-sending verification email for:', currentEmail);
-      setHasAutoSent(true);
-
-      // Store in sessionStorage to persist across page reloads
-      if (typeof window !== 'undefined') {
-        const autoSentKey = `auto-sent-${currentEmail}`;
-        sessionStorage.setItem(autoSentKey, 'true');
-      }
-
-      // Auto-send without using the main handler to avoid circular dependency
-      const autoSendEmail = async () => {
-        setIsResending(true);
-        try {
-          const pendingResult =
-            await resendPendingVerificationEmail(currentEmail);
-          if (pendingResult.success) {
-            authToasts.success(
-              'Verification email sent!',
-              pendingResult.message
-            );
-            setResendCooldown(60);
-            return;
-          }
-          const existingUserResult =
-            await resendVerificationEmail(currentEmail);
-          if (existingUserResult.success) {
-            authToasts.success(
-              'Verification email sent!',
-              existingUserResult.message
-            );
-            setResendCooldown(60);
-          } else {
-            authToasts.error(pendingResult.message);
-          }
-        } catch (error) {
-          console.error('Error auto-sending verification:', error);
-          authToasts.verificationError(
-            'Failed to send verification email. Please try again.'
-          );
-        } finally {
-          setIsResending(false);
-        }
-      };
-
-      autoSendEmail();
-    } else if (showResend && !isVerified && !currentEmail) {
-      console.log('No email provided, setting needsEmailInput to true');
+    // If no email provided but showResend is true, show email input
+    if (showResend && !isVerified && !currentEmail) {
       setNeedsEmailInput(true);
       setShowResendOptions(true);
     }
-  }, [showResend, isVerified, currentEmail, hasAutoSent]);
+  }, [showResend, isVerified, currentEmail]);
 
   // Show resend options after 60 seconds (for manual resend)
   useEffect(() => {
     if (showResend && !isVerified) {
       setShowResendOptions(false);
+      setResendCooldown(60); // Start 60-second countdown
 
       const countdownTimeout = setTimeout(() => {
         setShowResendOptions(true);
@@ -150,11 +90,6 @@ export function VerifyEmailForm({
         // If we have a verified param in the URL, mark as verified
         if (emailVerified) {
           setIsVerified(true);
-          // Clear sessionStorage when verified
-          if (typeof window !== 'undefined' && currentEmail) {
-            const autoSentKey = `auto-sent-${currentEmail}`;
-            sessionStorage.removeItem(autoSentKey);
-          }
           // Redirect to login after a short delay
           setTimeout(() => {
             router.push('/login');
@@ -232,19 +167,7 @@ export function VerifyEmailForm({
     return (
       <div className="text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-          <svg
-            className="h-6 w-6 text-green-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
+          <CheckCircle className="h-6 w-6 text-green-600" />
         </div>
         <h3 className="mt-4 text-lg font-medium text-gray-900">
           Email Verified!
@@ -253,7 +176,7 @@ export function VerifyEmailForm({
           Your email has been verified successfully. Redirecting to dashboard...
         </p>
         <div className="mt-6">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-cyan-500 mx-auto"></div>
+          <Loader2 className="animate-spin h-6 w-6 text-cyan-500 mx-auto" />
         </div>
       </div>
     );
@@ -262,20 +185,8 @@ export function VerifyEmailForm({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-          <svg
-            className="h-6 w-6 text-blue-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-            />
-          </svg>
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-teal-100">
+          <Mail className="h-6 w-6 text-teal-600" />
         </div>
         <h3 className="mt-4 text-lg font-medium text-gray-900">
           {isVerified ? 'Email verified successfully!' : 'Check your email'}
@@ -366,7 +277,7 @@ export function VerifyEmailForm({
       {isChecking && (
         <div className="text-center">
           <div className="inline-flex items-center text-sm text-gray-500">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-cyan-500 mr-2"></div>
+            <Loader2 className="animate-spin h-4 w-4 text-cyan-500 mr-2" />
             Checking verification status...
           </div>
         </div>

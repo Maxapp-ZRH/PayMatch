@@ -2,7 +2,7 @@
 
 ## Overview
 
-PayMatch implements a comprehensive, security-first authentication system using Supabase Auth with deferred account creation, Redis-based token management, and automatic cleanup mechanisms. The system handles both regular users and pending registrations seamlessly.
+PayMatch implements a modern, GDPR-compliant authentication system using Supabase Auth with deferred account creation, smart auto-send logic, and comprehensive security features. The system handles both regular users and pending registrations seamlessly with intelligent flow routing.
 
 ## Table of Contents
 
@@ -11,6 +11,7 @@ PayMatch implements a comprehensive, security-first authentication system using 
 - [Security Features](#security-features)
 - [Database Schema](#database-schema)
 - [Redis Integration](#redis-integration)
+- [Smart Auto-Send Logic](#smart-auto-send-logic)
 - [API Endpoints](#api-endpoints)
 - [Error Handling](#error-handling)
 - [Testing](#testing)
@@ -35,6 +36,8 @@ PayMatch implements a comprehensive, security-first authentication system using 
 │  - Register     │    │  - Password     │    │  - Profiles     │
 │  - Password     │    │    Reset Tokens │    │  - Pending      │
 │    Reset        │    │  - Session Data │    │    Registrations│
+│  - Verify Email │    │  - Auto-Send    │    │  - Email Prefs  │
+│  - Set Password │    │    State        │    │  - Newsletter   │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -47,13 +50,14 @@ src/features/auth/
 │   ├── RegisterForm.tsx
 │   ├── ForgotPasswordForm.tsx
 │   ├── ResetPasswordForm.tsx
-│   └── PendingPasswordResetForm.tsx
+│   ├── VerifyEmailForm.tsx
+│   └── SetPasswordForm.tsx
 ├── server/
 │   ├── actions/         # Server Actions
 │   │   ├── registration.ts
 │   │   ├── login.ts
 │   │   ├── password-reset.ts
-│   │   └── pending-password-reset.ts
+│   │   └── user-operations.ts
 │   ├── services/        # External Services
 │   │   ├── redis.ts
 │   │   ├── rate-limiting.ts
@@ -72,25 +76,29 @@ src/features/auth/
 
 ## Authentication Flows
 
-### 1. User Registration Flow
+### 1. User Registration Flow (GDPR Compliant)
 
 ```mermaid
 graph TD
     A[User Submits Registration] --> B{Check for Duplicate}
     B -->|Duplicate Found| C[Show Warning + Redirect to Verify]
-    B -->|No Duplicate| D[Store Pending Registration]
+    B -->|No Duplicate| D[Store Pending Registration<br/>NO PASSWORD STORED]
     D --> E[Send Verification Email]
-    E --> F[Redirect to Verify Email Page]
-    F --> G[User Clicks Email Link]
-    G --> H[Verify Token]
-    H --> I[Create Supabase User]
-    I --> J[Create Organization]
-    J --> K[Redirect to Login]
+    E --> F[Redirect to Verify Email Page<br/>with showResend=true]
+    F --> G[Auto-Send Verification Email]
+    G --> H[User Clicks Email Link]
+    H --> I[Verify Token]
+    I --> J[User Sets Password]
+    J --> K[Create Supabase User]
+    K --> L[Create Organization]
+    L --> M[Redirect to Login]
 ```
 
 **Key Features:**
 
-- **Deferred Account Creation**: No Supabase user until email verification
+- **GDPR Compliant**: No password storage in pending registrations
+- **Deferred Account Creation**: No Supabase user until email verification + password setting
+- **Smart Auto-Send**: Only auto-sends when coming from registration flow
 - **Duplicate Prevention**: Prevents multiple registrations with same email
 - **Automatic Cleanup**: Expired registrations cleaned up every 6 hours
 - **Rate Limiting**: Prevents abuse of registration endpoint
@@ -102,7 +110,7 @@ graph TD
     A[User Submits Login] --> B[Attempt Supabase Login]
     B --> C{Login Successful?}
     C -->|No| D{Check Pending Registration}
-    D -->|Found| E[Redirect to Verify Email]
+    D -->|Found| E[Redirect to Verify Email<br/>NO AUTO-SEND]
     D -->|Not Found| F[Show Generic Error]
     C -->|Yes| G{User Has Organization?}
     G -->|No| H[Redirect to Onboarding]
@@ -113,7 +121,7 @@ graph TD
 
 **Key Features:**
 
-- **Smart Redirects**: Pending users guided to verification
+- **Smart Redirects**: Pending users guided to verification without auto-send
 - **Organization Validation**: Ensures proper account setup
 - **Onboarding Check**: Guides users through setup process
 - **Error Handling**: Graceful fallbacks for all scenarios
@@ -124,79 +132,126 @@ graph TD
 graph TD
     A[User Requests Password Reset] --> B{Check User Type}
     B -->|Regular User| C[Send Regular Reset Email]
-    B -->|Pending User| D[Send Pending Reset Email]
+    B -->|Pending User| D[Redirect to Verify Email<br/>with pendingPasswordReset=true]
     B -->|No User| E[Send Generic Success Message]
     C --> F[User Clicks Reset Link]
-    D --> F
-    F --> G{Token Valid?}
-    G -->|No| H[Show Error Message]
-    G -->|Yes| I{User Type?}
-    I -->|Regular| J[Update Supabase Password]
-    I -->|Pending| K[Update Pending Registration Password]
-    J --> L[Redirect to Login]
-    K --> M[Redirect to Verify Email]
+    D --> G[User Clicks Resend Button]
+    F --> H{Token Valid?}
+    G --> I[Resend Verification Email]
+    H -->|No| J[Show Error Message]
+    H -->|Yes| K[Update Supabase Password]
+    I --> L[User Clicks Email Link]
+    K --> M[Redirect to Login]
+    L --> N[User Sets Password]
+    N --> O[Create Supabase User]
+    O --> P[Create Organization]
+    P --> Q[Redirect to Login]
 ```
 
 **Key Features:**
 
-- **Dual Support**: Handles both regular and pending users
-- **Automatic Detection**: Smart routing based on user state
+- **Smart Routing**: Pending users redirected to verify-email page
+- **No Auto-Send**: Users control when to resend verification
 - **Token Security**: Redis-based storage with TTL
 - **No User Enumeration**: Same response for all email requests
 
+### 4. Email Verification Flow
+
+```mermaid
+graph TD
+    A[User Lands on Verify Email] --> B{Coming from Registration?}
+    B -->|Yes| C[Auto-Send Verification Email]
+    B -->|No| D[Show Manual Resend Button]
+    C --> E[User Clicks Email Link]
+    D --> F[User Clicks Resend Button]
+    E --> G[Verify Token]
+    F --> H[Resend Verification Email]
+    G --> I[User Sets Password]
+    H --> I
+    I --> J[Create Supabase User]
+    J --> K[Create Organization]
+    K --> L[Redirect to Login]
+```
+
+**Key Features:**
+
+- **Smart Auto-Send**: Only auto-sends from registration flow
+- **Manual Control**: Users control resend in other flows
+- **Password Collection**: Secure password setting during verification
+- **60-Second Cooldown**: Prevents spam resends
+
 ## Security Features
 
-### 1. Password Security
+### 1. GDPR Compliance
 
-- **Hashing**: Supabase handles password hashing automatically
+- **No Password Storage**: Passwords not stored in pending registrations
+- **Data Minimization**: Only essential data stored temporarily
+- **Automatic Cleanup**: Expired data automatically removed
+- **User Control**: Users can control their data
+
+### 2. Password Security
+
+- **Supabase Hashing**: Supabase handles password hashing automatically
 - **Requirements**: Minimum 6 characters with complexity validation
-- **Temporary Storage**: Plain passwords stored temporarily in pending registrations (max 24 hours)
+- **No Plain Text**: Passwords never stored in plain text
+- **Secure Collection**: Passwords collected only during verification
 
-### 2. Token Management
+### 3. Token Management
 
 - **Redis Storage**: All tokens stored in Redis with automatic TTL
+- **URL-Safe Tokens**: Base64url encoded tokens for better URL compatibility
 - **Unique Tokens**: Cryptographically secure random tokens
 - **Expiration**: Tokens expire after 1 hour (configurable)
 - **Cleanup**: Automatic cleanup of expired tokens
 
-### 3. Rate Limiting
+### 4. Rate Limiting
 
 - **Per-User Limits**: Rate limiting applied per email address
 - **Multiple Endpoints**: Registration, login, password reset all rate limited
 - **Redis-Based**: Distributed rate limiting using Redis
 - **Configurable**: Limits can be adjusted in `redis-config.ts`
+- **Fail-Open**: System continues working even if Redis is unavailable
 
-### 4. Input Validation
+### 5. Input Validation
 
 - **Zod Schemas**: All inputs validated with Zod schemas
 - **Type Safety**: Full TypeScript coverage
 - **Sanitization**: Input sanitization and validation
+- **Error Messages**: User-friendly error messages
 
-### 5. Error Handling
+### 6. Error Handling
 
 - **No Information Leakage**: Generic error messages for security
 - **Graceful Degradation**: System continues working even with errors
 - **Comprehensive Logging**: Detailed logging for debugging
+- **User-Friendly Messages**: Clear, actionable error messages
 
 ## Database Schema
 
 ### Core Tables
 
-#### `pending_registrations`
+#### `pending_registrations` (GDPR Compliant)
 
 ```sql
 CREATE TABLE pending_registrations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email VARCHAR(255) NOT NULL UNIQUE,
-  password_hash TEXT NOT NULL, -- Temporarily stores plain password
   first_name VARCHAR(100) NOT NULL,
   last_name VARCHAR(100) NOT NULL,
   verification_token VARCHAR(255) NOT NULL UNIQUE,
   expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  user_metadata JSONB DEFAULT '{}',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ```
+
+**Key Features:**
+
+- **No Password Storage**: Passwords not stored (GDPR compliant)
+- **Metadata Storage**: Referral source, browser locale in user_metadata
+- **Automatic Cleanup**: Expired records cleaned up every 6 hours
+- **Unique Constraints**: Prevents duplicate registrations
 
 #### `organizations`
 
@@ -224,15 +279,48 @@ CREATE TABLE user_profiles (
 );
 ```
 
-### Row Level Security (RLS)
-
-All tables have RLS policies ensuring users can only access their own data:
+#### `email_preferences`
 
 ```sql
--- Example RLS policy
-CREATE POLICY "Users can view own profile" ON user_profiles
-  FOR SELECT USING (auth.uid() = id);
+CREATE TABLE email_preferences (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  email VARCHAR(255) NOT NULL,
+  newsletter BOOLEAN DEFAULT TRUE,
+  marketing BOOLEAN DEFAULT FALSE,
+  transactional BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 ```
+
+#### `newsletter_subscribers`
+
+```sql
+CREATE TABLE newsletter_subscribers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) NOT NULL UNIQUE,
+  subscribed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  unsubscribed_at TIMESTAMP WITH TIME ZONE NULL,
+  source VARCHAR(100) DEFAULT 'website'
+);
+```
+
+### Row Level Security (RLS)
+
+All tables have optimized RLS policies ensuring users can only access their own data:
+
+```sql
+-- Optimized RLS policy example
+CREATE POLICY "Users can view own profile" ON user_profiles
+  FOR SELECT USING ((SELECT auth.uid()) = id);
+```
+
+**Key Features:**
+
+- **Performance Optimized**: Uses `(SELECT auth.uid())` to prevent re-evaluation
+- **Comprehensive Coverage**: All tables protected with appropriate policies
+- **Service Role Access**: Admin functions use service role for privileged operations
 
 ## Redis Integration
 
@@ -250,14 +338,12 @@ rate_limit:REGISTRATION:user@example.com
 
 ```
 password_reset:TOKEN_HASH
-pending_password_reset:TOKEN_HASH
 ```
 
-#### Session Data
+#### Auto-Send State
 
 ```
-session:USER_ID
-user_data:USER_ID
+paymatch-auto-sent-user@example.com
 ```
 
 ### Configuration
@@ -270,7 +356,7 @@ export const REDIS_CONFIG = {
   keyPrefixes: {
     RATE_LIMIT: 'rate_limit',
     PASSWORD_RESET: 'password_reset',
-    PENDING_PASSWORD_RESET: 'pending_password_reset',
+    AUTO_SEND: 'paymatch-auto-sent',
   },
   rateLimits: {
     EMAIL_VERIFICATION: { maxAttempts: 5, windowMs: 3600000 }, // 5 per hour
@@ -279,6 +365,52 @@ export const REDIS_CONFIG = {
   },
 };
 ```
+
+## Smart Auto-Send Logic
+
+### When Auto-Send Happens
+
+#### ✅ WILL Auto-Send:
+
+- **Registration Flow**: `register` → `verify-email?email=...&showResend=true`
+  - User completes registration form
+  - Gets redirected to verify-email page with `showResend=true`
+  - **Auto-sends verification email immediately** (natural next step)
+
+#### ❌ WON'T Auto-Send:
+
+- **Login Flow**: `login` → `verify-email?email=...&showResend=true` (pending registration)
+  - User tries to login with unverified account
+  - Gets redirected to verify-email page
+  - **No auto-send** - user can manually resend if needed
+
+- **Forgot Password Flow**: `forgot-password` → `verify-email?email=...&showResend=true&pendingPasswordReset=true`
+  - User requests password reset for pending registration
+  - Gets redirected to verify-email page
+  - **No auto-send** - user can manually resend if needed
+
+- **Direct Access**: User navigates directly to `/verify-email`
+  - **No auto-send** - user must manually enter email and resend
+
+### Technical Implementation
+
+```typescript
+// Only auto-send if:
+// 1. We have showResend=true (indicating coming from registration)
+// 2. User is not verified
+// 3. We have an email
+// 4. We haven't already auto-sent
+// 5. We're not currently auto-sending
+const shouldAutoSend =
+  showResend && !isVerified && currentEmail && !hasAutoSent && !isAutoSending;
+```
+
+### Benefits
+
+- **Better UX**: Only sends emails when expected
+- **Less Spam**: Users won't get duplicate emails
+- **Modern Standard**: Follows industry best practices
+- **User Control**: Users can choose when to resend in non-registration flows
 
 ## API Endpoints
 
@@ -295,8 +427,8 @@ Register a new user with deferred account creation.
   "firstName": "John",
   "lastName": "Doe",
   "email": "john@example.com",
-  "password": "SecurePass123!",
-  "referralSource": "google"
+  "referralSource": "google",
+  "browserLocale": "en-CH"
 }
 ```
 
@@ -305,7 +437,7 @@ Register a new user with deferred account creation.
 ```json
 {
   "success": true,
-  "message": "Registration successful! Please check your email to verify your account."
+  "message": "Registration successful! Please check your email to verify your account and set your password."
 }
 ```
 
@@ -357,7 +489,7 @@ Request password reset for any user type.
 
 #### `/register`
 
-Registration page with duplicate prevention.
+Registration page with duplicate prevention and no password collection.
 
 #### `/login`
 
@@ -365,15 +497,15 @@ Login page with smart redirects for pending users.
 
 #### `/verify-email`
 
-Email verification page with resend functionality.
+Email verification page with smart auto-send logic and resend functionality.
 
 #### `/forgot-password`
 
-Password reset request page.
+Password reset request page with smart routing for pending users.
 
 #### `/reset-password?token=TOKEN`
 
-Password reset form with automatic user type detection.
+Password reset form for existing users only.
 
 ## Error Handling
 
@@ -419,12 +551,12 @@ Password reset form with automatic user type detection.
 # Test normal registration
 curl -X POST "http://localhost:3000/api/auth/register" \
   -H "Content-Type: application/json" \
-  -d '{"email": "test@example.com", "password": "Test123!"}'
+  -d '{"email": "test@example.com", "firstName": "Test", "lastName": "User"}'
 
 # Test duplicate registration
 curl -X POST "http://localhost:3000/api/auth/register" \
   -H "Content-Type: application/json" \
-  -d '{"email": "test@example.com", "password": "Test123!"}'
+  -d '{"email": "test@example.com", "firstName": "Test", "lastName": "User"}'
 ```
 
 #### Login Flow
@@ -459,12 +591,12 @@ EMAIL="test@example.com"
 echo "Testing Registration..."
 curl -X POST "$BASE_URL/api/auth/register" \
   -H "Content-Type: application/json" \
-  -d "{\"email\": \"$EMAIL\", \"password\": \"Test123!\"}"
+  -d "{\"email\": \"$EMAIL\", \"firstName\": \"Test\", \"lastName\": \"User\"}"
 
 echo -e "\n\nTesting Duplicate Registration..."
 curl -X POST "$BASE_URL/api/auth/register" \
   -H "Content-Type: application/json" \
-  -d "{\"email\": \"$EMAIL\", \"password\": \"Test123!\"}"
+  -d "{\"email\": \"$EMAIL\", \"firstName\": \"Test\", \"lastName\": \"User\"}"
 
 echo -e "\n\nTesting Login with Pending Registration..."
 curl -X POST "$BASE_URL/api/auth/login" \
@@ -488,6 +620,7 @@ SELECT * FROM pending_registrations ORDER BY created_at DESC;
 -- Check Redis keys
 redis-cli KEYS "*password_reset*"
 redis-cli KEYS "*rate_limit*"
+redis-cli KEYS "*paymatch-auto-sent*"
 ```
 
 #### Rate Limiting Testing
@@ -589,6 +722,11 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 **Cause:** Email service configuration issue
 **Solution:** Check Resend API key and configuration
 
+#### 6. Duplicate Email Sends
+
+**Cause:** Auto-send logic triggered multiple times
+**Solution:** Check sessionStorage flags and auto-send state
+
 ### Debugging
 
 #### Check Logs
@@ -629,6 +767,7 @@ redis-cli KEYS "*"
 # Check specific patterns
 redis-cli KEYS "*password_reset*"
 redis-cli KEYS "*rate_limit*"
+redis-cli KEYS "*paymatch-auto-sent*"
 
 # Check TTL
 redis-cli TTL "password_reset:TOKEN_HASH"
@@ -643,6 +782,7 @@ redis-cli TTL "password_reset:TOKEN_HASH"
 - **Password Reset Success Rate**: Should be > 90%
 - **Email Delivery Rate**: Should be > 99%
 - **Rate Limit Hit Rate**: Should be < 5%
+- **Auto-Send Accuracy**: Should be 100% (only from registration)
 
 #### Monitoring Queries
 
@@ -672,6 +812,7 @@ FROM pending_registrations;
 4. **Rate Limit Everything**: Prevent abuse of all endpoints
 5. **Monitor for Anomalies**: Set up alerts for unusual patterns
 6. **Regular Security Audits**: Review code and dependencies regularly
+7. **GDPR Compliance**: Follow data protection regulations
 
 ### Compliance
 
@@ -689,6 +830,7 @@ FROM pending_registrations;
 4. **Audit Logging**: Comprehensive activity tracking
 5. **Account Recovery**: Advanced recovery options
 6. **Session Management**: Advanced session controls
+7. **Biometric Authentication**: Fingerprint and face recognition
 
 ### Scalability Considerations
 
@@ -710,5 +852,5 @@ For technical support or questions about the authentication system:
 
 ---
 
-_Last updated: October 2024_
-_Version: 1.0.0_
+_Last updated: January 2025_
+_Version: 2.0.0_

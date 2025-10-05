@@ -1,8 +1,8 @@
 /**
- * Email Verification Template
+ * Modern Email Verification Template
  *
  * React Email template for user email verification.
- * Uses the existing email system with proper branding and unsubscribe functionality.
+ * Inspired by Slack's clean design with modern styling.
  */
 
 import React from 'react';
@@ -29,91 +29,84 @@ export function EmailVerification({
       unsubscribeUrl={unsubscribeUrl}
       showUnsubscribe={!!unsubscribeUrl}
     >
-      <Section style={header}>
-        <Heading style={h1}>Welcome to PayMatch!</Heading>
+      <Heading style={h1}>Welcome to PayMatch!</Heading>
+
+      <Text style={heroText}>
+        Hi {userName}! Please verify your email address to complete your account
+        setup and start creating Swiss QR-bill compliant invoices.
+      </Text>
+
+      <Section style={buttonContainer}>
+        <Button style={button} href={verificationUrl}>
+          Verify Email Address
+        </Button>
       </Section>
 
-      <Section style={content}>
-        <Text style={text}>Hi {userName},</Text>
+      <Text style={text}>
+        If you didn&apos;t create this account, you can safely ignore this
+        email.
+      </Text>
 
-        <Text style={text}>
-          Welcome to PayMatch! Please verify your email to start creating Swiss
-          QR-bill compliant invoices.
-        </Text>
-
-        <Section style={buttonContainer}>
-          <Button style={button} href={verificationUrl}>
-            Verify Email
-          </Button>
-        </Section>
-
-        <Text style={text}>
-          This link expires in 24 hours. If you didn&apos;t create this account,
-          ignore this email.
-        </Text>
-
-        <Text style={text}>
-          <Link href={verificationUrl} style={link}>
-            {verificationUrl}
-          </Link>
-        </Text>
-
-        <Text style={text}>
-          Best regards,
-          <br />
-          The PayMatch Team
-        </Text>
-      </Section>
+      <Text style={text}>
+        <Link href={verificationUrl} style={link}>
+          {verificationUrl}
+        </Link>
+      </Text>
     </EmailLayout>
   );
 }
 
-// Styles
-const header = {
-  padding: '0 0 24px 0',
+// Styles - Inspired by Slack's clean design
+const h1 = {
+  color: '#1d1c1d',
+  fontSize: '36px',
+  fontWeight: '700',
+  margin: '30px 0',
+  padding: '0',
+  lineHeight: '42px',
   textAlign: 'center' as const,
 };
 
-const content = {
-  padding: '0',
-};
-
-const h1 = {
-  color: '#E4262A',
-  fontSize: '24px',
-  fontWeight: 'bold',
-  margin: '0 0 20px 0',
-  lineHeight: '1.25',
+const heroText = {
+  fontSize: '20px',
+  lineHeight: '28px',
+  marginBottom: '30px',
+  color: '#1d1c1d',
+  textAlign: 'center' as const,
 };
 
 const text = {
-  color: '#374151',
-  fontSize: '16px',
-  lineHeight: '1.5',
+  color: '#000',
+  fontSize: '14px',
+  lineHeight: '24px',
   margin: '0 0 16px 0',
+  textAlign: 'center' as const,
 };
 
 const buttonContainer = {
   textAlign: 'center' as const,
-  margin: '32px 0',
+  margin: '40px 0',
 };
 
 const button = {
   backgroundColor: '#E4262A',
-  borderRadius: '6px',
+  borderRadius: '4px',
   color: '#fff',
   fontSize: '16px',
-  fontWeight: 'bold',
+  fontWeight: '600',
   textDecoration: 'none',
   textAlign: 'center' as const,
   display: 'inline-block',
-  padding: '12px 24px',
+  padding: '16px 32px',
+  border: 'none',
+  cursor: 'pointer',
 };
 
 const link = {
   color: '#E4262A',
   textDecoration: 'underline',
   wordBreak: 'break-all' as const,
+  fontSize: '12px',
 };
 
 export default EmailVerification;
