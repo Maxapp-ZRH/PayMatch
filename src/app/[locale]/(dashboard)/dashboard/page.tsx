@@ -36,13 +36,22 @@ export default async function Dashboard() {
   }
 
   // Check if user has completed onboarding
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('onboarding_completed')
-    .eq('id', user.id)
+  const { data: orgMembership } = await supabase
+    .from('organization_users')
+    .select(
+      `
+      org_id,
+      organizations!inner(onboarding_completed)
+    `
+    )
+    .eq('user_id', user.id)
+    .eq('status', 'active')
     .single();
 
-  if (!profile?.onboarding_completed) {
+  const org = orgMembership?.organizations as
+    | { onboarding_completed: boolean }
+    | undefined;
+  if (!org?.onboarding_completed) {
     redirect('/onboarding');
   }
 

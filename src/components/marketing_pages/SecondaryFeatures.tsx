@@ -1,6 +1,5 @@
 'use client';
 
-import { useId } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 
@@ -60,7 +59,7 @@ function DeviceArrowIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 }
 
 function DeviceCardsIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
-  const id = useId();
+  const gradientId = 'device-cards-gradient';
 
   return (
     <svg viewBox="0 0 32 32" aria-hidden="true" {...props}>
@@ -74,13 +73,13 @@ function DeviceCardsIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
         fillRule="evenodd"
         clipRule="evenodd"
         d="M9 13a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H10a1 1 0 01-1-1v-2zm0 6a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H10a1 1 0 01-1-1v-2zm1 5a1 1 0 00-1 1v2a1 1 0 001 1h12a1 1 0 001-1v-2a1 1 0 00-1-1H10z"
-        fill={`url(#${id}-gradient)`}
+        fill={`url(#${gradientId})`}
       />
       <rect x={9} y={6} width={14} height={4} rx={1} fill="#171717" />
       <circle cx={16} cy={16} r={16} fill="#A3A3A3" fillOpacity={0.2} />
       <defs>
         <linearGradient
-          id={`${id}-gradient`}
+          id={gradientId}
           x1={16}
           y1={12}
           x2={16}
@@ -96,7 +95,7 @@ function DeviceCardsIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 }
 
 function DevicePwaIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
-  const id = useId();
+  const gradientId = 'device-pwa-gradient';
 
   return (
     <svg viewBox="0 0 32 32" aria-hidden="true" {...props}>
@@ -117,18 +116,18 @@ function DevicePwaIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
         strokeLinejoin="round"
       />
       {/* PWA Features - Grid of dots representing app features */}
-      <circle cx={12} cy={18} r={1} fill={`url(#${id}-gradient)`} />
-      <circle cx={16} cy={18} r={1} fill={`url(#${id}-gradient)`} />
-      <circle cx={20} cy={18} r={1} fill={`url(#${id}-gradient)`} />
-      <circle cx={12} cy={22} r={1} fill={`url(#${id}-gradient)`} />
-      <circle cx={16} cy={22} r={1} fill={`url(#${id}-gradient)`} />
-      <circle cx={20} cy={22} r={1} fill={`url(#${id}-gradient)`} />
+      <circle cx={12} cy={18} r={1} fill={`url(#${gradientId})`} />
+      <circle cx={16} cy={18} r={1} fill={`url(#${gradientId})`} />
+      <circle cx={20} cy={18} r={1} fill={`url(#${gradientId})`} />
+      <circle cx={12} cy={22} r={1} fill={`url(#${gradientId})`} />
+      <circle cx={16} cy={22} r={1} fill={`url(#${gradientId})`} />
+      <circle cx={20} cy={22} r={1} fill={`url(#${gradientId})`} />
       {/* PWA Status Indicator */}
       <circle cx={20} cy={8} r={1.5} fill="#10B981" />
       <circle cx={16} cy={16} r={16} fill="#A3A3A3" fillOpacity={0.2} />
       <defs>
         <linearGradient
-          id={`${id}-gradient`}
+          id={gradientId}
           x1={16}
           y1={16}
           x2={16}

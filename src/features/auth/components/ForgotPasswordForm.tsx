@@ -13,7 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CheckCircle } from 'lucide-react';
 
 import { Button } from '@/components/marketing_pages/Button';
-import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
+import { TextField } from '@/components/ui/text-field';
 import {
   sendPasswordResetEmail,
   checkPendingRegistrationForPasswordReset,
@@ -107,7 +107,7 @@ export function ForgotPasswordForm() {
         password.
       </div>
 
-      <EnhancedTextField
+      <TextField
         label="Email address"
         type="email"
         autoComplete="email"

@@ -277,6 +277,14 @@ export function Footer() {
                   </li>
                   <li>
                     <I18nLink
+                      href="/cookie-settings"
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      {t('links.cookieSettings')}
+                    </I18nLink>
+                  </li>
+                  <li>
+                    <I18nLink
                       href="/gdpr"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
@@ -340,7 +348,7 @@ export function Footer() {
                             href="/cookie-settings"
                             className="inline-flex items-center text-sm text-red-600 hover:text-red-700 underline"
                           >
-                            Manage Cookie Settings
+                            {t('links.cookieSettings')}
                           </I18nLink>
                           <span className="text-red-500">•</span>
                           <I18nLink

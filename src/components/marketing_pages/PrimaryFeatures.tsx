@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useEffect, useId, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import clsx from 'clsx';
 import {
@@ -79,13 +79,13 @@ function DeviceNotificationIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 }
 
 function DeviceTouchIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
-  const id = useId();
+  const gradientId = 'device-touch-gradient';
 
   return (
     <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" {...props}>
       <defs>
         <linearGradient
-          id={`${id}-gradient`}
+          id={gradientId}
           x1={14}
           y1={14.5}
           x2={7}
@@ -105,7 +105,7 @@ function DeviceTouchIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
       />
       <path
         d="M7 22c0-4.694 3.5-8 8-8"
-        stroke={`url(#${id}-gradient)`}
+        stroke={`url(#${gradientId})`}
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -494,6 +494,7 @@ function FeaturesDesktop({
 
   return (
     <TabGroup
+      id="primary-features-tabs"
       className="grid grid-cols-12 items-center gap-8 lg:gap-16 xl:gap-24"
       selectedIndex={selectedIndex}
       onChange={onChange}
@@ -515,7 +516,10 @@ function FeaturesDesktop({
             <div className="relative z-10 p-8">
               <feature.icon className="h-8 w-8" />
               <h3 className="mt-6 text-lg font-semibold text-white">
-                <Tab className="text-left data-selected:not-data-focus:outline-hidden">
+                <Tab
+                  id={`primary-features-tab-${featureIndex}`}
+                  className="text-left data-selected:not-data-focus:outline-hidden"
+                >
                   <span className="absolute inset-0 rounded-2xl" />
                   {feature.name}
                 </Tab>
@@ -529,7 +533,11 @@ function FeaturesDesktop({
       </TabList>
       <div className="relative col-span-6">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <CircleBackground color="#E4262A" className="animate-spin-slower" />
+          <CircleBackground
+            color="#E4262A"
+            className="animate-spin-slower"
+            id="primary-features-main-circle"
+          />
         </div>
         <PhoneFrame className="z-10 mx-auto w-full max-w-[366px]">
           <TabPanels as={Fragment}>
@@ -540,6 +548,7 @@ function FeaturesDesktop({
               {features.map((feature, featureIndex) =>
                 selectedIndex === featureIndex ? (
                   <TabPanel
+                    id={`primary-features-panel-${featureIndex}`}
                     static
                     key={feature.name + changeCount}
                     className="col-start-1 row-start-1 flex focus:outline-offset-32 data-selected:not-data-focus:outline-hidden"
@@ -619,6 +628,7 @@ function FeaturesMobile({
                 <CircleBackground
                   color="#E4262A"
                   className={featureIndex % 2 === 1 ? 'rotate-180' : undefined}
+                  id={`primary-features-circle-${featureIndex}`}
                 />
               </div>
               <PhoneFrame className="relative mx-auto w-full max-w-[280px] sm:max-w-[366px]">

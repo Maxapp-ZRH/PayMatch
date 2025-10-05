@@ -21,6 +21,11 @@ export default async function middleware(request: NextRequest) {
   // Get the pathname first to avoid unnecessary auth checks
   const pathname = request.nextUrl.pathname;
 
+  // Remove locale prefix from pathname for route matching
+  // Supported locales: en-CH, de-CH
+  const localePattern = /^\/(en-CH|de-CH)/;
+  const pathnameWithoutLocale = pathname.replace(localePattern, '') || '/';
+
   // Skip auth checks for static assets and API routes
   if (
     pathname.startsWith('/_next') ||
@@ -33,26 +38,68 @@ export default async function middleware(request: NextRequest) {
   // Handle authentication for protected routes
   const { supabase } = createClient(request);
 
-  // Only refresh session for routes that need auth
+  // Only check auth for protected routes
   const needsAuth =
-    pathname.includes('/dashboard') ||
-    pathname.includes('/onboarding') ||
-    pathname.includes('/settings');
+    pathnameWithoutLocale.includes('/dashboard') ||
+    pathnameWithoutLocale.includes('/onboarding');
+
+  let user = null;
+  let authError = null;
 
   if (needsAuth) {
     try {
-      await supabase.auth.getSession();
-    } catch (error) {
-      // Only log and clear session for non-refresh-token errors
-      if (
-        !(
-          error instanceof Error &&
-          error.message?.includes('refresh_token_not_found')
-        )
-      ) {
-        console.log('Clearing invalid session:', error);
-        await supabase.auth.signOut();
+      // First, try to refresh the session if needed
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        console.log('Session error, attempting refresh:', sessionError.message);
+        // Try to refresh the session
+        const {
+          data: { session: refreshedSession },
+          error: refreshError,
+        } = await supabase.auth.refreshSession();
+
+        if (refreshError) {
+          console.log('Refresh failed:', refreshError.message);
+          // If refresh fails, sign out the user
+          await supabase.auth.signOut();
+          user = null;
+          authError = refreshError;
+        } else if (refreshedSession?.user) {
+          user = refreshedSession.user;
+          authError = null;
+        } else {
+          user = null;
+          authError = refreshError;
+        }
+      } else if (session?.user) {
+        user = session.user;
+        authError = null;
+      } else {
+        // No session, try to get user directly
+        const {
+          data: { user: authUser },
+          error,
+        } = await supabase.auth.getUser();
+        user = authUser;
+        authError = error;
       }
+
+      console.log('Middleware auth check:', {
+        pathname: pathnameWithoutLocale,
+        hasUser: !!user,
+        userId: user?.id,
+        emailConfirmed: user?.email_confirmed_at,
+        error: authError?.message,
+      });
+    } catch (error) {
+      console.log('Middleware auth error:', error);
+      await supabase.auth.signOut();
+      user = null;
+      authError = error as Error;
     }
   }
 
@@ -72,41 +119,27 @@ export default async function middleware(request: NextRequest) {
   // Check if the current path is protected
   // Handle nested dashboard routes (e.g., /dashboard/settings, /dashboard/profile, etc.)
   const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
+    pathnameWithoutLocale.startsWith(route)
   );
-  const isOnboardingRoute = pathname.startsWith(onboardingRoute);
-  const isAuthRoute = authRoutes.some((route) => pathname.includes(route));
+  const isOnboardingRoute = pathnameWithoutLocale.startsWith(onboardingRoute);
+  const isAuthRoute = authRoutes.some((route) =>
+    pathnameWithoutLocale.includes(route)
+  );
   const isTokenProtectedRoute = tokenProtectedRoutes.some((route) =>
-    pathname.includes(route)
+    pathnameWithoutLocale.includes(route)
   );
   const isSpecialRoute = specialRoutes.some((route) =>
-    pathname.includes(route)
+    pathnameWithoutLocale.includes(route)
   );
+
   // Note: Homepage handles its own authentication redirect in the page component
   // Middleware only handles protected routes and auth routes
 
   if (isProtectedRoute) {
-    // Check if user is authenticated (using getUser for security)
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    // If there's a JWT error or refresh token error, clear the session
-    if (
-      error &&
-      (error.message.includes('User from sub claim in JWT does not exist') ||
-        error.message.includes('refresh_token_not_found') ||
-        error.message.includes('Invalid Refresh Token'))
-    ) {
-      console.log('Clearing invalid session due to auth error:', error.message);
-      await supabase.auth.signOut();
-    }
-
-    if (!user || error) {
+    if (!user || authError) {
       // Redirect to login with return URL
       const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('redirectTo', pathname);
+      loginUrl.searchParams.set('redirectTo', pathnameWithoutLocale);
       return NextResponse.redirect(loginUrl);
     }
 
@@ -115,43 +148,33 @@ export default async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/verify-email', request.url));
     }
 
-    // Check if user has completed onboarding (only for protected routes)
-    if (isProtectedRoute) {
-      const { data: profile, error: profileError } = await supabase
-        .from('user_profiles')
-        .select('onboarding_completed')
-        .eq('id', user.id)
-        .single();
+    // Check if user has completed onboarding
+    const { data: orgMembership, error: orgError } = await supabase
+      .from('organization_users')
+      .select(
+        `
+        org_id,
+        organizations!inner(onboarding_completed)
+      `
+      )
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .single();
 
-      // If profile doesn't exist yet or onboarding not completed, redirect to onboarding
-      if (profileError || !profile?.onboarding_completed) {
-        return NextResponse.redirect(new URL('/onboarding', request.url));
-      }
+    // If no organization or onboarding not completed, redirect to onboarding
+    const org = orgMembership?.organizations as unknown as
+      | { onboarding_completed: boolean }
+      | undefined;
+    if (orgError || !org?.onboarding_completed) {
+      return NextResponse.redirect(new URL('/onboarding', request.url));
     }
   }
 
   if (isOnboardingRoute) {
-    // Check if user is authenticated (using getUser for security)
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    // If there's a JWT error or refresh token error, clear the session
-    if (
-      error &&
-      (error.message.includes('User from sub claim in JWT does not exist') ||
-        error.message.includes('refresh_token_not_found') ||
-        error.message.includes('Invalid Refresh Token'))
-    ) {
-      console.log('Clearing invalid session due to auth error:', error.message);
-      await supabase.auth.signOut();
-    }
-
-    if (!user || error) {
+    if (!user || authError) {
       // Redirect to login with return URL
       const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('redirectTo', pathname);
+      loginUrl.searchParams.set('redirectTo', pathnameWithoutLocale);
       return NextResponse.redirect(loginUrl);
     }
 
@@ -160,8 +183,40 @@ export default async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/verify-email', request.url));
     }
 
-    // Allow access to onboarding - don't check onboarding completion here
-    // The onboarding page will handle redirecting to dashboard if already completed
+    // Check if onboarding is already completed - redirect to dashboard
+    const { data: orgMembership, error: orgError } = await supabase
+      .from('organization_users')
+      .select(
+        `
+        org_id,
+        organizations!inner(onboarding_completed)
+      `
+      )
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .single();
+
+    console.log('Onboarding route check:', {
+      pathname: pathnameWithoutLocale,
+      userId: user.id,
+      orgMembership: !!orgMembership,
+      orgError: orgError?.message,
+      onboardingCompleted: (
+        orgMembership?.organizations as unknown as
+          | { onboarding_completed: boolean }
+          | undefined
+      )?.onboarding_completed,
+    });
+
+    const org = orgMembership?.organizations as unknown as
+      | { onboarding_completed: boolean }
+      | undefined;
+    if (org?.onboarding_completed) {
+      console.log('Redirecting to dashboard - onboarding already completed');
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+
+    // Allow access to onboarding
   }
 
   if (isTokenProtectedRoute) {
@@ -178,26 +233,17 @@ export default async function middleware(request: NextRequest) {
   }
 
   if (isAuthRoute) {
-    // Check if user is already authenticated (using getUser for security)
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
+    console.log('Auth route check:', {
+      pathname: pathnameWithoutLocale,
+      hasUser: !!user,
+      hasError: !!authError,
+      errorMessage: authError?.message,
+    });
 
-    // If there's a JWT error or refresh token error, clear the session
-    if (
-      error &&
-      (error.message.includes('User from sub claim in JWT does not exist') ||
-        error.message.includes('refresh_token_not_found') ||
-        error.message.includes('Invalid Refresh Token'))
-    ) {
-      console.log('Clearing invalid session due to auth error:', error.message);
-      await supabase.auth.signOut();
-    }
-
-    // If user is authenticated (which means they're verified with new flow),
-    // redirect them to dashboard (onboarding check happens on dashboard page)
-    if (user && !error) {
+    // If user is authenticated, redirect them to dashboard
+    // The dashboard route will handle onboarding redirect if needed
+    if (user && !authError) {
+      console.log('Redirecting authenticated user to dashboard');
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
@@ -206,7 +252,7 @@ export default async function middleware(request: NextRequest) {
 
   if (isSpecialRoute) {
     // Handle special routes that need custom authentication logic
-    if (pathname.includes('/verify-email')) {
+    if (pathnameWithoutLocale.includes('/verify-email')) {
       // With deferred account creation, users won't have accounts until verification
       // However, we should still check if they have a valid email parameter
       // or are coming from a legitimate flow (registration, login, forgot-password)

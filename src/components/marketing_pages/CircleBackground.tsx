@@ -1,12 +1,13 @@
-import { useId } from 'react';
-
 export function CircleBackground({
   color,
+  id,
   ...props
 }: React.ComponentPropsWithoutRef<'svg'> & {
   color: string;
+  id?: string;
 }) {
-  const id = useId();
+  // Use provided ID or generate a stable one based on color
+  const gradientId = id || `circle-gradient-${color.replace('#', '')}`;
 
   return (
     <svg
@@ -19,7 +20,7 @@ export function CircleBackground({
     >
       <defs>
         <linearGradient
-          id={id}
+          id={gradientId}
           x1="79"
           y1="16"
           x2="105"
@@ -37,7 +38,7 @@ export function CircleBackground({
       />
       <path
         d="M1 279C1 125.465 125.465 1 279 1"
-        stroke={`url(#${id})`}
+        stroke={`url(#${gradientId})`}
         strokeLinecap="round"
       />
     </svg>

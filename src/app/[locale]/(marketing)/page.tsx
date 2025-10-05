@@ -42,10 +42,12 @@ export default async function Home() {
     }
 
     // If user is authenticated and no error, check email verification
+    // Note: Onboarding completion is handled by middleware for protected routes
     if (user && !error) {
       if (!user.email_confirmed_at) {
         redirect('/verify-email');
       } else {
+        // Let middleware handle onboarding redirects for protected routes
         redirect('/dashboard');
       }
     }

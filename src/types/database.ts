@@ -7,13 +7,77 @@ export type Json =
   | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: '13.0.5';
-  };
   public: {
     Tables: {
+      consent_records: {
+        Row: {
+          consent_age_days: number | null;
+          consent_context: Json | null;
+          consent_form_version: string | null;
+          consent_given: boolean;
+          consent_given_at: string | null;
+          consent_method: string;
+          consent_source: string | null;
+          consent_type: string;
+          consent_withdrawn: boolean | null;
+          consent_withdrawn_at: string | null;
+          created_at: string;
+          email: string | null;
+          id: string;
+          ip_address: unknown | null;
+          privacy_policy_version: string | null;
+          session_id: string | null;
+          updated_at: string;
+          user_agent: string | null;
+          user_id: string | null;
+          withdrawal_reason: string | null;
+        };
+        Insert: {
+          consent_age_days?: number | null;
+          consent_context?: Json | null;
+          consent_form_version?: string | null;
+          consent_given: boolean;
+          consent_given_at?: string | null;
+          consent_method: string;
+          consent_source?: string | null;
+          consent_type: string;
+          consent_withdrawn?: boolean | null;
+          consent_withdrawn_at?: string | null;
+          created_at?: string;
+          email?: string | null;
+          id?: string;
+          ip_address?: unknown | null;
+          privacy_policy_version?: string | null;
+          session_id?: string | null;
+          updated_at?: string;
+          user_agent?: string | null;
+          user_id?: string | null;
+          withdrawal_reason?: string | null;
+        };
+        Update: {
+          consent_age_days?: number | null;
+          consent_context?: Json | null;
+          consent_form_version?: string | null;
+          consent_given?: boolean;
+          consent_given_at?: string | null;
+          consent_method?: string;
+          consent_source?: string | null;
+          consent_type?: string;
+          consent_withdrawn?: boolean | null;
+          consent_withdrawn_at?: string | null;
+          created_at?: string;
+          email?: string | null;
+          id?: string;
+          ip_address?: unknown | null;
+          privacy_policy_version?: string | null;
+          session_id?: string | null;
+          updated_at?: string;
+          user_agent?: string | null;
+          user_id?: string | null;
+          withdrawal_reason?: string | null;
+        };
+        Relationships: [];
+      };
       email_preferences: {
         Row: {
           created_at: string;
@@ -44,6 +108,33 @@ export type Database = {
           unsubscribed_at?: string | null;
           updated_at?: string;
           user_id?: string | null;
+        };
+        Relationships: [];
+      };
+      email_type_categories: {
+        Row: {
+          category: string;
+          created_at: string;
+          description: string | null;
+          email_type: string;
+          id: string;
+          requires_marketing_consent: boolean | null;
+        };
+        Insert: {
+          category: string;
+          created_at?: string;
+          description?: string | null;
+          email_type: string;
+          id?: string;
+          requires_marketing_consent?: boolean | null;
+        };
+        Update: {
+          category?: string;
+          created_at?: string;
+          description?: string | null;
+          email_type?: string;
+          id?: string;
+          requires_marketing_consent?: boolean | null;
         };
         Relationships: [];
       };
@@ -149,11 +240,13 @@ export type Database = {
           logo_url: string | null;
           name: string;
           onboarding_completed: boolean | null;
+          onboarding_draft_data: Json | null;
           onboarding_step: number | null;
           plan: string | null;
           qr_iban: string | null;
           street: string | null;
           stripe_customer_id: string | null;
+          stripe_subscription_id: string | null;
           uid: string | null;
           updated_at: string | null;
           vat_number: string | null;
@@ -174,11 +267,13 @@ export type Database = {
           logo_url?: string | null;
           name: string;
           onboarding_completed?: boolean | null;
+          onboarding_draft_data?: Json | null;
           onboarding_step?: number | null;
           plan?: string | null;
           qr_iban?: string | null;
           street?: string | null;
           stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
           uid?: string | null;
           updated_at?: string | null;
           vat_number?: string | null;
@@ -199,11 +294,13 @@ export type Database = {
           logo_url?: string | null;
           name?: string;
           onboarding_completed?: boolean | null;
+          onboarding_draft_data?: Json | null;
           onboarding_step?: number | null;
           plan?: string | null;
           qr_iban?: string | null;
           street?: string | null;
           stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
           uid?: string | null;
           updated_at?: string | null;
           vat_number?: string | null;
@@ -211,40 +308,41 @@ export type Database = {
         };
         Relationships: [];
       };
-      user_checklist_progress: {
+      pending_registrations: {
         Row: {
-          checklist_item_id: string;
-          completed_at: string | null;
           created_at: string | null;
+          email: string;
+          expires_at: string;
+          first_name: string | null;
           id: string;
-          org_id: string | null;
-          user_id: string | null;
+          last_name: string | null;
+          updated_at: string | null;
+          user_metadata: Json | null;
+          verification_token: string;
         };
         Insert: {
-          checklist_item_id: string;
-          completed_at?: string | null;
           created_at?: string | null;
+          email: string;
+          expires_at: string;
+          first_name?: string | null;
           id?: string;
-          org_id?: string | null;
-          user_id?: string | null;
+          last_name?: string | null;
+          updated_at?: string | null;
+          user_metadata?: Json | null;
+          verification_token: string;
         };
         Update: {
-          checklist_item_id?: string;
-          completed_at?: string | null;
           created_at?: string | null;
+          email?: string;
+          expires_at?: string;
+          first_name?: string | null;
           id?: string;
-          org_id?: string | null;
-          user_id?: string | null;
+          last_name?: string | null;
+          updated_at?: string | null;
+          user_metadata?: Json | null;
+          verification_token?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'user_checklist_progress_org_id_fkey';
-            columns: ['org_id'];
-            isOneToOne: false;
-            referencedRelation: 'organizations';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       user_profiles: {
         Row: {
@@ -252,8 +350,6 @@ export type Database = {
           created_at: string | null;
           id: string;
           name: string | null;
-          onboarding_completed: boolean;
-          onboarding_completed_at: string | null;
           updated_at: string | null;
         };
         Insert: {
@@ -261,8 +357,6 @@ export type Database = {
           created_at?: string | null;
           id: string;
           name?: string | null;
-          onboarding_completed?: boolean;
-          onboarding_completed_at?: string | null;
           updated_at?: string | null;
         };
         Update: {
@@ -270,8 +364,6 @@ export type Database = {
           created_at?: string | null;
           id?: string;
           name?: string | null;
-          onboarding_completed?: boolean;
-          onboarding_completed_at?: string | null;
           updated_at?: string | null;
         };
         Relationships: [];
@@ -281,6 +373,49 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      calculate_consent_age: {
+        Args: { consent_given_at: string };
+        Returns: number;
+      };
+      check_consent_renewal_required: {
+        Args: { p_email?: string; p_user_id?: string };
+        Returns: {
+          consent_type: string;
+          days_until_expiry: number;
+          needs_renewal: boolean;
+        }[];
+      };
+      cleanup_expired_registrations_direct: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          cleaned_count: number;
+          cleaned_emails: string[];
+        }[];
+      };
+      email_type_requires_marketing_consent: {
+        Args: { p_email_type: string };
+        Returns: boolean;
+      };
+      get_email_types_by_category: {
+        Args: { p_category: string };
+        Returns: {
+          description: string;
+          email_type: string;
+          requires_marketing_consent: boolean;
+        }[];
+      };
+      get_user_consent_status: {
+        Args: { p_email?: string; p_user_id?: string };
+        Returns: {
+          consent_age_days: number;
+          consent_given: boolean;
+          consent_given_at: string;
+          consent_type: string;
+          consent_withdrawn: boolean;
+          consent_withdrawn_at: string;
+          is_valid: boolean;
+        }[];
+      };
       get_user_organizations: {
         Args: { user_uuid: string };
         Returns: {
@@ -291,6 +426,14 @@ export type Database = {
         }[];
       };
       user_has_org_access: {
+        Args: { org_uuid: string; user_uuid: string };
+        Returns: boolean;
+      };
+      user_has_organization: {
+        Args: { user_uuid: string };
+        Returns: boolean;
+      };
+      user_is_org_owner: {
         Args: { org_uuid: string; user_uuid: string };
         Returns: boolean;
       };
@@ -369,6 +512,83 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      iceberg_namespaces: {
+        Row: {
+          bucket_id: string;
+          created_at: string;
+          id: string;
+          name: string;
+          updated_at: string;
+        };
+        Insert: {
+          bucket_id: string;
+          created_at?: string;
+          id?: string;
+          name: string;
+          updated_at?: string;
+        };
+        Update: {
+          bucket_id?: string;
+          created_at?: string;
+          id?: string;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'iceberg_namespaces_bucket_id_fkey';
+            columns: ['bucket_id'];
+            isOneToOne: false;
+            referencedRelation: 'buckets_analytics';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      iceberg_tables: {
+        Row: {
+          bucket_id: string;
+          created_at: string;
+          id: string;
+          location: string;
+          name: string;
+          namespace_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          bucket_id: string;
+          created_at?: string;
+          id?: string;
+          location: string;
+          name: string;
+          namespace_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          bucket_id?: string;
+          created_at?: string;
+          id?: string;
+          location?: string;
+          name?: string;
+          namespace_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'iceberg_tables_bucket_id_fkey';
+            columns: ['bucket_id'];
+            isOneToOne: false;
+            referencedRelation: 'buckets_analytics';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'iceberg_tables_namespace_id_fkey';
+            columns: ['namespace_id'];
+            isOneToOne: false;
+            referencedRelation: 'iceberg_namespaces';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       migrations: {
         Row: {

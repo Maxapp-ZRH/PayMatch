@@ -1,5 +1,5 @@
 /**
- * Enhanced Text Field Component
+ * Text Field Component
  *
  * Text input with mandatory field indicators and improved styling.
  */
@@ -32,20 +32,20 @@ function Label({
   );
 }
 
-interface EnhancedTextFieldProps
+interface TextFieldProps
   extends Omit<React.ComponentPropsWithoutRef<'input'>, 'id'> {
   label?: string;
   required?: boolean;
   error?: string;
 }
 
-export function EnhancedTextField({
+export function TextField({
   label,
   required = false,
   error,
   className,
   ...props
-}: EnhancedTextFieldProps) {
+}: TextFieldProps) {
   const id = useId();
 
   return (

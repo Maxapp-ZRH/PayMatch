@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,7 +15,7 @@ import { CheckCircle } from 'lucide-react';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { createClient } from '@/lib/supabase/client';
-import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
+import { TextField } from '@/components/ui/text-field';
 import { PasswordField } from '@/components/ui/password-field';
 import { loginSchema, type LoginFormData } from '../schemas/login-schema';
 import {
@@ -46,10 +46,25 @@ export function LoginForm({
     formState: { errors },
     setError,
     clearErrors,
+    setValue,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     mode: 'onBlur', // Validate on blur for better UX
+    defaultValues: {
+      email: '',
+      password: '',
+      rememberMe: false,
+    },
   });
+
+  // Check if user previously selected Remember Me
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const rememberMe =
+        localStorage.getItem('supabase.auth.remember') === 'true';
+      setValue('rememberMe', rememberMe);
+    }
+  }, [setValue]);
 
   const onSubmit = async (data: LoginFormData) => {
     // Clear any previous server errors
@@ -61,6 +76,16 @@ export function LoginForm({
         email: data.email,
         password: data.password,
       });
+
+      // Handle Remember Me functionality
+      if (authData.session && data.rememberMe) {
+        // For Remember Me, we'll store the session in localStorage
+        // This will persist the session across browser sessions
+        localStorage.setItem('supabase.auth.remember', 'true');
+      } else {
+        // Clear the remember flag if not checked
+        localStorage.removeItem('supabase.auth.remember');
+      }
 
       if (error) {
         // Handle specific error cases with field-level validation
@@ -186,7 +211,7 @@ export function LoginForm({
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <EnhancedTextField
+        <TextField
           label="Email address"
           type="email"
           autoComplete="email"
@@ -202,6 +227,22 @@ export function LoginForm({
           {...register('password')}
           error={errors.password?.message}
         />
+
+        {/* Remember Me Checkbox */}
+        <div className="flex items-center">
+          <input
+            id="rememberMe"
+            type="checkbox"
+            {...register('rememberMe')}
+            className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+          />
+          <label
+            htmlFor="rememberMe"
+            className="ml-2 block text-sm text-gray-900"
+          >
+            Remember me
+          </label>
+        </div>
 
         <Button
           type="submit"

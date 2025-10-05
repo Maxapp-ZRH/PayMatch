@@ -1,17 +1,16 @@
 /**
  * Onboarding Page
  *
- * User onboarding flow for new PayMatch users.
- * Guides users through essential setup steps.
+ * Main onboarding page that displays the onboarding wizard.
+ * Uses a full-page layout with modern design.
  */
 
 import { type Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
-import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
-import { OnboardingForm } from '@/features/onboarding/components/OnboardingForm';
-import { LogoutButton } from '@/components/ui/logout-button';
+import { OnboardingWizard } from '@/features/onboarding/components/OnboardingWizard';
 import { createClient } from '@/lib/supabase/server';
+import type { PlanName } from '@/config/plans';
 
 export const metadata: Metadata = {
   title: 'Onboarding - PayMatch',
@@ -19,41 +18,35 @@ export const metadata: Metadata = {
     'Complete your PayMatch setup to start creating Swiss QR-bill compliant invoices.',
 };
 
-export default async function Onboarding() {
+export default async function OnboardingPage() {
   const supabase = await createClient();
 
-  // Check if user is authenticated
+  // Get current user (middleware already verified authentication)
   const {
     data: { user },
-    error,
   } = await supabase.auth.getUser();
 
-  if (!user || error) {
+  // Get user's organization
+  const { data: orgMembership } = await supabase
+    .from('organization_users')
+    .select(
+      `
+      org_id,
+      organizations!inner(id, name, plan)
+    `
+    )
+    .eq('user_id', user!.id)
+    .eq('status', 'active')
+    .single();
+
+  const org = orgMembership?.organizations as
+    | { id: string; name: string; plan: string }
+    | undefined;
+
+  if (!org) {
+    // This shouldn't happen due to middleware checks
     redirect('/login');
   }
 
-  // Check if user has already completed onboarding
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('onboarding_completed')
-    .eq('id', user.id)
-    .single();
-
-  if (profile?.onboarding_completed) {
-    redirect('/dashboard');
-  }
-
-  return (
-    <AuthLayout
-      title="Welcome to PayMatch!"
-      subtitle="Let's get you set up to start creating Swiss QR-bill compliant invoices."
-    >
-      <div className="space-y-6">
-        <div className="flex justify-end">
-          <LogoutButton variant="ghost" size="sm" />
-        </div>
-        <OnboardingForm />
-      </div>
-    </AuthLayout>
-  );
+  return <OnboardingWizard orgId={org.id} initialPlan={org.plan as PlanName} />;
 }

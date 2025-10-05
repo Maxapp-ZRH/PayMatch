@@ -1,5 +1,5 @@
 /**
- * Enhanced Select Field Component
+ * Select Field Component
  *
  * Select input with mandatory field indicators and improved styling.
  */
@@ -32,21 +32,21 @@ function Label({
   );
 }
 
-interface EnhancedSelectFieldProps
+interface SelectFieldProps
   extends Omit<React.ComponentPropsWithoutRef<'select'>, 'id'> {
   label?: string;
   required?: boolean;
   error?: string;
 }
 
-export function EnhancedSelectField({
+export function SelectField({
   label,
   required = false,
   error,
   className,
   children,
   ...props
-}: EnhancedSelectFieldProps) {
+}: SelectFieldProps) {
   const id = useId();
 
   return (

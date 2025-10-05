@@ -1,6 +1,5 @@
 'use client';
 
-import { useId } from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
@@ -19,7 +18,9 @@ import logoTechcrunch from '@/assets/logos/techcrunch.svg';
 import logoWired from '@/assets/logos/wired.svg';
 
 function BackgroundIllustration(props: React.ComponentPropsWithoutRef<'div'>) {
-  const id = useId();
+  // Use stable IDs that won't change between server and client
+  const gradientId1 = 'hero-gradient-1';
+  const gradientId2 = 'hero-gradient-2';
 
   return (
     <div {...props}>
@@ -36,12 +37,12 @@ function BackgroundIllustration(props: React.ComponentPropsWithoutRef<'div'>) {
         />
         <path
           d="M513 1025C230.23 1025 1 795.77 1 513"
-          stroke={`url(#${id}-gradient-1)`}
+          stroke={`url(#${gradientId1})`}
           strokeLinecap="round"
         />
         <defs>
           <linearGradient
-            id={`${id}-gradient-1`}
+            id={gradientId1}
             x1="1"
             y1="513"
             x2="1"
@@ -66,12 +67,12 @@ function BackgroundIllustration(props: React.ComponentPropsWithoutRef<'div'>) {
         />
         <path
           d="M913 513c0 220.914-179.086 400-400 400"
-          stroke={`url(#${id}-gradient-2)`}
+          stroke={`url(#${gradientId2})`}
           strokeLinecap="round"
         />
         <defs>
           <linearGradient
-            id={`${id}-gradient-2`}
+            id={gradientId2}
             x1="913"
             y1="513"
             x2="913"

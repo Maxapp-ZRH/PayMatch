@@ -76,7 +76,9 @@ export class ConsentServiceClient {
    * Note: This only returns local storage consent, not database records
    */
   static async getConsentStatus(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _userId?: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _email?: string
   ): Promise<{ success: boolean; status?: ConsentStatus[]; error?: string }> {
     try {
@@ -125,7 +127,9 @@ export class ConsentServiceClient {
    * Note: This only checks local storage consent, not database records
    */
   static async checkConsentRenewal(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _userId?: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _email?: string
   ): Promise<{
     success: boolean;

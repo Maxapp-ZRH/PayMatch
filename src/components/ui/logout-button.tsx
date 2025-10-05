@@ -37,6 +37,11 @@ export function LogoutButton({
       const result = await logout();
 
       if (result.success) {
+        // Clear Remember Me flag on logout
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('supabase.auth.remember');
+        }
+
         showToast.success('Logged out successfully');
         router.push('/');
         router.refresh();

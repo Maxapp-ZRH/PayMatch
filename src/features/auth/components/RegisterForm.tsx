@@ -14,8 +14,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 
 import { Button } from '@/components/marketing_pages/Button';
-import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
-import { EnhancedSelectField } from '@/components/ui/enhanced-select-field';
+import { TextField } from '@/components/ui/text-field';
+import { SelectField } from '@/components/ui/select-field';
 import { registerUser } from '../server/actions/registration';
 import { checkUserPendingRegistration } from '../server/actions/login';
 import {
@@ -100,7 +100,7 @@ export function RegisterForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-2 gap-6">
-        <EnhancedTextField
+        <TextField
           label="First name"
           type="text"
           autoComplete="given-name"
@@ -109,7 +109,7 @@ export function RegisterForm() {
           error={errors.firstName?.message}
         />
 
-        <EnhancedTextField
+        <TextField
           label="Last name"
           type="text"
           autoComplete="family-name"
@@ -118,7 +118,7 @@ export function RegisterForm() {
           error={errors.lastName?.message}
         />
 
-        <EnhancedTextField
+        <TextField
           className="col-span-full"
           label="Email address"
           type="email"
@@ -130,7 +130,7 @@ export function RegisterForm() {
 
         {/* Password will be collected during email verification for GDPR compliance */}
 
-        <EnhancedSelectField
+        <SelectField
           className="col-span-full"
           label="How did you hear about us?"
           {...register('referralSource')}
@@ -141,7 +141,7 @@ export function RegisterForm() {
           <option value="referral">Referral from colleague</option>
           <option value="directory">Swiss business directory</option>
           <option value="other">Other</option>
-        </EnhancedSelectField>
+        </SelectField>
       </div>
 
       <Button

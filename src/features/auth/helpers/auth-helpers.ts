@@ -6,7 +6,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
-import { User, AuthError } from '@supabase/supabase-js';
+import { User, AuthError, Session } from '@supabase/supabase-js';
 
 export interface AuthUserResult {
   user: User | null;
@@ -25,10 +25,61 @@ export async function getAuthUserSafely(supabase: {
       data: { user: User | null };
       error: AuthError | null;
     }>;
+    getSession: () => Promise<{
+      data: { session: Session | null };
+      error: AuthError | null;
+    }>;
+    refreshSession: () => Promise<{
+      data: { session: Session | null };
+      error: AuthError | null;
+    }>;
     signOut: () => Promise<{ error: AuthError | null }>;
   };
 }): Promise<AuthUserResult> {
   try {
+    // First try to get the current session
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError) {
+      // If session error, try to refresh
+      console.log('Session error, attempting refresh:', sessionError.message);
+      const {
+        data: { session: refreshedSession },
+        error: refreshError,
+      } = await supabase.auth.refreshSession();
+
+      if (refreshError) {
+        // If refresh fails, handle the error
+        if (
+          refreshError.message?.includes('JWT') ||
+          refreshError.message?.includes('token') ||
+          refreshError.message?.includes('User from sub claim') ||
+          refreshError.message?.includes('does not exist') ||
+          refreshError.message?.includes('Invalid Refresh Token')
+        ) {
+          await supabase.auth.signOut();
+          return { user: null, error: null, isUnauthenticated: true };
+        }
+        return { user: null, error: refreshError, isUnauthenticated: true };
+      }
+
+      if (refreshedSession?.user) {
+        return {
+          user: refreshedSession.user,
+          error: null,
+          isUnauthenticated: false,
+        };
+      }
+    }
+
+    if (session?.user) {
+      return { user: session.user, error: null, isUnauthenticated: false };
+    }
+
+    // Fallback to getUser if no session
     const {
       data: { user },
       error,
@@ -40,7 +91,8 @@ export async function getAuthUserSafely(supabase: {
         error.message?.includes('JWT') ||
         error.message?.includes('token') ||
         error.message?.includes('User from sub claim') ||
-        error.message?.includes('does not exist')
+        error.message?.includes('does not exist') ||
+        error.message?.includes('Invalid Refresh Token')
       ) {
         await supabase.auth.signOut();
         return { user: null, error: null, isUnauthenticated: true };
@@ -89,13 +141,22 @@ export async function handleAuthPageLogic(
     }
 
     // Check if user has completed onboarding
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('onboarding_completed')
-      .eq('id', user.id)
+    const { data: orgMembership } = await supabase
+      .from('organization_users')
+      .select(
+        `
+        org_id,
+        organizations!inner(onboarding_completed)
+      `
+      )
+      .eq('user_id', user.id)
+      .eq('status', 'active')
       .single();
 
-    if (!profile?.onboarding_completed) {
+    const org = orgMembership?.organizations as
+      | { onboarding_completed: boolean }
+      | undefined;
+    if (!org?.onboarding_completed) {
       return { user, redirectUrl: '/onboarding', shouldRedirect: true };
     }
 

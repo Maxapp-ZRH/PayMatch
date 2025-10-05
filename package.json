@@ -16,7 +16,8 @@
     "types:db:cloud": "supabase gen types typescript --linked --schema public --schema storage > src/types/database.ts",
     "functions:serve": "supabase functions serve",
     "functions:deploy": "supabase functions deploy",
-    "functions:deploy:all": "supabase functions deploy --no-verify-jwt"
+    "functions:deploy:all": "supabase functions deploy --no-verify-jwt",
+    "stripe:setup": "node scripts/setup-stripe-plans.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
@@ -24,6 +25,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@react-email/components": "^0.5.5",
     "@react-email/render": "^1.3.1",
+    "@stripe/stripe-js": "^8.0.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.58.0",
     "@tailwindcss/forms": "^0.5.10",
@@ -51,6 +53,7 @@
     "resend": "^6.1.0",
     "sharp": "^0.34.4",
     "sonner": "^2.0.7",
+    "stripe": "^19.1.0",
     "swissqrbill": "^4.2.0",
     "tailwind-merge": "^3.3.1",
     "use-debounce": "^10.0.6",

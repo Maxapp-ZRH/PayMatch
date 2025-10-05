@@ -6,6 +6,84 @@
  */
 
 import { createClient } from '@/lib/supabase/client';
+import type { User, AuthError } from '@supabase/supabase-js';
+
+/**
+ * Safely get authenticated user with session refresh (client-side)
+ * @returns Promise<{ user: User | null; error: AuthError | null }>
+ */
+async function getAuthenticatedUserSafely(): Promise<{
+  user: User | null;
+  error: AuthError | null;
+}> {
+  const supabase = createClient();
+
+  try {
+    // First try to get the current session
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError) {
+      // If session error, try to refresh
+      console.log('Session error, attempting refresh:', sessionError.message);
+      const {
+        data: { session: refreshedSession },
+        error: refreshError,
+      } = await supabase.auth.refreshSession();
+
+      if (refreshError) {
+        // If refresh fails, handle the error
+        if (
+          refreshError.message?.includes('JWT') ||
+          refreshError.message?.includes('token') ||
+          refreshError.message?.includes('User from sub claim') ||
+          refreshError.message?.includes('does not exist') ||
+          refreshError.message?.includes('Invalid Refresh Token')
+        ) {
+          await supabase.auth.signOut();
+          return { user: null, error: null };
+        }
+        return { user: null, error: refreshError };
+      }
+
+      if (refreshedSession?.user) {
+        return { user: refreshedSession.user, error: null };
+      }
+    }
+
+    if (session?.user) {
+      return { user: session.user, error: null };
+    }
+
+    // Fallback to getUser if no session
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error) {
+      // Handle JWT errors by clearing the session
+      if (
+        error.message?.includes('JWT') ||
+        error.message?.includes('token') ||
+        error.message?.includes('User from sub claim') ||
+        error.message?.includes('does not exist') ||
+        error.message?.includes('Invalid Refresh Token')
+      ) {
+        await supabase.auth.signOut();
+        return { user: null, error: null };
+      }
+      return { user: null, error };
+    }
+
+    return { user, error: null };
+  } catch (err) {
+    console.error('Auth error:', err);
+    return { user: null, error: err as AuthError };
+  }
+}
 
 /**
  * Check if user has an organization (client-side)
@@ -18,11 +96,8 @@ export async function userHasOrganizationClient(
   try {
     const supabase = createClient();
 
-    // Check if user is authenticated
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    // Check if user is authenticated with session refresh
+    const { user, error: authError } = await getAuthenticatedUserSafely();
 
     if (authError || !user) {
       return false;
@@ -73,20 +148,24 @@ export async function userHasCompletedOnboardingClient(
   try {
     const supabase = createClient();
 
-    // Check if user is authenticated
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    // Check if user is authenticated with session refresh
+    const { user, error: authError } = await getAuthenticatedUserSafely();
 
     if (authError || !user) {
       return false;
     }
 
-    const { data, error } = await supabase
-      .from('user_profiles')
-      .select('onboarding_completed')
-      .eq('id', userId)
+    // Check onboarding status from organizations table (single source of truth)
+    const { data: orgMembership, error } = await supabase
+      .from('organization_users')
+      .select(
+        `
+        org_id,
+        organizations!inner(onboarding_completed)
+      `
+      )
+      .eq('user_id', userId)
+      .eq('status', 'active')
       .single();
 
     if (error) {
@@ -94,7 +173,10 @@ export async function userHasCompletedOnboardingClient(
       return false;
     }
 
-    return Boolean(data?.onboarding_completed);
+    const org = orgMembership?.organizations as unknown as
+      | { onboarding_completed: boolean }
+      | undefined;
+    return Boolean(org?.onboarding_completed);
   } catch (error) {
     console.error('Error checking onboarding status:', error);
     return false;
@@ -115,6 +197,13 @@ export async function getUserPrimaryOrganizationClient(
 } | null> {
   try {
     const supabase = createClient();
+
+    // Check if user is authenticated with session refresh
+    const { user, error: authError } = await getAuthenticatedUserSafely();
+
+    if (authError || !user) {
+      return null;
+    }
 
     // First get the organization user record
     const { data: orgUser, error: orgUserError } = await supabase
