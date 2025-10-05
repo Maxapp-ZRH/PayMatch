@@ -1,8 +1,8 @@
 /**
- * Common Email Layout Component
+ * Modern Email Layout Component
  *
- * Provides a consistent header and footer for all PayMatch emails.
- * Includes the PayMatch logo with text and Swiss branding.
+ * Provides a consistent, modern header and footer for all PayMatch emails.
+ * Inspired by Slack's clean design with Swiss branding and just the logo.
  */
 
 import {
@@ -39,17 +39,16 @@ export const EmailLayout = ({
       {preview && <Preview>{preview}</Preview>}
       <Body style={main}>
         <Container style={container}>
-          {/* Header */}
-          <Section style={header}>
+          {/* Header with Logo Only */}
+          <Section style={logoContainer}>
             <Link href={appUrl} style={logoLink}>
               <Img
-                src="cid:paymatch-logo"
+                src={`${appUrl}/logo.png`}
                 alt="PayMatch"
-                width="40"
-                height="40"
+                width="120"
+                height="36"
                 style={logoImage}
               />
-              <Text style={logoText}>PayMatch</Text>
             </Link>
           </Section>
 
@@ -58,7 +57,6 @@ export const EmailLayout = ({
 
           {/* Footer */}
           <Section style={footer}>
-            <Text style={footerText}>PayMatch - Swiss QR-Bill Invoicing</Text>
             <Text style={footerText}>
               <Link href={`${appUrl}/support`} style={footerLink}>
                 Support
@@ -89,75 +87,61 @@ export const EmailLayout = ({
   );
 };
 
-// Styles
+// Styles - Inspired by Slack's clean design
 const main = {
-  backgroundColor: '#f8fafc',
+  backgroundColor: '#ffffff',
+  margin: '0 auto',
   fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+    "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
 };
 
 const container = {
-  backgroundColor: '#ffffff',
   margin: '0 auto',
-  padding: '20px 0 48px',
-  marginBottom: '64px',
+  padding: '0px 20px',
   maxWidth: '600px',
 };
 
-const header = {
-  padding: '32px 24px 24px',
-  borderBottom: '1px solid #e2e8f0',
+const logoContainer = {
+  marginTop: '32px',
   textAlign: 'center' as const,
 };
 
 const logoLink = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '12px',
+  display: 'inline-block',
   textDecoration: 'none',
-  color: '#1e293b',
 };
 
 const logoImage = {
   display: 'block',
-};
-
-const logoText = {
-  fontSize: '24px',
-  fontWeight: '700',
-  color: '#1e293b',
-  margin: '0',
-  letterSpacing: '-0.025em',
+  margin: '0 auto',
 };
 
 const content = {
-  padding: '24px',
+  padding: '0 0 40px 0',
 };
 
 const footer = {
-  padding: '24px',
-  borderTop: '1px solid #e2e8f0',
+  padding: '32px 0 50px 0',
   textAlign: 'center' as const,
-  backgroundColor: '#f8fafc',
+  borderTop: '1px solid #e2e8f0',
 };
 
 const footerText = {
-  fontSize: '14px',
-  color: '#64748b',
+  fontSize: '12px',
+  color: '#b7b7b7',
+  lineHeight: '15px',
+  textAlign: 'center' as const,
   margin: '0 0 8px 0',
-  lineHeight: '1.5',
 };
 
 const footerLink = {
-  color: '#dc2626',
-  textDecoration: 'none',
-  fontWeight: '500',
+  color: '#b7b7b7',
+  textDecoration: 'underline',
 };
 
 const unsubscribeLink = {
-  color: '#dc2626',
+  color: '#b7b7b7',
   textDecoration: 'underline',
-  fontWeight: '500',
 };
 
 export default EmailLayout;

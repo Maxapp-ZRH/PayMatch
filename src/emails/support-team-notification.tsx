@@ -1,8 +1,8 @@
 /**
- * Support Team Notification Email Template
+ * Modern Support Team Notification Email Template
  *
  * React Email template for notifying the support team about new support requests.
- * Sent to the support team when users submit support forms.
+ * Inspired by Slack's clean design with modern styling.
  */
 
 import {
@@ -67,61 +67,60 @@ export const SupportTeamNotificationEmail = ({
       <Preview>New Support Request - {subject}</Preview>
       <Body style={main}>
         <Container style={container}>
-          {/* Header */}
-          <Section style={header}>
-            <Heading style={h1}>New Support Request</Heading>
+          <Heading style={h1}>New support request</Heading>
+
+          <Text style={heroText}>
+            A new support request has been submitted and requires your
+            attention.
+          </Text>
+
+          {/* Personal Information */}
+          <Section style={infoBox}>
+            <Heading style={h2}>Contact</Heading>
+            <Text style={text}>
+              <strong>{userName}</strong> • {userEmail}
+              {userCompany && ` • ${userCompany}`}
+            </Text>
           </Section>
 
-          {/* Main Content */}
-          <Section style={content}>
-            {/* Personal Information */}
+          {/* Issue Details */}
+          <Section style={infoBox}>
+            <Heading style={h2}>Issue</Heading>
+            <Text style={text}>
+              <strong>{category}</strong> •{' '}
+              <span style={{ color: priorityColor, fontWeight: 'bold' }}>
+                {priorityLabel}
+              </span>
+            </Text>
+            <Text style={text}>
+              <strong>{subject}</strong>
+            </Text>
+          </Section>
+
+          {/* Message */}
+          <Section style={infoBox}>
+            <Heading style={h2}>Message</Heading>
+            <Text style={messageText}>{message}</Text>
+          </Section>
+
+          {/* Attachments */}
+          {attachments && attachments.length > 0 && (
             <Section style={infoBox}>
-              <Heading style={h2}>Contact</Heading>
-              <Text style={text}>
-                <strong>{userName}</strong> • {userEmail}
-                {userCompany && ` • ${userCompany}`}
-              </Text>
+              <Heading style={h2}>Attachments ({attachments.length})</Heading>
+              {attachments.map((attachment, index) => (
+                <Text key={index} style={text}>
+                  {attachment.name} (
+                  {(attachment.size / 1024 / 1024).toFixed(1)} MB)
+                </Text>
+              ))}
             </Section>
+          )}
 
-            {/* Issue Details */}
-            <Section style={infoBox}>
-              <Heading style={h2}>Issue</Heading>
-              <Text style={text}>
-                <strong>{category}</strong> •{' '}
-                <span style={{ color: priorityColor, fontWeight: 'bold' }}>
-                  {priorityLabel}
-                </span>
-              </Text>
-              <Text style={text}>
-                <strong>{subject}</strong>
-              </Text>
-            </Section>
-
-            {/* Message */}
-            <Section style={infoBox}>
-              <Heading style={h2}>Message</Heading>
-              <Text style={messageText}>{message}</Text>
-            </Section>
-
-            {/* Attachments */}
-            {attachments && attachments.length > 0 && (
-              <Section style={infoBox}>
-                <Heading style={h2}>Attachments ({attachments.length})</Heading>
-                {attachments.map((attachment, index) => (
-                  <Text key={index} style={text}>
-                    {attachment.name} (
-                    {(attachment.size / 1024 / 1024).toFixed(1)} MB)
-                  </Text>
-                ))}
-              </Section>
-            )}
-
-            {/* Footer */}
-            <Section style={footer}>
-              <Text style={footerText}>
-                PayMatch support form • Reply to respond
-              </Text>
-            </Section>
+          {/* Footer */}
+          <Section style={footer}>
+            <Text style={footerText}>
+              PayMatch support form • Reply to respond
+            </Text>
           </Section>
         </Container>
       </Body>
@@ -129,80 +128,82 @@ export const SupportTeamNotificationEmail = ({
   );
 };
 
-// Styles
+// Styles - Inspired by Slack's clean design
 const main = {
-  backgroundColor: '#f6f9fc',
+  backgroundColor: '#ffffff',
+  margin: '0 auto',
   fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
+    "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
 };
 
 const container = {
-  backgroundColor: '#ffffff',
   margin: '0 auto',
-  padding: '20px 0 48px',
-  marginBottom: '64px',
+  padding: '0px 20px',
   maxWidth: '600px',
 };
 
-const header = {
-  padding: '20px 30px',
-  borderBottom: '1px solid #e5e7eb',
-};
-
-const content = {
-  padding: '30px',
-};
-
 const h1 = {
-  color: '#E4262A',
-  fontSize: '24px',
-  fontWeight: 'bold',
-  margin: '0 0 20px 0',
-  lineHeight: '1.25',
-  borderBottom: '2px solid #E4262A',
-  paddingBottom: '10px',
+  color: '#1d1c1d',
+  fontSize: '36px',
+  fontWeight: '700',
+  margin: '30px 0',
+  padding: '0',
+  lineHeight: '42px',
+  textAlign: 'center' as const,
+};
+
+const heroText = {
+  fontSize: '20px',
+  lineHeight: '28px',
+  marginBottom: '30px',
+  color: '#1d1c1d',
+  textAlign: 'center' as const,
 };
 
 const h2 = {
-  color: '#374151',
+  color: '#1d1c1d',
   fontSize: '18px',
-  fontWeight: 'bold',
+  fontWeight: '600',
   margin: '0 0 15px 0',
+  textAlign: 'center' as const,
 };
 
 const text = {
-  color: '#374151',
-  fontSize: '16px',
-  lineHeight: '1.5',
+  color: '#000',
+  fontSize: '14px',
+  lineHeight: '24px',
   margin: '0 0 8px 0',
+  textAlign: 'center' as const,
 };
 
 const messageText = {
-  color: '#374151',
-  fontSize: '16px',
-  lineHeight: '1.6',
+  color: '#000',
+  fontSize: '14px',
+  lineHeight: '24px',
   margin: '0',
   whiteSpace: 'pre-wrap' as const,
+  textAlign: 'left' as const,
 };
 
 const infoBox = {
-  backgroundColor: '#f8fafc',
-  padding: '20px',
-  borderRadius: '8px',
-  margin: '20px 0',
-  border: '1px solid #e5e7eb',
+  background: 'rgb(245, 244, 245)',
+  borderRadius: '4px',
+  marginBottom: '30px',
+  padding: '40px 20px',
+  textAlign: 'center' as const,
 };
 
 const footer = {
-  padding: '20px 0',
-  borderTop: '1px solid #e5e7eb',
-  marginTop: '30px',
+  padding: '32px 0 50px 0',
+  textAlign: 'center' as const,
+  borderTop: '1px solid #e2e8f0',
 };
 
 const footerText = {
-  color: '#6b7280',
-  fontSize: '14px',
-  lineHeight: '1.5',
+  fontSize: '12px',
+  color: '#b7b7b7',
+  lineHeight: '15px',
+  textAlign: 'center' as const,
   margin: '0 0 8px 0',
 };
 

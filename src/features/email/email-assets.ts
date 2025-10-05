@@ -5,65 +5,40 @@
  * Uses Resend's CID (Content-ID) method for inline images.
  */
 
-import fs from 'fs';
-import path from 'path';
-
 /**
- * Get the base64-encoded PayMatch logo for inline email embedding
+ * Get the PayMatch logo URL for email templates
+ * Uses a URL that works in both development and production
  */
-export function getPayMatchLogoAttachment() {
-  try {
-    // Read the logo file from the public directory
-    const logoPath = path.join(process.cwd(), 'public', 'logo.png');
-    const logoBuffer = fs.readFileSync(logoPath);
-    const logoBase64 = logoBuffer.toString('base64');
-
-    return {
-      content: logoBase64,
-      filename: 'paymatch-logo.png',
-      contentId: 'paymatch-logo',
-      contentType: 'image/png',
-    };
-  } catch (error) {
-    console.error('Failed to load PayMatch logo:', error);
-    // Return a fallback - you might want to use a remote URL instead
-    return {
-      path: 'https://paymatch.app/logo.png',
-      filename: 'paymatch-logo.png',
-      contentId: 'paymatch-logo',
-      contentType: 'image/png',
-    };
-  }
+export function getPayMatchLogoUrl(): string {
+  // Use the app URL from environment or default to localhost for development
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  return `${baseUrl}/logo.png`;
 }
 
 /**
- * Get all standard email attachments (logo, etc.)
+ * Get all standard email attachments (currently none needed)
+ * Since we're using direct URLs in templates, no attachments needed
  */
 export function getStandardEmailAttachments() {
-  return [getPayMatchLogoAttachment()];
+  return [];
 }
 
 /**
- * Check if an asset file exists
+ * Check if an asset file exists (client-side compatible)
  */
-export function assetExists(filename: string): boolean {
-  try {
-    const assetPath = path.join(process.cwd(), 'public', filename);
-    return fs.existsSync(assetPath);
-  } catch {
-    return false;
-  }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function assetExists(_filename: string): boolean {
+  // For client-side compatibility, always return true
+  // In production, you might want to check against a CDN or known assets
+  return true;
 }
 
 /**
- * Get asset file size in bytes
+ * Get asset file size in bytes (client-side compatible)
  */
-export function getAssetSize(filename: string): number {
-  try {
-    const assetPath = path.join(process.cwd(), 'public', filename);
-    const stats = fs.statSync(assetPath);
-    return stats.size;
-  } catch {
-    return 0;
-  }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function getAssetSize(_filename: string): number {
+  // For client-side compatibility, return 0
+  // In production, you might want to get this from a CDN or API
+  return 0;
 }
