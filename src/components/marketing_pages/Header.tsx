@@ -151,7 +151,7 @@ export function Header() {
                             <Button href="/login" variant="outline">
                               {t('login')}
                             </Button>
-                            <Button href="/register" color="cyan">
+                            <Button href="/register" color="swiss">
                               {t('register')}
                             </Button>
                           </div>
@@ -166,7 +166,7 @@ export function Header() {
               <Button href="/login" variant="outline">
                 {t('login')}
               </Button>
-              <Button href="/register" color="cyan">
+              <Button href="/register" color="swiss">
                 {t('register')}
               </Button>
             </div>

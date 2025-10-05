@@ -140,7 +140,7 @@ export function Hero() {
             >
               <Button
                 href="/register"
-                color="cyan"
+                color="swiss"
                 className="px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-semibold w-full sm:w-auto"
               >
                 {t('cta')}

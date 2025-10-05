@@ -47,7 +47,7 @@ export default async function AuthCodeError({
                 : '/verify-email'
             }
           >
-            <Button color="cyan" className="w-full">
+            <Button color="swiss" className="w-full">
               Get new verification link
             </Button>
           </Link>

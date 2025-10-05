@@ -225,7 +225,7 @@ export function VerifyEmailForm({
         {isVerified ? (
           <Button
             onClick={() => router.push('/login')}
-            color="cyan"
+            color="swiss"
             className="w-full"
           >
             Sign in to your account
@@ -242,7 +242,7 @@ export function VerifyEmailForm({
                   !showResendOptions ||
                   (needsEmailInput && !emailInput.trim())
                 }
-                color="cyan"
+                color="swiss"
                 className="w-full"
               >
                 {isResending

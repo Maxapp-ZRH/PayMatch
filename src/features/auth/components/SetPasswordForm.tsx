@@ -117,7 +117,7 @@ export function SetPasswordForm({ email, onSuccess }: SetPasswordFormProps) {
 
         <Button
           type="submit"
-          color="cyan"
+          color="swiss"
           className="w-full"
           disabled={isLoading}
         >

@@ -203,7 +203,7 @@ export function LoginForm({
 
         <Button
           type="submit"
-          color="cyan"
+          color="swiss"
           className="w-full"
           disabled={isLoading}
         >

@@ -149,7 +149,7 @@ export function RegisterForm() {
 
       <Button
         type="submit"
-        color="cyan"
+        color="swiss"
         className="w-full"
         disabled={isLoading || isSubmitting}
       >

@@ -48,7 +48,7 @@ export function CallToAction() {
           >
             <Button
               href="/register"
-              color="cyan"
+              color="swiss"
               className="px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base font-semibold w-full sm:w-auto"
             >
               {t('cta')}

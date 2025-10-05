@@ -118,7 +118,7 @@ export function ForgotPasswordForm() {
 
       <Button
         type="submit"
-        color="cyan"
+        color="swiss"
         className="w-full"
         disabled={isLoading}
       >

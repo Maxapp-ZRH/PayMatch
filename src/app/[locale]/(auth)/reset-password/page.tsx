@@ -78,7 +78,7 @@ export default async function ResetPassword({
           </p>
           <div className="mt-6">
             <Link href="/forgot-password">
-              <Button color="cyan" className="w-full">
+              <Button color="swiss" className="w-full">
                 Request New Reset Link
               </Button>
             </Link>

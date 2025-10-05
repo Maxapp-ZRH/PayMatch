@@ -151,7 +151,7 @@ export function ResetPasswordForm() {
           new one.
         </p>
         <div className="mt-6">
-          <Button color="cyan" onClick={() => router.push('/forgot-password')}>
+          <Button color="swiss" onClick={() => router.push('/forgot-password')}>
             Request new reset link
           </Button>
         </div>
@@ -203,7 +203,7 @@ export function ResetPasswordForm() {
 
       <Button
         type="submit"
-        color="cyan"
+        color="swiss"
         className="w-full"
         disabled={isLoading}
       >

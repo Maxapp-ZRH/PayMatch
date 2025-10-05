@@ -368,14 +368,8 @@ export function Integrations() {
               <div className="flex justify-center items-center">
                 <Button
                   href="/register"
-                  className="text-white px-8 py-4 text-lg font-semibold"
-                  style={{ backgroundColor: '#E4262A' }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = '#C21E1E')
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = '#E4262A')
-                  }
+                  color="swiss"
+                  className="px-8 py-4 text-lg font-semibold"
                 >
                   {t('cta')}
                   <ArrowRight className="w-5 h-5 ml-2" />

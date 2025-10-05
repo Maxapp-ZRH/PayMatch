@@ -471,7 +471,7 @@ export function Footer() {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  color="cyan"
+                  color="swiss"
                   disabled={isSubmitting || !isValid}
                   className="w-full text-sm sm:text-base"
                 >
