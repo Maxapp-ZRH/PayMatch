@@ -17,7 +17,6 @@ import { Button } from '@/components/marketing_pages/Button';
 import { createClient } from '@/lib/supabase/client';
 import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
 import { PasswordField } from '@/components/ui/password-field';
-import { authToasts } from '@/lib/toast';
 import { loginSchema, type LoginFormData } from '../schemas/login-schema';
 import {
   userHasOrganizationClient,
@@ -45,11 +44,16 @@ export function LoginForm({
     register,
     handleSubmit,
     formState: { errors },
+    setError,
+    clearErrors,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    mode: 'onBlur', // Validate on blur for better UX
   });
 
   const onSubmit = async (data: LoginFormData) => {
+    // Clear any previous server errors
+    clearErrors();
     setIsLoading(true);
 
     try {
@@ -59,21 +63,18 @@ export function LoginForm({
       });
 
       if (error) {
-        console.log('Login error:', error);
-        console.log('Error message:', error.message);
-        console.log('Error code:', error.status);
-
-        // Handle specific error cases for existing users
+        // Handle specific error cases with field-level validation
         if (
           error.message.includes('Email not confirmed') ||
           error.message.includes('email_not_confirmed') ||
           error.message.includes('Sign-in failed: email not confirmed') ||
           error.message.includes('not confirmed')
         ) {
-          // User exists but email not verified, redirect to verify-email page with resend option
-          const emailParam = encodeURIComponent(data.email);
-          router.push(`/verify-email?showResend=true&email=${emailParam}`);
-          router.refresh();
+          setError('email', {
+            type: 'manual',
+            message:
+              'Please verify your email address before signing in. Check your email for a verification link.',
+          });
           return;
         }
 
@@ -91,28 +92,32 @@ export function LoginForm({
           if (userError || !userExists) {
             const { hasPendingRegistration } =
               await checkUserPendingRegistration(data.email);
-            console.log(
-              'User not found in Supabase Auth, has pending registration:',
-              hasPendingRegistration
-            );
 
             if (hasPendingRegistration) {
               // User exists in pending registrations - redirect to verify-email
               // GDPR-Compliant: We don't validate passwords for pending registrations
               // The password will be validated when the user is created in Supabase Auth
-              console.log(
-                'Pending registration found, redirecting to verify-email page'
-              );
               const emailParam = encodeURIComponent(data.email);
               router.push(`/verify-email?showResend=true&email=${emailParam}`);
               router.refresh();
               return;
             }
           }
+
+          // Set field-level error for invalid credentials
+          setError('password', {
+            type: 'manual',
+            message:
+              'Invalid email or password. Please check your credentials and try again.',
+          });
+          return;
         }
 
-        // Handle other errors with generic message for security
-        authToasts.loginError('Invalid email or password');
+        // Handle other errors with field-level validation
+        setError('email', {
+          type: 'manual',
+          message: 'An error occurred during login. Please try again.',
+        });
         return;
       }
 
@@ -124,11 +129,11 @@ export function LoginForm({
       if (!hasOrg) {
         // User is verified but doesn't have organization - this shouldn't happen
         // as organization is created during email verification, but handle gracefully
-        console.warn(
-          'User is verified but has no organization - redirecting to onboarding'
-        );
-        router.push('/onboarding');
-        router.refresh();
+        setError('email', {
+          type: 'manual',
+          message:
+            'Account setup incomplete. Please contact support for assistance.',
+        });
         return;
       }
 
@@ -138,22 +143,21 @@ export function LoginForm({
       );
 
       if (!hasCompletedOnboarding) {
-        authToasts.warning(
-          'Onboarding Required',
-          'Please complete your account setup to access the dashboard.'
-        );
+        // Redirect to onboarding without error message (this is expected flow)
         router.push('/onboarding');
         router.refresh();
         return;
       }
 
-      // Everything is set up, show success and redirect
-      authToasts.loginSuccess();
+      // Everything is set up, redirect to dashboard
       const destination = redirectTo || '/dashboard';
       router.push(destination);
       router.refresh();
     } catch {
-      authToasts.loginError('An unexpected error occurred. Please try again.');
+      setError('email', {
+        type: 'manual',
+        message: 'An unexpected error occurred. Please try again.',
+      });
     } finally {
       setIsLoading(false);
     }

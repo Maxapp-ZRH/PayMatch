@@ -69,20 +69,14 @@ export async function storePendingRegistration(
     }
 
     // Check if user already exists in Supabase Auth
-    console.log('Checking if user exists in Supabase Auth for:', data.email);
     const userExists = await userExistsByEmail(data.email);
-    console.log('User exists check result:', userExists);
-
     if (userExists) {
-      console.log('User already exists, returning error');
       return {
         success: false,
         message:
           'An account with this email already exists. Please sign in instead.',
       };
     }
-
-    console.log('User does not exist, proceeding with registration');
 
     // Generate verification token
     const { token: verificationToken, expiresAt } = generateVerificationToken();
@@ -136,11 +130,6 @@ export async function verifyPendingRegistration(
   try {
     const supabase = supabaseAdmin;
 
-    console.log(
-      'Verifying pending registration with token:',
-      token.substring(0, 10) + '...'
-    );
-
     // Get pending registration by token
     const { data: pendingReg, error: fetchError } = await supabase
       .from('pending_registrations')
@@ -161,27 +150,17 @@ export async function verifyPendingRegistration(
     }
 
     if (!pendingReg) {
-      console.log('No pending registration found for token');
       return {
         success: false,
         message: 'Invalid or expired verification link.',
       };
     }
 
-    console.log('Found pending registration for email:', pendingReg.email);
-
     // Check if token has expired
     const now = new Date();
     const expiresAt = new Date(pendingReg.expires_at);
-    console.log(
-      'Token expiration check - Now:',
-      now.toISOString(),
-      'Expires:',
-      expiresAt.toISOString()
-    );
 
     if (now > expiresAt) {
-      console.log('Token has expired, cleaning up pending registration');
       // Clean up expired registration
       await supabase
         .from('pending_registrations')
@@ -193,8 +172,6 @@ export async function verifyPendingRegistration(
         message: 'Verification link has expired. Please register again.',
       };
     }
-
-    console.log('Token is valid, proceeding with verification');
 
     // For GDPR compliance, we don't create the user immediately
     // Instead, we return the email so the user can set their password

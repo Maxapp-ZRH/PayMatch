@@ -10,7 +10,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/features/auth/server/actions/auth';
-import { authToasts } from '@/lib/toast';
+import { showToast } from '@/lib/toast';
 
 interface LogoutButtonProps {
   variant?: 'default' | 'outline' | 'ghost';
@@ -37,15 +37,15 @@ export function LogoutButton({
       const result = await logout();
 
       if (result.success) {
-        authToasts.success('Logged out successfully');
+        showToast.success('Logged out successfully');
         router.push('/');
         router.refresh();
       } else {
-        authToasts.error(result.message);
+        showToast.error(result.message);
       }
     } catch (error) {
       console.error('Logout error:', error);
-      authToasts.error('Failed to logout. Please try again.');
+      showToast.error('Failed to logout. Please try again.');
     } finally {
       setIsLoading(false);
     }

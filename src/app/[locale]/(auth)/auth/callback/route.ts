@@ -13,29 +13,15 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type');
   const token = searchParams.get('token');
 
-  console.log('Auth callback - type:', type, 'token exists:', !!token);
-  console.log('Raw token from URL:', token);
-
   // Decode the token in case it was URL-encoded
   const decodedToken = token ? decodeURIComponent(token) : null;
-  console.log('Decoded token:', decodedToken?.substring(0, 10) + '...');
 
   if (type === 'signup' && decodedToken) {
     // Handle pending registration verification
     try {
-      console.log(
-        'Verifying pending registration with decoded token:',
-        decodedToken.substring(0, 10) + '...'
-      );
       const result = await verifyPendingRegistration(decodedToken);
 
-      console.log(
-        'Verification result:',
-        result.success ? 'Success' : 'Failed'
-      );
-
       if (!result.success) {
-        console.error('Registration verification failed:', result.error);
         // Try to get email from the token verification result
         const emailParam = result.email
           ? `?email=${encodeURIComponent(result.email)}`
@@ -47,7 +33,6 @@ export async function GET(request: NextRequest) {
 
       // Redirect to password setting page for GDPR compliance
       // User needs to set their password to complete registration
-      console.log('Redirecting to password setting page');
       const emailParam = encodeURIComponent(result.email || '');
       return NextResponse.redirect(
         `${origin}/verify-email?setPassword=true&email=${emailParam}`
@@ -59,14 +44,5 @@ export async function GET(request: NextRequest) {
   }
 
   // Error redirect
-  console.log('No valid signup token, redirecting to error page');
-  console.log(
-    'Type:',
-    type,
-    'Token exists:',
-    !!token,
-    'Decoded token exists:',
-    !!decodedToken
-  );
   return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }

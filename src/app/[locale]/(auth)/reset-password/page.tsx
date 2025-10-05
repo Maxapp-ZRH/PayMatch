@@ -8,8 +8,10 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { XCircle } from 'lucide-react';
 
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
+import { Button } from '@/components/marketing_pages/Button';
 import { ResetPasswordForm } from '@/features/auth/components/ResetPasswordForm';
 import { handleAuthPageLogic } from '@/features/auth/helpers';
 import { verifyResetToken } from '@/features/auth/server/actions/password-reset';
@@ -65,19 +67,7 @@ export default async function ResetPassword({
       ) : (
         <div className="text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-            <svg
-              className="h-6 w-6 text-red-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <XCircle className="h-6 w-6 text-red-600" />
           </div>
           <h3 className="mt-4 text-lg font-medium text-gray-900">
             Invalid Reset Link
@@ -87,11 +77,10 @@ export default async function ResetPassword({
             new one.
           </p>
           <div className="mt-6">
-            <Link
-              href="/forgot-password"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-            >
-              Request New Reset Link
+            <Link href="/forgot-password">
+              <Button color="cyan" className="w-full">
+                Request New Reset Link
+              </Button>
             </Link>
           </div>
         </div>

@@ -17,7 +17,7 @@ import { Lock } from 'lucide-react';
 import { Button } from '@/components/marketing_pages/Button';
 import { PasswordField } from '@/components/ui/password-field';
 import { setPendingRegistrationPassword } from '../server/actions/registration';
-import { authToasts } from '@/lib/toast';
+import { showToast } from '@/lib/toast';
 
 const setPasswordSchema = z
   .object({
@@ -67,15 +67,15 @@ export function SetPasswordForm({ email, onSuccess }: SetPasswordFormProps) {
       const result = await setPendingRegistrationPassword(email, data.password);
 
       if (result.success) {
-        authToasts.success('Account created successfully!', result.message);
+        showToast.success('Account created successfully!', result.message);
         onSuccess?.();
         router.push('/login');
       } else {
-        authToasts.error(result.message);
+        showToast.error(result.message);
       }
     } catch (error) {
       console.error('Set password error:', error);
-      authToasts.error('Failed to create account. Please try again.');
+      showToast.error('Failed to create account. Please try again.');
     } finally {
       setIsLoading(false);
     }

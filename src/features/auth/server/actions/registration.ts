@@ -44,17 +44,12 @@ export async function registerUser(
   data: RegisterUserData
 ): Promise<RegisterResult> {
   try {
-    console.log('Starting registration for email:', data.email);
-
     // Check if user already has a pending registration
     const { hasPendingRegistration } = await checkPendingRegistration(
       data.email
     );
 
     if (hasPendingRegistration) {
-      console.log(
-        'User already has pending registration, preventing duplicate registration'
-      );
       return {
         success: false,
         message:
@@ -71,8 +66,6 @@ export async function registerUser(
       referralSource: data.referralSource,
       browserLocale: data.browserLocale,
     });
-
-    console.log('Pending registration result:', pendingResult);
 
     if (!pendingResult.success) {
       return {
@@ -285,9 +278,10 @@ export async function resendPendingVerificationEmail(
 
     // Send verification email using the same function as registration
     // Construct name from first_name and last_name columns
-    const name = pendingRegistration.first_name && pendingRegistration.last_name
-      ? `${pendingRegistration.first_name} ${pendingRegistration.last_name}`
-      : email;
+    const name =
+      pendingRegistration.first_name && pendingRegistration.last_name
+        ? `${pendingRegistration.first_name} ${pendingRegistration.last_name}`
+        : email;
 
     const result = await sendVerificationEmail(email, verificationToken, name);
 
@@ -339,7 +333,11 @@ export async function getPendingUserName(email: string) {
     }
 
     if (!pendingRegistration) {
-      return { success: false, firstName: null, error: 'No pending registration found' };
+      return {
+        success: false,
+        firstName: null,
+        error: 'No pending registration found',
+      };
     }
 
     return {

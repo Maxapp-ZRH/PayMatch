@@ -11,7 +11,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/marketing_pages/Button';
-import { authToasts } from '@/lib/toast';
+import { showToast } from '@/lib/toast';
 import { CheckCircle, Mail, Loader2 } from 'lucide-react';
 import {
   resendVerificationEmail,
@@ -99,7 +99,6 @@ export function VerifyEmailForm({
 
         // For now, we'll rely on the user clicking the verification link
         // which will redirect them to the auth callback and then to the appropriate page
-        console.log('🔍 VerifyEmailForm - Waiting for email verification...');
       } catch (error) {
         console.error('Error checking verification status:', error);
       } finally {
@@ -120,7 +119,7 @@ export function VerifyEmailForm({
     const emailToUse = currentEmail || emailInput;
 
     if (!emailToUse) {
-      authToasts.error(
+      showToast.error(
         'Please enter your email address to resend verification.'
       );
       return;
@@ -134,7 +133,7 @@ export function VerifyEmailForm({
       const pendingResult = await resendPendingVerificationEmail(emailToUse);
 
       if (pendingResult.success) {
-        authToasts.success('Verification email sent!', pendingResult.message);
+        showToast.success('Verification email sent!', pendingResult.message);
         setResendCooldown(60); // 60 second cooldown after successful resend
         return;
       }
@@ -144,20 +143,18 @@ export function VerifyEmailForm({
       const existingUserResult = await resendVerificationEmail(emailToUse);
 
       if (existingUserResult.success) {
-        authToasts.success(
+        showToast.success(
           'Verification email sent!',
           existingUserResult.message
         );
         setResendCooldown(60); // 60 second cooldown after successful resend
       } else {
         // Show the error from pending registration (more likely scenario)
-        authToasts.error(pendingResult.message);
+        showToast.error(pendingResult.message);
       }
     } catch (error) {
       console.error('Error resending verification:', error);
-      authToasts.verificationError(
-        'Failed to resend verification email. Please try again.'
-      );
+      showToast.error('Failed to resend verification email. Please try again.');
     } finally {
       setIsResending(false);
     }

@@ -42,7 +42,6 @@ export async function getAuthUserSafely(supabase: {
         error.message?.includes('User from sub claim') ||
         error.message?.includes('does not exist')
       ) {
-        console.log('JWT error detected, clearing session');
         await supabase.auth.signOut();
         return { user: null, error: null, isUnauthenticated: true };
       }

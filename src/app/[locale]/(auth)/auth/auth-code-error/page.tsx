@@ -6,6 +6,7 @@
 
 import { type Metadata } from 'next';
 import Link from 'next/link';
+import { XCircle } from 'lucide-react';
 
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
 import { Button } from '@/components/marketing_pages/Button';
@@ -29,19 +30,7 @@ export default async function AuthCodeError({
     >
       <div className="text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-          <svg
-            className="h-6 w-6 text-red-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <XCircle className="h-6 w-6 text-red-600" />
         </div>
         <h3 className="mt-4 text-lg font-medium text-gray-900">
           Link expired or invalid
@@ -66,7 +55,7 @@ export default async function AuthCodeError({
         <div className="mt-4 text-center">
           <Link
             href="/login"
-            className="text-sm text-gray-500 hover:text-gray-700 underline"
+            className="text-sm text-red-500 hover:text-red-600 underline transition-colors duration-200"
           >
             Already verified? Sign in
           </Link>

@@ -20,8 +20,6 @@ export async function findUserByEmail(
   email: string
 ): Promise<UserSearchResult> {
   try {
-    console.log('Searching for user with email:', email);
-
     const { data: users, error: listError } =
       await supabaseAdmin.auth.admin.listUsers();
 
@@ -33,10 +31,7 @@ export async function findUserByEmail(
       };
     }
 
-    console.log('Found users:', users?.users?.length || 0);
-
     const user = users?.users?.find((u) => u.email === email);
-    console.log('User found:', user ? 'Yes' : 'No');
 
     return {
       user: user || null,
@@ -56,10 +51,7 @@ export async function findUserByEmail(
  */
 export async function userExistsByEmail(email: string): Promise<boolean> {
   try {
-    console.log('userExistsByEmail called for:', email);
     const { user, error } = await findUserByEmail(email);
-
-    console.log('userExistsByEmail result - user:', user, 'error:', error);
 
     if (error) {
       console.error('Error checking if user exists:', error);
@@ -68,7 +60,6 @@ export async function userExistsByEmail(email: string): Promise<boolean> {
     }
 
     const exists = user !== null;
-    console.log('userExistsByEmail returning:', exists);
     return exists;
   } catch (error) {
     console.error('Exception in userExistsByEmail:', error);
@@ -105,8 +96,6 @@ export async function checkPendingRegistration(email: string): Promise<{
   error?: string;
 }> {
   try {
-    console.log('Checking pending registration for email:', email);
-
     const { data, error } = await supabaseAdmin
       .from('pending_registrations')
       .select('id, email, expires_at')
@@ -114,22 +103,17 @@ export async function checkPendingRegistration(email: string): Promise<{
       .single();
 
     if (error) {
-      console.log('No pending registration found:', error.message);
       return { hasPendingRegistration: false };
     }
 
     // Check if not expired
     const isExpired = new Date() > new Date(data.expires_at);
-    console.log('Pending registration found, expired:', isExpired);
 
     if (isExpired) {
       return { hasPendingRegistration: false };
     }
-
-    console.log('Valid pending registration found');
     return { hasPendingRegistration: true };
-  } catch (error) {
-    console.log('Error checking pending registration:', error);
+  } catch {
     return { hasPendingRegistration: false };
   }
 }
@@ -149,8 +133,6 @@ export async function getPendingRegistration(email: string): Promise<{
   created_at: string;
 } | null> {
   try {
-    console.log('Getting pending registration for email:', email);
-
     const { data, error } = await supabaseAdmin
       .from('pending_registrations')
       .select(
@@ -160,22 +142,17 @@ export async function getPendingRegistration(email: string): Promise<{
       .single();
 
     if (error) {
-      console.log('No pending registration found:', error.message);
       return null;
     }
 
     // Check if not expired
     const isExpired = new Date() > new Date(data.expires_at);
-    console.log('Pending registration found, expired:', isExpired);
 
     if (isExpired) {
       return null;
     }
-
-    console.log('Valid pending registration found');
     return data;
-  } catch (error) {
-    console.log('Error getting pending registration:', error);
+  } catch {
     return null;
   }
 }

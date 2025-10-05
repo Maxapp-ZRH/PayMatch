@@ -38,10 +38,6 @@ export default async function VerifyEmail({
   const isPendingPasswordReset =
     resolvedSearchParams.pendingPasswordReset === 'true';
 
-  console.log('VerifyEmail page - resolvedSearchParams:', resolvedSearchParams);
-  console.log('VerifyEmail page - emailFromUrl (decoded):', emailFromUrl);
-  console.log('VerifyEmail page - showResend:', showResend);
-
   // Fetch user's first name for personalized greeting
   let firstName = null;
   if (emailFromUrl) {

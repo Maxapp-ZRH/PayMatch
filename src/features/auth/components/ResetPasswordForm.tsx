@@ -15,7 +15,7 @@ import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { PasswordField } from '@/components/ui/password-field';
-import { authToasts } from '@/lib/toast';
+import { showToast } from '@/lib/toast';
 import {
   resetPasswordSchema,
   type ResetPasswordFormData,
@@ -48,7 +48,7 @@ export function ResetPasswordForm() {
   useEffect(() => {
     const checkToken = async () => {
       if (!token) {
-        authToasts.error(
+        showToast.error(
           'Invalid reset link',
           'Please request a new password reset link.'
         );
@@ -59,7 +59,7 @@ export function ResetPasswordForm() {
       try {
         const result = await verifyResetToken(token);
         if (!result.valid) {
-          authToasts.error(
+          showToast.error(
             'Invalid or expired reset link',
             result.error || 'Please request a new password reset link.'
           );
@@ -69,7 +69,7 @@ export function ResetPasswordForm() {
         }
       } catch (error) {
         console.error('Token verification error:', error);
-        authToasts.error(
+        showToast.error(
           'Invalid reset link',
           'Please request a new password reset link.'
         );
@@ -81,7 +81,7 @@ export function ResetPasswordForm() {
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!token) {
-      authToasts.error(
+      showToast.error(
         'Invalid reset link',
         'Please request a new password reset link.'
       );
@@ -94,11 +94,11 @@ export function ResetPasswordForm() {
       const result = await resetPassword(token, data.password);
 
       if (!result.success) {
-        authToasts.error('Password reset failed', result.message);
+        showToast.error('Password reset failed', result.message);
         return;
       }
 
-      authToasts.success(
+      showToast.success(
         'Password updated successfully!',
         'You can now sign in with your new password.'
       );
@@ -110,7 +110,7 @@ export function ResetPasswordForm() {
       }, 2000);
     } catch (error) {
       console.error('Password reset error:', error);
-      authToasts.error(
+      showToast.error(
         'Password reset failed',
         'An unexpected error occurred. Please try again.'
       );

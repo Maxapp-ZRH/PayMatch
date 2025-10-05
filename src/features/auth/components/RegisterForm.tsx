@@ -18,7 +18,6 @@ import { EnhancedTextField } from '@/components/ui/enhanced-text-field';
 import { EnhancedSelectField } from '@/components/ui/enhanced-select-field';
 import { registerUser } from '../server/actions/registration';
 import { checkUserPendingRegistration } from '../server/actions/login';
-import { authToasts } from '@/lib/toast';
 import {
   registerSchema,
   type RegisterFormData,
@@ -33,8 +32,11 @@ export function RegisterForm() {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
+    clearErrors,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
+    mode: 'onBlur', // Validate on blur for better UX
   });
 
   // Password will be collected during email verification
@@ -45,6 +47,8 @@ export function RegisterForm() {
       return;
     }
 
+    // Clear any previous server errors
+    clearErrors();
     setIsSubmitting(true);
     setIsLoading(true);
 
@@ -56,15 +60,11 @@ export function RegisterForm() {
 
       if (hasPendingRegistration) {
         // User already has pending registration, redirect to verify-email page
-        console.log(
-          'User already has pending registration, redirecting to verify-email'
-        );
-        authToasts.warning(
-          'Registration Already in Progress',
-          'You already have a pending registration. Please check your email and verify your account.'
-        );
-        const emailParam = encodeURIComponent(data.email);
-        router.push(`/verify-email?showResend=true&email=${emailParam}`);
+        setError('email', {
+          type: 'manual',
+          message:
+            'You already have a pending registration. Please check your email and verify your account.',
+        });
         return;
       }
 
@@ -78,19 +78,22 @@ export function RegisterForm() {
       });
 
       if (result.success) {
-        // Show success toast and redirect with email parameter
-        authToasts.registrationSuccess(data.email);
+        // Redirect with email parameter (no toast needed)
         const emailParam = encodeURIComponent(data.email);
         router.push(`/verify-email?email=${emailParam}&showResend=true`);
       } else {
-        // Show error toast
-        authToasts.registrationError(result.message);
+        // Set field-level error
+        setError('email', {
+          type: 'manual',
+          message: result.message || 'Registration failed. Please try again.',
+        });
       }
     } catch (error) {
       console.error('Registration error:', error);
-      authToasts.registrationError(
-        'An unexpected error occurred. Please try again.'
-      );
+      setError('email', {
+        type: 'manual',
+        message: 'An unexpected error occurred. Please try again.',
+      });
     } finally {
       setIsLoading(false);
       setIsSubmitting(false);

@@ -18,7 +18,6 @@ import {
   sendPasswordResetEmail,
   checkPendingRegistrationForPasswordReset,
 } from '../server/actions/password-reset';
-import { authToasts } from '@/lib/toast';
 import { useRouter } from 'next/navigation';
 import {
   forgotPasswordSchema,
@@ -34,11 +33,15 @@ export function ForgotPasswordForm() {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
+    clearErrors,
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
+    mode: 'onBlur', // Validate on blur for better UX
   });
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
+    clearErrors(); // Clear any previous server errors
     setIsLoading(true);
 
     try {
@@ -60,16 +63,21 @@ export function ForgotPasswordForm() {
       const result = await sendPasswordResetEmail(data.email);
 
       if (result.success) {
-        authToasts.passwordResetSent(data.email);
         setSuccess(true);
       } else {
-        authToasts.passwordResetError(result.message);
+        // Set field-level error
+        setError('email', {
+          type: 'manual',
+          message:
+            result.message || 'Failed to send reset email. Please try again.',
+        });
       }
     } catch (error) {
       console.error('Password reset error:', error);
-      authToasts.passwordResetError(
-        'An unexpected error occurred. Please try again.'
-      );
+      setError('email', {
+        type: 'manual',
+        message: 'An unexpected error occurred. Please try again.',
+      });
     } finally {
       setIsLoading(false);
     }

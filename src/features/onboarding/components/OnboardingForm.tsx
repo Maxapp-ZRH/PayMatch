@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 import { Button } from '@/components/marketing_pages/Button';
-import { authToasts } from '@/lib/toast';
+import { showToast } from '@/lib/toast';
 
 export function OnboardingForm() {
   const [isCompleting, setIsCompleting] = useState(false);
@@ -30,7 +30,7 @@ export function OnboardingForm() {
       } = await supabase.auth.getUser();
 
       if (userError || !user) {
-        authToasts.error('Authentication error', 'Please sign in again.');
+        showToast.error('Authentication error', 'Please sign in again.');
         router.push('/login');
         return;
       }
@@ -46,7 +46,7 @@ export function OnboardingForm() {
 
       if (updateError) {
         console.error('Error completing onboarding:', updateError);
-        authToasts.error(
+        showToast.error(
           'Failed to complete onboarding',
           'Please try again or contact support.'
         );
@@ -54,7 +54,7 @@ export function OnboardingForm() {
       }
 
       // Show success message
-      authToasts.success(
+      showToast.success(
         'Onboarding completed!',
         'Welcome to PayMatch! You can now access all features.'
       );
@@ -63,7 +63,7 @@ export function OnboardingForm() {
       router.push('/dashboard');
     } catch (error) {
       console.error('Onboarding completion error:', error);
-      authToasts.error(
+      showToast.error(
         'An unexpected error occurred',
         'Please try again or contact support.'
       );
