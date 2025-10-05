@@ -59,12 +59,9 @@ export function RegisterForm() {
       );
 
       if (hasPendingRegistration) {
-        // User already has pending registration, redirect to verify-email page
-        setError('email', {
-          type: 'manual',
-          message:
-            'You already have a pending registration. Please check your email and verify your account.',
-        });
+        // User already has pending registration, redirect to verify-email page with immediate resend
+        const emailParam = encodeURIComponent(data.email);
+        router.push(`/verify-email?immediateResend=true&email=${emailParam}`);
         return;
       }
 

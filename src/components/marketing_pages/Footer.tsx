@@ -211,12 +211,12 @@ export function Footer() {
                     </I18nLink>
                   </li>
                   <li>
-                    <a
-                      href="#pwa"
+                    <I18nLink
+                      href="/pwa"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >
                       {t('links.pwa')}
-                    </a>
+                    </I18nLink>
                   </li>
                 </ul>
               </div>

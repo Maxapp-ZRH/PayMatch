@@ -54,7 +54,7 @@ export function ForgotPasswordForm() {
         // Redirect to verify-email page with appropriate message
         const emailParam = encodeURIComponent(data.email);
         router.push(
-          `/verify-email?email=${emailParam}&showResend=true&pendingPasswordReset=true`
+          `/verify-email?email=${emailParam}&immediateResend=true&pendingPasswordReset=true`
         );
         return;
       }

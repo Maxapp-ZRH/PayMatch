@@ -98,7 +98,9 @@ export function LoginForm({
               // GDPR-Compliant: We don't validate passwords for pending registrations
               // The password will be validated when the user is created in Supabase Auth
               const emailParam = encodeURIComponent(data.email);
-              router.push(`/verify-email?showResend=true&email=${emailParam}`);
+              router.push(
+                `/verify-email?immediateResend=true&email=${emailParam}`
+              );
               router.refresh();
               return;
             }

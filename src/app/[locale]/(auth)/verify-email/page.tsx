@@ -24,6 +24,7 @@ export default async function VerifyEmail({
     verified?: string;
     email?: string;
     showResend?: string;
+    immediateResend?: string;
     setPassword?: string;
     pendingPasswordReset?: string;
   }>;
@@ -34,6 +35,7 @@ export default async function VerifyEmail({
     ? decodeURIComponent(resolvedSearchParams.email)
     : undefined;
   const showResend = resolvedSearchParams.showResend === 'true';
+  const immediateResend = resolvedSearchParams.immediateResend === 'true';
   const needsPassword = resolvedSearchParams.setPassword === 'true';
   const isPendingPasswordReset =
     resolvedSearchParams.pendingPasswordReset === 'true';
@@ -104,6 +106,7 @@ export default async function VerifyEmail({
         userEmail={emailFromUrl || ''}
         isVerified={isVerified}
         showResend={showResend}
+        immediateResend={immediateResend}
         firstName={firstName}
       />
     </AuthLayout>

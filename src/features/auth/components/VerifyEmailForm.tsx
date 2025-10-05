@@ -22,6 +22,7 @@ interface VerifyEmailFormProps {
   userEmail: string;
   isVerified?: boolean;
   showResend?: boolean;
+  immediateResend?: boolean;
   firstName?: string | null;
 }
 
@@ -29,6 +30,7 @@ export function VerifyEmailForm({
   userEmail,
   isVerified: emailVerified = false,
   showResend = false,
+  immediateResend = false,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   firstName = null, // Passed from page component for personalized greeting
 }: VerifyEmailFormProps) {
@@ -45,26 +47,33 @@ export function VerifyEmailForm({
 
   // Initialize UI state based on props (no auto-send since registration already sends email)
   useEffect(() => {
-    // If no email provided but showResend is true, show email input
-    if (showResend && !isVerified && !currentEmail) {
+    // If no email provided but showResend/immediateResend is true, show email input
+    if ((showResend || immediateResend) && !isVerified && !currentEmail) {
       setNeedsEmailInput(true);
       setShowResendOptions(true);
     }
-  }, [showResend, isVerified, currentEmail]);
+  }, [showResend, immediateResend, isVerified, currentEmail]);
 
-  // Show resend options after 60 seconds (for manual resend)
+  // Show resend options after 60 seconds (for manual resend) or immediately (for user-initiated flows)
   useEffect(() => {
-    if (showResend && !isVerified) {
-      setShowResendOptions(false);
-      setResendCooldown(60); // Start 60-second countdown
-
-      const countdownTimeout = setTimeout(() => {
+    if ((showResend || immediateResend) && !isVerified) {
+      if (immediateResend) {
+        // User-initiated flow (login/forgot-password) - show resend immediately
         setShowResendOptions(true);
-      }, 60000); // 60 seconds
+        setResendCooldown(0);
+      } else {
+        // Registration flow - 60-second cooldown
+        setShowResendOptions(false);
+        setResendCooldown(60); // Start 60-second countdown
 
-      return () => clearTimeout(countdownTimeout);
+        const countdownTimeout = setTimeout(() => {
+          setShowResendOptions(true);
+        }, 60000); // 60 seconds
+
+        return () => clearTimeout(countdownTimeout);
+      }
     }
-  }, [showResend, isVerified]);
+  }, [showResend, immediateResend, isVerified]);
 
   // Resend cooldown timer
   useEffect(() => {
@@ -135,6 +144,7 @@ export function VerifyEmailForm({
       if (pendingResult.success) {
         showToast.success('Verification email sent!', pendingResult.message);
         setResendCooldown(60); // 60 second cooldown after successful resend
+        setShowResendOptions(false); // Hide resend button during cooldown
         return;
       }
 
@@ -148,6 +158,7 @@ export function VerifyEmailForm({
           existingUserResult.message
         );
         setResendCooldown(60); // 60 second cooldown after successful resend
+        setShowResendOptions(false); // Hide resend button during cooldown
       } else {
         // Show the error from pending registration (more likely scenario)
         showToast.error(pendingResult.message);

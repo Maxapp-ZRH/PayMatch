@@ -5,7 +5,7 @@
  * to ensure only one banner appears at a time. Manages priority and timing
  * to prevent banner overlap and improve user experience.
  *
- * PWA banners are loaded after 2 minutes to avoid immediate popups.
+ * PWA banners are loaded after 20 seconds to avoid immediate popups.
  */
 
 'use client';
@@ -35,16 +35,13 @@ export function BannerManager() {
     setPwaDismissed(pwaDismissedValue === 'true');
   }, []);
 
-  // Load PWA banner after 2 minutes
+  // Load PWA banner after 20 seconds
   useEffect(() => {
     if (pwaDismissed) return; // Don't load if already dismissed
 
-    const timer = setTimeout(
-      () => {
-        setPwaLoaded(true);
-      },
-      2 * 60 * 1000
-    ); // 2 minutes
+    const timer = setTimeout(() => {
+      setPwaLoaded(true);
+    }, 20 * 1000); // 20 seconds
 
     return () => clearTimeout(timer);
   }, [pwaDismissed]);

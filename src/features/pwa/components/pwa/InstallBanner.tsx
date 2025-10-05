@@ -5,14 +5,13 @@ import { X, Download, Smartphone, Info } from 'lucide-react';
 import { usePWA } from '@/features/pwa/hooks/use-pwa';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { Button } from '@/components/marketing_pages/Button';
 
 interface InstallBannerProps {
   onDismiss?: () => void;
 }
 
-const PWA_BANNER_STORAGE_KEY = 'pwa-banner-dismissed';
-const PWA_BANNER_DELAY = 30 * 1000; // 30 seconds in milliseconds
+const PWA_BANNER_DELAY = 20 * 1000; // 20 seconds in milliseconds
 
 export function InstallBanner({ onDismiss }: InstallBannerProps) {
   const t = useTranslations('utils.installBanner');
@@ -26,20 +25,12 @@ export function InstallBanner({ onDismiss }: InstallBannerProps) {
     setTimeout(() => {
       setIsVisible(false);
       setIsExiting(false);
-      localStorage.setItem(PWA_BANNER_STORAGE_KEY, 'true');
       onDismiss?.();
     }, 300);
   }, [onDismiss]);
 
-  // Check if banner was previously dismissed
+  // Load PWA banner after 20 seconds (dismissal logic handled by BannerManager)
   useEffect(() => {
-    const wasDismissed =
-      localStorage.getItem(PWA_BANNER_STORAGE_KEY) === 'true';
-    if (wasDismissed) {
-      return; // Don't show if previously dismissed
-    }
-
-    // Load PWA banner after 2 minutes
     const timer = setTimeout(() => {
       setIsLoaded(true);
     }, PWA_BANNER_DELAY);
@@ -73,10 +64,7 @@ export function InstallBanner({ onDismiss }: InstallBannerProps) {
       >
         <div className="flex items-start space-x-4">
           <div className="flex-shrink-0">
-            <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: '#E4262A' }}
-            >
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-red-500">
               <Smartphone className="w-5 h-5 text-white" />
             </div>
           </div>
@@ -89,20 +77,14 @@ export function InstallBanner({ onDismiss }: InstallBannerProps) {
 
             <div className="mt-4 space-y-2">
               <div className="flex space-x-2">
-                <button
+                <Button
                   onClick={handleInstall}
-                  className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-medium text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors"
-                  style={{ backgroundColor: '#E4262A' }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = '#C21E1E')
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = '#E4262A')
-                  }
+                  color="swiss"
+                  className="flex-1 text-xs px-3 py-2"
                 >
                   <Download className="w-3 h-3 mr-1" />
                   {t('install')}
-                </button>
+                </Button>
 
                 <button
                   onClick={handleDismiss}
@@ -112,21 +94,16 @@ export function InstallBanner({ onDismiss }: InstallBannerProps) {
                 </button>
               </div>
 
-              <Link
+              <Button
                 href="/pwa"
                 onClick={handleDismiss}
-                className="w-full inline-flex items-center justify-center px-3 py-2 text-xs font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors"
-                style={{ color: '#E4262A', backgroundColor: '#FEF2F2' }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#FEE2E2')
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#FEF2F2')
-                }
+                variant="outline"
+                color="swiss"
+                className="w-full text-xs px-3 py-2"
               >
                 <Info className="w-3 h-3 mr-1" />
                 {t('learnMore')}
-              </Link>
+              </Button>
             </div>
           </div>
 
