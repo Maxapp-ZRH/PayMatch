@@ -10,6 +10,7 @@
     "title": "We use cookies",
     "description": "We use cookies to enhance your experience, analyze site traffic, and personalize content. You can customize your preferences or accept all cookies.",
     "acceptAll": "Accept All",
+    "acceptNecessary": "Accept Only Necessary",
     "customize": "Customize",
     "rejectAll": "Reject All",
     "preferences": {

@@ -10,6 +10,7 @@
     "title": "Wir verwenden Cookies",
     "description": "Wir verwenden Cookies, um Ihre Erfahrung zu verbessern, Website-Traffic zu analysieren und Inhalte zu personalisieren. Sie können Ihre Präferenzen anpassen oder alle Cookies akzeptieren.",
     "acceptAll": "Alle akzeptieren",
+    "acceptNecessary": "Nur Notwendige akzeptieren",
     "customize": "Anpassen",
     "rejectAll": "Alle ablehnen",
     "preferences": {

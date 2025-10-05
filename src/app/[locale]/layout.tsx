@@ -13,8 +13,7 @@ import { routing } from '@/i18n/routing';
 import { hasLocale } from 'next-intl';
 import { GeistSans } from 'geist/font/sans';
 import clsx from 'clsx';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import { ConditionalAnalytics } from '@/components/analytics/ConditionalAnalytics';
 import { Toaster } from 'sonner';
 
 import '@/styles/tailwind.css';
@@ -176,8 +175,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             closeButton={true}
           />
         </NextIntlClientProvider>
-        <Analytics />
-        <SpeedInsights />
+        <ConditionalAnalytics />
       </body>
     </html>
   );

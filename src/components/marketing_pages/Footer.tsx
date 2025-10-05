@@ -17,6 +17,8 @@ import {
   newsletterSubscriptionSchema,
   type NewsletterSubscriptionData,
 } from '@/features/email/schemas';
+import { CookieEmailIntegrationService } from '@/features/cookies';
+import { CheckCircle, X } from 'lucide-react';
 
 export function Footer() {
   const t = useTranslations('common.footer');
@@ -83,6 +85,18 @@ export function Footer() {
     setErrorMessage('');
 
     try {
+      // Check cookie consent before submitting
+      const cookieValidation =
+        CookieEmailIntegrationService.canSubscribeToNewsletter();
+      if (!cookieValidation.canSubscribe) {
+        setErrorMessage(
+          'To subscribe to our newsletter, please first accept marketing cookies. You can manage your cookie preferences in our cookie settings.'
+        );
+        setShowError(true);
+        setIsSubmitting(false);
+        return;
+      }
+
       const response = await fetch('/api/email/newsletter', {
         method: 'POST',
         headers: {
@@ -94,7 +108,17 @@ export function Footer() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to subscribe to newsletter');
+        // Handle cookie consent error specifically
+        if (result.requiresCookieConsent) {
+          setErrorMessage(
+            result.error ||
+              'Marketing cookies must be accepted to subscribe to newsletter'
+          );
+        } else {
+          setErrorMessage(result.error || 'Failed to subscribe to newsletter');
+        }
+        setShowError(true);
+        return;
       }
 
       setShowSuccess(true);
@@ -289,19 +313,7 @@ export function Footer() {
                   transition={{ duration: 0.3 }}
                 >
                   <div className="flex items-center">
-                    <svg
-                      className="w-5 h-5 text-green-600 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
+                    <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
                     <p className="text-sm text-green-800 font-medium">
                       Successfully subscribed! Check your email for a welcome
                       message.
@@ -319,22 +331,27 @@ export function Footer() {
                   transition={{ duration: 0.3 }}
                 >
                   <div className="flex items-center">
-                    <svg
-                      className="w-5 h-5 text-red-600 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                    <p className="text-sm text-red-800 font-medium">
-                      {errorMessage}
-                    </p>
+                    <X className="w-5 h-5 text-red-600 mr-2" />
+                    <div className="text-sm text-red-800 font-medium">
+                      <p className="mb-2">{errorMessage}</p>
+                      {errorMessage.includes('marketing cookies') && (
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <I18nLink
+                            href="/cookie-settings"
+                            className="inline-flex items-center text-sm text-red-600 hover:text-red-700 underline"
+                          >
+                            Manage Cookie Settings
+                          </I18nLink>
+                          <span className="text-red-500">•</span>
+                          <I18nLink
+                            href="/cookies"
+                            className="inline-flex items-center text-sm text-red-600 hover:text-red-700 underline"
+                          >
+                            View Cookie Policy
+                          </I18nLink>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               )}

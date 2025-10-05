@@ -10,6 +10,7 @@ import { NewsletterService, sendEmailWithComponent } from '@/features/email';
 import { newsletterSubscriptionSchema } from '@/features/email/schemas';
 import { NewsletterWelcomeEmail } from '@/emails/newsletter-welcome';
 import { generateUnsubscribeUrl } from '@/features/email';
+import { CookieEmailIntegrationService } from '@/features/cookies';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
@@ -19,6 +20,19 @@ export async function POST(request: NextRequest) {
 
     // Validate the form data
     const validatedData = newsletterSubscriptionSchema.parse(body);
+
+    // Check marketing cookie consent before allowing subscription
+    const cookieValidation =
+      CookieEmailIntegrationService.validateNewsletterSubscription();
+    if (!cookieValidation.valid) {
+      return NextResponse.json(
+        {
+          error: cookieValidation.error,
+          requiresCookieConsent: true,
+        },
+        { status: 403 }
+      );
+    }
 
     // Subscribe to newsletter
     const result = await NewsletterService.subscribe({

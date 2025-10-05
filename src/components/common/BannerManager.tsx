@@ -11,7 +11,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CookieBanner } from './CookieBanner';
+import { CookieBanner } from '@/features/cookies';
 import { InstallBanner } from '@/features/pwa/components/pwa/InstallBanner';
 import { usePWA } from '@/features/pwa/hooks/use-pwa';
 

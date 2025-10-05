@@ -15,6 +15,8 @@ export {
   UnsubscribeService,
 } from './email-service';
 
+// Cookie-related services moved to @/features/cookies
+
 // Utilities
 export {
   type EmailType,

@@ -5,18 +5,15 @@ import { X, Cookie, Settings } from 'lucide-react';
 import { Switch } from '@headlessui/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-
-interface CookiePreferences {
-  necessary: boolean;
-  analytics: boolean;
-  marketing: boolean;
-}
+import { CookieEmailIntegrationService } from '../services/cookie-email-integration';
+import { ConsentServiceClient } from '../services/consent-service-client';
+import type { CookiePreferences } from '../types/cookie-types';
 
 interface CookieBannerProps {
   onDismiss?: () => void;
 }
 
-export function CookieBanner({ onDismiss }: CookieBannerProps) {
+function CookieBanner({ onDismiss }: CookieBannerProps) {
   const t = useTranslations('utils.cookieBanner');
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
@@ -54,6 +51,16 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
     handleDismiss();
   };
 
+  const handleAcceptNecessary = () => {
+    const onlyNecessary = {
+      necessary: true,
+      analytics: false,
+      marketing: false,
+    };
+    savePreferences(onlyNecessary);
+    handleDismiss();
+  };
+
   const handleRejectAll = () => {
     const onlyNecessary = {
       necessary: true,
@@ -64,15 +71,41 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
     handleDismiss();
   };
 
-  const savePreferences = (prefs: CookiePreferences) => {
+  const savePreferences = async (prefs: CookiePreferences) => {
     localStorage.setItem('paymatch-cookie-consent', JSON.stringify(prefs));
     localStorage.setItem(
       'paymatch-cookie-consent-date',
       new Date().toISOString()
     );
 
-    // Here you would typically initialize your analytics/marketing tools
-    // based on the user's preferences
+    // Record consent with audit trail
+    try {
+      await ConsentServiceClient.recordCookieConsentChange(
+        prefs,
+        undefined,
+        undefined,
+        {
+          ipAddress: undefined, // Would need to be passed from server
+          userAgent: navigator.userAgent,
+          source: 'cookie_banner',
+          sessionId: undefined, // Would need session management
+        }
+      );
+    } catch (error) {
+      console.error('Failed to record consent:', error);
+    }
+
+    // Sync email preferences with cookie consent changes
+    try {
+      await CookieEmailIntegrationService.handleCookiePreferenceChange(prefs);
+    } catch (error) {
+      console.error(
+        'Failed to sync email preferences with cookie consent:',
+        error
+      );
+    }
+
+    // Initialize analytics/marketing tools based on preferences
     if (prefs.analytics) {
       // Initialize analytics (e.g., Google Analytics)
       console.log('Analytics cookies accepted');
@@ -81,6 +114,13 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
       // Initialize marketing tools (e.g., Facebook Pixel)
       console.log('Marketing cookies accepted');
     }
+
+    // Dispatch custom event to notify other components of consent change
+    window.dispatchEvent(
+      new CustomEvent('cookieConsentChanged', {
+        detail: { preferences: prefs },
+      })
+    );
   };
 
   const handleDismiss = () => {
@@ -133,6 +173,13 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
                   className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
                 >
                   {t('acceptAll')}
+                </button>
+
+                <button
+                  onClick={handleAcceptNecessary}
+                  className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                >
+                  {t('acceptNecessary')}
                 </button>
 
                 <button
@@ -261,3 +308,5 @@ export function CookieBanner({ onDismiss }: CookieBannerProps) {
     </div>
   );
 }
+
+export default CookieBanner;

@@ -59,6 +59,10 @@ export const routing = defineRouting({
       'en-CH': '/cookies',
       'de-CH': '/cookies',
     },
+    '/cookie-settings': {
+      'en-CH': '/cookie-settings',
+      'de-CH': '/cookie-einstellungen',
+    },
     '/gdpr': {
       'en-CH': '/gdpr',
       'de-CH': '/dsgvo',

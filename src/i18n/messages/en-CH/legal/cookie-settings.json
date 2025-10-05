@@ -1,0 +1,49 @@
+{
+  "title": "Cookie Settings",
+  "successMessage": "Your cookie preferences have been saved successfully!",
+  "sections": {
+    "introduction": {
+      "title": "Manage Your Cookie Preferences",
+      "content": "You can change your cookie preferences at any time. Your choices will be saved and applied immediately. Some features may not work properly if you disable certain cookie categories."
+    },
+    "categories": {
+      "title": "Cookie Categories",
+      "necessary": {
+        "title": "Necessary Cookies",
+        "description": "These cookies are essential for the website to function properly and cannot be disabled.",
+        "note": "These cookies are required for basic website functionality and cannot be turned off."
+      },
+      "analytics": {
+        "title": "Analytics Cookies",
+        "description": "Help us understand how visitors interact with our website by collecting anonymous information.",
+        "details": "These cookies collect information about how you use our website, such as which pages you visit most often.",
+        "benefits": {
+          "1": "Help us improve website performance",
+          "2": "Understand user behavior patterns",
+          "3": "Identify and fix technical issues"
+        }
+      },
+      "marketing": {
+        "title": "Marketing Cookies",
+        "description": "Used to track visitors across websites to display relevant advertisements and enable newsletter subscriptions.",
+        "details": "These cookies are used to deliver advertisements that are more relevant to you and your interests.",
+        "benefits": {
+          "1": "Enable newsletter subscription",
+          "2": "Show relevant advertisements",
+          "3": "Measure advertising effectiveness"
+        },
+        "warning": "Disabling marketing cookies will prevent you from subscribing to our newsletter and may affect your experience with personalized content."
+      }
+    },
+    "save": {
+      "title": "Save Your Preferences",
+      "description": "Click the button below to save your cookie preferences. Changes will take effect immediately."
+    }
+  },
+  "actions": {
+    "showBanner": "Show Cookie Banner",
+    "viewPolicy": "View Cookie Policy",
+    "savePreferences": "Save Preferences",
+    "saving": "Saving..."
+  }
+}

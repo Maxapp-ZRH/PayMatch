@@ -13,6 +13,10 @@
     "title": "Cookie-Richtlinie",
     "description": "Informationen über Cookies und Tracking-Technologien"
   },
+  "cookieSettings": {
+    "title": "Cookie-Einstellungen",
+    "description": "Verwalten Sie Ihre Cookie-Einstellungen und Einwilligung"
+  },
   "gdpr": {
     "title": "DSGVO",
     "description": "Ihre Rechte unter der Datenschutz-Grundverordnung"

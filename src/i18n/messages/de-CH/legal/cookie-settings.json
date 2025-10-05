@@ -1,0 +1,49 @@
+{
+  "title": "Cookie-Einstellungen",
+  "successMessage": "Ihre Cookie-Einstellungen wurden erfolgreich gespeichert!",
+  "sections": {
+    "introduction": {
+      "title": "Cookie-Einstellungen verwalten",
+      "content": "Sie können Ihre Cookie-Einstellungen jederzeit ändern. Ihre Auswahl wird gespeichert und sofort angewendet. Einige Funktionen funktionieren möglicherweise nicht ordnungsgemäß, wenn Sie bestimmte Cookie-Kategorien deaktivieren."
+    },
+    "categories": {
+      "title": "Cookie-Kategorien",
+      "necessary": {
+        "title": "Notwendige Cookies",
+        "description": "Diese Cookies sind für das ordnungsgemäße Funktionieren der Website unerlässlich und können nicht deaktiviert werden.",
+        "note": "Diese Cookies sind für die grundlegende Website-Funktionalität erforderlich und können nicht ausgeschaltet werden."
+      },
+      "analytics": {
+        "title": "Analyse-Cookies",
+        "description": "Helfen Sie uns zu verstehen, wie Besucher mit unserer Website interagieren, indem Sie anonyme Informationen sammeln.",
+        "details": "Diese Cookies sammeln Informationen darüber, wie Sie unsere Website nutzen, z. B. welche Seiten Sie am häufigsten besuchen.",
+        "benefits": {
+          "1": "Helfen uns, die Website-Leistung zu verbessern",
+          "2": "Benutzerverhaltensmuster verstehen",
+          "3": "Technische Probleme identifizieren und beheben"
+        }
+      },
+      "marketing": {
+        "title": "Marketing-Cookies",
+        "description": "Werden verwendet, um Besucher über Websites hinweg zu verfolgen und relevante Anzeigen anzuzeigen sowie Newsletter-Anmeldungen zu ermöglichen.",
+        "details": "Diese Cookies werden verwendet, um Anzeigen zu liefern, die für Sie und Ihre Interessen relevanter sind.",
+        "benefits": {
+          "1": "Newsletter-Anmeldung ermöglichen",
+          "2": "Relevante Anzeigen anzeigen",
+          "3": "Werbewirksamkeit messen"
+        },
+        "warning": "Das Deaktivieren von Marketing-Cookies verhindert, dass Sie sich für unseren Newsletter anmelden können, und kann Ihre Erfahrung mit personalisierten Inhalten beeinträchtigen."
+      }
+    },
+    "save": {
+      "title": "Einstellungen speichern",
+      "description": "Klicken Sie auf die Schaltfläche unten, um Ihre Cookie-Einstellungen zu speichern. Änderungen werden sofort wirksam."
+    }
+  },
+  "actions": {
+    "showBanner": "Cookie-Banner anzeigen",
+    "viewPolicy": "Cookie-Richtlinie anzeigen",
+    "savePreferences": "Einstellungen speichern",
+    "saving": "Speichern..."
+  }
+}

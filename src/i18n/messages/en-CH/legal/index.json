@@ -13,6 +13,10 @@
     "title": "Cookie Policy",
     "description": "Information about cookies and tracking technologies"
   },
+  "cookieSettings": {
+    "title": "Cookie Settings",
+    "description": "Manage your cookie preferences and consent"
+  },
   "gdpr": {
     "title": "GDPR",
     "description": "Your rights under the General Data Protection Regulation"

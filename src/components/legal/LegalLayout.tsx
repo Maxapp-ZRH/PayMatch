@@ -11,7 +11,14 @@ import { Footer } from '@/components/marketing_pages/Footer';
 import { Header } from '@/components/marketing_pages/Header';
 import { Container } from '@/components/marketing_pages/Container';
 import Link from 'next/link';
-import { FileText, Shield, Cookie, Scale, Building2 } from 'lucide-react';
+import {
+  FileText,
+  Shield,
+  Cookie,
+  Settings,
+  Scale,
+  Building2,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface LegalPage {
@@ -39,6 +46,12 @@ const getLegalPages = (t: (key: string) => string): LegalPage[] => [
     href: '/cookies',
     icon: Cookie,
     description: t('cookies.description'),
+  },
+  {
+    title: t('cookieSettings.title'),
+    href: '/cookie-settings',
+    icon: Settings,
+    description: t('cookieSettings.description'),
   },
   {
     title: t('gdpr.title'),
