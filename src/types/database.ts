@@ -7,6 +7,11 @@ export type Json =
   | Json[];
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: '13.0.5';
+  };
   public: {
     Tables: {
       email_preferences: {
@@ -206,42 +211,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      pending_registrations: {
-        Row: {
-          created_at: string | null;
-          email: string;
-          expires_at: string;
-          first_name: string | null;
-          id: string;
-          last_name: string | null;
-          updated_at: string | null;
-          user_metadata: Json | null;
-          verification_token: string;
-        };
-        Insert: {
-          created_at?: string | null;
-          email: string;
-          expires_at: string;
-          first_name?: string | null;
-          id?: string;
-          last_name?: string | null;
-          updated_at?: string | null;
-          user_metadata?: Json | null;
-          verification_token: string;
-        };
-        Update: {
-          created_at?: string | null;
-          email?: string;
-          expires_at?: string;
-          first_name?: string | null;
-          id?: string;
-          last_name?: string | null;
-          updated_at?: string | null;
-          user_metadata?: Json | null;
-          verification_token?: string;
-        };
-        Relationships: [];
-      };
       user_checklist_progress: {
         Row: {
           checklist_item_id: string;
@@ -312,13 +281,6 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      cleanup_expired_registrations_direct: {
-        Args: Record<PropertyKey, never>;
-        Returns: {
-          cleaned_count: number;
-          cleaned_emails: string[];
-        }[];
-      };
       get_user_organizations: {
         Args: { user_uuid: string };
         Returns: {
@@ -329,14 +291,6 @@ export type Database = {
         }[];
       };
       user_has_org_access: {
-        Args: { org_uuid: string; user_uuid: string };
-        Returns: boolean;
-      };
-      user_has_organization: {
-        Args: { user_uuid: string };
-        Returns: boolean;
-      };
-      user_is_org_owner: {
         Args: { org_uuid: string; user_uuid: string };
         Returns: boolean;
       };
@@ -415,83 +369,6 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
-      };
-      iceberg_namespaces: {
-        Row: {
-          bucket_id: string;
-          created_at: string;
-          id: string;
-          name: string;
-          updated_at: string;
-        };
-        Insert: {
-          bucket_id: string;
-          created_at?: string;
-          id?: string;
-          name: string;
-          updated_at?: string;
-        };
-        Update: {
-          bucket_id?: string;
-          created_at?: string;
-          id?: string;
-          name?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'iceberg_namespaces_bucket_id_fkey';
-            columns: ['bucket_id'];
-            isOneToOne: false;
-            referencedRelation: 'buckets_analytics';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      iceberg_tables: {
-        Row: {
-          bucket_id: string;
-          created_at: string;
-          id: string;
-          location: string;
-          name: string;
-          namespace_id: string;
-          updated_at: string;
-        };
-        Insert: {
-          bucket_id: string;
-          created_at?: string;
-          id?: string;
-          location: string;
-          name: string;
-          namespace_id: string;
-          updated_at?: string;
-        };
-        Update: {
-          bucket_id?: string;
-          created_at?: string;
-          id?: string;
-          location?: string;
-          name?: string;
-          namespace_id?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'iceberg_tables_bucket_id_fkey';
-            columns: ['bucket_id'];
-            isOneToOne: false;
-            referencedRelation: 'buckets_analytics';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'iceberg_tables_namespace_id_fkey';
-            columns: ['namespace_id'];
-            isOneToOne: false;
-            referencedRelation: 'iceberg_namespaces';
-            referencedColumns: ['id'];
-          },
-        ];
       };
       migrations: {
         Row: {
