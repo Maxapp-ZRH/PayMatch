@@ -16,6 +16,8 @@ jobs:
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: staging
 
       - uses: supabase/setup-cli@v1
         with:
