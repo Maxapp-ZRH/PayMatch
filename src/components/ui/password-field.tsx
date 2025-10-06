@@ -10,7 +10,7 @@
 import { useState } from 'react';
 import { useId } from 'react';
 import clsx from 'clsx';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { Eye, EyeOff } from 'lucide-react';
 
 const formClasses =
   'block w-full appearance-none rounded-lg border border-gray-200 bg-white py-2 px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-cyan-500 focus:outline-hidden focus:ring-cyan-500 sm:py-[calc(--spacing(2)-1px)] sm:px-[calc(--spacing(3)-1px)]';
@@ -118,9 +118,9 @@ export function PasswordField({
           onClick={() => setShowPassword(!showPassword)}
         >
           {showPassword ? (
-            <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+            <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
           ) : (
-            <EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+            <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
           )}
         </button>
       </div>
