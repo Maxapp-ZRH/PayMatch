@@ -48,7 +48,6 @@ export const settingsSchema = z.object({
       message: 'Please select valid payment terms',
     }),
   emailNotifications: z.boolean(),
-  smsNotifications: z.boolean(),
   autoReminders: z.boolean(),
   reminderDays: z
     .string()

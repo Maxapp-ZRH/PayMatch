@@ -10,6 +10,7 @@ import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
 import { LogoutButton } from '@/components/ui/logout-button';
+import { BillingSection } from '@/features/dashboard/components/BillingSection';
 
 export const metadata: Metadata = {
   title: 'Dashboard - PayMatch',
@@ -35,13 +36,18 @@ export default async function Dashboard() {
     redirect('/verify-email');
   }
 
-  // Check if user has completed onboarding
+  // Check if user has completed onboarding and get organization data
   const { data: orgMembership } = await supabase
     .from('organization_users')
     .select(
       `
       org_id,
-      organizations!inner(onboarding_completed)
+      organizations!inner(
+        onboarding_completed,
+        plan,
+        stripe_subscription_status,
+        name
+      )
     `
     )
     .eq('user_id', user.id)
@@ -49,7 +55,12 @@ export default async function Dashboard() {
     .single();
 
   const org = orgMembership?.organizations as
-    | { onboarding_completed: boolean }
+    | {
+        onboarding_completed: boolean;
+        plan: string;
+        stripe_subscription_status: string | null;
+        name: string;
+      }
     | undefined;
   if (!org?.onboarding_completed) {
     redirect('/onboarding');
@@ -119,12 +130,27 @@ export default async function Dashboard() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Plan</span>
-                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                  Free
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    org?.plan === 'free'
+                      ? 'bg-gray-100 text-gray-800'
+                      : org?.stripe_subscription_status === 'active'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                  }`}
+                >
+                  {org?.plan === 'free'
+                    ? 'Free'
+                    : org?.plan?.charAt(0).toUpperCase() + org?.plan?.slice(1)}
                 </span>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Billing Section */}
+        <div className="mt-8">
+          <BillingSection orgId={orgMembership?.org_id || ''} />
         </div>
 
         {/* Welcome Message */}

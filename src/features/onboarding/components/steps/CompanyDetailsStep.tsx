@@ -80,8 +80,6 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
     setIsLoading(true);
 
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
       onNext(data);
     } catch (error) {
       console.error('Form submission error:', error);

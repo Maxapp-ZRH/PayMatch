@@ -69,7 +69,12 @@ export function SetPasswordForm({ email, onSuccess }: SetPasswordFormProps) {
       if (result.success) {
         showToast.success('Account created successfully!', result.message);
         onSuccess?.();
-        router.push('/login');
+        // Redirect to login page where user can sign in with their new credentials
+        router.push(
+          '/login?email=' +
+            encodeURIComponent(email) +
+            '&message=Your account has been created successfully. Please sign in with your new password to continue.'
+        );
       } else {
         showToast.error(result.message);
       }

@@ -8,6 +8,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { handleStripeWebhook } from '@/features/stripe/server/actions/handle-stripe-webhook';
 
+export async function GET() {
+  return NextResponse.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    service: 'stripe-webhook',
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text();

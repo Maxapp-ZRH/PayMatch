@@ -61,4 +61,4 @@ jobs:
           commit_message: 'supabase backup'
           file_pattern: 'supabase/backups/*.sql'
           commit_user_name: 'Supabase Backup Bot'
-          commit_user_email: 'backup@paymatch.ch'
+          commit_user_email: 'backup@paymatch.app'

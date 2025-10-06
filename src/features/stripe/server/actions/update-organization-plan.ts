@@ -7,7 +7,7 @@
 
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import type {
   UpdateOrganizationPlanData,
   UpdateOrganizationPlanResult,
@@ -17,20 +17,7 @@ export async function updateOrganizationPlan(
   data: UpdateOrganizationPlanData
 ): Promise<UpdateOrganizationPlanResult> {
   try {
-    const supabase = await createClient();
-
-    // Get current user
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      return {
-        success: false,
-        message: 'User not authenticated',
-      };
-    }
+    const supabase = supabaseAdmin;
 
     // Update organization plan
     const updateData: {
@@ -38,6 +25,7 @@ export async function updateOrganizationPlan(
       updated_at: string;
       stripe_customer_id?: string | null;
       stripe_subscription_id?: string | null;
+      stripe_subscription_status?: string | null;
     } = {
       plan: data.planName,
       updated_at: new Date().toISOString(),
@@ -51,11 +39,20 @@ export async function updateOrganizationPlan(
       if (data.stripeSubscriptionId) {
         updateData.stripe_subscription_id = data.stripeSubscriptionId;
       }
+      if (data.stripeSubscriptionStatus) {
+        updateData.stripe_subscription_status = data.stripeSubscriptionStatus;
+      }
     } else {
       // Clear Stripe fields for free plan
       updateData.stripe_customer_id = null;
       updateData.stripe_subscription_id = null;
+      updateData.stripe_subscription_status = null;
     }
+
+    console.log('Attempting to update organization:', {
+      orgId: data.orgId,
+      updateData,
+    });
 
     const { error: updateError } = await supabase
       .from('organizations')
@@ -70,6 +67,8 @@ export async function updateOrganizationPlan(
         error: updateError.message,
       };
     }
+
+    console.log('Successfully updated organization plan in database');
 
     return {
       success: true,

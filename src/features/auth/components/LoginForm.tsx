@@ -30,11 +30,15 @@ import {
 interface LoginFormProps {
   redirectTo?: string;
   showVerifiedMessage?: boolean;
+  initialEmail?: string;
+  successMessage?: string;
 }
 
 export function LoginForm({
   redirectTo,
   showVerifiedMessage = false,
+  initialEmail,
+  successMessage,
 }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -51,7 +55,7 @@ export function LoginForm({
     resolver: zodResolver(loginSchema),
     mode: 'onBlur', // Validate on blur for better UX
     defaultValues: {
-      email: '',
+      email: initialEmail || '',
       password: '',
       rememberMe: false,
     },
@@ -204,6 +208,27 @@ export function LoginForm({
               </h3>
               <div className="mt-2 text-sm text-green-700">
                 <p>Your email has been verified. Please sign in to continue.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="rounded-md bg-teal-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <CheckCircle className="h-5 w-5 text-teal-400" />
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-teal-800">
+                Welcome to PayMatch!
+              </h3>
+              <div className="mt-2 text-sm text-teal-700">
+                <p>
+                  Your account has been created successfully. Please sign in
+                  with your new password to continue.
+                </p>
               </div>
             </div>
           </div>

@@ -21,9 +21,11 @@ import {
 } from '@/config/plans';
 import { formatSwissCurrencyFromCents } from '@/utils/formatting';
 import { createCheckoutSession } from '../server/actions/create-checkout-session';
+import { createPortalSession } from '../server/actions/create-portal-session';
 import { updateOrganizationPlan } from '../server/actions/update-organization-plan';
 import { showToast } from '@/lib/toast';
 import { Button } from '@/components/marketing_pages/Button';
+import { createClient } from '@/lib/supabase/client';
 
 interface PlanSelectionProps {
   orgId: string;
@@ -82,21 +84,45 @@ export function PlanSelection({
           showToast.error(result.message);
         }
       } else {
-        // Paid plan - create Stripe checkout session
-        const result = await createCheckoutSession({
-          planName,
-          billingCycle,
-          orgId,
-          userId: '', // Will be filled by server action
-          successUrl: `${window.location.origin}/onboarding?step=company-details&plan=${planName}`,
-          cancelUrl: `${window.location.origin}/onboarding?step=plan-selection`,
-        });
+        // Check if customer already has a Stripe customer ID
+        const supabase = createClient();
+        const { data: org } = await supabase
+          .from('organizations')
+          .select('stripe_customer_id, stripe_subscription_id')
+          .eq('id', orgId)
+          .single();
 
-        if (result.success && result.url) {
-          // Redirect to Stripe checkout
-          window.location.href = result.url;
+        if (org?.stripe_customer_id && !org?.stripe_subscription_id) {
+          // Customer exists but no subscription - redirect to customer portal
+          const result = await createPortalSession({
+            orgId,
+            returnUrl: `${window.location.origin}/onboarding?step=company-details&plan=${planName}`,
+          });
+
+          if (result.success && result.url) {
+            window.location.href = result.url;
+          } else {
+            showToast.error('Failed to open billing portal. Please try again.');
+          }
         } else {
-          showToast.error(result.error || 'Failed to create checkout session');
+          // Create new checkout session
+          const result = await createCheckoutSession({
+            planName,
+            billingCycle,
+            orgId,
+            userId: '', // Will be filled by server action
+            successUrl: `${window.location.origin}/onboarding?step=company-details&plan=${planName}`,
+            cancelUrl: `${window.location.origin}/onboarding?step=plan-selection`,
+          });
+
+          if (result.success && result.url) {
+            // Redirect to Stripe checkout
+            window.location.href = result.url;
+          } else {
+            showToast.error(
+              result.error || 'Failed to create checkout session'
+            );
+          }
         }
       }
     } catch (error) {

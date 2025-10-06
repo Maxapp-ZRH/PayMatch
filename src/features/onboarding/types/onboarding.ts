@@ -62,7 +62,6 @@ export interface OnboardingData {
   invoiceNumbering?: string;
   paymentTerms?: string;
   emailNotifications?: boolean;
-  smsNotifications?: boolean;
   autoReminders?: boolean;
   reminderDays?: string;
 }

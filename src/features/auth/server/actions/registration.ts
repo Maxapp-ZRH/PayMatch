@@ -186,22 +186,30 @@ export async function setPendingRegistrationPassword(
     }
 
     // Create Supabase user with the provided password
-    const { error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email: email,
-      password: password, // Supabase will hash this properly
-      email_confirm: true, // Mark as verified since they clicked the link
-      user_metadata: {
-        first_name: pendingRegistration.first_name,
-        last_name: pendingRegistration.last_name,
-        ...pendingRegistration.user_metadata,
-      },
-    });
+    const { data: userData, error: authError } =
+      await supabaseAdmin.auth.admin.createUser({
+        email: email,
+        password: password, // Supabase will hash this properly
+        email_confirm: true, // Mark as verified since they clicked the link
+        user_metadata: {
+          first_name: pendingRegistration.first_name,
+          last_name: pendingRegistration.last_name,
+          ...pendingRegistration.user_metadata,
+        },
+      });
 
     if (authError) {
       console.error('Error creating user during verification:', authError);
       return {
         success: false,
         message: 'Failed to create account. Please try again.',
+      };
+    }
+
+    if (!userData.user) {
+      return {
+        success: false,
+        message: 'Failed to create user account. Please try again.',
       };
     }
 

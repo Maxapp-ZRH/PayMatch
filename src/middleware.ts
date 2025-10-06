@@ -48,45 +48,14 @@ export default async function middleware(request: NextRequest) {
 
   if (needsAuth) {
     try {
-      // First, try to refresh the session if needed
+      // Use getUser() for secure authentication
       const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
+        data: { user: authUser },
+        error,
+      } = await supabase.auth.getUser();
 
-      if (sessionError) {
-        console.log('Session error, attempting refresh:', sessionError.message);
-        // Try to refresh the session
-        const {
-          data: { session: refreshedSession },
-          error: refreshError,
-        } = await supabase.auth.refreshSession();
-
-        if (refreshError) {
-          console.log('Refresh failed:', refreshError.message);
-          // If refresh fails, sign out the user
-          await supabase.auth.signOut();
-          user = null;
-          authError = refreshError;
-        } else if (refreshedSession?.user) {
-          user = refreshedSession.user;
-          authError = null;
-        } else {
-          user = null;
-          authError = refreshError;
-        }
-      } else if (session?.user) {
-        user = session.user;
-        authError = null;
-      } else {
-        // No session, try to get user directly
-        const {
-          data: { user: authUser },
-          error,
-        } = await supabase.auth.getUser();
-        user = authUser;
-        authError = error;
-      }
+      user = authUser;
+      authError = error;
 
       console.log('Middleware auth check:', {
         pathname: pathnameWithoutLocale,

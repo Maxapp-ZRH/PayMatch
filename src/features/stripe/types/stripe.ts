@@ -52,6 +52,8 @@ export interface CheckoutSessionResult {
   error?: string;
 }
 
+// Customer Portal types are defined in create-portal-session.ts
+
 // Stripe webhook event types
 export interface StripeWebhookEvent {
   id: string;
@@ -83,6 +85,7 @@ export interface UpdateOrganizationPlanData {
   planName: PlanName;
   stripeCustomerId?: string;
   stripeSubscriptionId?: string;
+  stripeSubscriptionStatus?: string;
   billingCycle?: BillingPeriod;
 }
 

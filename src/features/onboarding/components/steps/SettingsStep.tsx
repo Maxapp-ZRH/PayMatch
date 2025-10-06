@@ -10,7 +10,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Save, Info, Mail, Smartphone, Clock } from 'lucide-react';
+import { Save, Info, Mail, Clock } from 'lucide-react';
 import { Button } from '@/components/marketing_pages/Button';
 import { SelectField } from '@/components/ui/select-field';
 import {
@@ -50,7 +50,6 @@ export function SettingsStep({ formData, onNext }: StepProps) {
       invoiceNumbering: formData.invoiceNumbering || 'sequential',
       paymentTerms: formData.paymentTerms || '30',
       emailNotifications: formData.emailNotifications ?? true,
-      smsNotifications: formData.smsNotifications ?? false,
       autoReminders: formData.autoReminders ?? true,
       reminderDays: formData.reminderDays || '7,14,30',
     },
@@ -80,8 +79,6 @@ export function SettingsStep({ formData, onNext }: StepProps) {
     setIsLoading(true);
 
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
       onNext(data);
     } catch (error) {
       console.error('Form submission error:', error);
@@ -216,31 +213,6 @@ export function SettingsStep({ formData, onNext }: StepProps) {
                 <input
                   type="checkbox"
                   {...register('emailNotifications')}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
-              </label>
-            </div>
-
-            {/* SMS Notifications */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <Smartphone className="w-5 h-5 text-red-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">
-                    SMS Notifications
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Receive notifications via SMS
-                  </p>
-                </div>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  {...register('smsNotifications')}
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>

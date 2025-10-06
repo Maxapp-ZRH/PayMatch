@@ -25,7 +25,7 @@ import type { StepProps } from '../../types';
 export function PlanSelectionStep({ onNext, formData }: StepProps) {
   const [selectedPlan, setSelectedPlan] = useState<PlanName | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('annual');
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
 
   const plansData = useAllPlansData();
   const pricingData = useAllPlansPricing(billingPeriod);
@@ -52,7 +52,7 @@ export function PlanSelectionStep({ onNext, formData }: StepProps) {
         userId: '', // Will be set by the server action
         planName: selectedPlan,
         billingCycle: billingPeriod,
-        successUrl: `${window.location.origin}/onboarding?step=company-details`,
+        successUrl: `${window.location.origin}/onboarding?step=company-details&plan=${selectedPlan}`,
         cancelUrl: `${window.location.origin}/onboarding?step=plan-selection`,
       });
 

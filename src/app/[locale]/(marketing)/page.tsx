@@ -18,38 +18,29 @@ import { SecondaryFeatures } from '@/components/marketing_pages/SecondaryFeature
 import { createClient } from '@/lib/supabase/server';
 
 export default async function Home() {
-  // Only check auth if we have a session cookie to avoid unnecessary DB calls
+  // Check authentication using secure getUser() method
   const supabase = await createClient();
-
-  // Quick session check without full user validation
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-  // Only do full auth check if we have a session
-  if (session) {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
+  // If there's an error (like stale JWT), clear the session
+  if (
+    error &&
+    error.message.includes('User from sub claim in JWT does not exist')
+  ) {
+    await supabase.auth.signOut();
+  }
 
-    // If there's an error (like stale JWT), clear the session
-    if (
-      error &&
-      error.message.includes('User from sub claim in JWT does not exist')
-    ) {
-      await supabase.auth.signOut();
-    }
-
-    // If user is authenticated and no error, check email verification
-    // Note: Onboarding completion is handled by middleware for protected routes
-    if (user && !error) {
-      if (!user.email_confirmed_at) {
-        redirect('/verify-email');
-      } else {
-        // Let middleware handle onboarding redirects for protected routes
-        redirect('/dashboard');
-      }
+  // If user is authenticated and no error, check email verification
+  // Note: Onboarding completion is handled by middleware for protected routes
+  if (user && !error) {
+    if (!user.email_confirmed_at) {
+      redirect('/verify-email');
+    } else {
+      // Let middleware handle onboarding redirects for protected routes
+      redirect('/dashboard');
     }
   }
 

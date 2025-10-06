@@ -23,6 +23,8 @@ interface LoginPageProps {
   searchParams: Promise<{
     redirectTo?: string;
     verified?: string;
+    email?: string;
+    message?: string;
   }>;
 }
 
@@ -63,6 +65,8 @@ export default async function Login({ searchParams }: LoginPageProps) {
       <LoginForm
         redirectTo={resolvedSearchParams.redirectTo}
         showVerifiedMessage={resolvedSearchParams.verified === 'true'}
+        initialEmail={resolvedSearchParams.email}
+        successMessage={resolvedSearchParams.message}
       />
 
       <div className="mt-6 text-center">
