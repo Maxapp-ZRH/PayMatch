@@ -52,7 +52,11 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
       country: formData.country || 'CH',
       phone: formData.phone || '',
       website: formData.website || '',
-      vatNumber: formData.vatNumber || '',
+      canton: formData.canton || '',
+      uidVatNumber: formData.uidVatNumber || '',
+      iban: formData.iban || '',
+      qrIban: formData.qrIban || '',
+      legalEntityType: formData.legalEntityType || '',
     },
   });
 
@@ -68,11 +72,15 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
     }
   }, [draftData, isLoadingDraft, setValue]);
 
-  // Progressive saving on form changes
+  // Progressive saving on form changes (debounced)
   useEffect(() => {
-    if (Object.keys(watchedValues).length > 0) {
-      saveDraft(watchedValues);
-    }
+    const timeoutId = setTimeout(() => {
+      if (Object.keys(watchedValues).length > 0) {
+        saveDraft(watchedValues);
+      }
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timeoutId);
   }, [watchedValues, saveDraft]);
 
   const onSubmit = async (data: CompanyDetailsFormData) => {
@@ -128,15 +136,6 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
               placeholder="Enter your company name"
               {...register('companyName')}
               error={errors.companyName?.message}
-            />
-
-            {/* VAT Number */}
-            <TextField
-              label="VAT Number"
-              type="text"
-              placeholder="CHE-123.456.789"
-              {...register('vatNumber')}
-              error={errors.vatNumber?.message}
             />
 
             {/* Website */}
@@ -214,6 +213,151 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
               {...register('phone')}
               error={errors.phone?.message}
             />
+          </div>
+        </div>
+
+        {/* Swiss-Specific Information */}
+        <div className="space-y-6">
+          <h2 className="text-lg font-medium text-gray-900">
+            Swiss Business Information
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Canton */}
+            <SelectField
+              label="Canton"
+              required
+              {...register('canton')}
+              error={errors.canton?.message}
+            >
+              <option value="">Select canton</option>
+              <option value="ZH">Zürich</option>
+              <option value="BE">Bern</option>
+              <option value="LU">Luzern</option>
+              <option value="UR">Uri</option>
+              <option value="SZ">Schwyz</option>
+              <option value="OW">Obwalden</option>
+              <option value="NW">Nidwalden</option>
+              <option value="GL">Glarus</option>
+              <option value="ZG">Zug</option>
+              <option value="FR">Freiburg</option>
+              <option value="SO">Solothurn</option>
+              <option value="BS">Basel-Stadt</option>
+              <option value="BL">Basel-Landschaft</option>
+              <option value="SH">Schaffhausen</option>
+              <option value="AR">Appenzell Ausserrhoden</option>
+              <option value="AI">Appenzell Innerrhoden</option>
+              <option value="SG">St. Gallen</option>
+              <option value="GR">Graubünden</option>
+              <option value="AG">Aargau</option>
+              <option value="TG">Thurgau</option>
+              <option value="TI">Ticino</option>
+              <option value="VD">Vaud</option>
+              <option value="VS">Valais</option>
+              <option value="NE">Neuchâtel</option>
+              <option value="GE">Genève</option>
+              <option value="JU">Jura</option>
+            </SelectField>
+
+            {/* Legal Entity Type */}
+            <SelectField
+              label="Legal Entity Type"
+              required
+              {...register('legalEntityType')}
+              error={errors.legalEntityType?.message}
+            >
+              <option value="">Select entity type</option>
+              <option value="GmbH">GmbH (Limited Liability Company)</option>
+              <option value="AG">AG (Public Limited Company)</option>
+              <option value="Einzelunternehmen">
+                Einzelunternehmen (Sole Proprietorship)
+              </option>
+              <option value="Partnerschaft">Partnerschaft (Partnership)</option>
+              <option value="Verein">Verein (Association)</option>
+              <option value="Stiftung">Stiftung (Foundation)</option>
+              <option value="Other">Other</option>
+            </SelectField>
+
+            {/* UID/VAT Number */}
+            <TextField
+              label="UID/VAT Number"
+              type="text"
+              placeholder="CHE-123.456.789"
+              {...register('uidVatNumber')}
+              error={errors.uidVatNumber?.message}
+            />
+          </div>
+        </div>
+
+        {/* Banking Information */}
+        <div className="space-y-6">
+          <h2 className="text-lg font-medium text-gray-900">
+            Banking Information
+          </h2>
+          <div className="space-y-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg
+                    className="h-5 w-5 text-blue-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-blue-800">
+                    Swiss QR-Bill Banking Requirements
+                  </h3>
+                  <div className="mt-2 text-sm text-blue-700">
+                    <p>For Swiss QR-Bill compliance, you need both:</p>
+                    <ul className="list-disc list-inside mt-1 space-y-1">
+                      <li>
+                        <strong>IBAN:</strong> Your regular bank account for
+                        transfers
+                      </li>
+                      <li>
+                        <strong>QR-IBAN:</strong> Special QR-Bill payment
+                        reference (different from IBAN)
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* IBAN */}
+            <div className="space-y-2">
+              <TextField
+                label="IBAN (Bank Account)"
+                type="text"
+                placeholder="CH93 0076 2011 6238 5295 7"
+                {...register('iban')}
+                error={errors.iban?.message}
+              />
+              <p className="text-xs text-gray-500">
+                Your regular Swiss bank account for transfers
+              </p>
+            </div>
+
+            {/* QR-IBAN */}
+            <div className="space-y-2">
+              <TextField
+                label="QR-IBAN (QR-Bill Reference)"
+                type="text"
+                placeholder="CH93 0076 2011 6238 5295 7"
+                {...register('qrIban')}
+                error={errors.qrIban?.message}
+              />
+              <p className="text-xs text-gray-500">
+                Special QR-Bill payment reference (ask your bank)
+              </p>
+            </div>
           </div>
         </div>
 

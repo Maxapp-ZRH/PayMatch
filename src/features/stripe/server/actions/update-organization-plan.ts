@@ -49,11 +49,6 @@ export async function updateOrganizationPlan(
       updateData.stripe_subscription_status = null;
     }
 
-    console.log('Attempting to update organization:', {
-      orgId: data.orgId,
-      updateData,
-    });
-
     const { error: updateError } = await supabase
       .from('organizations')
       .update(updateData)
@@ -67,8 +62,6 @@ export async function updateOrganizationPlan(
         error: updateError.message,
       };
     }
-
-    console.log('Successfully updated organization plan in database');
 
     return {
       success: true,

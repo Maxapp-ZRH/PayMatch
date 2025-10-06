@@ -40,7 +40,7 @@ export function SettingsStep({ formData, onNext }: StepProps) {
     setValue,
     watch,
     clearErrors,
-  } = useForm<SettingsFormData>({
+  } = useForm({
     resolver: zodResolver(settingsSchema),
     mode: 'onBlur', // Validate on blur for better UX
     defaultValues: {
@@ -52,6 +52,8 @@ export function SettingsStep({ formData, onNext }: StepProps) {
       emailNotifications: formData.emailNotifications ?? true,
       autoReminders: formData.autoReminders ?? true,
       reminderDays: formData.reminderDays || '7,14,30',
+      vatRegistered: formData.vatRegistered ?? false,
+      defaultVatRates: formData.defaultVatRates ?? [],
     },
   });
 
@@ -67,11 +69,15 @@ export function SettingsStep({ formData, onNext }: StepProps) {
     }
   }, [draftData, isLoadingDraft, setValue]);
 
-  // Progressive saving on form changes
+  // Progressive saving on form changes (debounced)
   useEffect(() => {
-    if (Object.keys(watchedValues).length > 0) {
-      saveDraft(watchedValues);
-    }
+    const timeoutId = setTimeout(() => {
+      if (Object.keys(watchedValues).length > 0) {
+        saveDraft(watchedValues);
+      }
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timeoutId);
   }, [watchedValues, saveDraft]);
 
   const onSubmit = async (data: SettingsFormData) => {
@@ -185,6 +191,65 @@ export function SettingsStep({ formData, onNext }: StepProps) {
               <option value="60">60 days</option>
               <option value="90">90 days</option>
             </SelectField>
+          </div>
+        </div>
+
+        {/* VAT Configuration */}
+        <div className="space-y-6">
+          <h2 className="text-lg font-medium text-gray-900">
+            VAT Configuration
+          </h2>
+          <div className="space-y-4">
+            {/* VAT Registered */}
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <Mail className="w-5 h-5 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-900">
+                    VAT Registered
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Are you registered for VAT in Switzerland?
+                  </p>
+                </div>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  {...register('vatRegistered')}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+              </label>
+            </div>
+
+            {/* Default VAT Rates */}
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-gray-700">
+                Default VAT Rates
+              </label>
+              <div className="space-y-2">
+                <div className="text-sm text-gray-500">
+                  Standard Swiss VAT rates will be pre-configured:
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="font-medium">Standard Rate</div>
+                    <div className="text-gray-600">7.7%</div>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="font-medium">Reduced Rate</div>
+                    <div className="text-gray-600">2.5%</div>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="font-medium">Zero Rate</div>
+                    <div className="text-gray-600">0%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

@@ -63,6 +63,17 @@ export const settingsSchema = z.object({
         message: 'Reminder days must be comma-separated numbers',
       }
     ),
+  vatRegistered: z.boolean(),
+  defaultVatRates: z
+    .array(
+      z.object({
+        name: z.string().min(1, 'VAT rate name is required'),
+        rate: z.number().min(0).max(100, 'VAT rate must be between 0 and 100'),
+        type: z.enum(['standard', 'reduced', 'zero']),
+      })
+    )
+    .optional()
+    .default([]),
 });
 
 export type SettingsFormData = z.infer<typeof settingsSchema>;

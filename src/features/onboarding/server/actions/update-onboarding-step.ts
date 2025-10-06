@@ -34,6 +34,16 @@ interface OrganizationUpdateData {
   email_notifications?: boolean;
   auto_reminders?: boolean;
   reminder_days?: string;
+  canton?: string;
+  uid?: string;
+  iban?: string;
+  qr_iban?: string;
+  legal_entity_type?: string;
+  default_vat_rates?: Array<{
+    name: string;
+    rate: number;
+    type: 'standard' | 'reduced' | 'zero';
+  }>;
 }
 
 export async function updateOnboardingStep(
@@ -81,14 +91,32 @@ export async function updateOnboardingStep(
         if ('country' in data.stepData && data.stepData.country) {
           updateData.country = data.stepData.country as string;
         }
-        if ('vatNumber' in data.stepData && data.stepData.vatNumber) {
-          updateData.vat_number = data.stepData.vatNumber as string;
-        }
         if ('phone' in data.stepData && data.stepData.phone) {
           updateData.phone = data.stepData.phone as string;
         }
         if ('website' in data.stepData && data.stepData.website) {
           updateData.website = data.stepData.website as string;
+        }
+        if ('canton' in data.stepData && data.stepData.canton) {
+          updateData.canton = data.stepData.canton as string;
+        }
+        if ('uidVatNumber' in data.stepData && data.stepData.uidVatNumber) {
+          // Store the same value in both uid and vat_number fields
+          updateData.uid = data.stepData.uidVatNumber as string;
+          updateData.vat_number = data.stepData.uidVatNumber as string;
+        }
+        if ('iban' in data.stepData && data.stepData.iban) {
+          updateData.iban = data.stepData.iban as string;
+        }
+        if ('qrIban' in data.stepData && data.stepData.qrIban) {
+          updateData.qr_iban = data.stepData.qrIban as string;
+        }
+        if (
+          'legalEntityType' in data.stepData &&
+          data.stepData.legalEntityType
+        ) {
+          updateData.legal_entity_type = data.stepData
+            .legalEntityType as string;
         }
       }
 
@@ -133,6 +161,35 @@ export async function updateOnboardingStep(
         }
         if ('reminderDays' in data.stepData && data.stepData.reminderDays) {
           updateData.reminder_days = data.stepData.reminderDays as string;
+        }
+        if (
+          'vatRegistered' in data.stepData &&
+          data.stepData.vatRegistered !== undefined
+        ) {
+          // VAT registration status is handled by the VAT rates configuration
+          // We'll set default VAT rates based on registration status
+          if (data.stepData.vatRegistered) {
+            updateData.default_vat_rates = [
+              { name: 'Standard Rate', rate: 7.7, type: 'standard' },
+              { name: 'Reduced Rate', rate: 2.5, type: 'reduced' },
+              { name: 'Zero Rate', rate: 0, type: 'zero' },
+            ];
+          } else {
+            updateData.default_vat_rates = [
+              { name: 'Zero Rate', rate: 0, type: 'zero' },
+            ];
+          }
+        }
+        if (
+          'defaultVatRates' in data.stepData &&
+          data.stepData.defaultVatRates
+        ) {
+          updateData.default_vat_rates = data.stepData
+            .defaultVatRates as Array<{
+            name: string;
+            rate: number;
+            type: 'standard' | 'reduced' | 'zero';
+          }>;
         }
       }
     }

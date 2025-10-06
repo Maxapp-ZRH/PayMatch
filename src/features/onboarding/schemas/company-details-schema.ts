@@ -64,17 +64,98 @@ export const companyDetailsSchema = z.object({
         message: 'Please enter a valid website URL',
       }
     ),
-  vatNumber: z
+  canton: z
+    .string()
+    .min(1, 'Canton is required for Swiss businesses')
+    .refine(
+      (val) =>
+        [
+          'ZH',
+          'BE',
+          'LU',
+          'UR',
+          'SZ',
+          'OW',
+          'NW',
+          'GL',
+          'ZG',
+          'FR',
+          'SO',
+          'BS',
+          'BL',
+          'SH',
+          'AR',
+          'AI',
+          'SG',
+          'GR',
+          'AG',
+          'TG',
+          'TI',
+          'VD',
+          'VS',
+          'NE',
+          'GE',
+          'JU',
+        ].includes(val),
+      {
+        message: 'Please select a valid Swiss canton',
+      }
+    ),
+  uidVatNumber: z
     .string()
     .optional()
     .refine(
       (val) => {
         if (!val || val.trim() === '') return true;
-        // Swiss VAT number format: CHE-123.456.789
+        // Swiss UID/VAT number format: CHE-123.456.789
         return /^CHE-\d{3}\.\d{3}\.\d{3}$/.test(val);
       },
       {
-        message: 'VAT number must be in format CHE-123.456.789',
+        message: 'UID/VAT number must be in format CHE-123.456.789',
+      }
+    ),
+  iban: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val || val.trim() === '') return true;
+        // Swiss IBAN format: CH + 2 check digits + 5 bank code + 12 account number
+        return /^CH[0-9]{2}[0-9]{5}[0-9A-Z]{12}$/.test(val);
+      },
+      {
+        message: 'Please enter a valid Swiss IBAN (CH + 21 characters)',
+      }
+    ),
+  qrIban: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val || val.trim() === '') return true;
+        // Swiss QR-IBAN format: CH + 2 check digits + 5 bank code + 12 account number
+        return /^CH[0-9]{2}[0-9]{5}[0-9A-Z]{12}$/.test(val);
+      },
+      {
+        message: 'Please enter a valid Swiss QR-IBAN (CH + 21 characters)',
+      }
+    ),
+  legalEntityType: z
+    .string()
+    .min(1, 'Legal entity type is required')
+    .refine(
+      (val) =>
+        [
+          'GmbH',
+          'AG',
+          'Einzelunternehmen',
+          'Partnerschaft',
+          'Verein',
+          'Stiftung',
+          'Other',
+        ].includes(val),
+      {
+        message: 'Please select a valid legal entity type',
       }
     ),
 });

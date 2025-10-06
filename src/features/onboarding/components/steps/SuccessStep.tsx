@@ -8,11 +8,15 @@
 'use client';
 
 import { CheckCircle, ArrowRight, FileText, Users, Zap } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import type { StepProps } from '../../types';
 
-export function SuccessStep({ onNext }: StepProps) {
+export function SuccessStep({}: StepProps) {
+  const router = useRouter();
+
   const handleComplete = () => {
-    onNext({});
+    // Redirect to dashboard
+    router.push('/dashboard');
   };
 
   return (

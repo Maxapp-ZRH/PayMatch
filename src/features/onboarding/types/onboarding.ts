@@ -53,7 +53,11 @@ export interface OnboardingData {
   country?: string;
   phone?: string;
   website?: string;
-  vatNumber?: string;
+  canton?: string;
+  uidVatNumber?: string;
+  iban?: string;
+  qrIban?: string;
+  legalEntityType?: string;
 
   // Settings fields (for form handling)
   defaultCurrency?: string;
@@ -64,6 +68,12 @@ export interface OnboardingData {
   emailNotifications?: boolean;
   autoReminders?: boolean;
   reminderDays?: string;
+  vatRegistered?: boolean;
+  defaultVatRates?: Array<{
+    name: string;
+    rate: number;
+    type: 'standard' | 'reduced' | 'zero';
+  }>;
 }
 
 // Onboarding wizard state

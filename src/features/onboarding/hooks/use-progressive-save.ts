@@ -33,22 +33,25 @@ export function useProgressiveSave({
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isSavingRef = useRef(false);
 
   const saveDraft = useCallback(
     async (data: Partial<OnboardingData>) => {
-      if (!enabled || !orgId) return;
+      if (!enabled || !orgId || isSavingRef.current) return;
 
       // Clear existing timeout
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
 
-      // Set saving state
-      setIsSaving(true);
-      setSaveError(null);
-
       // Debounce the save operation
       saveTimeoutRef.current = setTimeout(async () => {
+        if (isSavingRef.current) return; // Prevent concurrent saves
+
+        isSavingRef.current = true;
+        setIsSaving(true);
+        setSaveError(null);
+
         try {
           const result = await onboardingDraftService.saveDraft(
             orgId,
@@ -67,8 +70,9 @@ export function useProgressiveSave({
           setSaveError('An unexpected error occurred');
         } finally {
           setIsSaving(false);
+          isSavingRef.current = false;
         }
-      }, 2000); // 2 second debounce
+      }, 1000); // 1 second debounce
     },
     [orgId, currentStep, enabled]
   );

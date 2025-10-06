@@ -129,8 +129,7 @@ export function OnboardingWizard({
             console.error('Error clearing draft data:', error);
           }
 
-          // Redirect to dashboard after successful completion
-          router.push('/dashboard');
+          // Don't redirect immediately - let SuccessStep handle it
           return;
         } else {
           console.error('Failed to complete onboarding:', result.message);
@@ -193,21 +192,17 @@ export function OnboardingWizard({
           </motion.div>
         </AnimatePresence>
 
-        {/* Step Navigation - Only show for non-plan selection steps */}
-        {state.currentStep > 1 && (
+        {/* Step Navigation - Only show for non-plan selection and non-success steps */}
+        {state.currentStep > 1 && state.currentStep < state.totalSteps && (
           <StepNavigation
             onBack={handleBack}
             onNext={() => handleNext({})}
             canGoBack={state.currentStep > 1}
             canGoNext={state.currentStep < state.totalSteps}
             isLoading={state.isLoading}
-            nextLabel={
-              state.currentStep === state.totalSteps
-                ? 'Complete Setup'
-                : 'Continue'
-            }
+            nextLabel="Continue"
             backLabel="Previous Step"
-            showNext={state.currentStep < state.totalSteps}
+            showNext={true}
             showBack={state.currentStep > 1}
           />
         )}
