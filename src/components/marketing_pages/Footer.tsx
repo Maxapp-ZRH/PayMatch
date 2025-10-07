@@ -285,6 +285,14 @@ export function Footer() {
                   </li>
                   <li>
                     <I18nLink
+                      href="/email-preferences"
+                      className="text-sm text-gray-600 hover:text-gray-900"
+                    >
+                      Email Preferences
+                    </I18nLink>
+                  </li>
+                  <li>
+                    <I18nLink
                       href="/gdpr"
                       className="text-sm text-gray-600 hover:text-gray-900"
                     >

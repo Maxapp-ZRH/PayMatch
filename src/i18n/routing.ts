@@ -67,6 +67,10 @@ export const routing = defineRouting({
       'en-CH': '/gdpr',
       'de-CH': '/dsgvo',
     },
+    '/email-preferences': {
+      'en-CH': '/email-preferences',
+      'de-CH': '/e-mail-einstellungen',
+    },
 
     // Main pages
     '/support': {

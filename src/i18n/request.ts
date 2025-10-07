@@ -36,6 +36,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       legalPrivacyMessages,
       legalTermsMessages,
       legalCookiesMessages,
+      legalCookieSettingsMessages,
       legalGdprMessages,
       legalImprintMessages,
       supportMessages,
@@ -43,6 +44,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       indexMessages,
       validationMessages,
       pwaMessages,
+      emailPreferencesMessages,
     ] = await Promise.all([
       import(`./messages/${locale}/common.json`)
         .then((m) => m.default)
@@ -60,6 +62,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
         .then((m) => m.default)
         .catch(() => ({})),
       import(`./messages/${locale}/legal/cookies.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
+      import(`./messages/${locale}/legal/cookie-settings.json`)
         .then((m) => m.default)
         .catch(() => ({})),
       import(`./messages/${locale}/legal/gdpr.json`)
@@ -83,6 +88,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
       import(`./messages/${locale}/pwa.json`)
         .then((m) => m.default)
         .catch(() => ({})),
+      import(`./messages/${locale}/email-preferences.json`)
+        .then((m) => m.default)
+        .catch(() => ({})),
     ]);
 
     // Merge all messages into a single object
@@ -104,6 +112,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
           ...safeGet(legalIndexMessages, 'cookies'),
           ...legalCookiesMessages,
         },
+        cookieSettings: {
+          ...safeGet(legalIndexMessages, 'cookieSettings'),
+          ...legalCookieSettingsMessages,
+        },
         gdpr: {
           ...safeGet(legalIndexMessages, 'gdpr'),
           ...legalGdprMessages,
@@ -116,6 +128,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       support: supportMessages,
       faq: faqMessages,
       pwa: pwaMessages,
+      emailPreferences: emailPreferencesMessages,
       ...indexMessages, // Main page content
     };
   } catch {
@@ -131,6 +144,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
         legalPrivacyMessages,
         legalTermsMessages,
         legalCookiesMessages,
+        legalCookieSettingsMessages,
         legalGdprMessages,
         legalImprintMessages,
         supportMessages,
@@ -138,6 +152,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
         indexMessages,
         validationMessages,
         pwaMessages,
+        emailPreferencesMessages,
       ] = await Promise.all([
         import(`./messages/en-CH/common.json`)
           .then((m) => m.default)
@@ -155,6 +170,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
           .then((m) => m.default)
           .catch(() => ({})),
         import(`./messages/en-CH/legal/cookies.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
+        import(`./messages/en-CH/legal/cookie-settings.json`)
           .then((m) => m.default)
           .catch(() => ({})),
         import(`./messages/en-CH/legal/gdpr.json`)
@@ -178,6 +196,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
         import(`./messages/en-CH/pwa.json`)
           .then((m) => m.default)
           .catch(() => ({})),
+        import(`./messages/en-CH/email-preferences.json`)
+          .then((m) => m.default)
+          .catch(() => ({})),
       ]);
 
       messages = {
@@ -198,6 +219,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
             ...safeGet(legalIndexMessages, 'cookies'),
             ...legalCookiesMessages,
           },
+          cookieSettings: {
+            ...safeGet(legalIndexMessages, 'cookieSettings'),
+            ...legalCookieSettingsMessages,
+          },
           gdpr: {
             ...safeGet(legalIndexMessages, 'gdpr'),
             ...legalGdprMessages,
@@ -210,6 +235,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
         support: supportMessages,
         faq: faqMessages,
         pwa: pwaMessages,
+        emailPreferences: emailPreferencesMessages,
         ...indexMessages,
       };
     } catch (fallbackError) {

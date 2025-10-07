@@ -51,7 +51,6 @@ export function usePWA() {
     if ('serviceWorker' in navigator) {
       try {
         const registration = await navigator.serviceWorker.register('/sw.js');
-        console.log('Service worker registered:', registration);
 
         // Listen for updates
         registration.addEventListener('updatefound', () => {
@@ -84,14 +83,12 @@ export function usePWA() {
         const choiceResult = await state.installPrompt.userChoice;
 
         if (choiceResult.outcome === 'accepted') {
-          console.log('PWA installation accepted');
           setState((prev) => ({
             ...prev,
             isInstalled: true,
             installPrompt: null,
           }));
         } else {
-          console.log('PWA installation dismissed');
         }
       } catch (error) {
         console.error('PWA installation failed:', error);

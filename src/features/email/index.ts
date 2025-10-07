@@ -8,7 +8,6 @@
 // Services
 export {
   EmailPreferencesService,
-  NewsletterService,
   sendEmail,
   sendEmailWithComponent,
   SupportEmailService,

@@ -94,15 +94,19 @@ The PayMatch email system is a **hybrid, type-safe, and scalable** solution that
 
 **Tables:**
 
-- `newsletter_subscribers` - Newsletter subscription data
-- `email_preferences` - Email type preferences and unsubscribes
+- `newsletter_subscribers` - Newsletter subscription data (legacy)
+- `email_preferences` - Granular email type preferences and unsubscribes
+- `consent_records` - GDPR/FADP compliance with full audit trail
+- `email_type_categories` - Email type categorization and consent requirements
 
 **Features:**
 
 - ✅ **RLS Security** - Row Level Security policies
 - ✅ **Performance Optimized** - Proper indexes
 - ✅ **Audit Trail** - Created/updated timestamps
-- ✅ **Type Support** - Newsletter, support, transactional
+- ✅ **Type Support** - All 9 email types supported
+- ✅ **GDPR Compliance** - Full consent management with audit trails
+- ✅ **Switzerland FADP** - 2-year consent expiry tracking
 
 ## 🏛️ **Email Architecture Patterns**
 
@@ -144,12 +148,34 @@ The PayMatch email system is a **hybrid, type-safe, and scalable** solution that
 
 ## 📧 **Email Types & Flows**
 
+### **Supported Email Types (9 Total)**
+
+The system supports **9 granular email types** for comprehensive user control:
+
+#### **📢 Newsletter Types**
+
+- `newsletter_promotional` - Marketing emails, offers, sales
+- `newsletter_informational` - Educational content, tips, guides
+- `newsletter_news` - Company news, announcements
+
+#### **🔧 Business Types**
+
+- `business_notifications` - Invoice status, payment confirmations
+- `overdue_alerts` - Overdue payment alerts (sent to business owner)
+
+#### **🛡️ Essential Types**
+
+- `support` - Customer support communications
+- `transactional` - Account-related emails (receipts, confirmations)
+- `security` - Login alerts, password resets, email verification
+- `legal` - Terms updates, privacy policy changes
+
 ### 1. **Newsletter Emails**
 
 **Flow:**
 
 1. User subscribes via `/api/email/newsletter`
-2. Data stored in `newsletter_subscribers` table
+2. Data stored in `newsletter_subscribers` table + `email_preferences` table
 3. Welcome email sent with unsubscribe link
 4. Future newsletters include unsubscribe headers
 
@@ -158,6 +184,7 @@ The PayMatch email system is a **hybrid, type-safe, and scalable** solution that
 - ✅ **Dual Storage** - Newsletter table + email preferences
 - ✅ **Unsubscribe Support** - Both token and one-click
 - ✅ **User Management** - Name, email, subscription status
+- ✅ **GDPR Compliance** - Marketing consent required
 
 ### 2. **Support Emails**
 
@@ -165,8 +192,8 @@ The PayMatch email system is a **hybrid, type-safe, and scalable** solution that
 
 1. User submits support form via `/api/email/support`
 2. **Two emails sent:**
-   - Team notification → `support@paymatch.app`
-   - User confirmation → User's email
+   - Team notification → `support@paymatch.app` (emailType: `support`)
+   - User confirmation → User's email (emailType: `support`)
 3. Both emails include unsubscribe functionality
 
 **Features:**
@@ -175,6 +202,7 @@ The PayMatch email system is a **hybrid, type-safe, and scalable** solution that
 - ✅ **Priority Handling** - Visual priority indicators
 - ✅ **Attachment Support** - File upload handling
 - ✅ **Reply-to Setup** - Team can reply directly
+- ✅ **GDPR Compliance** - Support emails are essential for service operation
 
 ### 3. **Authentication Emails** (Server Actions)
 
@@ -182,7 +210,7 @@ The PayMatch email system is a **hybrid, type-safe, and scalable** solution that
 
 1. User triggers auth action (register, reset password, etc.)
 2. Server action calls `registerUser()` or `sendPasswordResetEmail()`
-3. Email sent via unified email service
+3. Email sent via unified email service (emailType: `security`)
 4. User redirected to appropriate page
 
 **Features:**
@@ -191,21 +219,26 @@ The PayMatch email system is a **hybrid, type-safe, and scalable** solution that
 - ✅ **Rate Limiting** - Built-in abuse prevention
 - ✅ **Type Safety** - Full TypeScript support
 - ✅ **Direct Integration** - No API overhead
+- ✅ **GDPR Compliance** - Security emails are essential for service operation
 
-### 4. **Transactional Emails**
+### 4. **Business Notification Emails**
 
 **Flow:**
 
-1. System-triggered emails (invoices, receipts, etc.)
-2. Stored in `email_preferences` table
+1. System-triggered emails (invoices, receipts, overdue alerts, etc.)
+2. Stored in `email_preferences` table with specific email types:
+   - `business_notifications` - Invoice status, payment confirmations
+   - `overdue_alerts` - Overdue payment alerts (sent to business owner)
+   - `transactional` - Account-related emails, receipts
 3. Include unsubscribe headers
 4. Support both token and one-click unsubscribe
 
 **Features:**
 
 - ✅ **System Integration** - Automated email sending
-- ✅ **Preference Management** - User can control receipt
+- ✅ **Preference Management** - User can control receipt by type
 - ✅ **Compliance Ready** - Swiss QR-bill integration
+- ✅ **GDPR Compliance** - Business notifications classified as `data_processing` consent (necessary for service operation)
 
 ## 🔐 **Security & Compliance**
 
@@ -228,7 +261,11 @@ The PayMatch email system is a **hybrid, type-safe, and scalable** solution that
 - **RFC 8058** - One-click unsubscribe standard
 - **List-Unsubscribe Headers** - Email client integration
 - **Swiss Compliance** - QR-bill integration ready
-- **GDPR Ready** - Data protection compliance
+- **GDPR/FADP Compliant** - Full data protection compliance with consent management
+- **Consent Categories** - Proper classification of email types:
+  - `necessary` - Always enabled (security, transactional, legal)
+  - `data_processing` - Business notifications (necessary for service operation)
+  - `marketing` - Newsletter and promotional emails (requires explicit consent)
 
 ## 🚀 **Usage Examples**
 
@@ -277,7 +314,7 @@ if (result.success) {
 ### **Newsletter Emails** (API Routes)
 
 ```typescript
-// Newsletter subscription
+// Newsletter subscription (requires marketing consent)
 const response = await fetch('/api/email/newsletter', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
@@ -290,8 +327,11 @@ const response = await fetch('/api/email/newsletter', {
 
 const result = await response.json();
 if (result.success) {
-  // User subscribed successfully
+  // User subscribed successfully to newsletter_promotional emails
   setMessage('Successfully subscribed to newsletter!');
+} else if (result.requiresCookieConsent) {
+  // User needs to enable marketing cookies first
+  showCookieConsentModal();
 }
 ```
 
@@ -342,15 +382,29 @@ const response = await fetch('/api/email/unsubscribe/one-click?token=...', {
 import { sendEmailWithComponent } from '@/features/email/email-service';
 import { EmailVerification } from '@/emails/email-verification';
 
+// Authentication email (security type)
 await sendEmailWithComponent({
   to: 'user@example.com',
   subject: 'Verify your account',
-  emailType: 'transactional',
+  emailType: 'security',
   userId: 'user-id',
   component: EmailVerification({
     verificationUrl: 'https://app.paymatch.app/verify?token=...',
     userName: 'John Doe',
     appUrl: 'https://app.paymatch.app',
+  }),
+});
+
+// Business notification email
+await sendEmailWithComponent({
+  to: 'business@example.com',
+  subject: 'Invoice Payment Received',
+  emailType: 'business_notifications',
+  userId: 'user-id',
+  component: InvoicePaymentNotification({
+    invoiceNumber: 'INV-2024-001',
+    amount: 'CHF 1,500.00',
+    businessName: 'Acme Corp',
   }),
 });
 ```
@@ -376,12 +430,15 @@ await sendEmailWithComponent({
 
 ### **For Business**
 
-- ✅ **Swiss Compliance** - Ready for Swiss market
+- ✅ **Swiss Compliance** - Ready for Swiss market with FADP compliance
+- ✅ **GDPR Compliance** - Full consent management with audit trails
 - ✅ **Scalable Architecture** - Easy to add new email types
-- ✅ **Audit Trail** - Complete email history
+- ✅ **Audit Trail** - Complete email and consent history
 - ✅ **Performance** - Optimized database queries
 - ✅ **Security** - Server-side protection for sensitive operations
 - ✅ **Flexibility** - Choose the right pattern for each use case
+- ✅ **User Control** - Granular email preferences by type
+- ✅ **Legal Protection** - Comprehensive consent records for compliance audits
 
 ## 🔧 **Configuration**
 
@@ -407,10 +464,13 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_key
 
 ### **Database Setup**
 
-- Newsletter subscribers table with RLS policies
-- Email preferences table for unsubscribe management
+- Newsletter subscribers table with RLS policies (legacy)
+- Email preferences table for granular unsubscribe management
+- Consent records table for GDPR/FADP compliance
+- Email type categories table for consent requirements
 - Proper indexes for performance
 - Audit triggers for data tracking
+- 2-year consent expiry tracking for Switzerland FADP
 
 ## 🎯 **Future Enhancements**
 
@@ -424,10 +484,12 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_key
 
 ### **Integration Ready**
 
-- Swiss QR-bill generation
-- Stripe payment notifications
+- Swiss QR-bill generation with business notifications
+- Stripe payment notifications (business_notifications type)
 - Multi-language support
-- Advanced reporting
+- Advanced reporting with consent analytics
+- Onboarding email preference integration
+- Cookie consent synchronization
 
 ## 📈 **Monitoring & Maintenance**
 
@@ -442,9 +504,22 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_key
 
 - Database query optimization
 - Email delivery monitoring
-- Unsubscribe rate tracking
+- Unsubscribe rate tracking by email type
 - System health metrics
+- Consent compliance monitoring
+- GDPR audit trail generation
 
 ---
 
-The PayMatch email system provides a **hybrid, robust, scalable, and compliant** foundation for all email communications. By using **Server Actions for authentication emails** and **API Routes for external-facing operations**, it ensures both technical excellence and user satisfaction while meeting Swiss market requirements and maintaining optimal security and performance.
+The PayMatch email system provides a **hybrid, robust, scalable, and fully compliant** foundation for all email communications. By using **Server Actions for authentication emails** and **API Routes for external-facing operations**, it ensures both technical excellence and user satisfaction while meeting Swiss market requirements and maintaining optimal security and performance.
+
+## 🎯 **Key Features Summary**
+
+- ✅ **9 Granular Email Types** - Complete user control over email preferences
+- ✅ **GDPR/FADP Compliant** - Full consent management with audit trails
+- ✅ **Swiss Market Ready** - 2-year consent expiry tracking
+- ✅ **Hybrid Architecture** - Server Actions for auth, API Routes for external
+- ✅ **Business Integration** - Onboarding email preferences sync
+- ✅ **Cookie Integration** - Marketing consent synchronization
+- ✅ **Comprehensive Audit** - Complete email and consent history
+- ✅ **User-Friendly** - Granular unsubscribe and preference management

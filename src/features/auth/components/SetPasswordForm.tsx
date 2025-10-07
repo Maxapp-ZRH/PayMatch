@@ -68,6 +68,11 @@ export function SetPasswordForm({ email, onSuccess }: SetPasswordFormProps) {
 
       if (result.success) {
         showToast.success('Account created successfully!', result.message);
+
+        // Set localStorage flag to notify other tabs that verification is complete
+        localStorage.setItem('email-verification-complete', 'true');
+        localStorage.setItem('email-verification-email', email);
+
         onSuccess?.();
         // Redirect to login page where user can sign in with their new credentials
         router.push(

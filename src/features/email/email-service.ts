@@ -51,7 +51,16 @@ function getSupabaseClient() {
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'noreply@paymatch.app';
 const FROM_NAME = process.env.RESEND_FROM_NAME || 'PayMatch';
 
-export type EmailType = 'newsletter' | 'support' | 'transactional' | 'auth';
+export type EmailType =
+  | 'newsletter_promotional'
+  | 'newsletter_informational'
+  | 'newsletter_news'
+  | 'support'
+  | 'transactional'
+  | 'security'
+  | 'legal'
+  | 'business_notifications'
+  | 'overdue_alerts';
 
 export interface EmailOptions {
   to: string | string[];
@@ -106,12 +115,19 @@ export async function sendEmail(options: EmailOptions) {
     attachments = [],
   } = options;
 
-  // Generate unsubscribe URL (only for non-auth emails and if environment variable is available)
+  // Generate unsubscribe URL (only for optional email types)
   let unsubscribeUrl: string | undefined;
   let headers: Record<string, string> = {};
 
-  // Skip unsubscribe URLs for authentication emails (verification, password reset, etc.)
-  if (emailType !== 'auth') {
+  // Skip unsubscribe URLs for mandatory emails (security, transactional, support, legal)
+  const mandatoryEmailTypes: EmailType[] = [
+    'security',
+    'transactional',
+    'support',
+    'legal',
+  ];
+
+  if (!mandatoryEmailTypes.includes(emailType)) {
     try {
       unsubscribeUrl = generateUnsubscribeUrl(
         Array.isArray(to) ? to[0] : to,
@@ -119,7 +135,7 @@ export async function sendEmail(options: EmailOptions) {
         userId
       );
 
-      // Get unsubscribe headers for transactional emails
+      // Get unsubscribe headers for non-mandatory transactional emails
       headers =
         emailType === 'transactional'
           ? getUnsubscribeHeaders(
@@ -178,12 +194,19 @@ export async function sendEmailWithComponent(
 ) {
   const { component, ...emailOptions } = options;
 
-  // Generate unsubscribe URL for the email (only for non-auth emails and if environment variable is available)
+  // Generate unsubscribe URL for the email (only for optional email types)
   let unsubscribeUrl: string | undefined;
   const emailType = emailOptions.emailType || 'transactional';
 
-  // Skip unsubscribe URLs for authentication emails (verification, password reset, etc.)
-  if (emailType !== 'auth') {
+  // Skip unsubscribe URLs for mandatory emails (security, transactional, support, legal)
+  const mandatoryEmailTypes: EmailType[] = [
+    'security',
+    'transactional',
+    'support',
+    'legal',
+  ];
+
+  if (!mandatoryEmailTypes.includes(emailType)) {
     try {
       unsubscribeUrl = generateUnsubscribeUrl(
         Array.isArray(emailOptions.to) ? emailOptions.to[0] : emailOptions.to,
@@ -214,190 +237,67 @@ export async function sendEmailWithComponent(
 }
 
 /**
- * Newsletter subscription management
- */
-export class NewsletterService {
-  /**
-   * Subscribe to newsletter
-   */
-  static async subscribe(data: {
-    email: string;
-    firstName: string;
-    lastName: string;
-  }) {
-    // Check if email already exists and is active
-    const supabaseClient = getSupabaseClient();
-    const { data: existingSubscriber, error: checkError } = await supabaseClient
-      .from('newsletter_subscribers')
-      .select('id, is_active, email')
-      .eq('email', data.email)
-      .single();
-
-    if (checkError && checkError.code !== 'PGRST116') {
-      throw new Error('Failed to check subscription status');
-    }
-
-    // Type the subscriber data properly
-    const subscriber = existingSubscriber as {
-      id: string;
-      is_active: boolean;
-      email: string;
-    } | null;
-
-    // If subscriber exists and is active, return success
-    if (subscriber && subscriber.is_active) {
-      return {
-        success: true,
-        message: 'Successfully subscribed to newsletter',
-        alreadySubscribed: true,
-      };
-    }
-
-    // If subscriber exists but is inactive, reactivate them
-    if (subscriber && !subscriber.is_active) {
-      const { error: updateError } = await (supabaseClient as any)
-        .from('newsletter_subscribers')
-        .update({
-          first_name: data.firstName,
-          last_name: data.lastName,
-          is_active: true,
-          subscribed_at: new Date().toISOString(),
-          unsubscribed_at: null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', subscriber.id);
-
-      if (updateError) {
-        throw new Error('Failed to reactivate subscription');
-      }
-
-      return {
-        success: true,
-        message: 'Successfully reactivated newsletter subscription',
-        subscriber: {
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-        },
-      };
-    }
-
-    // Create new subscription
-    const { data: newSubscriber, error: insertError } = await (
-      supabaseClient as any
-    )
-      .from('newsletter_subscribers')
-      .insert({
-        first_name: data.firstName,
-        last_name: data.lastName,
-        email: data.email,
-        is_active: true,
-      })
-      .select('id, email, first_name, last_name')
-      .single();
-
-    if (insertError) {
-      throw new Error('Failed to create subscription');
-    }
-
-    return {
-      success: true,
-      message: 'Successfully subscribed to newsletter',
-      subscriber: newSubscriber,
-    };
-  }
-
-  /**
-   * Unsubscribe from newsletter
-   */
-  static async unsubscribe(email: string) {
-    const supabaseClient = getSupabaseClient();
-    const { data: subscriber, error: findError } = await (supabaseClient as any)
-      .from('newsletter_subscribers')
-      .select('id, email, first_name, last_name, is_active')
-      .eq('email', email)
-      .single();
-
-    if (findError || !subscriber) {
-      throw new Error('Subscriber not found');
-    }
-
-    if (!subscriber.is_active) {
-      return {
-        success: true,
-        message: 'You have already unsubscribed from our newsletter',
-        alreadyUnsubscribed: true,
-        subscriber: {
-          email: subscriber.email,
-          firstName: subscriber.first_name,
-          lastName: subscriber.last_name,
-          emailType: 'newsletter',
-        },
-      };
-    }
-
-    // Unsubscribe the user
-    const { error: updateError } = await (supabaseClient as any)
-      .from('newsletter_subscribers')
-      .update({
-        is_active: false,
-        unsubscribed_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', subscriber.id);
-
-    if (updateError) {
-      throw new Error('Failed to unsubscribe from newsletter');
-    }
-
-    return {
-      success: true,
-      message: 'Successfully unsubscribed from newsletter',
-      subscriber: {
-        email: subscriber.email,
-        firstName: subscriber.first_name,
-        lastName: subscriber.last_name,
-        emailType: 'newsletter',
-      },
-    };
-  }
-
-  /**
-   * Get newsletter subscriber info
-   */
-  static async getSubscriberInfo(email: string) {
-    const supabaseClient = getSupabaseClient();
-    const { data: subscriber, error } = await (supabaseClient as any)
-      .from('newsletter_subscribers')
-      .select('id, email, first_name, last_name, is_active')
-      .eq('email', email)
-      .single();
-
-    if (error || !subscriber) {
-      throw new Error('Subscriber not found');
-    }
-
-    return {
-      success: true,
-      subscriber: {
-        email: subscriber.email,
-        firstName: subscriber.first_name,
-        lastName: subscriber.last_name,
-        isActive: subscriber.is_active,
-        emailType: 'newsletter',
-      },
-    };
-  }
-}
-
-/**
  * Email preferences management
  */
 export class EmailPreferencesService {
   /**
+   * Subscribe to specific email type
+   */
+  static async subscribe(
+    email: string,
+    type: EmailType,
+    userId?: string,
+    firstName?: string,
+    lastName?: string
+  ) {
+    const supabaseClient = getSupabaseClient();
+    const { error } = await (supabaseClient as any)
+      .from('email_preferences')
+      .upsert({
+        email,
+        user_id: userId,
+        email_type: type,
+        first_name: firstName,
+        last_name: lastName,
+        is_active: true,
+        subscribed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
+    if (error) {
+      throw new Error(`Failed to subscribe to ${type} emails`);
+    }
+
+    return {
+      success: true,
+      message: `Successfully subscribed to ${type} emails`,
+      subscriber: {
+        email,
+        emailType: type,
+        firstName,
+        lastName,
+      },
+    };
+  }
+
+  /**
    * Unsubscribe from specific email type
    */
   static async unsubscribe(email: string, type: EmailType, userId?: string) {
+    // Check if this email type is mandatory (cannot be unsubscribed)
+    const mandatoryEmailTypes: EmailType[] = [
+      'security',
+      'transactional',
+      'support',
+      'legal',
+    ];
+
+    if (mandatoryEmailTypes.includes(type)) {
+      throw new Error(
+        `Cannot unsubscribe from ${type} emails - they are mandatory for account security, support, and legal compliance`
+      );
+    }
+
     const supabaseClient = getSupabaseClient();
     const { error } = await (supabaseClient as any)
       .from('email_preferences')
@@ -431,7 +331,7 @@ export class EmailPreferencesService {
     const supabaseClient = getSupabaseClient();
     const { data: preferences, error } = await (supabaseClient as any)
       .from('email_preferences')
-      .select('email, email_type, is_active')
+      .select('email, email_type, is_active, first_name, last_name')
       .eq('email', email)
       .eq('email_type', type)
       .single();
@@ -446,6 +346,8 @@ export class EmailPreferencesService {
         email,
         isActive: preferences?.is_active ?? true,
         emailType: type,
+        firstName: preferences?.first_name ?? '',
+        lastName: preferences?.last_name ?? '',
       },
     };
   }
@@ -467,11 +369,15 @@ export class UnsubscribeService {
     const { email, type, userId } = tokenData;
 
     switch (type) {
-      case 'newsletter':
-        return await NewsletterService.unsubscribe(email);
-
+      case 'newsletter_promotional':
       case 'support':
       case 'transactional':
+      case 'security':
+      case 'legal':
+      case 'business_notifications':
+      case 'overdue_alerts':
+      case 'newsletter_informational':
+      case 'newsletter_news':
         return await EmailPreferencesService.unsubscribe(email, type, userId);
 
       default:
@@ -491,11 +397,15 @@ export class UnsubscribeService {
     const { email, type } = tokenData;
 
     switch (type) {
-      case 'newsletter':
-        return await NewsletterService.getSubscriberInfo(email);
-
+      case 'newsletter_promotional':
       case 'support':
       case 'transactional':
+      case 'security':
+      case 'legal':
+      case 'business_notifications':
+      case 'overdue_alerts':
+      case 'newsletter_informational':
+      case 'newsletter_news':
         return await EmailPreferencesService.getPreferences(email, type);
 
       default:

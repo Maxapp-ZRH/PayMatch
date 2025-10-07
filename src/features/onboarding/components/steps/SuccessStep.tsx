@@ -20,7 +20,7 @@ export function SuccessStep({}: StepProps) {
   };
 
   return (
-    <div className="text-center space-y-6">
+    <div className="text-center space-y-8">
       {/* Success Icon */}
       <div className="flex justify-center">
         <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center">
@@ -33,7 +33,7 @@ export function SuccessStep({}: StepProps) {
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-gray-900">
           Welcome to PayMatch! 🎉
         </h2>
-        <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="mt-4 sm:mt-6 text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
           Your account has been set up successfully. You&apos;re now ready to
           create Swiss QR-Bill compliant invoices and manage your business
           finances.
@@ -42,7 +42,7 @@ export function SuccessStep({}: StepProps) {
 
       {/* What's Next */}
       <div className="bg-red-50 rounded-lg p-6 border border-red-200">
-        <h3 className="text-3xl font-medium tracking-tight text-gray-900 mb-6">
+        <h3 className="text-lg font-medium text-gray-900 mb-6">
           What&apos;s Next?
         </h3>
 

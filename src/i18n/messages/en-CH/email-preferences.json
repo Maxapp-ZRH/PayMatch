@@ -1,0 +1,99 @@
+{
+  "title": "Email Preferences",
+  "subtitle": "Manage your email preferences and choose which types of communications you'd like to receive from PayMatch.",
+  "managingFor": "Managing preferences for:",
+  "successMessage": "Email preferences updated successfully!",
+  "errorMessage": "Failed to load email preferences. Please try again.",
+  "updateErrorMessage": "Failed to update {emailType} preference. Please try again.",
+  "mandatoryErrorMessage": "This email type is mandatory and cannot be disabled.",
+  "sections": {
+    "introduction": {
+      "title": "Manage Your Email Communications",
+      "content": "You have control over most emails you receive from PayMatch. You can subscribe or unsubscribe from different types of communications at any time. However, some emails are mandatory for account security and cannot be disabled.",
+      "importantNote": {
+        "title": "Important Note",
+        "content": "Security emails (like login notifications and password resets) are mandatory and cannot be disabled. Other emails can be toggled on/off, but consider the consequences before making changes."
+      }
+    },
+    "categories": {
+      "title": "Email Categories"
+    },
+    "footer": {
+      "autoSave": "Changes are saved automatically when you toggle preferences.",
+      "updateAnytime": "You can update these settings at any time."
+    }
+  },
+  "auth": {
+    "signInRequired": {
+      "title": "Sign in to manage your email preferences",
+      "description": "You need to be signed in to view and manage your email preferences. Sign in to your PayMatch account to continue.",
+      "signIn": "Sign In",
+      "createAccount": "Create Account"
+    }
+  },
+  "emailTypes": {
+    "newsletter_promotional": {
+      "title": "Promotional Emails",
+      "description": "Marketing campaigns, special offers, product announcements, and sales promotions.",
+      "consequence": "You may miss out on exclusive deals and important product updates."
+    },
+    "newsletter_informational": {
+      "title": "Educational Content",
+      "description": "Product tips, how-to guides, best practices, and educational resources.",
+      "consequence": "You may miss helpful tips and guides to get the most out of PayMatch."
+    },
+    "newsletter_news": {
+      "title": "Company News",
+      "description": "Company updates, new features, industry insights, and important announcements.",
+      "consequence": "You may miss important updates about new features and company news."
+    },
+    "business_notifications": {
+      "title": "Business Notifications",
+      "description": "Invoice status updates, payment confirmations, and account-related notifications.",
+      "consequence": "You may miss important updates about your invoices and payments."
+    },
+    "overdue_alerts": {
+      "title": "Overdue Payment Alerts",
+      "description": "Notifications about overdue payments from your clients.",
+      "consequence": "You may not be alerted to overdue payments, affecting your cash flow."
+    },
+    "support": {
+      "title": "Support Communications",
+      "description": "Responses to your support requests and help desk communications.",
+      "consequence": "You may not receive responses to your support requests."
+    },
+    "transactional": {
+      "title": "Account Updates",
+      "description": "Account confirmations, receipts, and other essential account communications.",
+      "consequence": "You may miss important account-related information."
+    },
+    "security": {
+      "title": "Security Alerts",
+      "description": "Login notifications, password reset confirmations, and security alerts.",
+      "consequence": "You may not be notified of suspicious account activity or security issues."
+    },
+    "legal": {
+      "title": "Legal Updates",
+      "description": "Terms of service changes, privacy policy updates, and legal notifications.",
+      "consequence": "You may miss important legal updates that affect your account."
+    }
+  },
+  "categories": {
+    "marketing": "Marketing",
+    "transactional": "Transactional",
+    "security": "Security",
+    "legal": "Legal",
+    "informational": "Informational"
+  },
+  "labels": {
+    "required": "Required",
+    "essential": "Essential",
+    "consequence": "Consequence",
+    "requiresMarketingConsent": "Requires Marketing Consent",
+    "essentialDescription": "This email type is required for account security and cannot be disabled."
+  },
+  "actions": {
+    "contactSupport": "Contact Support",
+    "privacyPolicy": "Privacy Policy"
+  }
+}

@@ -45,7 +45,6 @@ export async function getAuthUserSafely(supabase: {
 
     if (sessionError) {
       // If session error, try to refresh
-      console.log('Session error, attempting refresh:', sessionError.message);
       const {
         data: { session: refreshedSession },
         error: refreshError,

@@ -482,3 +482,94 @@ export function formatSwissInvoiceTotals(
     total: formatSwissCurrency(total),
   };
 }
+
+/**
+ * Format and validate website URL
+ * Automatically adds https:// if not present
+ */
+export function formatWebsiteURL(url: string): string {
+  if (!url) return '';
+
+  // Remove any existing protocol
+  const cleanUrl = url.replace(/^https?:\/\//, '');
+
+  // Add https:// if no protocol is present
+  return `https://${cleanUrl}`;
+}
+
+/**
+ * Format Swiss phone number with proper spacing as user types
+ */
+export function formatSwissPhoneNumberInput(value: string): string {
+  // Remove all non-digit characters
+  const digits = value.replace(/\D/g, '');
+
+  // Handle Swiss phone number formatting
+  if (digits.startsWith('41')) {
+    // International format: +41 XX XXX XX XX
+    if (digits.length <= 2) return `+${digits}`;
+    if (digits.length <= 4) return `+${digits.slice(0, 2)} ${digits.slice(2)}`;
+    if (digits.length <= 7)
+      return `+${digits.slice(0, 2)} ${digits.slice(2, 4)} ${digits.slice(4)}`;
+    if (digits.length <= 9)
+      return `+${digits.slice(0, 2)} ${digits.slice(2, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
+    return `+${digits.slice(0, 2)} ${digits.slice(2, 4)} ${digits.slice(4, 7)} ${digits.slice(7, 9)} ${digits.slice(9, 11)}`;
+  } else if (digits.startsWith('0')) {
+    // National format: 0XX XXX XX XX
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 3)} ${digits.slice(3)}`;
+    if (digits.length <= 8)
+      return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
+    return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 8)} ${digits.slice(8, 10)}`;
+  }
+
+  // For other formats, just add spaces every 3 digits
+  return digits.replace(/(\d{3})(?=\d)/g, '$1 ');
+}
+
+/**
+ * Format Swiss IBAN with proper spacing as user types
+ * Swiss IBAN format: CH + 2 check digits + 5 bank code + 12 account number (21 characters total)
+ */
+export function formatSwissIBANInput(value: string): string {
+  // Remove all non-alphanumeric characters and convert to uppercase
+  const cleanValue = value.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+
+  // Limit to 21 characters (Swiss IBAN length)
+  const limitedValue = cleanValue.substring(0, 21);
+
+  // Swiss IBAN format: CH44 3199 9123 0008 8901 2
+  if (limitedValue.startsWith('CH')) {
+    // Format with spaces every 4 characters
+    return limitedValue.replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  return limitedValue;
+}
+
+/**
+ * Format Swiss VAT number with proper formatting as user types
+ */
+export function formatSwissVATNumberInput(value: string): string {
+  // Remove all non-digit characters
+  const digits = value.replace(/\D/g, '');
+
+  // Swiss VAT format: CHE-123.456.789
+  if (digits.length === 0) return '';
+  if (digits.length <= 3) return `CHE-${digits}`;
+  if (digits.length <= 6) return `CHE-${digits.slice(0, 3)}.${digits.slice(3)}`;
+  if (digits.length <= 9)
+    return `CHE-${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+  return `CHE-${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}`;
+}
+
+/**
+ * Format Swiss postal code with proper formatting as user types
+ */
+export function formatSwissPostalCodeInput(value: string): string {
+  // Remove all non-digit characters
+  const digits = value.replace(/\D/g, '');
+
+  // Swiss postal codes are 4 digits
+  return digits.slice(0, 4);
+}

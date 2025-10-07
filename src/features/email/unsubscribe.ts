@@ -7,7 +7,16 @@
 
 import { createHash, randomBytes } from 'crypto';
 
-export type EmailType = 'newsletter' | 'support' | 'transactional';
+export type EmailType =
+  | 'newsletter_promotional'
+  | 'newsletter_informational'
+  | 'newsletter_news'
+  | 'support'
+  | 'transactional'
+  | 'security'
+  | 'legal'
+  | 'business_notifications'
+  | 'overdue_alerts';
 
 export interface UnsubscribeTokenData {
   email: string;

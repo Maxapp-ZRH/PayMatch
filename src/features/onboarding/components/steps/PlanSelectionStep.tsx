@@ -10,11 +10,7 @@
 import { useState } from 'react';
 import { ArrowRight, Loader2, Gift } from 'lucide-react';
 import { PlanName, BillingPeriod } from '@/config/plans';
-import {
-  BillingToggle,
-  PlanCard,
-  SaveBadge,
-} from '@/components/shared/pricing';
+import { BillingToggle, PlanCard } from '@/components/shared/pricing';
 import { useAllPlansData, useAllPlansPricing } from '@/hooks/pricing';
 import type { PlanData } from '@/lib/pricing/plan-types';
 import { createCheckoutSession } from '@/features/stripe/server/actions/create-checkout-session';
@@ -112,13 +108,8 @@ export function PlanSelectionStep({ onNext, formData }: StepProps) {
         />
       </div>
 
-      {/* Save Badge */}
-      <div className="flex justify-center">
-        <SaveBadge discountPercent={20} />
-      </div>
-
       {/* Plan Cards - Responsive Grid */}
-      <div className="mx-auto grid max-w-4xl grid-cols-1 items-start gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:max-w-none lg:grid-cols-3">
+      <div className="grid grid-cols-1 items-start gap-x-8 gap-y-8 lg:grid-cols-3">
         {paidPlans.map((plan: PlanData) => {
           const isSelected = selectedPlan === plan.name;
           const pricing = pricingData.find((p) => p.planName === plan.name);

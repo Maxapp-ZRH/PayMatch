@@ -1,0 +1,99 @@
+{
+  "title": "E-Mail-Einstellungen",
+  "subtitle": "Verwalten Sie Ihre E-Mail-Einstellungen und wählen Sie aus, welche Arten von Kommunikationen Sie von PayMatch erhalten möchten.",
+  "managingFor": "Einstellungen verwalten für:",
+  "successMessage": "E-Mail-Einstellungen erfolgreich aktualisiert!",
+  "errorMessage": "Fehler beim Laden der E-Mail-Einstellungen. Bitte versuchen Sie es erneut.",
+  "updateErrorMessage": "Fehler beim Aktualisieren der {emailType}-Einstellung. Bitte versuchen Sie es erneut.",
+  "mandatoryErrorMessage": "Diese E-Mail-Art ist obligatorisch und kann nicht deaktiviert werden.",
+  "sections": {
+    "introduction": {
+      "title": "Verwalten Sie Ihre E-Mail-Kommunikation",
+      "content": "Sie haben Kontrolle über die meisten E-Mails, die Sie von PayMatch erhalten. Sie können sich jederzeit für verschiedene Arten von Kommunikationen anmelden oder abmelden. Einige E-Mails sind jedoch für die Kontosicherheit obligatorisch und können nicht deaktiviert werden.",
+      "importantNote": {
+        "title": "Wichtiger Hinweis",
+        "content": "Sicherheits-E-Mails (wie Anmeldebenachrichtigungen und Passwort-Zurücksetzungen) sind obligatorisch und können nicht deaktiviert werden. Andere E-Mails können ein-/ausgeschaltet werden, aber überlegen Sie die Konsequenzen, bevor Sie Änderungen vornehmen."
+      }
+    },
+    "categories": {
+      "title": "E-Mail-Kategorien"
+    },
+    "footer": {
+      "autoSave": "Änderungen werden automatisch gespeichert, wenn Sie Einstellungen umschalten.",
+      "updateAnytime": "Sie können diese Einstellungen jederzeit aktualisieren."
+    }
+  },
+  "auth": {
+    "signInRequired": {
+      "title": "Melden Sie sich an, um Ihre E-Mail-Einstellungen zu verwalten",
+      "description": "Sie müssen angemeldet sein, um Ihre E-Mail-Einstellungen anzuzeigen und zu verwalten. Melden Sie sich in Ihrem PayMatch-Konto an, um fortzufahren.",
+      "signIn": "Anmelden",
+      "createAccount": "Konto erstellen"
+    }
+  },
+  "emailTypes": {
+    "newsletter_promotional": {
+      "title": "Werbliche E-Mails",
+      "description": "Marketing-Kampagnen, Sonderangebote, Produktankündigungen und Verkaufsförderungen.",
+      "consequence": "Sie könnten exklusive Angebote und wichtige Produktupdates verpassen."
+    },
+    "newsletter_informational": {
+      "title": "Bildungsinhalte",
+      "description": "Produkttipps, Anleitungen, Best Practices und Bildungsressourcen.",
+      "consequence": "Sie könnten hilfreiche Tipps und Anleitungen verpassen, um das Beste aus PayMatch herauszuholen."
+    },
+    "newsletter_news": {
+      "title": "Unternehmensnachrichten",
+      "description": "Unternehmensupdates, neue Funktionen, Brancheneinblicke und wichtige Ankündigungen.",
+      "consequence": "Sie könnten wichtige Updates über neue Funktionen und Unternehmensnachrichten verpassen."
+    },
+    "business_notifications": {
+      "title": "Geschäftsbenachrichtigungen",
+      "description": "Rechnungsstatus-Updates, Zahlungsbestätigungen und kontobezogene Benachrichtigungen.",
+      "consequence": "Sie könnten wichtige Updates über Ihre Rechnungen und Zahlungen verpassen."
+    },
+    "overdue_alerts": {
+      "title": "Überfällige Zahlungsalarme",
+      "description": "Benachrichtigungen über überfällige Zahlungen von Ihren Kunden.",
+      "consequence": "Sie werden möglicherweise nicht über überfällige Zahlungen alarmiert, was Ihren Cashflow beeinträchtigen könnte."
+    },
+    "support": {
+      "title": "Support-Kommunikation",
+      "description": "Antworten auf Ihre Support-Anfragen und Helpdesk-Kommunikation.",
+      "consequence": "Sie erhalten möglicherweise keine Antworten auf Ihre Support-Anfragen."
+    },
+    "transactional": {
+      "title": "Konto-Updates",
+      "description": "Kontobestätigungen, Quittungen und andere wesentliche Konto-Kommunikationen.",
+      "consequence": "Sie könnten wichtige kontobezogene Informationen verpassen."
+    },
+    "security": {
+      "title": "Sicherheitsalarme",
+      "description": "Anmeldebenachrichtigungen, Passwort-Zurücksetzungsbestätigungen und Sicherheitsalarme.",
+      "consequence": "Sie werden möglicherweise nicht über verdächtige Kontoaktivitäten oder Sicherheitsprobleme benachrichtigt."
+    },
+    "legal": {
+      "title": "Rechtliche Updates",
+      "description": "Änderungen der Nutzungsbedingungen, Datenschutzrichtlinien-Updates und rechtliche Benachrichtigungen.",
+      "consequence": "Sie könnten wichtige rechtliche Updates verpassen, die Ihr Konto betreffen."
+    }
+  },
+  "categories": {
+    "marketing": "Marketing",
+    "transactional": "Transaktional",
+    "security": "Sicherheit",
+    "legal": "Rechtlich",
+    "informational": "Informativ"
+  },
+  "labels": {
+    "required": "Erforderlich",
+    "essential": "Wesentlich",
+    "consequence": "Konsequenz",
+    "requiresMarketingConsent": "Erfordert Marketing-Einverständnis",
+    "essentialDescription": "Diese E-Mail-Art ist für die Kontosicherheit erforderlich und kann nicht deaktiviert werden."
+  },
+  "actions": {
+    "contactSupport": "Support kontaktieren",
+    "privacyPolicy": "Datenschutzrichtlinie"
+  }
+}

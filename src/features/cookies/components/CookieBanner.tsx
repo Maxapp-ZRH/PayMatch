@@ -108,11 +108,9 @@ function CookieBanner({ onDismiss }: CookieBannerProps) {
     // Initialize analytics/marketing tools based on preferences
     if (prefs.analytics) {
       // Initialize analytics (e.g., Google Analytics)
-      console.log('Analytics cookies accepted');
     }
     if (prefs.marketing) {
       // Initialize marketing tools (e.g., Facebook Pixel)
-      console.log('Marketing cookies accepted');
     }
 
     // Dispatch custom event to notify other components of consent change

@@ -8,6 +8,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { syncEmailPreferences } from '../../services/email-preferences-integration-server';
 
 import type {
   UpdateOnboardingStepData,
@@ -19,7 +20,8 @@ interface OrganizationUpdateData {
   updated_at: string;
   name?: string;
   legal_name?: string;
-  street?: string;
+  address_line_1?: string;
+  address_line_2?: string;
   city?: string;
   zip?: string;
   country?: string;
@@ -79,8 +81,11 @@ export async function updateOnboardingStep(
           updateData.name = data.stepData.companyName as string;
           updateData.legal_name = data.stepData.companyName as string;
         }
-        if ('address' in data.stepData && data.stepData.address) {
-          updateData.street = data.stepData.address as string;
+        if ('address_line_1' in data.stepData && data.stepData.address_line_1) {
+          updateData.address_line_1 = data.stepData.address_line_1 as string;
+        }
+        if ('address_line_2' in data.stepData && data.stepData.address_line_2) {
+          updateData.address_line_2 = data.stepData.address_line_2 as string;
         }
         if ('city' in data.stepData && data.stepData.city) {
           updateData.city = data.stepData.city as string;
@@ -162,24 +167,12 @@ export async function updateOnboardingStep(
         if ('reminderDays' in data.stepData && data.stepData.reminderDays) {
           updateData.reminder_days = data.stepData.reminderDays as string;
         }
-        if (
-          'vatRegistered' in data.stepData &&
-          data.stepData.vatRegistered !== undefined
-        ) {
-          // VAT registration status is handled by the VAT rates configuration
-          // We'll set default VAT rates based on registration status
-          if (data.stepData.vatRegistered) {
-            updateData.default_vat_rates = [
-              { name: 'Standard Rate', rate: 7.7, type: 'standard' },
-              { name: 'Reduced Rate', rate: 2.5, type: 'reduced' },
-              { name: 'Zero Rate', rate: 0, type: 'zero' },
-            ];
-          } else {
-            updateData.default_vat_rates = [
-              { name: 'Zero Rate', rate: 0, type: 'zero' },
-            ];
-          }
-        }
+        // Always set standard Swiss VAT rates for Swiss businesses
+        updateData.default_vat_rates = [
+          { name: 'Standard Rate', rate: 7.7, type: 'standard' },
+          { name: 'Reduced Rate', rate: 2.5, type: 'reduced' },
+          { name: 'Zero Rate', rate: 0, type: 'zero' },
+        ];
         if (
           'defaultVatRates' in data.stepData &&
           data.stepData.defaultVatRates
@@ -207,6 +200,36 @@ export async function updateOnboardingStep(
         message: 'Failed to update onboarding step',
         error: updateError.message,
       };
+    }
+
+    // Sync email preferences if this is the settings step (step 3)
+    if (data.step === 3 && data.stepData) {
+      try {
+        const emailSettings = {
+          emailNotifications: Boolean(data.stepData.emailNotifications ?? true),
+          autoReminders: Boolean(data.stepData.autoReminders ?? true),
+          reminderDays:
+            typeof data.stepData.reminderDays === 'string'
+              ? data.stepData.reminderDays
+              : undefined,
+        };
+
+        // Get user email from organization (use billing_email as fallback)
+        const { data: orgData } = await supabase
+          .from('organizations')
+          .select('owner_email, billing_email')
+          .eq('id', data.orgId)
+          .single();
+
+        const userEmail =
+          orgData?.owner_email || orgData?.billing_email || user.email;
+        if (userEmail) {
+          await syncEmailPreferences(userEmail, emailSettings, user.id);
+        }
+      } catch (emailError) {
+        console.error('Failed to sync email preferences:', emailError);
+        // Don't fail the entire operation if email sync fails
+      }
     }
 
     return {

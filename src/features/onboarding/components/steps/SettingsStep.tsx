@@ -7,28 +7,29 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, {
+  useEffect,
+  useCallback,
+  useImperativeHandle,
+  forwardRef,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Save, Info, Mail, Clock } from 'lucide-react';
-import { Button } from '@/components/marketing_pages/Button';
+import { Info, Mail, Clock } from 'lucide-react';
 import { SelectField } from '@/components/ui/select-field';
+import { TextField } from '@/components/ui/text-field';
 import {
   settingsSchema,
   type SettingsFormData,
 } from '../../schemas/settings-schema';
 import type { StepProps } from '../../types';
-import { useProgressiveSave, useDraftData } from '../../hooks';
+import { useDraftData } from '../../hooks';
 
-export function SettingsStep({ formData, onNext }: StepProps) {
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Progressive saving hooks
-  const { saveDraft, isSaving } = useProgressiveSave({
-    orgId: formData.orgId!,
-    currentStep: 3,
-  });
-
+export const SettingsStep = forwardRef<
+  { submitForm: () => Promise<void> },
+  StepProps
+>(function SettingsStep({ formData, onNext, saveOnBlur }, ref) {
+  // Draft data loading
   const { draftData, isLoading: isLoadingDraft } = useDraftData({
     orgId: formData.orgId!,
   });
@@ -38,7 +39,7 @@ export function SettingsStep({ formData, onNext }: StepProps) {
     handleSubmit,
     formState: { errors },
     setValue,
-    watch,
+    getValues,
     clearErrors,
   } = useForm({
     resolver: zodResolver(settingsSchema),
@@ -52,80 +53,77 @@ export function SettingsStep({ formData, onNext }: StepProps) {
       emailNotifications: formData.emailNotifications ?? true,
       autoReminders: formData.autoReminders ?? true,
       reminderDays: formData.reminderDays || '7,14,30',
-      vatRegistered: formData.vatRegistered ?? false,
       defaultVatRates: formData.defaultVatRates ?? [],
     },
   });
 
   // Watch all form values for progressive saving
-  const watchedValues = watch();
-
-  // Load draft data when available
+  // Load draft data when available (fallback for any missing data)
   useEffect(() => {
     if (draftData && !isLoadingDraft) {
       Object.entries(draftData).forEach(([key, value]) => {
-        setValue(key as keyof SettingsFormData, value as string | boolean);
+        // Only set values that aren't already set from formData prop
+        const currentValue = getValues(key as keyof SettingsFormData);
+        if (!currentValue && value) {
+          setValue(key as keyof SettingsFormData, value as string | boolean);
+        }
       });
     }
-  }, [draftData, isLoadingDraft, setValue]);
+  }, [draftData, isLoadingDraft, setValue, getValues]);
 
-  // Progressive saving on form changes (debounced)
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (Object.keys(watchedValues).length > 0) {
-        saveDraft(watchedValues);
-      }
-    }, 1000); // 1 second debounce
+  // Save on blur handler
+  const handleBlur = useCallback(() => {
+    const currentValues = getValues();
+    if (saveOnBlur && Object.keys(currentValues).length > 0) {
+      saveOnBlur(currentValues);
+    }
+  }, [getValues, saveOnBlur]);
 
-    return () => clearTimeout(timeoutId);
-  }, [watchedValues, saveDraft]);
-
-  const onSubmit = async (data: SettingsFormData) => {
+  const handleFormSubmit = async (data: SettingsFormData) => {
     clearErrors();
-    setIsLoading(true);
-
     try {
       onNext(data);
     } catch (error) {
       console.error('Form submission error:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
+  // Expose form submission function to parent
+  useImperativeHandle(ref, () => ({
+    submitForm: async () => {
+      const formData = getValues();
+      // Ensure defaultVatRates is always an array
+      const dataWithDefaults = {
+        ...formData,
+        defaultVatRates: formData.defaultVatRates || [],
+      };
+      await handleFormSubmit(dataWithDefaults);
+    },
+  }));
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header Section */}
       <div className="text-center">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-gray-900">
-          Settings & Preferences
+          Settings
         </h1>
-        <p className="mt-2 text-base sm:text-lg text-gray-600">
+        <p className="mt-4 sm:mt-6 text-base sm:text-lg text-gray-600">
           Configure your default settings for invoicing and notifications.
         </p>
       </div>
 
-      {/* Save Status Indicator */}
-      {isSaving && (
-        <div className="flex justify-center">
-          <div className="flex items-center space-x-1 text-sm text-red-600">
-            <Save className="w-4 h-4" />
-            <span>Saving...</span>
-          </div>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Currency & Language */}
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
+        {/* General Settings */}
         <div className="space-y-6">
-          <h2 className="text-lg font-medium text-gray-900">
-            Currency & Language
-          </h2>
+          <h2 className="text-lg font-medium text-gray-900">General</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Default Currency */}
             <SelectField
               label="Default Currency"
+              required
               {...register('defaultCurrency')}
+              onBlur={handleBlur}
               error={errors.defaultCurrency?.message}
             >
               <option value="CHF">Swiss Franc (CHF)</option>
@@ -135,7 +133,9 @@ export function SettingsStep({ formData, onNext }: StepProps) {
             {/* Language */}
             <SelectField
               label="Language"
+              required
               {...register('language')}
+              onBlur={handleBlur}
               error={errors.language?.message}
             >
               <option value="en">English</option>
@@ -144,19 +144,21 @@ export function SettingsStep({ formData, onNext }: StepProps) {
               <option value="it">Italiano</option>
             </SelectField>
 
-            {/* Timezone */}
-            <SelectField
-              className="lg:col-span-2"
-              label="Timezone"
-              {...register('timezone')}
-              error={errors.timezone?.message}
-            >
-              <option value="Europe/Zurich">Europe/Zurich (Switzerland)</option>
-              <option value="Europe/Berlin">Europe/Berlin (Germany)</option>
-              <option value="Europe/Vienna">Europe/Vienna (Austria)</option>
-              <option value="Europe/Paris">Europe/Paris (France)</option>
-              <option value="Europe/Rome">Europe/Rome (Italy)</option>
-            </SelectField>
+            {/* Timezone - Hidden field with subtle note */}
+            <div className="lg:col-span-2">
+              <div className="flex items-center text-sm text-gray-500 bg-blue-50 border border-blue-200 rounded-md px-3 py-2">
+                <Clock className="h-4 w-4 text-blue-500 mr-2 flex-shrink-0" />
+                <span>
+                  Timezone: Europe/Zurich (CET/CEST) - Automatically set for
+                  Swiss businesses
+                </span>
+              </div>
+              <input
+                type="hidden"
+                {...register('timezone')}
+                value="Europe/Zurich"
+              />
+            </div>
           </div>
         </div>
 
@@ -169,86 +171,68 @@ export function SettingsStep({ formData, onNext }: StepProps) {
             {/* Invoice Numbering */}
             <SelectField
               label="Invoice Numbering"
+              required
               {...register('invoiceNumbering')}
+              onBlur={handleBlur}
               error={errors.invoiceNumbering?.message}
             >
               <option value="sequential">Sequential (001, 002, 003...)</option>
               <option value="year-prefix">
                 Year Prefix (2024-001, 2024-002...)
               </option>
-              <option value="custom">Custom Format</option>
             </SelectField>
 
             {/* Payment Terms */}
-            <SelectField
-              label="Default Payment Terms (Days)"
-              {...register('paymentTerms')}
-              error={errors.paymentTerms?.message}
-            >
-              <option value="7">7 days</option>
-              <option value="14">14 days</option>
-              <option value="30">30 days</option>
-              <option value="60">60 days</option>
-              <option value="90">90 days</option>
-            </SelectField>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Default Payment Terms (Days){' '}
+                  <span className="text-red-500">*</span>
+                </label>
+                <div className="group relative">
+                  <Info className="h-4 w-4 text-gray-400 cursor-help" />
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-4 py-3 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                    <div className="max-w-xs">
+                      <div className="font-semibold mb-1">
+                        Default Payment Terms
+                      </div>
+                      <div>
+                        This sets the default number of days customers have to
+                        pay invoices. You can change this for individual
+                        invoices later.
+                      </div>
+                    </div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                  </div>
+                </div>
+              </div>
+              <SelectField
+                {...register('paymentTerms')}
+                onBlur={handleBlur}
+                error={errors.paymentTerms?.message}
+              >
+                <option value="7">7 days</option>
+                <option value="14">14 days</option>
+                <option value="30">30 days</option>
+                <option value="60">60 days</option>
+                <option value="90">90 days</option>
+              </SelectField>
+            </div>
           </div>
         </div>
 
-        {/* VAT Configuration */}
+        {/* VAT Information */}
         <div className="space-y-6">
-          <h2 className="text-lg font-medium text-gray-900">
-            VAT Configuration
-          </h2>
+          <h2 className="text-lg font-medium text-gray-900">VAT Information</h2>
           <div className="space-y-4">
-            {/* VAT Registered */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <Mail className="w-5 h-5 text-red-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">
-                    VAT Registered
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Are you registered for VAT in Switzerland?
-                  </p>
-                </div>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  {...register('vatRegistered')}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
-              </label>
-            </div>
-
-            {/* Default VAT Rates */}
-            <div className="space-y-3">
-              <label className="block text-sm font-medium text-gray-700">
-                Default VAT Rates
-              </label>
-              <div className="space-y-2">
-                <div className="text-sm text-gray-500">
-                  Standard Swiss VAT rates will be pre-configured:
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="font-medium">Standard Rate</div>
-                    <div className="text-gray-600">7.7%</div>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="font-medium">Reduced Rate</div>
-                    <div className="text-gray-600">2.5%</div>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="font-medium">Zero Rate</div>
-                    <div className="text-gray-600">0%</div>
-                  </div>
-                </div>
-              </div>
+            {/* Swiss VAT Rates Info */}
+            <div className="flex items-center text-sm text-gray-500 bg-blue-50 border border-blue-200 rounded-md px-3 py-2">
+              <Info className="h-4 w-4 text-blue-500 mr-2 flex-shrink-0" />
+              <span>
+                Swiss VAT rates (7.7% standard, 2.5% reduced, 0% zero) are
+                automatically configured for all invoices. You can customize
+                rates per invoice if needed.
+              </span>
             </div>
           </div>
         </div>
@@ -270,7 +254,7 @@ export function SettingsStep({ formData, onNext }: StepProps) {
                     Email Notifications
                   </h3>
                   <p className="text-sm text-gray-500">
-                    Receive notifications via email
+                    Receive notifications about invoice status changes
                   </p>
                 </div>
               </div>
@@ -284,7 +268,7 @@ export function SettingsStep({ formData, onNext }: StepProps) {
               </label>
             </div>
 
-            {/* Auto Reminders */}
+            {/* Overdue Alerts */}
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-red-100 rounded-lg">
@@ -292,10 +276,10 @@ export function SettingsStep({ formData, onNext }: StepProps) {
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-900">
-                    Automatic Reminders
+                    Overdue Alerts
                   </h3>
                   <p className="text-sm text-gray-500">
-                    Send automatic payment reminders
+                    Get notified when customers haven&apos;t paid on time
                   </p>
                 </div>
               </div>
@@ -308,39 +292,48 @@ export function SettingsStep({ formData, onNext }: StepProps) {
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
               </label>
             </div>
+
+            {/* Alert Days - Show only if overdue alerts is enabled */}
+            {getValues('autoReminders') && (
+              <div className="p-4 bg-white border border-gray-200 rounded-lg">
+                <TextField
+                  label="Alert Schedule"
+                  type="text"
+                  placeholder="7,14,30"
+                  {...register('reminderDays')}
+                  onBlur={handleBlur}
+                  error={errors.reminderDays?.message}
+                />
+                <p className="mt-2 text-sm text-gray-500">
+                  Days after due date to send you overdue alerts (e.g., 7,14,30)
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Info Box */}
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        {/* GDPR Compliance Notice */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex">
             <div className="flex-shrink-0">
-              <Info className="h-5 w-5 text-red-400" />
+              <Info className="h-5 w-5 text-blue-400" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
-                Settings Saved
+              <h3 className="text-sm font-medium text-blue-800">
+                Email Preferences & GDPR Compliance
               </h3>
-              <div className="mt-2 text-sm text-red-700">
+              <div className="mt-2 text-sm text-blue-700">
                 <p>
-                  You can always change these settings later in your dashboard.
-                  These preferences will be applied to all new invoices and
-                  notifications.
+                  Business notifications are necessary for service operation and
+                  are automatically enabled. You can manage all email settings
+                  in your account preferences. We comply with Swiss FADP data
+                  protection laws and respect your privacy.
                 </p>
               </div>
             </div>
           </div>
         </div>
-
-        <Button
-          type="submit"
-          color="swiss"
-          className="w-full"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Saving...' : 'Complete Setup'}
-        </Button>
       </form>
     </div>
   );
-}
+});

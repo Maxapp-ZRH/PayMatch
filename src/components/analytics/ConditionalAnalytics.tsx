@@ -27,15 +27,7 @@ export function ConditionalAnalytics() {
         setAnalyticsEnabled(hasAnalyticsConsent);
         setIsInitialized(true);
 
-        if (hasAnalyticsConsent) {
-          console.log(
-            '✅ Analytics enabled - user has consented to analytics cookies'
-          );
-        } else {
-          console.log(
-            '🚫 Analytics disabled - user has not consented to analytics cookies'
-          );
-        }
+        // Analytics consent status determined
       } catch (error) {
         console.error('Error checking analytics consent:', error);
         // Default to disabled for privacy

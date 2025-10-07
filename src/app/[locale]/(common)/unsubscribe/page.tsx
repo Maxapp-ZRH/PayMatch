@@ -21,7 +21,16 @@ interface Subscriber {
   firstName?: string;
   lastName?: string;
   isActive: boolean;
-  emailType: 'newsletter' | 'support' | 'transactional';
+  emailType:
+    | 'newsletter_promotional'
+    | 'newsletter_informational'
+    | 'newsletter_news'
+    | 'support'
+    | 'transactional'
+    | 'security'
+    | 'legal'
+    | 'business_notifications'
+    | 'overdue_alerts';
 }
 
 interface UnsubscribeResponse {
@@ -43,8 +52,16 @@ export default function UnsubscribePage() {
   const [isUnsubscribed, setIsUnsubscribed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [emailType, setEmailType] = useState<
-    'newsletter' | 'support' | 'transactional'
-  >('newsletter');
+    | 'newsletter_promotional'
+    | 'newsletter_informational'
+    | 'newsletter_news'
+    | 'support'
+    | 'transactional'
+    | 'security'
+    | 'legal'
+    | 'business_notifications'
+    | 'overdue_alerts'
+  >('newsletter_promotional');
 
   // Helper function to get user-friendly error messages
   const getErrorMessage = (errorCode: string): string => {
@@ -61,7 +78,7 @@ export default function UnsubscribePage() {
   // Helper function to get email type display name
   const getEmailTypeDisplayName = (type: string): string => {
     switch (type) {
-      case 'newsletter':
+      case 'newsletter_promotional':
         return 'PayMatch Newsletter';
       case 'support':
         return 'Support Emails';
@@ -228,7 +245,8 @@ export default function UnsubscribePage() {
             <p className="text-gray-600 mb-6">
               You have been unsubscribed from{' '}
               {getEmailTypeDisplayName(emailType)}. You will no longer receive{' '}
-              {emailType === 'newsletter' ? 'updates' : 'emails'} from us.
+              {emailType === 'newsletter_promotional' ? 'updates' : 'emails'}{' '}
+              from us.
             </p>
             <div className="space-y-3">
               <Link href="/" className="block">
@@ -282,7 +300,7 @@ export default function UnsubscribePage() {
           {subscriber && (
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
               <p className="text-sm text-gray-600 mb-1">
-                {emailType === 'newsletter'
+                {emailType === 'newsletter_promotional'
                   ? 'Subscribed as:'
                   : 'Email address:'}
               </p>
@@ -321,7 +339,7 @@ export default function UnsubscribePage() {
 
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-500">
-              {emailType === 'newsletter'
+              {emailType === 'newsletter_promotional'
                 ? 'You can always resubscribe by visiting our website and using the newsletter signup form.'
                 : 'You can always re-enable these emails by contacting our support team.'}
             </p>

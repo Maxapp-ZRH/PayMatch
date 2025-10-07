@@ -26,13 +26,13 @@ export default async function OnboardingPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Get user's organization
+  // Get user's organization with onboarding step
   const { data: orgMembership } = await supabase
     .from('organization_users')
     .select(
       `
       org_id,
-      organizations!inner(id, name, plan)
+      organizations!inner(id, name, plan, onboarding_step)
     `
     )
     .eq('user_id', user!.id)
@@ -40,7 +40,7 @@ export default async function OnboardingPage() {
     .single();
 
   const org = orgMembership?.organizations as
-    | { id: string; name: string; plan: string }
+    | { id: string; name: string; plan: string; onboarding_step: number }
     | undefined;
 
   if (!org) {
@@ -48,5 +48,14 @@ export default async function OnboardingPage() {
     redirect('/login');
   }
 
-  return <OnboardingWizard orgId={org.id} initialPlan={org.plan as PlanName} />;
+  // Use the stored onboarding step, but ensure it's valid (1-4)
+  const currentStep = Math.max(1, Math.min(4, org.onboarding_step || 1));
+
+  return (
+    <OnboardingWizard
+      orgId={org.id}
+      initialPlan={org.plan as PlanName}
+      initialStep={currentStep}
+    />
+  );
 }

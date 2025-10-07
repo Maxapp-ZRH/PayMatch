@@ -38,7 +38,7 @@ export const settingsSchema = z.object({
   invoiceNumbering: z
     .string()
     .min(1, 'Invoice numbering is required')
-    .refine((val) => ['sequential', 'year-prefix', 'custom'].includes(val), {
+    .refine((val) => ['sequential', 'year-prefix'].includes(val), {
       message: 'Please select a valid invoice numbering format',
     }),
   paymentTerms: z
@@ -63,7 +63,6 @@ export const settingsSchema = z.object({
         message: 'Reminder days must be comma-separated numbers',
       }
     ),
-  vatRegistered: z.boolean(),
   defaultVatRates: z
     .array(
       z.object({

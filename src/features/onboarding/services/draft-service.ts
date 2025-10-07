@@ -18,61 +18,64 @@ export interface DraftSaveResult {
 
 export class OnboardingDraftService {
   private supabase = createClient();
-  private saveTimeout: NodeJS.Timeout | null = null;
-  private readonly DEBOUNCE_DELAY = 2000; // 2 seconds
 
   /**
-   * Save draft data with debouncing to prevent excessive API calls
+   * Save draft data immediately (debouncing handled by useCentralizedSaving)
+   * Merges new data with existing draft data to preserve all steps
    */
   async saveDraft(
     orgId: string,
     stepData: Partial<OnboardingData>,
     step: number
   ): Promise<DraftSaveResult> {
-    // Clear existing timeout
-    if (this.saveTimeout) {
-      clearTimeout(this.saveTimeout);
+    try {
+      // First, get existing draft data to merge with
+      const { data: existingData } = await this.supabase
+        .from('organizations')
+        .select('onboarding_draft_data')
+        .eq('id', orgId)
+        .single();
+
+      // Merge existing data with new step data
+      const existingDraft = existingData?.onboarding_draft_data;
+      const mergedData = {
+        ...(existingDraft?.data || {}),
+        ...stepData,
+      };
+
+      const { error } = await this.supabase
+        .from('organizations')
+        .update({
+          onboarding_draft_data: {
+            step,
+            data: mergedData,
+            last_saved: new Date().toISOString(),
+          },
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', orgId);
+
+      if (error) {
+        console.error('Error saving draft data:', error);
+        return {
+          success: false,
+          message: 'Failed to save draft data',
+          error: error.message,
+        };
+      }
+
+      return {
+        success: true,
+        message: 'Draft data saved successfully',
+      };
+    } catch (error) {
+      console.error('Error saving draft data:', error);
+      return {
+        success: false,
+        message: 'An unexpected error occurred',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
-
-    return new Promise((resolve) => {
-      this.saveTimeout = setTimeout(async () => {
-        try {
-          const { error } = await this.supabase
-            .from('organizations')
-            .update({
-              onboarding_draft_data: {
-                step,
-                data: stepData,
-                last_saved: new Date().toISOString(),
-              },
-              updated_at: new Date().toISOString(),
-            })
-            .eq('id', orgId);
-
-          if (error) {
-            console.error('Error saving draft data:', error);
-            resolve({
-              success: false,
-              message: 'Failed to save draft data',
-              error: error.message,
-            });
-            return;
-          }
-
-          resolve({
-            success: true,
-            message: 'Draft data saved successfully',
-          });
-        } catch (error) {
-          console.error('Error saving draft data:', error);
-          resolve({
-            success: false,
-            message: 'An unexpected error occurred',
-            error: error instanceof Error ? error.message : 'Unknown error',
-          });
-        }
-      }, this.DEBOUNCE_DELAY);
-    });
   }
 
   /**
@@ -154,16 +157,6 @@ export class OnboardingDraftService {
         message: 'An unexpected error occurred',
         error: error instanceof Error ? error.message : 'Unknown error',
       };
-    }
-  }
-
-  /**
-   * Cancel pending save operations
-   */
-  cancelPendingSave(): void {
-    if (this.saveTimeout) {
-      clearTimeout(this.saveTimeout);
-      this.saveTimeout = null;
     }
   }
 }

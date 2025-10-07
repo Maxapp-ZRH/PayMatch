@@ -5,10 +5,7 @@
  * Ensures GDPR compliance by connecting marketing cookie consent with email subscriptions.
  */
 
-import {
-  NewsletterService,
-  EmailPreferencesService,
-} from '@/features/email/email-service';
+import { EmailPreferencesService } from '@/features/email/email-service';
 import type { CookiePreferences } from '../types/cookie-types';
 
 export class CookieEmailIntegrationService {
@@ -67,11 +64,11 @@ export class CookieEmailIntegrationService {
       if (!marketingConsent) {
         // If marketing consent is withdrawn, disable marketing emails
         if (userEmail) {
-          // Disable newsletter subscription for specific user
-          await NewsletterService.unsubscribe(userEmail);
-
           // Disable marketing email preferences
-          await EmailPreferencesService.unsubscribe(userEmail, 'newsletter');
+          await EmailPreferencesService.unsubscribe(
+            userEmail,
+            'newsletter_promotional'
+          );
         }
 
         return {

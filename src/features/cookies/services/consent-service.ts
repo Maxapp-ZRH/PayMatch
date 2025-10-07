@@ -23,7 +23,9 @@ export type EmailType =
   | 'support'
   | 'transactional'
   | 'security'
-  | 'legal';
+  | 'legal'
+  | 'business_notifications'
+  | 'overdue_alerts';
 
 export class ConsentService {
   private static readonly CONSENT_EXPIRY_DAYS = 730; // 2 years for Switzerland FADP

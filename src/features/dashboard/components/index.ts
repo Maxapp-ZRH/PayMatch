@@ -5,3 +5,5 @@
  */
 
 export * from './BillingSection';
+export * from './SettingsSection';
+export * from './SettingsPageContent';

@@ -86,16 +86,11 @@ export function VerifyEmailForm({
     }
   }, [resendCooldown]);
 
-  // Check verification status periodically
+  // Check verification status periodically and listen for cross-tab communication
   useEffect(() => {
     const checkVerificationStatus = async () => {
       setIsChecking(true);
       try {
-        // With deferred account creation, we don't check for user session here
-        // because the user doesn't exist in Supabase Auth until after email verification
-        // Instead, we'll check if the user has been verified by looking at the URL params
-        // or by checking if they can access the dashboard
-
         // If we have a verified param in the URL, mark as verified
         if (emailVerified) {
           setIsVerified(true);
@@ -106,8 +101,103 @@ export function VerifyEmailForm({
           return;
         }
 
-        // For now, we'll rely on the user clicking the verification link
-        // which will redirect them to the auth callback and then to the appropriate page
+        // Check if user has completed verification in another tab
+        // This happens when user clicks verification link and sets password
+        const verificationComplete = localStorage.getItem(
+          'email-verification-complete'
+        );
+        const verificationEmail = localStorage.getItem(
+          'email-verification-email'
+        );
+
+        if (
+          verificationComplete === 'true' &&
+          verificationEmail === currentEmail
+        ) {
+          setIsVerified(true);
+          // Clear the localStorage flag
+          localStorage.removeItem('email-verification-complete');
+          localStorage.removeItem('email-verification-email');
+
+          // Show success message and redirect to login
+          showToast.success(
+            'Email verified successfully! Please sign in to continue.'
+          );
+          setTimeout(() => {
+            router.push('/login');
+          }, 2000);
+          return;
+        }
+
+        // Check if user session exists (user has completed verification and password setup)
+        if (currentEmail) {
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (user && user.email === currentEmail && user.email_confirmed_at) {
+            setIsVerified(true);
+            showToast.success(
+              'Email verified successfully! Please sign in to continue.'
+            );
+            setTimeout(() => {
+              router.push('/login');
+            }, 2000);
+            return;
+          }
+        }
+
+        // Check if user has been verified from another device by checking pending registrations
+        // This handles the case where user verifies email on mobile/another device
+        if (currentEmail) {
+          try {
+            const { data: pendingRegistrations } = await supabase
+              .from('pending_registrations')
+              .select('email, verified_at, verified')
+              .eq('email', currentEmail)
+              .eq('verified', true)
+              .single();
+
+            if (pendingRegistrations && pendingRegistrations.verified_at) {
+              setIsVerified(true);
+              showToast.success(
+                'Email verified successfully! Please sign in to continue.'
+              );
+              setTimeout(() => {
+                router.push('/login');
+              }, 2000);
+              return;
+            }
+          } catch (error) {
+            // Ignore errors - this is just a check for cross-device verification
+            console.log('No verified pending registration found:', error);
+          }
+
+          // Check if user has been verified from another device by checking if they can sign in
+          // This is a lightweight way to detect cross-device verification
+          try {
+            // Try to get user session - if user exists and is verified, this will work
+            const {
+              data: { user },
+            } = await supabase.auth.getUser();
+            if (
+              user &&
+              user.email === currentEmail &&
+              user.email_confirmed_at
+            ) {
+              setIsVerified(true);
+              showToast.success(
+                'Email verified successfully! Please sign in to continue.'
+              );
+              setTimeout(() => {
+                router.push('/login');
+              }, 2000);
+              return;
+            }
+          } catch (error) {
+            // Ignore errors - this is just a check for cross-device verification
+            console.log('Could not check user session:', error);
+          }
+        }
       } catch (error) {
         console.error('Error checking verification status:', error);
       } finally {
@@ -118,10 +208,35 @@ export function VerifyEmailForm({
     // Check immediately
     checkVerificationStatus();
 
-    // Check every 10 seconds (less frequent since we're not checking auth state)
-    const interval = setInterval(checkVerificationStatus, 10000);
+    // Check every 5 seconds for faster response
+    const interval = setInterval(checkVerificationStatus, 5000);
 
-    return () => clearInterval(interval);
+    // Listen for storage events (cross-tab communication)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'email-verification-complete' && e.newValue === 'true') {
+        const verificationEmail = localStorage.getItem(
+          'email-verification-email'
+        );
+        if (verificationEmail === currentEmail) {
+          setIsVerified(true);
+          localStorage.removeItem('email-verification-complete');
+          localStorage.removeItem('email-verification-email');
+          showToast.success(
+            'Email verified successfully! Please sign in to continue.'
+          );
+          setTimeout(() => {
+            router.push('/login');
+          }, 2000);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, [supabase, router, emailVerified, currentEmail]);
 
   const handleResendVerification = useCallback(async () => {
@@ -181,10 +296,19 @@ export function VerifyEmailForm({
           Email Verified!
         </h3>
         <p className="mt-2 text-sm text-gray-600">
-          Your email has been verified successfully. Redirecting to dashboard...
+          Your email has been verified successfully. Redirecting to login...
         </p>
         <div className="mt-6">
           <Loader2 className="animate-spin h-6 w-6 text-cyan-500 mx-auto" />
+        </div>
+        <div className="mt-4">
+          <Button
+            onClick={() => router.push('/login')}
+            color="swiss"
+            className="w-full"
+          >
+            Go to Login
+          </Button>
         </div>
       </div>
     );
@@ -208,7 +332,7 @@ export function VerifyEmailForm({
               <span className="font-medium text-gray-900">{currentEmail}</span>
             </>
           ) : (
-            "We've sent a verification link to your email address."
+            <>We&apos;ve sent a verification link to your email address.</>
           )}
         </p>
         {!isVerified && showResend && (

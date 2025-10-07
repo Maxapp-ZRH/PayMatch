@@ -12,11 +12,23 @@ export const companyDetailsSchema = z.object({
     .min(1, 'Company name is required')
     .min(2, 'Company name must be at least 2 characters')
     .max(100, 'Company name must be less than 100 characters'),
-  address: z
+  address1: z
     .string()
     .min(1, 'Address is required')
     .min(5, 'Address must be at least 5 characters')
     .max(200, 'Address must be less than 200 characters'),
+  address2: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val || val.trim() === '') return true;
+        return val.length <= 200;
+      },
+      {
+        message: 'Address line 2 must be less than 200 characters',
+      }
+    ),
   city: z
     .string()
     .min(1, 'City is required')
@@ -40,11 +52,12 @@ export const companyDetailsSchema = z.object({
     .refine(
       (val) => {
         if (!val || val.trim() === '') return true;
-        // Basic phone validation - allows international formats
-        return /^[\+]?[0-9\s\-\(\)]{7,20}$/.test(val);
+        // Swiss phone validation - allows +41 or 0xx formats
+        const cleanVal = val.replace(/\s/g, '');
+        return /^(\+41|0)[0-9]{9}$/.test(cleanVal);
       },
       {
-        message: 'Please enter a valid phone number',
+        message: 'Please enter a valid Swiss phone number',
       }
     ),
   website: z
@@ -120,11 +133,17 @@ export const companyDetailsSchema = z.object({
     .refine(
       (val) => {
         if (!val || val.trim() === '') return true;
-        // Swiss IBAN format: CH + 2 check digits + 5 bank code + 12 account number
-        return /^CH[0-9]{2}[0-9]{5}[0-9A-Z]{12}$/.test(val);
+        // Remove spaces for validation
+        const cleanVal = val.replace(/\s/g, '');
+        // Swiss IBAN format: CH + 2 check digits + 5 bank code + 12 account number (21 characters total)
+        return (
+          /^CH[0-9]{2}[0-9]{5}[0-9A-Z]{12}$/.test(cleanVal) &&
+          cleanVal.length === 21
+        );
       },
       {
-        message: 'Please enter a valid Swiss IBAN (CH + 21 characters)',
+        message:
+          'Please enter a valid Swiss IBAN (CH + 19 digits, 21 characters total)',
       }
     ),
   qrIban: z
@@ -133,11 +152,17 @@ export const companyDetailsSchema = z.object({
     .refine(
       (val) => {
         if (!val || val.trim() === '') return true;
-        // Swiss QR-IBAN format: CH + 2 check digits + 5 bank code + 12 account number
-        return /^CH[0-9]{2}[0-9]{5}[0-9A-Z]{12}$/.test(val);
+        // Remove spaces for validation
+        const cleanVal = val.replace(/\s/g, '');
+        // Swiss QR-IBAN format: CH + 2 check digits + 5 bank code + 12 account number (21 characters total)
+        return (
+          /^CH[0-9]{2}[0-9]{5}[0-9A-Z]{12}$/.test(cleanVal) &&
+          cleanVal.length === 21
+        );
       },
       {
-        message: 'Please enter a valid Swiss QR-IBAN (CH + 21 characters)',
+        message:
+          'Please enter a valid Swiss QR-IBAN (CH + 19 digits, 21 characters total)',
       }
     ),
   legalEntityType: z

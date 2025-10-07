@@ -1,17 +1,21 @@
 /**
  * Company Details Step Component
  *
- * Second step of the onboarding wizard - company information.
- * Collects business details for invoice generation.
+ * Second step of the onboarding wizard - collecting company information.
+ * Includes Swiss-specific fields for QR-Bill compliance.
  */
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, {
+  useEffect,
+  useCallback,
+  useImperativeHandle,
+  forwardRef,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Save, Info } from 'lucide-react';
-import { Button } from '@/components/marketing_pages/Button';
+import { Info } from 'lucide-react';
 import { TextField } from '@/components/ui/text-field';
 import { SelectField } from '@/components/ui/select-field';
 import {
@@ -19,17 +23,18 @@ import {
   type CompanyDetailsFormData,
 } from '../../schemas/company-details-schema';
 import type { StepProps } from '../../types';
-import { useProgressiveSave, useDraftData } from '../../hooks';
+import { useDraftData } from '../../hooks';
+import {
+  formatSwissPhoneNumberInput,
+  formatSwissIBANInput,
+  formatSwissVATNumberInput,
+  formatSwissPostalCodeInput,
+} from '@/utils/formatting';
 
-export function CompanyDetailsStep({ formData, onNext }: StepProps) {
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Progressive saving hooks
-  const { saveDraft, isSaving } = useProgressiveSave({
-    orgId: formData.orgId!,
-    currentStep: 2,
-  });
-
+export const CompanyDetailsStep = forwardRef<
+  { submitForm: () => Promise<void> },
+  StepProps
+>(function CompanyDetailsStep({ formData, onNext, saveOnBlur }, ref) {
   const { draftData, isLoading: isLoadingDraft } = useDraftData({
     orgId: formData.orgId!,
   });
@@ -39,87 +44,190 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
     handleSubmit,
     formState: { errors },
     setValue,
-    watch,
+    getValues,
     clearErrors,
   } = useForm<CompanyDetailsFormData>({
     resolver: zodResolver(companyDetailsSchema),
     mode: 'onBlur', // Validate on blur for better UX
     defaultValues: {
       companyName: formData.companyName || '',
-      address: formData.address || '',
+      address1:
+        formData.address1 || formData.address_line_1 || formData.address || '', // Support old address field
+      address2: formData.address2 || formData.address_line_2 || '',
       city: formData.city || '',
       postalCode: formData.postalCode || '',
       country: formData.country || 'CH',
-      phone: formData.phone || '',
-      website: formData.website || '',
+      phone: formData.phone || '+41 ',
+      website: formData.website || 'https://',
       canton: formData.canton || '',
-      uidVatNumber: formData.uidVatNumber || '',
-      iban: formData.iban || '',
-      qrIban: formData.qrIban || '',
+      uidVatNumber: formData.uidVatNumber || 'CHE-',
+      iban: formData.iban || 'CH',
+      qrIban: formData.qrIban || 'CH',
       legalEntityType: formData.legalEntityType || '',
     },
   });
 
-  // Watch all form values for progressive saving
-  const watchedValues = watch();
-
-  // Load draft data when available
+  // Load draft data when available (fallback for any missing data)
   useEffect(() => {
     if (draftData && !isLoadingDraft) {
       Object.entries(draftData).forEach(([key, value]) => {
-        setValue(key as keyof CompanyDetailsFormData, value as string);
+        // Only set values that aren't already set from formData prop
+        const currentValue = getValues(key as keyof CompanyDetailsFormData);
+        if (!currentValue && value) {
+          setValue(key as keyof CompanyDetailsFormData, value as string);
+        }
       });
     }
-  }, [draftData, isLoadingDraft, setValue]);
+  }, [draftData, isLoadingDraft, setValue, getValues]);
 
-  // Progressive saving on form changes (debounced)
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (Object.keys(watchedValues).length > 0) {
-        saveDraft(watchedValues);
+  // Formatting handlers
+  const handlePhoneChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      let value = e.target.value;
+
+      // If user starts typing without +41, add it
+      if (value && !value.startsWith('+41') && !value.startsWith('0')) {
+        value = '+41 ' + value;
       }
-    }, 1000); // 1 second debounce
 
-    return () => clearTimeout(timeoutId);
-  }, [watchedValues, saveDraft]);
+      // If user types 0xx format, convert to +41
+      if (value.startsWith('0') && value.length > 1) {
+        value = '+41 ' + value.substring(1);
+      }
 
-  const onSubmit = async (data: CompanyDetailsFormData) => {
+      const formatted = formatSwissPhoneNumberInput(value);
+      setValue('phone', formatted);
+    },
+    [setValue]
+  );
+
+  const handleWebsiteChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      let value = e.target.value;
+
+      // If user starts typing without https://, add it
+      if (
+        value &&
+        !value.startsWith('http://') &&
+        !value.startsWith('https://')
+      ) {
+        value = 'https://' + value;
+      }
+
+      setValue('website', value);
+    },
+    [setValue]
+  );
+
+  const handleIBANChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      let value = e.target.value;
+
+      // If user starts typing without CH, add it
+      if (value && !value.startsWith('CH') && !value.startsWith('ch')) {
+        value = 'CH' + value;
+      }
+
+      const formatted = formatSwissIBANInput(value);
+      setValue('iban', formatted);
+    },
+    [setValue]
+  );
+
+  const handleQRIBANChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      let value = e.target.value;
+
+      // If user starts typing without CH, add it
+      if (value && !value.startsWith('CH') && !value.startsWith('ch')) {
+        value = 'CH' + value;
+      }
+
+      const formatted = formatSwissIBANInput(value);
+      setValue('qrIban', formatted);
+    },
+    [setValue]
+  );
+
+  const handleVATNumberChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      let value = e.target.value;
+
+      // If user starts typing without CHE-, add it
+      if (value && !value.startsWith('CHE-')) {
+        value = 'CHE-' + value;
+      }
+
+      const formatted = formatSwissVATNumberInput(value);
+      setValue('uidVatNumber', formatted);
+    },
+    [setValue]
+  );
+
+  const handlePostalCodeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const formatted = formatSwissPostalCodeInput(e.target.value);
+      setValue('postalCode', formatted);
+    },
+    [setValue]
+  );
+
+  // Save on blur handler
+  const handleBlur = useCallback(() => {
+    const currentValues = getValues();
+    if (saveOnBlur && Object.keys(currentValues).length > 0) {
+      saveOnBlur(currentValues);
+    }
+  }, [getValues, saveOnBlur]);
+
+  const handleFormSubmit = async (data: CompanyDetailsFormData) => {
     clearErrors();
-    setIsLoading(true);
-
     try {
-      onNext(data);
+      // Combine address1 and address2 into a single address field for backend compatibility
+      let phone = data.phone;
+
+      // Ensure phone has +41 prefix if it's provided
+      if (phone && phone.trim() !== '') {
+        // Remove any existing +41 to avoid duplicates
+        phone = phone.replace(/^\+41\s*/, '');
+        // Add +41 prefix
+        phone = '+41 ' + phone;
+      }
+
+      const submitData = {
+        ...data,
+        address_line_1: data.address1,
+        address_line_2: data.address2,
+        phone: phone,
+      };
+      onNext(submitData);
     } catch (error) {
       console.error('Form submission error:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
+  // Expose form submission function to parent
+  useImperativeHandle(ref, () => ({
+    submitForm: async () => {
+      const formData = getValues();
+      await handleFormSubmit(formData);
+    },
+  }));
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header Section */}
       <div className="text-center">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-gray-900">
           Company Details
         </h1>
-        <p className="mt-2 text-base sm:text-lg text-gray-600">
+        <p className="mt-4 sm:mt-6 text-base sm:text-lg text-gray-600">
           Tell us about your business. This information will be used for Swiss
           QR-Bill compliant invoices.
         </p>
       </div>
 
-      {/* Save Status Indicator */}
-      {isSaving && (
-        <div className="flex justify-center">
-          <div className="flex items-center space-x-1 text-sm text-red-600">
-            <Save className="w-4 h-4" />
-            <span>Saving...</span>
-          </div>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
         {/* Company Information */}
         <div className="space-y-6">
           <h2 className="text-lg font-medium text-gray-900">
@@ -128,13 +236,13 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Company Name */}
             <TextField
-              className="lg:col-span-2"
               label="Company Name"
               type="text"
               autoComplete="organization"
               required
               placeholder="Enter your company name"
               {...register('companyName')}
+              onBlur={handleBlur}
               error={errors.companyName?.message}
             />
 
@@ -144,6 +252,8 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
               type="url"
               placeholder="https://yourcompany.com"
               {...register('website')}
+              onChange={handleWebsiteChange}
+              onBlur={handleBlur}
               error={errors.website?.message}
             />
           </div>
@@ -155,7 +265,7 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
             Address Information
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Address */}
+            {/* Address Line 1 */}
             <TextField
               className="lg:col-span-2"
               label="Street Address"
@@ -163,8 +273,21 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
               autoComplete="street-address"
               required
               placeholder="Enter your street address"
-              {...register('address')}
-              error={errors.address?.message}
+              {...register('address1')}
+              onBlur={handleBlur}
+              error={errors.address1?.message}
+            />
+
+            {/* Address Line 2 */}
+            <TextField
+              className="lg:col-span-2"
+              label="Address Line 2 (Optional)"
+              type="text"
+              autoComplete="address-line2"
+              placeholder="Apartment, suite, unit, building, floor, etc."
+              {...register('address2')}
+              onBlur={handleBlur}
+              error={errors.address2?.message}
             />
 
             {/* City */}
@@ -175,6 +298,7 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
               required
               placeholder="Enter your city"
               {...register('city')}
+              onBlur={handleBlur}
               error={errors.city?.message}
             />
 
@@ -186,95 +310,103 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
               required
               placeholder="8001"
               {...register('postalCode')}
+              onChange={handlePostalCodeChange}
+              onBlur={handleBlur}
               error={errors.postalCode?.message}
             />
-
-            {/* Country */}
-            <SelectField
-              label="Country"
-              required
-              {...register('country')}
-              error={errors.country?.message}
-            >
-              <option value="">Select country</option>
-              <option value="CH">Switzerland</option>
-              <option value="DE">Germany</option>
-              <option value="AT">Austria</option>
-              <option value="FR">France</option>
-              <option value="IT">Italy</option>
-            </SelectField>
 
             {/* Phone */}
             <TextField
               label="Phone Number"
               type="tel"
               autoComplete="tel"
-              placeholder="+41 44 123 45 67"
+              placeholder="+41 79 123 45 67"
               {...register('phone')}
+              onChange={handlePhoneChange}
+              onBlur={handleBlur}
               error={errors.phone?.message}
             />
-          </div>
-        </div>
 
-        {/* Swiss-Specific Information */}
-        <div className="space-y-6">
-          <h2 className="text-lg font-medium text-gray-900">
-            Swiss Business Information
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Canton */}
             <SelectField
               label="Canton"
               required
               {...register('canton')}
+              onBlur={handleBlur}
               error={errors.canton?.message}
             >
-              <option value="">Select canton</option>
-              <option value="ZH">Zürich</option>
-              <option value="BE">Bern</option>
-              <option value="LU">Luzern</option>
-              <option value="UR">Uri</option>
-              <option value="SZ">Schwyz</option>
-              <option value="OW">Obwalden</option>
-              <option value="NW">Nidwalden</option>
-              <option value="GL">Glarus</option>
-              <option value="ZG">Zug</option>
-              <option value="FR">Freiburg</option>
-              <option value="SO">Solothurn</option>
-              <option value="BS">Basel-Stadt</option>
-              <option value="BL">Basel-Landschaft</option>
-              <option value="SH">Schaffhausen</option>
-              <option value="AR">Appenzell Ausserrhoden</option>
-              <option value="AI">Appenzell Innerrhoden</option>
-              <option value="SG">St. Gallen</option>
-              <option value="GR">Graubünden</option>
+              <option value="">Select Canton</option>
               <option value="AG">Aargau</option>
+              <option value="AI">Appenzell Innerrhoden</option>
+              <option value="AR">Appenzell Ausserrhoden</option>
+              <option value="BL">Basel-Landschaft</option>
+              <option value="BS">Basel-Stadt</option>
+              <option value="BE">Bern</option>
+              <option value="FR">Fribourg</option>
+              <option value="GE">Genève</option>
+              <option value="GL">Glarus</option>
+              <option value="GR">Graubünden</option>
+              <option value="JU">Jura</option>
+              <option value="LU">Luzern</option>
+              <option value="NE">Neuchâtel</option>
+              <option value="NW">Nidwalden</option>
+              <option value="OW">Obwalden</option>
+              <option value="SG">St. Gallen</option>
+              <option value="SH">Schaffhausen</option>
+              <option value="SZ">Schwyz</option>
+              <option value="SO">Solothurn</option>
               <option value="TG">Thurgau</option>
               <option value="TI">Ticino</option>
-              <option value="VD">Vaud</option>
+              <option value="UR">Uri</option>
               <option value="VS">Valais</option>
-              <option value="NE">Neuchâtel</option>
-              <option value="GE">Genève</option>
-              <option value="JU">Jura</option>
+              <option value="VD">Vaud</option>
+              <option value="ZG">Zug</option>
+              <option value="ZH">Zürich</option>
             </SelectField>
 
+            {/* Switzerland Note */}
+            <div className="lg:col-span-2">
+              <div className="flex items-center text-sm text-gray-500 bg-blue-50 border border-blue-200 rounded-md px-3 py-2">
+                <Info className="h-4 w-4 text-blue-500 mr-2 flex-shrink-0" />
+                <span>
+                  PayMatch is designed specifically for businesses in
+                  Switzerland and Swiss QR-Bill compliance.
+                </span>
+              </div>
+              <input type="hidden" {...register('country')} value="CH" />
+            </div>
+          </div>
+        </div>
+
+        {/* Legal & Tax Information */}
+        <div className="space-y-6">
+          <h2 className="text-lg font-medium text-gray-900">
+            Legal & Tax Information
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Legal Entity Type */}
             <SelectField
               label="Legal Entity Type"
               required
               {...register('legalEntityType')}
+              onBlur={handleBlur}
               error={errors.legalEntityType?.message}
             >
-              <option value="">Select entity type</option>
-              <option value="GmbH">GmbH (Limited Liability Company)</option>
-              <option value="AG">AG (Public Limited Company)</option>
-              <option value="Einzelunternehmen">
-                Einzelunternehmen (Sole Proprietorship)
+              <option value="">Select Type</option>
+              <option value="AG">AG (Aktiengesellschaft)</option>
+              <option value="GmbH">
+                GmbH (Gesellschaft mit beschränkter Haftung)
               </option>
-              <option value="Partnerschaft">Partnerschaft (Partnership)</option>
-              <option value="Verein">Verein (Association)</option>
-              <option value="Stiftung">Stiftung (Foundation)</option>
-              <option value="Other">Other</option>
+              <option value="Einzelunternehmen">Einzelunternehmen</option>
+              <option value="Verein">Verein</option>
+              <option value="Stiftung">Stiftung</option>
+              <option value="Genossenschaft">Genossenschaft</option>
+              <option value="Kollektivgesellschaft">
+                Kollektivgesellschaft
+              </option>
+              <option value="Kommanditgesellschaft">
+                Kommanditgesellschaft
+              </option>
             </SelectField>
 
             {/* UID/VAT Number */}
@@ -283,6 +415,8 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
               type="text"
               placeholder="CHE-123.456.789"
               {...register('uidVatNumber')}
+              onChange={handleVATNumberChange}
+              onBlur={handleBlur}
               error={errors.uidVatNumber?.message}
             />
           </div>
@@ -293,104 +427,31 @@ export function CompanyDetailsStep({ formData, onNext }: StepProps) {
           <h2 className="text-lg font-medium text-gray-900">
             Banking Information
           </h2>
-          <div className="space-y-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-5 w-5 text-blue-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-blue-800">
-                    Swiss QR-Bill Banking Requirements
-                  </h3>
-                  <div className="mt-2 text-sm text-blue-700">
-                    <p>For Swiss QR-Bill compliance, you need both:</p>
-                    <ul className="list-disc list-inside mt-1 space-y-1">
-                      <li>
-                        <strong>IBAN:</strong> Your regular bank account for
-                        transfers
-                      </li>
-                      <li>
-                        <strong>QR-IBAN:</strong> Special QR-Bill payment
-                        reference (different from IBAN)
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* IBAN */}
-            <div className="space-y-2">
-              <TextField
-                label="IBAN (Bank Account)"
-                type="text"
-                placeholder="CH93 0076 2011 6238 5295 7"
-                {...register('iban')}
-                error={errors.iban?.message}
-              />
-              <p className="text-xs text-gray-500">
-                Your regular Swiss bank account for transfers
-              </p>
-            </div>
+            <TextField
+              label="IBAN (Bank Account)"
+              type="text"
+              placeholder="CH93 0076 2011 6238 5295 7"
+              {...register('iban')}
+              onChange={handleIBANChange}
+              onBlur={handleBlur}
+              error={errors.iban?.message}
+            />
 
             {/* QR-IBAN */}
-            <div className="space-y-2">
-              <TextField
-                label="QR-IBAN (QR-Bill Reference)"
-                type="text"
-                placeholder="CH93 0076 2011 6238 5295 7"
-                {...register('qrIban')}
-                error={errors.qrIban?.message}
-              />
-              <p className="text-xs text-gray-500">
-                Special QR-Bill payment reference (ask your bank)
-              </p>
-            </div>
+            <TextField
+              label="QR-IBAN (QR-Bill Reference)"
+              type="text"
+              placeholder="CH93 0076 2011 6238 5295 7"
+              {...register('qrIban')}
+              onChange={handleQRIBANChange}
+              onBlur={handleBlur}
+              error={errors.qrIban?.message}
+            />
           </div>
         </div>
-
-        {/* Info Box */}
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <Info className="h-5 w-5 text-red-400" />
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
-                Swiss QR-Bill Compliance
-              </h3>
-              <div className="mt-2 text-sm text-red-700">
-                <p>
-                  This information will be used to generate Swiss QR-Bill
-                  compliant invoices. Make sure all details are accurate as they
-                  will appear on your invoices.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Button
-          type="submit"
-          color="swiss"
-          className="w-full"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Saving...' : 'Continue to Settings'}
-        </Button>
       </form>
     </div>
   );
-}
+});

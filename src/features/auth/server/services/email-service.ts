@@ -25,7 +25,7 @@ export async function sendPendingRegistrationEmail(
     const result = await sendEmailWithComponent({
       to: email,
       subject: 'Verify your PayMatch account',
-      emailType: 'auth', // Mark as auth email to skip unsubscribe URLs
+      emailType: 'security', // Mark as security email to skip unsubscribe URLs
       component: React.createElement(EmailVerification, {
         userName,
         verificationUrl,
@@ -70,7 +70,7 @@ export async function sendVerificationEmail(
     const result = await sendEmailWithComponent({
       to: email,
       subject: 'Verify your PayMatch account',
-      emailType: 'auth', // Mark as auth email to skip unsubscribe URLs
+      emailType: 'security', // Mark as security email to skip unsubscribe URLs
       component: React.createElement(EmailVerification, {
         userName,
         verificationUrl,
@@ -115,7 +115,7 @@ export async function sendPasswordResetEmail(
     const result = await sendEmailWithComponent({
       to: email,
       subject: 'Reset your PayMatch password',
-      emailType: 'auth', // Mark as auth email to skip unsubscribe URLs
+      emailType: 'security', // Mark as security email to skip unsubscribe URLs
       component: React.createElement(PasswordReset, {
         userName,
         resetUrl,

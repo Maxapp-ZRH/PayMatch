@@ -11,6 +11,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { LogoutButton } from '@/components/ui/logout-button';
 import { BillingSection } from '@/features/dashboard/components/BillingSection';
+import { SettingsSection } from '@/features/dashboard/components/SettingsSection';
 
 export const metadata: Metadata = {
   title: 'Dashboard - PayMatch',
@@ -151,6 +152,11 @@ export default async function Dashboard() {
         {/* Billing Section */}
         <div className="mt-8">
           <BillingSection orgId={orgMembership?.org_id || ''} />
+        </div>
+
+        {/* Settings Section */}
+        <div className="mt-8">
+          <SettingsSection />
         </div>
 
         {/* Welcome Message */}

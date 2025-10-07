@@ -48,6 +48,10 @@ export interface OnboardingData {
   // Company details fields (for form handling)
   companyName?: string;
   address?: string;
+  address1?: string;
+  address2?: string;
+  address_line_1?: string;
+  address_line_2?: string;
   city?: string;
   postalCode?: string;
   country?: string;
@@ -83,6 +87,9 @@ export interface OnboardingWizardState {
   formData: OnboardingData;
   isLoading: boolean;
   errors: Record<string, string>;
+  isSaving: boolean;
+  lastSaved: Date | null;
+  saveError: string | null;
 }
 
 // Step navigation props
@@ -97,6 +104,9 @@ export interface StepNavigationProps {
 // Step component props
 export interface StepProps extends StepNavigationProps {
   formData: OnboardingData;
+  saveOnBlur?: (data: Partial<OnboardingData>) => void;
+  saveImmediately?: (data: Partial<OnboardingData>) => Promise<void>;
+  onSubmit?: () => Promise<Partial<OnboardingData> | void>;
 }
 
 // Swiss validation result

@@ -9,7 +9,17 @@ import { z } from 'zod';
 
 // Email type enum
 export const emailTypeSchema = z.enum(
-  ['newsletter', 'support', 'transactional'],
+  [
+    'newsletter_promotional',
+    'newsletter_informational',
+    'newsletter_news',
+    'support',
+    'transactional',
+    'security',
+    'legal',
+    'business_notifications',
+    'overdue_alerts',
+  ],
   {
     errorMap: () => ({ message: 'emailType.invalid' }),
   }

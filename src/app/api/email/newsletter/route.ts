@@ -6,7 +6,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { NewsletterService, sendEmailWithComponent } from '@/features/email';
+import {
+  EmailPreferencesService,
+  sendEmailWithComponent,
+} from '@/features/email';
 import { newsletterSubscriptionSchema } from '@/features/email/schemas';
 import { NewsletterWelcomeEmail } from '@/emails/newsletter-welcome';
 import { generateUnsubscribeUrl } from '@/features/email';
@@ -34,24 +37,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Subscribe to newsletter
-    const result = await NewsletterService.subscribe({
-      email: validatedData.email,
-      firstName: validatedData.firstName,
-      lastName: validatedData.lastName,
-    });
+    // Check if already subscribed
+    const existingPreference = await EmailPreferencesService.getPreferences(
+      validatedData.email,
+      'newsletter_promotional'
+    );
 
-    // If subscription was successful and not already subscribed, send welcome email
-    if (result.success && !result.alreadySubscribed && result.subscriber) {
+    const alreadySubscribed = existingPreference.subscriber.isActive;
+
+    // Subscribe to newsletter_promotional emails
+    await EmailPreferencesService.subscribe(
+      validatedData.email,
+      'newsletter_promotional',
+      undefined, // userId
+      validatedData.firstName,
+      validatedData.lastName
+    );
+
+    // If not already subscribed, send welcome email
+    if (!alreadySubscribed) {
       const unsubscribeUrl = generateUnsubscribeUrl(
         validatedData.email,
-        'newsletter'
+        'newsletter_promotional'
       );
 
       const emailResult = await sendEmailWithComponent({
         to: validatedData.email,
         subject: 'Welcome to PayMatch Newsletter!',
-        emailType: 'newsletter',
+        emailType: 'newsletter_promotional',
         component: NewsletterWelcomeEmail({
           firstName: validatedData.firstName,
           lastName: validatedData.lastName,
@@ -70,14 +83,32 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json(
         {
-          ...result,
+          success: true,
+          message: 'Successfully subscribed to newsletter',
           emailSent: emailResult.success,
+          subscriber: {
+            email: validatedData.email,
+            firstName: validatedData.firstName,
+            lastName: validatedData.lastName,
+          },
         },
         { status: 200 }
       );
     }
 
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Successfully subscribed to newsletter',
+        alreadySubscribed: true,
+        subscriber: {
+          email: validatedData.email,
+          firstName: validatedData.firstName,
+          lastName: validatedData.lastName,
+        },
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error('Newsletter API error:', error);
 
@@ -109,13 +140,25 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const result = await NewsletterService.getSubscriberInfo(
-      // Extract email from token for newsletter-specific lookup
-      // This is a simplified approach - in practice you'd verify the token
-      token
+    // Get newsletter subscriber info using email_preferences
+    const result = await EmailPreferencesService.getPreferences(
+      token, // In practice, you'd extract email from token
+      'newsletter_promotional'
     );
 
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        subscriber: {
+          email: token, // In practice, you'd extract email from token
+          firstName: '', // Not stored in email_preferences
+          lastName: '', // Not stored in email_preferences
+          isActive: result.subscriber.isActive,
+          emailType: 'newsletter_promotional',
+        },
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error('Newsletter GET API error:', error);
     return NextResponse.json(
