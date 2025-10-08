@@ -22,6 +22,11 @@ import {
   registerSchema,
   type RegisterFormData,
 } from '../schemas/register-schema';
+import {
+  getClientIP,
+  getUserAgent,
+  getBrowserLocale,
+} from '@/utils/client-info';
 
 export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -65,13 +70,22 @@ export function RegisterForm() {
         return;
       }
 
-      // Use server action for registration and email sending
+      // Extract client information for server action
+      const [clientIP, userAgent, browserLocale] = await Promise.all([
+        getClientIP(),
+        Promise.resolve(getUserAgent()),
+        Promise.resolve(getBrowserLocale()),
+      ]);
+
+      // Use server action for registration and email sending with new security features
       const result = await registerUser({
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
         referralSource: data.referralSource,
-        browserLocale: navigator.language || 'de-CH',
+        browserLocale,
+        clientIP,
+        userAgent,
       });
 
       if (result.success) {

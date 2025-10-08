@@ -18,6 +18,7 @@ import {
   sendPasswordResetEmail,
   checkPendingRegistrationForPasswordReset,
 } from '../server/actions/password-reset';
+import { getClientIP, getUserAgent } from '@/utils/client-info';
 import { useRouter } from 'next/navigation';
 import {
   forgotPasswordSchema,
@@ -59,8 +60,19 @@ export function ForgotPasswordForm() {
         return;
       }
 
+      // Extract client information for server action
+      const [clientIP, userAgent] = await Promise.all([
+        getClientIP(),
+        Promise.resolve(getUserAgent()),
+      ]);
+
       // Send password reset email for existing users
-      const result = await sendPasswordResetEmail(data.email);
+      const result = await sendPasswordResetEmail(
+        data.email,
+        undefined,
+        clientIP,
+        userAgent
+      );
 
       if (result.success) {
         setSuccess(true);

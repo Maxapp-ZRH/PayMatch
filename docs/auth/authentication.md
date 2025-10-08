@@ -18,6 +18,34 @@ PayMatch implements a modern, GDPR-compliant authentication system using Supabas
 - [Deployment](#deployment)
 - [Troubleshooting](#troubleshooting)
 
+## Current System Features
+
+### ✅ Implemented Features
+
+- **✅ GDPR/FADP Compliant Registration**: No password storage in pending registrations
+- **✅ Deferred Account Creation**: Supabase users created only after email verification
+- **✅ Smart Auto-Send Logic**: Intelligent email sending based on user flow
+- **✅ Hybrid Rate Limiting**: Edge Runtime + Redis-based protection
+- **✅ Comprehensive Audit Logging**: Full activity tracking for compliance
+- **✅ Consent Management**: Complete consent lifecycle tracking
+- **✅ Security Headers**: Production-ready security headers
+- **✅ Password Policy**: 8+ chars with complexity requirements
+- **✅ Internationalization**: Multi-language support (en-CH, de-CH)
+- **✅ Client Information Extraction**: IP, User Agent, Browser Locale tracking
+- **✅ Organization-Based Model**: Multi-user organizations with roles
+- **✅ Stripe Integration**: Subscription management
+- **✅ Email System**: Unified email preferences and unsubscribe
+- **✅ Edge Functions**: Automated cleanup and maintenance
+- **✅ Row Level Security**: Comprehensive database security
+
+### 🎯 Key Innovations
+
+1. **Edge Runtime Compatibility**: In-memory rate limiting for middleware
+2. **Client-Side Information Extraction**: Secure IP/UA extraction without server-side headers
+3. **Smart Flow Routing**: Intelligent user guidance based on account status
+4. **Comprehensive Compliance**: GDPR + Switzerland FADP compliance
+5. **Production-Ready Security**: Security headers, audit logging, rate limiting
+
 ## Architecture
 
 ### High-Level Architecture
@@ -192,9 +220,14 @@ graph TD
 ### 2. Password Security
 
 - **Supabase Hashing**: Supabase handles password hashing automatically
-- **Requirements**: Minimum 6 characters with complexity validation
+- **Requirements**: Minimum 8 characters with complexity validation
+  - At least one uppercase letter (A-Z)
+  - At least one lowercase letter (a-z)
+  - At least one number (0-9)
+  - At least one special character (!@#$%^&\*()\_+-=[]{}|;':",./<>?)
 - **No Plain Text**: Passwords never stored in plain text
 - **Secure Collection**: Passwords collected only during verification
+- **Frontend Validation**: Real-time password strength indicator with requirements display
 
 ### 3. Token Management
 
@@ -206,10 +239,14 @@ graph TD
 
 ### 4. Rate Limiting
 
-- **Per-User Limits**: Rate limiting applied per email address
+- **Edge Runtime Compatible**: In-memory rate limiting for middleware (Edge Runtime)
+- **Redis-Based**: Full Redis rate limiting for server actions (Node.js Runtime)
 - **Multiple Endpoints**: Registration, login, password reset all rate limited
-- **Redis-Based**: Distributed rate limiting using Redis
-- **Configurable**: Limits can be adjusted in `redis-config.ts`
+- **IP-Based Limits**:
+  - Login: 10 requests per 15 minutes
+  - Registration: 5 requests per hour
+  - Password Reset: 3 requests per hour
+- **Configurable**: Limits can be adjusted in middleware and server actions
 - **Fail-Open**: System continues working even if Redis is unavailable
 
 ### 5. Input Validation
@@ -218,8 +255,17 @@ graph TD
 - **Type Safety**: Full TypeScript coverage
 - **Sanitization**: Input sanitization and validation
 - **Error Messages**: User-friendly error messages
+- **Client-Side Validation**: Real-time validation with password strength indicators
 
-### 6. Error Handling
+### 6. Security Headers
+
+- **X-Content-Type-Options**: nosniff
+- **X-Frame-Options**: DENY
+- **X-XSS-Protection**: 1; mode=block
+- **Referrer-Policy**: strict-origin-when-cross-origin
+- **Permissions-Policy**: camera=(), microphone=(), geolocation=()
+
+### 7. Error Handling
 
 - **No Information Leakage**: Generic error messages for security
 - **Graceful Degradation**: System continues working even with errors
@@ -235,14 +281,14 @@ graph TD
 ```sql
 CREATE TABLE pending_registrations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email VARCHAR(255) NOT NULL UNIQUE,
-  first_name VARCHAR(100) NOT NULL,
-  last_name VARCHAR(100) NOT NULL,
-  verification_token VARCHAR(255) NOT NULL UNIQUE,
-  expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  first_name TEXT,
+  last_name TEXT,
   user_metadata JSONB DEFAULT '{}',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  verification_token TEXT UNIQUE NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 ```
 
@@ -250,18 +296,38 @@ CREATE TABLE pending_registrations (
 
 - **No Password Storage**: Passwords not stored (GDPR compliant)
 - **Metadata Storage**: Referral source, browser locale in user_metadata
-- **Automatic Cleanup**: Expired records cleaned up every 6 hours
+- **Automatic Cleanup**: Expired records cleaned up every 6 hours via Edge Function
 - **Unique Constraints**: Prevents duplicate registrations
+- **Client Information**: IP address and user agent stored for audit purposes
 
 #### `organizations`
 
 ```sql
 CREATE TABLE organizations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(255) NOT NULL,
-  plan VARCHAR(50) DEFAULT 'free',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  name TEXT NOT NULL,
+  legal_name TEXT,
+  country TEXT DEFAULT 'CH',
+  canton TEXT,
+  city TEXT,
+  zip TEXT,
+  street TEXT,
+  vat_number TEXT,
+  uid TEXT, -- Swiss business ID
+  logo_url TEXT,
+  default_language TEXT DEFAULT 'de',
+  default_currency TEXT DEFAULT 'CHF',
+  default_vat_rates JSONB DEFAULT '[]'::jsonb,
+  default_payment_terms_days INT DEFAULT 30,
+  iban TEXT,
+  qr_iban TEXT,
+  plan TEXT DEFAULT 'free' CHECK (plan IN ('free', 'freelancer', 'business', 'enterprise')),
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  onboarding_completed BOOLEAN DEFAULT false,
+  onboarding_step INTEGER DEFAULT 1,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
 );
 ```
 
@@ -270,12 +336,28 @@ CREATE TABLE organizations (
 ```sql
 CREATE TABLE user_profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  first_name VARCHAR(100) NOT NULL,
-  last_name VARCHAR(100) NOT NULL,
-  organization_id UUID REFERENCES organizations(id),
-  onboarding_completed BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  name TEXT,
+  avatar_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+#### `organization_users`
+
+```sql
+CREATE TABLE organization_users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  role TEXT NOT NULL DEFAULT 'owner' CHECK (role IN ('owner', 'admin', 'accountant', 'staff')),
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'pending', 'suspended')),
+  invited_by UUID REFERENCES auth.users(id),
+  invited_at TIMESTAMPTZ,
+  accepted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(org_id, user_id)
 );
 ```
 
@@ -283,26 +365,89 @@ CREATE TABLE user_profiles (
 
 ```sql
 CREATE TABLE email_preferences (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email TEXT NOT NULL,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  email VARCHAR(255) NOT NULL,
-  newsletter BOOLEAN DEFAULT TRUE,
-  marketing BOOLEAN DEFAULT FALSE,
-  transactional BOOLEAN DEFAULT TRUE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  email_type TEXT NOT NULL CHECK (email_type IN (
+    'newsletter_promotional',
+    'newsletter_informational',
+    'newsletter_news',
+    'support',
+    'transactional',
+    'security',
+    'legal',
+    'business_notifications',
+    'overdue_alerts'
+  )),
+  is_active BOOLEAN DEFAULT true NOT NULL,
+  first_name TEXT,
+  last_name TEXT,
+  unsubscribed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  UNIQUE(email, email_type)
 );
 ```
 
-#### `newsletter_subscribers`
+#### `consent_records` (GDPR/FADP Compliance)
 
 ```sql
-CREATE TABLE newsletter_subscribers (
+CREATE TABLE consent_records (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  email TEXT,
+  session_id TEXT,
+  consent_type TEXT NOT NULL CHECK (consent_type IN (
+    'marketing_cookies',
+    'analytics_cookies',
+    'newsletter_subscription',
+    'marketing_emails',
+    'data_processing',
+    'third_party_sharing'
+  )),
+  consent_given BOOLEAN NOT NULL,
+  consent_withdrawn BOOLEAN DEFAULT false,
+  consent_method TEXT NOT NULL CHECK (consent_method IN (
+    'cookie_banner',
+    'newsletter_form',
+    'account_settings',
+    'email_link',
+    'api_request',
+    'admin_action'
+  )),
+  privacy_policy_version TEXT,
+  consent_form_version TEXT,
+  ip_address INET,
+  user_agent TEXT,
+  consent_given_at TIMESTAMPTZ,
+  consent_withdrawn_at TIMESTAMPTZ,
+  consent_source TEXT,
+  consent_context JSONB,
+  withdrawal_reason TEXT,
+  consent_age_days INTEGER,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  UNIQUE(user_id, consent_type, email)
+);
+```
+
+#### `audit_logs` (Security & Compliance)
+
+```sql
+CREATE TABLE audit_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email VARCHAR(255) NOT NULL UNIQUE,
-  subscribed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  unsubscribed_at TIMESTAMP WITH TIME ZONE NULL,
-  source VARCHAR(100) DEFAULT 'website'
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  email TEXT,
+  ip_address INET,
+  user_agent TEXT,
+  action TEXT NOT NULL,
+  resource_type TEXT,
+  resource_id TEXT,
+  details JSONB DEFAULT '{}',
+  status TEXT NOT NULL CHECK (status IN ('success', 'failure', 'error')),
+  error_message TEXT,
+  session_id TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ```
 
@@ -324,20 +469,28 @@ CREATE POLICY "Users can view own profile" ON user_profiles
 
 ## Redis Integration
 
+### Architecture
+
+The system uses a **hybrid approach** for rate limiting:
+
+- **Edge Runtime (Middleware)**: In-memory rate limiting for immediate protection
+- **Node.js Runtime (Server Actions)**: Full Redis-based rate limiting for comprehensive tracking
+
 ### Key Patterns
 
-#### Rate Limiting
+#### Rate Limiting (Redis)
 
 ```
-rate_limit:EMAIL_VERIFICATION:user@example.com
-rate_limit:PASSWORD_RESET:user@example.com
-rate_limit:REGISTRATION:user@example.com
+rate_limit:IP_LOGIN_ATTEMPTS:192.168.1.1
+rate_limit:IP_REGISTRATION_ATTEMPTS:192.168.1.1
+rate_limit:IP_PASSWORD_RESET_ATTEMPTS:192.168.1.1
 ```
 
-#### Token Storage
+#### Session Management (Redis)
 
 ```
-password_reset:TOKEN_HASH
+session:USER_ID:session_data
+session_timeout:USER_ID:last_activity
 ```
 
 #### Auto-Send State
@@ -349,19 +502,32 @@ paymatch-auto-sent-user@example.com
 ### Configuration
 
 ```typescript
-// redis-config.ts
+// Edge Runtime (Middleware) - In-memory
+const edgeRateLimitStore = new Map<
+  string,
+  { count: number; resetTime: number }
+>();
+
+const rateLimitConfig = {
+  '/login': { maxRequests: 10, windowMs: 15 * 60 * 1000 },
+  '/register': { maxRequests: 5, windowMs: 60 * 60 * 1000 },
+  '/forgot-password': { maxRequests: 3, windowMs: 60 * 60 * 1000 },
+};
+
+// Node.js Runtime (Server Actions) - Redis
 export const REDIS_CONFIG = {
   url: process.env.REDIS_URL!,
   password: process.env.REDIS_PASSWORD,
   keyPrefixes: {
     RATE_LIMIT: 'rate_limit',
-    PASSWORD_RESET: 'password_reset',
+    SESSION: 'session',
+    SESSION_TIMEOUT: 'session_timeout',
     AUTO_SEND: 'paymatch-auto-sent',
   },
   rateLimits: {
-    EMAIL_VERIFICATION: { maxAttempts: 5, windowMs: 3600000 }, // 5 per hour
-    PASSWORD_RESET: { maxAttempts: 3, windowMs: 3600000 }, // 3 per hour
-    REGISTRATION: { maxAttempts: 10, windowMs: 3600000 }, // 10 per hour
+    IP_LOGIN_ATTEMPTS: { maxAttempts: 10, windowMs: 15 * 60 * 1000 },
+    IP_REGISTRATION_ATTEMPTS: { maxAttempts: 5, windowMs: 60 * 60 * 1000 },
+    IP_PASSWORD_RESET_ATTEMPTS: { maxAttempts: 3, windowMs: 60 * 60 * 1000 },
   },
 };
 ```
@@ -416,96 +582,120 @@ const shouldAutoSend =
 
 ### Authentication Endpoints
 
-#### POST `/api/auth/register`
+#### Server Actions (Next.js App Router)
+
+The system uses **Server Actions** instead of traditional API endpoints for better security and performance.
+
+#### `registerUser` Server Action
 
 Register a new user with deferred account creation.
 
 **Request:**
 
-```json
+```typescript
 {
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "john@example.com",
-  "referralSource": "google",
-  "browserLocale": "en-CH"
+  firstName: "John",
+  lastName: "Doe",
+  email: "john@example.com",
+  referralSource: "google",
+  browserLocale: "en-CH",
+  clientIP: "192.168.1.1",
+  userAgent: "Mozilla/5.0..."
 }
 ```
 
 **Response:**
 
-```json
+```typescript
 {
-  "success": true,
-  "message": "Registration successful! Please check your email to verify your account and set your password."
+  success: true,
+  message: "Registration successful! Please check your email to verify your account and set your password."
 }
 ```
 
-#### POST `/api/auth/login`
+#### `loginUser` Server Action
 
 Authenticate an existing user.
 
 **Request:**
 
-```json
+```typescript
 {
-  "email": "john@example.com",
-  "password": "SecurePass123!"
+  email: "john@example.com",
+  password: "SecurePass123!",
+  rememberMe: true
 }
 ```
 
 **Response:**
 
-```json
+```typescript
 {
-  "success": true,
-  "user": { "id": "uuid", "email": "john@example.com" },
-  "redirect": "/dashboard"
+  success: true,
+  user: { id: "uuid", email: "john@example.com" },
+  redirect: "/dashboard"
 }
 ```
 
-#### POST `/api/auth/forgot-password`
+#### `sendPasswordResetEmail` Server Action
 
 Request password reset for any user type.
 
 **Request:**
 
-```json
+```typescript
 {
-  "email": "john@example.com"
+  email: "john@example.com",
+  clientIP: "192.168.1.1",
+  userAgent: "Mozilla/5.0..."
 }
 ```
 
 **Response:**
 
-```json
+```typescript
 {
-  "success": true,
-  "message": "If an account with that email exists, we've sent a password reset link."
+  success: true,
+  message: "If an account with that email exists, we've sent a password reset link."
 }
 ```
 
 ### Page Routes
 
-#### `/register`
+#### `/[locale]/register`
 
 Registration page with duplicate prevention and no password collection.
 
-#### `/login`
+- Supports internationalization (en-CH, de-CH)
+- Client-side information extraction (IP, User Agent, Browser Locale)
+
+#### `/[locale]/login`
 
 Login page with smart redirects for pending users.
 
-#### `/verify-email`
+- Supports internationalization (en-CH, de-CH)
+- Smart routing based on user status
+
+#### `/[locale]/verify-email`
 
 Email verification page with smart auto-send logic and resend functionality.
 
-#### `/forgot-password`
+- Auto-send only from registration flow
+- Manual resend with 60-second cooldown
+
+#### `/[locale]/forgot-password`
 
 Password reset request page with smart routing for pending users.
 
-#### `/reset-password?token=TOKEN`
+- Client-side information extraction
+- Smart routing for different user types
+
+#### `/[locale]/reset-password?token=TOKEN`
 
 Password reset form for existing users only.
+
+- Password strength validation
+- Real-time requirements display
 
 ## Error Handling
 
@@ -653,9 +843,14 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 # Email Configuration
 RESEND_API_KEY=your-resend-key
+RESEND_FROM_EMAIL=noreply@paymatch.app
+RESEND_FROM_NAME=PayMatch
 
 # App Configuration
 NEXT_PUBLIC_APP_URL=https://your-app.vercel.app
+
+# Support Configuration
+SUPPORT_EMAIL=support@paymatch.app
 ```
 
 #### Supabase Edge Functions (Automatic)
@@ -678,6 +873,8 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
    ```bash
    supabase functions deploy cleanup-expired-registrations
+   supabase functions deploy cleanup-audit-logs
+   supabase functions deploy cleanup-sessions
    ```
 
 3. **Apply Database Migrations**
@@ -687,9 +884,16 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
    ```
 
 4. **Verify Deployment**
+
    ```bash
-   # Test cleanup function
+   # Test cleanup functions
    curl -X POST "https://your-project.supabase.co/functions/v1/cleanup-expired-registrations" \
+     -H "Authorization: Bearer YOUR_SERVICE_ROLE_KEY"
+
+   curl -X POST "https://your-project.supabase.co/functions/v1/cleanup-audit-logs" \
+     -H "Authorization: Bearer YOUR_SERVICE_ROLE_KEY"
+
+   curl -X POST "https://your-project.supabase.co/functions/v1/cleanup-sessions" \
      -H "Authorization: Bearer YOUR_SERVICE_ROLE_KEY"
    ```
 
@@ -817,8 +1021,10 @@ FROM pending_registrations;
 ### Compliance
 
 - **GDPR**: User data handling and deletion
-- **Swiss Data Protection**: Local data protection requirements
+- **Switzerland FADP**: Local data protection requirements with consent tracking
 - **PCI DSS**: If handling payment data (future)
+- **Audit Logging**: Comprehensive activity tracking for compliance
+- **Consent Management**: Full consent lifecycle tracking with withdrawal capabilities
 
 ## Future Enhancements
 
@@ -826,11 +1032,11 @@ FROM pending_registrations;
 
 1. **Multi-Factor Authentication**: TOTP and SMS support
 2. **Social Login**: Google, Apple, Microsoft integration
-3. **Advanced Rate Limiting**: IP-based and device-based limits
-4. **Audit Logging**: Comprehensive activity tracking
+3. **Advanced Rate Limiting**: Device-based and behavioral limits
+4. **Advanced Session Management**: Device tracking and remote logout
 5. **Account Recovery**: Advanced recovery options
-6. **Session Management**: Advanced session controls
-7. **Biometric Authentication**: Fingerprint and face recognition
+6. **Biometric Authentication**: Fingerprint and face recognition
+7. **Advanced Audit Logging**: Real-time monitoring and alerting
 
 ### Scalability Considerations
 
@@ -852,5 +1058,5 @@ For technical support or questions about the authentication system:
 
 ---
 
-_Last updated: January 2025_
-_Version: 2.0.0_
+_Last updated: October 2025_
+_Version: 3.0.0_

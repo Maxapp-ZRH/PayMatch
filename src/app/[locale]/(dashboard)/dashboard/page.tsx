@@ -12,6 +12,7 @@ import { createClient } from '@/lib/supabase/server';
 import { LogoutButton } from '@/components/ui/logout-button';
 import { BillingSection } from '@/features/dashboard/components/BillingSection';
 import { SettingsSection } from '@/features/dashboard/components/SettingsSection';
+import { SessionTimeoutWarning } from '@/features/auth/components/SessionTimeoutWarning';
 
 export const metadata: Metadata = {
   title: 'Dashboard - PayMatch',
@@ -69,6 +70,9 @@ export default async function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Session Timeout Warning */}
+      <SessionTimeoutWarning />
+
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-center justify-between">
           <div>
@@ -142,7 +146,9 @@ export default async function Dashboard() {
                 >
                   {org?.plan === 'free'
                     ? 'Free'
-                    : org?.plan?.charAt(0).toUpperCase() + org?.plan?.slice(1)}
+                    : org?.plan
+                      ? org.plan.charAt(0).toUpperCase() + org.plan.slice(1)
+                      : 'Unknown'}
                 </span>
               </div>
             </div>

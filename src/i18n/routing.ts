@@ -31,17 +31,12 @@ export const routing = defineRouting({
   pathnames: {
     // Home
     '/': '/',
-
-    // Authentication
-    '/login': {
-      'en-CH': '/login',
-      'de-CH': '/anmelden',
-    },
-    '/register': {
-      'en-CH': '/register',
-      'de-CH': '/registrieren',
-    },
-
+    // Authentication (same URL for all locales)
+    '/login': '/login',
+    '/register': '/register',
+    '/forgot-password': '/forgot-password',
+    '/reset-password': '/reset-password',
+    '/verify-email': '/verify-email',
     // Legal pages
     '/privacy': {
       'en-CH': '/privacy',

@@ -24,14 +24,19 @@ The PayMatch email system is a **hybrid, type-safe, and scalable** solution that
 - ✅ **Database Integration** - Supabase for data persistence
 - ✅ **Error Handling** - Comprehensive error management
 
-### 2. **Authentication Server Actions** (`src/server/actions/auth.ts`)
+### 2. **Authentication Server Actions** (`src/features/auth/server/actions/`)
 
 **Server-Side Email Operations:**
 
 - `registerUser()` - User registration with email verification
-- `changeUserEmail()` - Email change during verification
 - `resendVerificationEmail()` - Resend verification emails
 - `sendPasswordResetEmail()` - Password reset functionality
+
+**Email Service Integration** (`src/features/auth/server/services/email-service.ts`):
+
+- `sendPendingRegistrationEmail()` - Verification email for new registrations
+- `sendVerificationEmail()` - Verification email for existing users
+- `sendPasswordResetEmail()` - Password reset email functionality
 
 **Key Features:**
 
@@ -78,16 +83,25 @@ The PayMatch email system is a **hybrid, type-safe, and scalable** solution that
 
 **React Email Templates:**
 
+- `EmailVerification` - User account verification
+- `PasswordReset` - Password reset functionality
 - `SupportConfirmationEmail` - User confirmation
 - `SupportTeamNotificationEmail` - Team notifications
 - `NewsletterWelcomeEmail` - Welcome messages
 - `EmailLayout` - Shared layout component
+
+**Email Assets System:**
+
+- Direct logo URL approach (no attachments needed)
+- Simplified asset management via `email-assets.ts`
+- PayMatch logo served from public directory
 
 **Features:**
 
 - ✅ **React Components** - Type-safe email templates
 - ✅ **Unsubscribe Integration** - Automatic unsubscribe URLs
 - ✅ **Responsive Design** - Mobile-friendly layouts
+- ✅ **Simplified Assets** - Direct URL approach for images
 - ✅ **Brand Consistency** - PayMatch styling
 
 ### 6. **Database Schema**
@@ -112,7 +126,7 @@ The PayMatch email system is a **hybrid, type-safe, and scalable** solution that
 
 ### **Server Actions vs API Routes**
 
-**Server Actions** (`src/server/actions/auth.ts`):
+**Server Actions** (`src/features/auth/server/actions/`):
 
 - ✅ **Authentication emails** - Registration, verification, password reset
 - ✅ **Server-side security** - Access to environment variables
@@ -179,6 +193,10 @@ The system supports **9 granular email types** for comprehensive user control:
 3. Welcome email sent with unsubscribe link
 4. Future newsletters include unsubscribe headers
 
+**Email Templates:**
+
+- `NewsletterWelcomeEmail` - Welcome email for new subscribers
+
 **Features:**
 
 - ✅ **Dual Storage** - Newsletter table + email preferences
@@ -195,6 +213,11 @@ The system supports **9 granular email types** for comprehensive user control:
    - Team notification → `support@paymatch.app` (emailType: `support`)
    - User confirmation → User's email (emailType: `support`)
 3. Both emails include unsubscribe functionality
+
+**Email Templates:**
+
+- `SupportConfirmationEmail` - User confirmation with request details
+- `SupportTeamNotificationEmail` - Team notification with full request info
 
 **Features:**
 
@@ -273,7 +296,7 @@ The system supports **9 granular email types** for comprehensive user control:
 
 ```typescript
 // User registration with email verification
-import { registerUser } from '@/features/auth/server/auth';
+import { registerUser } from '@/features/auth/server/actions/registration';
 
 const result = await registerUser({
   firstName: 'John',
@@ -291,7 +314,7 @@ if (result.success) {
 
 ```typescript
 // Password reset email
-import { sendPasswordResetEmail } from '@/features/auth/server/auth';
+import { sendPasswordResetEmail } from '@/features/auth/server/actions/password-reset';
 
 const result = await sendPasswordResetEmail('user@example.com');
 if (result.success) {
@@ -302,7 +325,7 @@ if (result.success) {
 
 ```typescript
 // Resend verification email
-import { resendVerificationEmail } from '@/features/auth/server/auth';
+import { resendVerificationEmail } from '@/features/auth/server/actions/registration';
 
 const result = await resendVerificationEmail('user@example.com');
 if (result.success) {

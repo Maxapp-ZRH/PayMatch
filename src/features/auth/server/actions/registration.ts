@@ -20,6 +20,8 @@ import {
 } from '../utils/user-operations';
 import { generateVerificationToken } from '../utils/token-operations';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { logRegistrationAttempt } from '../services/audit-logging';
+import { checkDualRateLimit } from '../services/ip-rate-limiting';
 
 export interface RegisterUserData {
   firstName: string;
@@ -28,6 +30,8 @@ export interface RegisterUserData {
   password?: string; // Optional for GDPR compliance
   referralSource?: string;
   browserLocale?: string;
+  clientIP?: string; // Extracted client IP
+  userAgent?: string; // Extracted user agent
 }
 
 export interface RegisterResult {
@@ -43,13 +47,49 @@ export interface RegisterResult {
 export async function registerUser(
   data: RegisterUserData
 ): Promise<RegisterResult> {
+  const ip = data.clientIP || 'unknown';
+
   try {
+    // Check dual rate limiting (email + IP)
+    if (data.clientIP) {
+      const { emailAllowed, ipAllowed } = await checkDualRateLimit(
+        data.email,
+        ip,
+        'AUTH_OPERATIONS',
+        'IP_REGISTRATION_ATTEMPTS'
+      );
+
+      if (!emailAllowed || !ipAllowed) {
+        await logRegistrationAttempt(
+          data.email,
+          { clientIP: data.clientIP, userAgent: data.userAgent },
+          false,
+          'Rate limit exceeded',
+          { ip, emailAllowed, ipAllowed }
+        );
+
+        return {
+          success: false,
+          message:
+            'Too many registration attempts. Please wait before trying again.',
+        };
+      }
+    }
+
     // Check if user already has a pending registration
     const { hasPendingRegistration } = await checkPendingRegistration(
       data.email
     );
 
     if (hasPendingRegistration) {
+      await logRegistrationAttempt(
+        data.email,
+        { clientIP: data.clientIP, userAgent: data.userAgent },
+        false,
+        'Duplicate registration attempt',
+        { ip }
+      );
+
       return {
         success: false,
         message:
@@ -82,12 +122,33 @@ export async function registerUser(
     );
 
     if (!emailResult.success) {
+      await logRegistrationAttempt(
+        data.email,
+        { clientIP: data.clientIP, userAgent: data.userAgent },
+        false,
+        'Failed to send verification email',
+        { ip, error: emailResult.error }
+      );
+
       return {
         success: false,
         message:
           'Registration data stored, but failed to send verification email. Please try again.',
       };
     }
+
+    // Log successful registration
+    await logRegistrationAttempt(
+      data.email,
+      { clientIP: data.clientIP, userAgent: data.userAgent },
+      true,
+      undefined,
+      {
+        ip,
+        referralSource: data.referralSource,
+        browserLocale: data.browserLocale,
+      }
+    );
 
     return {
       success: true,
@@ -96,6 +157,16 @@ export async function registerUser(
     };
   } catch (error) {
     console.error('Registration error:', error);
+
+    // Log registration error
+    await logRegistrationAttempt(
+      data.email,
+      { clientIP: data.clientIP, userAgent: data.userAgent },
+      false,
+      error instanceof Error ? error.message : 'Unknown error',
+      { ip, error: error instanceof Error ? error.stack : 'Unknown error' }
+    );
+
     return {
       success: false,
       message: 'An unexpected error occurred. Please try again.',

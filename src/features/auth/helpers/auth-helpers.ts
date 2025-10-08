@@ -7,11 +7,22 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { User, AuthError, Session } from '@supabase/supabase-js';
+import {
+  checkSessionTimeout,
+  updateSessionActivity,
+} from '../server/services/session-timeout';
+import { logSessionActivity } from '../server/services/audit-logging';
 
 export interface AuthUserResult {
   user: User | null;
   error: AuthError | null;
   isUnauthenticated: boolean;
+}
+
+export interface SessionTimeoutResult {
+  isValid: boolean;
+  shouldWarn: boolean;
+  timeUntilExpiry: number;
 }
 
 /**
@@ -163,6 +174,61 @@ export async function handleAuthPageLogic(
   }
 
   return { user: null, redirectUrl: '', shouldRedirect: false };
+}
+
+/**
+ * Check session timeout for authenticated user
+ * @param user - Authenticated user
+ * @param sessionId - Session ID
+ * @param request - Request object for audit logging
+ * @returns Session timeout information
+ */
+export async function checkUserSessionTimeout(
+  user: User,
+  sessionId: string,
+  request?: Request
+): Promise<SessionTimeoutResult> {
+  try {
+    const timeoutInfo = await checkSessionTimeout(sessionId);
+
+    if (timeoutInfo.isExpired) {
+      // Log session expiration
+      if (request) {
+        await logSessionActivity('session_expired', {
+          request,
+          user: { id: user.id, email: user.email },
+          sessionId,
+        });
+      }
+
+      return {
+        isValid: false,
+        shouldWarn: false,
+        timeUntilExpiry: 0,
+      };
+    }
+
+    // Update session activity if valid
+    if (timeoutInfo.timeUntilExpiry > 0) {
+      await updateSessionActivity(sessionId, user.id, {
+        request,
+        email: user.email,
+      });
+    }
+
+    return {
+      isValid: true,
+      shouldWarn: timeoutInfo.shouldWarn,
+      timeUntilExpiry: timeoutInfo.timeUntilExpiry,
+    };
+  } catch (error) {
+    console.error('Session timeout check error:', error);
+    return {
+      isValid: false,
+      shouldWarn: false,
+      timeUntilExpiry: 0,
+    };
+  }
 }
 
 /**

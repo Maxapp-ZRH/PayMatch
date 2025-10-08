@@ -13,6 +13,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { routing } from './i18n/routing';
 import { createClient } from './lib/supabase/middleware';
 import type { User } from '@supabase/supabase-js';
+// Lazy imports to avoid Redis initialization at module load time
+// import { extractClientIP, checkIPRateLimit } from './features/auth/server/services/ip-rate-limiting';
+// import { checkSessionTimeout, updateSessionActivity } from './features/auth/server/services/session-timeout';
+// import { logRateLimitHit } from './features/auth/server/services/audit-logging';
 
 // Create the internationalization middleware
 const handleI18nRouting = createMiddleware(routing);
@@ -41,6 +45,11 @@ type RouteType =
  * Efficiently determine route type with single regex check
  */
 function getRouteType(pathname: string): RouteType {
+  // Ensure pathname is a valid string
+  if (!pathname || typeof pathname !== 'string') {
+    return 'public';
+  }
+
   if (ROUTE_PATTERNS.STATIC.test(pathname)) return 'static';
   if (ROUTE_PATTERNS.DASHBOARD.test(pathname)) return 'dashboard';
   if (ROUTE_PATTERNS.ONBOARDING.test(pathname)) return 'onboarding';
@@ -78,16 +87,184 @@ async function getOrganizationData(
   };
 }
 
+/**
+ * Extract client IP from NextRequest (Edge Runtime compatible)
+ */
+function extractClientIPFromRequest(request: NextRequest): string {
+  try {
+    // Check various headers for the real IP address
+    const vercelIP = request.headers.get('x-vercel-forwarded-for');
+    if (vercelIP && typeof vercelIP === 'string' && vercelIP.trim()) {
+      const firstIP = vercelIP.split(',')[0]?.trim();
+      if (firstIP && firstIP.length > 0) {
+        return firstIP;
+      }
+    }
+
+    const cloudflareIP = request.headers.get('cf-connecting-ip');
+    if (
+      cloudflareIP &&
+      typeof cloudflareIP === 'string' &&
+      cloudflareIP.trim()
+    ) {
+      return cloudflareIP.trim();
+    }
+
+    const forwardedFor = request.headers.get('x-forwarded-for');
+    if (
+      forwardedFor &&
+      typeof forwardedFor === 'string' &&
+      forwardedFor.trim()
+    ) {
+      const firstIP = forwardedFor.split(',')[0]?.trim();
+      if (firstIP && firstIP.length > 0) {
+        return firstIP;
+      }
+    }
+
+    const realIP = request.headers.get('x-real-ip');
+    if (realIP && typeof realIP === 'string' && realIP.trim()) {
+      return realIP.trim();
+    }
+
+    return '0.0.0.0';
+  } catch (error) {
+    console.warn('Error extracting client IP in middleware:', error);
+    return '0.0.0.0';
+  }
+}
+
+/**
+ * Simple Edge Runtime rate limiting using in-memory storage
+ * This is a basic implementation that resets on cold starts
+ */
+const edgeRateLimitStore = new Map<
+  string,
+  { count: number; resetTime: number }
+>();
+
+function checkSimpleEdgeRateLimit(
+  ip: string,
+  path: string
+): { allowed: boolean; rateLimitType?: string } {
+  try {
+    // Simple rate limiting rules
+    const rateLimitConfig = {
+      '/login': { maxRequests: 10, windowMs: 15 * 60 * 1000 }, // 10 requests per 15 minutes
+      '/register': { maxRequests: 5, windowMs: 60 * 60 * 1000 }, // 5 requests per hour
+      '/forgot-password': { maxRequests: 3, windowMs: 60 * 60 * 1000 }, // 3 requests per hour
+    };
+
+    // Find matching rate limit config
+    let config = rateLimitConfig['/login']; // default
+    let rateLimitType = 'IP_LOGIN_ATTEMPTS';
+
+    for (const [pathPrefix, pathConfig] of Object.entries(rateLimitConfig)) {
+      if (path.startsWith(pathPrefix)) {
+        config = pathConfig;
+        rateLimitType =
+          pathPrefix === '/login'
+            ? 'IP_LOGIN_ATTEMPTS'
+            : pathPrefix === '/register'
+              ? 'IP_REGISTRATION_ATTEMPTS'
+              : 'IP_PASSWORD_RESET_ATTEMPTS';
+        break;
+      }
+    }
+
+    const key = `${ip}:${rateLimitType}`;
+    const now = Date.now();
+    const entry = edgeRateLimitStore.get(key);
+
+    if (!entry || now > entry.resetTime) {
+      // No entry or window expired
+      edgeRateLimitStore.set(key, {
+        count: 1,
+        resetTime: now + config.windowMs,
+      });
+      return { allowed: true, rateLimitType };
+    }
+
+    if (entry.count >= config.maxRequests) {
+      return { allowed: false, rateLimitType };
+    }
+
+    // Increment count
+    entry.count++;
+    edgeRateLimitStore.set(key, entry);
+    return { allowed: true, rateLimitType };
+  } catch (error) {
+    console.error('Simple edge rate limit error:', error);
+    return { allowed: true };
+  }
+}
+
+// Session timeout check removed - handled in server actions where Redis is available
+
+/**
+ * Add security headers to response
+ */
+function addSecurityHeaders(response: NextResponse): NextResponse {
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=()'
+  );
+  return response;
+}
+
 export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  // Ensure pathname is a valid string
+  if (!pathname || typeof pathname !== 'string') {
+    return handleI18nRouting(request);
+  }
+
   // Remove locale prefix efficiently
   const pathnameWithoutLocale = pathname.replace(/^\/(en-CH|de-CH)/, '') || '/';
+
+  // Ensure pathnameWithoutLocale is always a valid string
+  if (!pathnameWithoutLocale || typeof pathnameWithoutLocale !== 'string') {
+    return handleI18nRouting(request);
+  }
 
   // Early return for static assets
   const routeType = getRouteType(pathnameWithoutLocale);
   if (routeType === 'static') {
     return handleI18nRouting(request);
+  }
+
+  // Check simple rate limiting for auth routes (Edge Runtime compatible)
+  if (routeType === 'auth') {
+    const ip = extractClientIPFromRequest(request);
+    const { allowed, rateLimitType } = checkSimpleEdgeRateLimit(
+      ip,
+      pathnameWithoutLocale
+    );
+
+    if (!allowed) {
+      console.log(`Rate limit exceeded for ${rateLimitType} from IP: ${ip}`);
+      const response = NextResponse.json(
+        {
+          error: 'Rate limit exceeded',
+          message:
+            'Too many requests from this IP address. Please try again later.',
+          rateLimitType,
+        },
+        { status: 429 }
+      );
+
+      // Add rate limit headers
+      response.headers.set('X-RateLimit-Limit', '10');
+      response.headers.set('X-RateLimit-Remaining', '0');
+      response.headers.set('Retry-After', '900'); // 15 minutes
+
+      return addSecurityHeaders(response);
+    }
   }
 
   // Only create Supabase client for protected routes
@@ -96,6 +273,8 @@ export default async function middleware(request: NextRequest) {
   let user = null;
   let authError = null;
   let orgData = null;
+  let sessionValid = true;
+  let sessionWarning = false;
 
   if (needsAuth) {
     const { supabase } = createClient(request);
@@ -109,8 +288,21 @@ export default async function middleware(request: NextRequest) {
       user = authUser;
       authError = error;
 
-      // Single organization query for both dashboard and onboarding routes
+      // Session timeout check is handled in server actions where Redis is available
+      // In middleware, we just pass through authenticated users
       if (user && !error) {
+        sessionValid = true; // Assume valid for middleware purposes
+        sessionWarning = false;
+
+        // If session is invalid, sign out the user
+        if (!sessionValid) {
+          await supabase.auth.signOut();
+          user = null;
+        }
+      }
+
+      // Single organization query for both dashboard and onboarding routes
+      if (user && !error && sessionValid) {
         orgData = await getOrganizationData(supabase, user.id);
       }
     } catch (error) {
@@ -128,7 +320,9 @@ export default async function middleware(request: NextRequest) {
         user,
         authError,
         orgData,
-        pathnameWithoutLocale
+        pathnameWithoutLocale,
+        sessionValid,
+        sessionWarning
       );
 
     case 'onboarding':
@@ -137,7 +331,9 @@ export default async function middleware(request: NextRequest) {
         user,
         authError,
         orgData,
-        pathnameWithoutLocale
+        pathnameWithoutLocale,
+        sessionValid,
+        sessionWarning
       );
 
     case 'auth':
@@ -167,12 +363,20 @@ function handleDashboardRoute(
     error: unknown;
     onboardingCompleted: boolean;
   } | null,
-  pathnameWithoutLocale: string
+  pathnameWithoutLocale: string,
+  sessionValid: boolean = true,
+  sessionWarning: boolean = false
 ) {
   // Auth check
-  if (!user || authError) {
+  if (!user || authError || !sessionValid) {
     const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirectTo', pathnameWithoutLocale);
+    // Ensure pathnameWithoutLocale is a valid string
+    if (pathnameWithoutLocale && typeof pathnameWithoutLocale === 'string') {
+      loginUrl.searchParams.set('redirectTo', pathnameWithoutLocale);
+    }
+    if (!sessionValid) {
+      loginUrl.searchParams.set('reason', 'session_expired');
+    }
     return NextResponse.redirect(loginUrl);
   }
 
@@ -186,8 +390,13 @@ function handleDashboardRoute(
     return NextResponse.redirect(new URL('/onboarding', request.url));
   }
 
-  // Allow access to dashboard
-  return handleI18nRouting(request);
+  // Add session warning header if needed
+  const response = handleI18nRouting(request);
+  if (sessionWarning) {
+    response.headers.set('X-Session-Warning', 'true');
+  }
+
+  return addSecurityHeaders(response);
 }
 
 /**
@@ -202,12 +411,20 @@ function handleOnboardingRoute(
     error: unknown;
     onboardingCompleted: boolean;
   } | null,
-  pathnameWithoutLocale: string
+  pathnameWithoutLocale: string,
+  sessionValid: boolean = true,
+  sessionWarning: boolean = false
 ) {
   // Auth check
-  if (!user || authError) {
+  if (!user || authError || !sessionValid) {
     const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirectTo', pathnameWithoutLocale);
+    // Ensure pathnameWithoutLocale is a valid string
+    if (pathnameWithoutLocale && typeof pathnameWithoutLocale === 'string') {
+      loginUrl.searchParams.set('redirectTo', pathnameWithoutLocale);
+    }
+    if (!sessionValid) {
+      loginUrl.searchParams.set('reason', 'session_expired');
+    }
     return NextResponse.redirect(loginUrl);
   }
 
@@ -221,8 +438,13 @@ function handleOnboardingRoute(
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  // Allow access to onboarding
-  return handleI18nRouting(request);
+  // Add session warning header if needed
+  const response = handleI18nRouting(request);
+  if (sessionWarning) {
+    response.headers.set('X-Session-Warning', 'true');
+  }
+
+  return addSecurityHeaders(response);
 }
 
 /**

@@ -7,6 +7,7 @@
 
 import { Header } from '@/components/marketing_pages/Header';
 import { Footer } from '@/components/marketing_pages/Footer';
+import { SessionTimeoutProvider } from '@/features/auth/components/SessionTimeoutProvider';
 
 type Props = {
   children: React.ReactNode;
@@ -14,10 +15,10 @@ type Props = {
 
 export default function MarketingLayout({ children }: Props) {
   return (
-    <>
+    <SessionTimeoutProvider>
       <Header />
       <main>{children}</main>
       <Footer />
-    </>
+    </SessionTimeoutProvider>
   );
 }

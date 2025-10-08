@@ -21,6 +21,11 @@ import {
   deleteRedisKey,
 } from '../services/redis';
 import { REDIS_CONFIG } from '@/config/redis-config';
+import { logPasswordResetAttempt } from '../services/audit-logging';
+import {
+  checkDualRateLimit,
+  extractClientIP,
+} from '../services/ip-rate-limiting';
 
 export interface PasswordResetResult {
   success: boolean;
@@ -73,16 +78,55 @@ export async function checkPendingRegistrationForPasswordReset(
  * Send password reset email
  */
 export async function sendPasswordResetEmail(
-  email: string
+  email: string,
+  request?: Request,
+  clientIP?: string,
+  userAgent?: string
 ): Promise<PasswordResetResult> {
+  const ip = clientIP || (request ? extractClientIP(request) : 'unknown');
+
   try {
-    // Check rate limit using centralized config
-    if (!(await checkRateLimit(email, 'PASSWORD_RESET'))) {
-      return {
-        success: false,
-        message:
-          'Too many password reset attempts. Please wait before trying again.',
-      };
+    // Check dual rate limiting (email + IP)
+    if (clientIP || request) {
+      const { emailAllowed, ipAllowed } = await checkDualRateLimit(
+        email,
+        ip,
+        'PASSWORD_RESET',
+        'IP_PASSWORD_RESET_ATTEMPTS'
+      );
+
+      if (!emailAllowed || !ipAllowed) {
+        await logPasswordResetAttempt(
+          email,
+          { request, clientIP, userAgent },
+          false,
+          'Rate limit exceeded',
+          { ip, emailAllowed, ipAllowed }
+        );
+
+        return {
+          success: false,
+          message:
+            'Too many password reset attempts. Please wait before trying again.',
+        };
+      }
+    } else {
+      // Fallback to email-only rate limiting
+      if (!(await checkRateLimit(email, 'PASSWORD_RESET'))) {
+        await logPasswordResetAttempt(
+          email,
+          { request, clientIP, userAgent },
+          false,
+          'Email rate limit exceeded',
+          { ip }
+        );
+
+        return {
+          success: false,
+          message:
+            'Too many password reset attempts. Please wait before trying again.',
+        };
+      }
     }
 
     // Find user by email
@@ -96,6 +140,15 @@ export async function sendPasswordResetEmail(
     }
 
     if (!user) {
+      // Log attempt for non-existent user (for security monitoring)
+      await logPasswordResetAttempt(
+        email,
+        { request, clientIP, userAgent },
+        true,
+        undefined,
+        { ip, userExists: false }
+      );
+
       // Don't reveal if user exists or not for security
       return {
         success: true,
@@ -129,11 +182,39 @@ export async function sendPasswordResetEmail(
 
     if (!result.success) {
       console.error('Failed to send password reset email:', result.error);
+
+      await logPasswordResetAttempt(
+        email,
+        {
+          request,
+          clientIP,
+          userAgent,
+          user: { id: user.id, email: user.email },
+        },
+        false,
+        'Failed to send password reset email',
+        { ip, error: result.error }
+      );
+
       return {
         success: false,
         message: 'Failed to send password reset email. Please try again.',
       };
     }
+
+    // Log successful password reset request
+    await logPasswordResetAttempt(
+      email,
+      {
+        request,
+        clientIP,
+        userAgent,
+        user: { id: user.id, email: user.email },
+      },
+      true,
+      undefined,
+      { ip }
+    );
 
     return {
       success: true,
@@ -142,6 +223,16 @@ export async function sendPasswordResetEmail(
     };
   } catch (error) {
     console.error('Error sending password reset email:', error);
+
+    // Log password reset error
+    await logPasswordResetAttempt(
+      email,
+      { request, clientIP, userAgent },
+      false,
+      error instanceof Error ? error.message : 'Unknown error',
+      { ip, error: error instanceof Error ? error.stack : 'Unknown error' }
+    );
+
     return {
       success: false,
       message: 'Failed to send password reset email. Please try again.',

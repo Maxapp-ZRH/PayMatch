@@ -9,6 +9,7 @@ import { type Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { OnboardingWizard } from '@/features/onboarding/components/OnboardingWizard';
+import { SessionTimeoutWarning } from '@/features/auth/components/SessionTimeoutWarning';
 import { createClient } from '@/lib/supabase/server';
 import type { PlanName } from '@/config/plans';
 
@@ -52,10 +53,15 @@ export default async function OnboardingPage() {
   const currentStep = Math.max(1, Math.min(4, org.onboarding_step || 1));
 
   return (
-    <OnboardingWizard
-      orgId={org.id}
-      initialPlan={org.plan as PlanName}
-      initialStep={currentStep}
-    />
+    <>
+      {/* Session Timeout Warning */}
+      <SessionTimeoutWarning />
+
+      <OnboardingWizard
+        orgId={org.id}
+        initialPlan={org.plan as PlanName}
+        initialStep={currentStep}
+      />
+    </>
   );
 }

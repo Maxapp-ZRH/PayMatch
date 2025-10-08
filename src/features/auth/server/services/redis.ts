@@ -7,28 +7,144 @@
 
 import Redis from 'ioredis';
 
-// Create Redis client with connection pooling and error handling
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
-  maxRetriesPerRequest: 3,
-  lazyConnect: true,
-  keepAlive: 30000,
-  connectTimeout: 10000,
-  commandTimeout: 5000,
-});
+// Validate Redis URL
+function getRedisUrl(): string {
+  try {
+    const redisUrl = process.env.REDIS_URL;
 
-// Handle Redis connection events
-redis.on('connect', () => {});
+    // If no Redis URL is provided, return a default local URL
+    if (!redisUrl || typeof redisUrl !== 'string' || redisUrl.trim() === '') {
+      console.log('No REDIS_URL provided, using localhost fallback');
+      return 'redis://localhost:6379';
+    }
 
-redis.on('error', (error) => {
-  console.error('Redis connection error:', error);
-});
+    // Basic validation of Redis URL format
+    try {
+      const url = new URL(redisUrl);
+      // Additional validation for Redis URL
+      if (url.protocol !== 'redis:' && url.protocol !== 'rediss:') {
+        throw new Error('Invalid protocol, must be redis: or rediss:');
+      }
+      return redisUrl;
+    } catch (urlError) {
+      console.warn(
+        'Invalid REDIS_URL format, falling back to localhost:',
+        urlError
+      );
+      return 'redis://localhost:6379';
+    }
+  } catch (error) {
+    console.error('Error processing REDIS_URL:', error);
+    return 'redis://localhost:6379';
+  }
+}
 
-redis.on('close', () => {});
+// Lazy Redis client initialization
+let redis: Redis | null = null;
+let redisInitialized = false;
 
 /**
- * Redis client instance
+ * Get Redis client with true lazy initialization
  */
-export const redisClient = redis;
+function getRedisClient(): Redis | null {
+  if (!redisInitialized) {
+    try {
+      // Check if we're in Edge Runtime
+      const isEdgeRuntime =
+        (typeof process !== 'undefined' &&
+          process.env.NEXT_RUNTIME === 'edge') ||
+        (typeof globalThis !== 'undefined' && 'EdgeRuntime' in globalThis);
+
+      if (isEdgeRuntime) {
+        console.log(
+          'Running in Edge Runtime, Redis may not be fully supported'
+        );
+      }
+
+      const redisUrl = getRedisUrl();
+      console.log(
+        'Initializing Redis client with URL:',
+        redisUrl.replace(/\/\/.*@/, '//***:***@')
+      ); // Hide credentials in logs
+
+      // Additional safety check for the URL
+      if (!redisUrl || typeof redisUrl !== 'string') {
+        throw new Error('Invalid Redis URL');
+      }
+
+      // Additional validation for Edge Runtime
+      if (isEdgeRuntime) {
+        // In Edge Runtime, we need to be more careful
+        console.log('Using Edge Runtime compatible Redis configuration');
+      }
+
+      // Create Redis client with additional error handling
+      redis = new Redis(redisUrl, {
+        maxRetriesPerRequest: 3,
+        lazyConnect: true,
+        keepAlive: 30000,
+        connectTimeout: 10000,
+        commandTimeout: 5000,
+        enableReadyCheck: false,
+        // Edge Runtime compatible options
+        family: 4, // Force IPv4
+      });
+
+      // Handle Redis connection events
+      redis.on('connect', () => {
+        console.log('Redis connected successfully');
+      });
+
+      redis.on('error', (error) => {
+        console.error('Redis connection error:', error);
+        // Don't crash the application on Redis errors
+      });
+
+      redis.on('close', () => {
+        console.log('Redis connection closed');
+      });
+
+      redis.on('reconnecting', () => {
+        console.log('Redis reconnecting...');
+      });
+
+      redisInitialized = true;
+    } catch (error) {
+      console.error('Failed to initialize Redis client:', error);
+      console.error('Error details:', error);
+      if (error instanceof Error) {
+        console.error('Error stack:', error.stack);
+      }
+      redis = null;
+      redisInitialized = true;
+    }
+  }
+
+  return redis;
+}
+
+/**
+ * Check if Redis is available
+ */
+export async function isRedisAvailable(): Promise<boolean> {
+  try {
+    const client = getRedisClient();
+    if (!client) return false;
+
+    await client.ping();
+    return true;
+  } catch (error) {
+    console.warn('Redis not available:', error);
+    return false;
+  }
+}
+
+/**
+ * Redis client instance (completely lazy - only created when accessed)
+ */
+export function getRedisClientInstance(): Redis | null {
+  return getRedisClient();
+}
 
 /**
  * Set a key-value pair in Redis with optional expiration
@@ -42,10 +158,16 @@ export async function setRedisKey(
   ttlSeconds?: number
 ): Promise<boolean> {
   try {
+    const client = getRedisClient();
+    if (!client) {
+      console.warn('Redis client not available, skipping SET operation');
+      return false;
+    }
+
     if (ttlSeconds) {
-      await redis.setex(key, ttlSeconds, value);
+      await client.setex(key, ttlSeconds, value);
     } else {
-      await redis.set(key, value);
+      await client.set(key, value);
     }
     return true;
   } catch (error) {
@@ -61,7 +183,13 @@ export async function setRedisKey(
  */
 export async function getRedisKey(key: string): Promise<string | null> {
   try {
-    const value = await redis.get(key);
+    const client = getRedisClient();
+    if (!client) {
+      console.warn('Redis client not available, skipping GET operation');
+      return null;
+    }
+
+    const value = await client.get(key);
     return value;
   } catch (error) {
     console.error('Redis GET error:', error);
@@ -76,7 +204,13 @@ export async function getRedisKey(key: string): Promise<string | null> {
  */
 export async function deleteRedisKey(key: string): Promise<boolean> {
   try {
-    const result = await redis.del(key);
+    const client = getRedisClient();
+    if (!client) {
+      console.warn('Redis client not available, skipping DEL operation');
+      return false;
+    }
+
+    const result = await client.del(key);
     return result > 0;
   } catch (error) {
     console.error('Redis DEL error:', error);
@@ -91,7 +225,13 @@ export async function deleteRedisKey(key: string): Promise<boolean> {
  */
 export async function existsRedisKey(key: string): Promise<boolean> {
   try {
-    const result = await redis.exists(key);
+    const client = getRedisClient();
+    if (!client) {
+      console.warn('Redis client not available, skipping EXISTS operation');
+      return false;
+    }
+
+    const result = await client.exists(key);
     return result === 1;
   } catch (error) {
     console.error('Redis EXISTS error:', error);
@@ -110,7 +250,13 @@ export async function incrementRedisCounter(
   increment = 1
 ): Promise<number> {
   try {
-    const result = await redis.incrby(key, increment);
+    const client = getRedisClient();
+    if (!client) {
+      console.warn('Redis client not available, skipping INCR operation');
+      return 0;
+    }
+
+    const result = await client.incrby(key, increment);
     return result;
   } catch (error) {
     console.error('Redis INCR error:', error);
@@ -129,7 +275,13 @@ export async function expireRedisKey(
   ttlSeconds: number
 ): Promise<boolean> {
   try {
-    const result = await redis.expire(key, ttlSeconds);
+    const client = getRedisClient();
+    if (!client) {
+      console.warn('Redis client not available, skipping EXPIRE operation');
+      return false;
+    }
+
+    const result = await client.expire(key, ttlSeconds);
     return result === 1;
   } catch (error) {
     console.error('Redis EXPIRE error:', error);
@@ -182,8 +334,14 @@ export async function getRedisObject<T = Record<string, unknown>>(
  */
 export async function getRedisKeys(keys: string[]): Promise<(string | null)[]> {
   try {
+    const client = getRedisClient();
+    if (!client) {
+      console.warn('Redis client not available, skipping MGET operation');
+      return keys.map(() => null);
+    }
+
     if (keys.length === 0) return [];
-    return await redis.mget(...keys);
+    return await client.mget(...keys);
   } catch (error) {
     console.error('Redis MGET error:', error);
     return keys.map(() => null);
@@ -197,8 +355,14 @@ export async function getRedisKeys(keys: string[]): Promise<(string | null)[]> {
  */
 export async function deleteRedisKeys(keys: string[]): Promise<number> {
   try {
+    const client = getRedisClient();
+    if (!client) {
+      console.warn('Redis client not available, skipping MDEL operation');
+      return 0;
+    }
+
     if (keys.length === 0) return 0;
-    return await redis.del(...keys);
+    return await client.del(...keys);
   } catch (error) {
     console.error('Redis MDEL error:', error);
     return 0;
