@@ -27,14 +27,25 @@ jobs:
       - name: Link to Supabase project
         run: echo "$SUPABASE_DB_PASSWORD" | supabase link --project-ref "$PROJECT_ID"
 
-      - name: Deploy complete Supabase project
+      # ⬇️ Push config.toml (Auth, Storage, URLs, function config, etc.)
+      - name: Push Supabase configuration (config.toml)
         run: |
-          echo "🚀 Deploying complete Supabase project..."
-          echo "This includes:"
-          echo "  - Database migrations and schema changes"
-          echo "  - Edge Functions"
-          echo "  - Project configuration from config.toml"
-          echo "  - Auth settings and OAuth providers"
-          echo "  - All other project configurations"
-          echo ""
-          supabase deploy
+          echo "🔧 Deploying project configuration from config.toml..."
+          echo "This includes auth settings, OAuth providers, and other project config"
+          supabase config push
+
+      # Push database migrations and schema changes
+      - name: Push database migrations
+        run: |
+          echo "📊 Deploying database migrations and schema changes..."
+          supabase db push
+
+      # Deploy Edge Functions (if any exist)
+      - name: Deploy Edge Functions
+        run: |
+          if [ -d "supabase/functions" ] && [ "$(ls -A supabase/functions)" ]; then
+            echo "⚡ Deploying Edge Functions..."
+            supabase functions deploy
+          else
+            echo "ℹ️  No Edge Functions to deploy"
+          fi
