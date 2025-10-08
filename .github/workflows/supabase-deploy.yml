@@ -26,23 +26,15 @@ jobs:
 
       - name: Link to Supabase project
         run: echo "$SUPABASE_DB_PASSWORD" | supabase link --project-ref "$PROJECT_ID"
-        # Alternative: Use direct database URL instead of linking
-        # run: supabase db push --db-url "$SUPABASE_DB_URL"
 
-      - name: Push database migrations
-        run: supabase db push
-        # Add --include-seed if you want seed.sql to run in production
-
-      - name: Deploy all Edge Functions
+      - name: Deploy complete Supabase project
         run: |
-          if [ -d "supabase/functions" ] && [ "$(ls -A supabase/functions)" ]; then
-            echo "Deploying Edge Functions..."
-            supabase functions deploy
-          else
-            echo "No Edge Functions to deploy"
-          fi
-
-      - name: Deploy project configuration
-        run: |
-          echo "Deploying project configuration from config.toml..."
-          supabase projects update --project-ref "$PROJECT_ID" --config-file supabase/config.toml
+          echo "🚀 Deploying complete Supabase project..."
+          echo "This includes:"
+          echo "  - Database migrations and schema changes"
+          echo "  - Edge Functions"
+          echo "  - Project configuration from config.toml"
+          echo "  - Auth settings and OAuth providers"
+          echo "  - All other project configurations"
+          echo ""
+          supabase deploy
