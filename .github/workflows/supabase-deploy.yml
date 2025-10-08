@@ -41,3 +41,8 @@ jobs:
           else
             echo "No Edge Functions to deploy"
           fi
+
+      - name: Deploy project configuration
+        run: |
+          echo "Deploying project configuration from config.toml..."
+          supabase projects update --project-ref "$PROJECT_ID" --config-file supabase/config.toml
