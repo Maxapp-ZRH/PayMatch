@@ -13,10 +13,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { routing } from './i18n/routing';
 import { createClient } from './lib/supabase/middleware';
 import type { User } from '@supabase/supabase-js';
-// Lazy imports to avoid Redis initialization at module load time
-// import { extractClientIP, checkIPRateLimit } from './features/auth/server/services/ip-rate-limiting';
-// import { checkSessionTimeout, updateSessionActivity } from './features/auth/server/services/session-timeout';
-// import { logRateLimitHit } from './features/auth/server/services/audit-logging';
+// Rate limiting is handled by:
+// 1. Supabase Auth for authentication operations
+// 2. Redis-based rate limiting in server actions
+// 3. Edge Functions for complex scenarios
 
 // Create the internationalization middleware
 const handleI18nRouting = createMiddleware(routing);
@@ -26,7 +26,7 @@ const ROUTE_PATTERNS = {
   STATIC: /^\/_next|^\/api|\./,
   DASHBOARD: /^\/dashboard/,
   ONBOARDING: /^\/onboarding/,
-  AUTH: /^\/(login|register|forgot-password)/,
+  AUTH: /^\/(login|register|forgot-password|verification-success)/,
   TOKEN_PROTECTED: /^\/reset-password/,
   SPECIAL: /^\/verify-email/,
 } as const;
@@ -87,117 +87,12 @@ async function getOrganizationData(
   };
 }
 
-/**
- * Extract client IP from NextRequest (Edge Runtime compatible)
- */
-function extractClientIPFromRequest(request: NextRequest): string {
-  try {
-    // Check various headers for the real IP address
-    const vercelIP = request.headers.get('x-vercel-forwarded-for');
-    if (vercelIP && typeof vercelIP === 'string' && vercelIP.trim()) {
-      const firstIP = vercelIP.split(',')[0]?.trim();
-      if (firstIP && firstIP.length > 0) {
-        return firstIP;
-      }
-    }
+// Client IP extraction removed - handled in server actions where Redis is available
 
-    const cloudflareIP = request.headers.get('cf-connecting-ip');
-    if (
-      cloudflareIP &&
-      typeof cloudflareIP === 'string' &&
-      cloudflareIP.trim()
-    ) {
-      return cloudflareIP.trim();
-    }
-
-    const forwardedFor = request.headers.get('x-forwarded-for');
-    if (
-      forwardedFor &&
-      typeof forwardedFor === 'string' &&
-      forwardedFor.trim()
-    ) {
-      const firstIP = forwardedFor.split(',')[0]?.trim();
-      if (firstIP && firstIP.length > 0) {
-        return firstIP;
-      }
-    }
-
-    const realIP = request.headers.get('x-real-ip');
-    if (realIP && typeof realIP === 'string' && realIP.trim()) {
-      return realIP.trim();
-    }
-
-    return '0.0.0.0';
-  } catch (error) {
-    console.warn('Error extracting client IP in middleware:', error);
-    return '0.0.0.0';
-  }
-}
-
-/**
- * Simple Edge Runtime rate limiting using in-memory storage
- * This is a basic implementation that resets on cold starts
- */
-const edgeRateLimitStore = new Map<
-  string,
-  { count: number; resetTime: number }
->();
-
-function checkSimpleEdgeRateLimit(
-  ip: string,
-  path: string
-): { allowed: boolean; rateLimitType?: string } {
-  try {
-    // Simple rate limiting rules
-    const rateLimitConfig = {
-      '/login': { maxRequests: 10, windowMs: 15 * 60 * 1000 }, // 10 requests per 15 minutes
-      '/register': { maxRequests: 5, windowMs: 60 * 60 * 1000 }, // 5 requests per hour
-      '/forgot-password': { maxRequests: 3, windowMs: 60 * 60 * 1000 }, // 3 requests per hour
-    };
-
-    // Find matching rate limit config
-    let config = rateLimitConfig['/login']; // default
-    let rateLimitType = 'IP_LOGIN_ATTEMPTS';
-
-    for (const [pathPrefix, pathConfig] of Object.entries(rateLimitConfig)) {
-      if (path.startsWith(pathPrefix)) {
-        config = pathConfig;
-        rateLimitType =
-          pathPrefix === '/login'
-            ? 'IP_LOGIN_ATTEMPTS'
-            : pathPrefix === '/register'
-              ? 'IP_REGISTRATION_ATTEMPTS'
-              : 'IP_PASSWORD_RESET_ATTEMPTS';
-        break;
-      }
-    }
-
-    const key = `${ip}:${rateLimitType}`;
-    const now = Date.now();
-    const entry = edgeRateLimitStore.get(key);
-
-    if (!entry || now > entry.resetTime) {
-      // No entry or window expired
-      edgeRateLimitStore.set(key, {
-        count: 1,
-        resetTime: now + config.windowMs,
-      });
-      return { allowed: true, rateLimitType };
-    }
-
-    if (entry.count >= config.maxRequests) {
-      return { allowed: false, rateLimitType };
-    }
-
-    // Increment count
-    entry.count++;
-    edgeRateLimitStore.set(key, entry);
-    return { allowed: true, rateLimitType };
-  } catch (error) {
-    console.error('Simple edge rate limit error:', error);
-    return { allowed: true };
-  }
-}
+// Rate limiting removed from middleware - handled by:
+// 1. Supabase Auth for authentication operations (automatic)
+// 2. Redis-based rate limiting in server actions
+// 3. Edge Functions for complex scenarios
 
 // Session timeout check removed - handled in server actions where Redis is available
 
@@ -238,34 +133,8 @@ export default async function middleware(request: NextRequest) {
     return handleI18nRouting(request);
   }
 
-  // Check simple rate limiting for auth routes (Edge Runtime compatible)
-  if (routeType === 'auth') {
-    const ip = extractClientIPFromRequest(request);
-    const { allowed, rateLimitType } = checkSimpleEdgeRateLimit(
-      ip,
-      pathnameWithoutLocale
-    );
-
-    if (!allowed) {
-      console.log(`Rate limit exceeded for ${rateLimitType} from IP: ${ip}`);
-      const response = NextResponse.json(
-        {
-          error: 'Rate limit exceeded',
-          message:
-            'Too many requests from this IP address. Please try again later.',
-          rateLimitType,
-        },
-        { status: 429 }
-      );
-
-      // Add rate limit headers
-      response.headers.set('X-RateLimit-Limit', '10');
-      response.headers.set('X-RateLimit-Remaining', '0');
-      response.headers.set('Retry-After', '900'); // 15 minutes
-
-      return addSecurityHeaders(response);
-    }
-  }
+  // Rate limiting is handled by Supabase Auth and server actions
+  // No rate limiting needed in middleware
 
   // Only create Supabase client for protected routes
   const needsAuth = routeType === 'dashboard' || routeType === 'onboarding';

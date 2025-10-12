@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CheckCircle } from 'lucide-react';
@@ -28,6 +28,7 @@ import {
 export function ForgotPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [countdown, setCountdown] = useState(5);
   const router = useRouter();
 
   const {
@@ -40,6 +41,29 @@ export function ForgotPasswordForm() {
     resolver: zodResolver(forgotPasswordSchema),
     mode: 'onBlur', // Validate on blur for better UX
   });
+
+  // Auto-close after 5 seconds when success is shown
+  useEffect(() => {
+    if (success) {
+      const countdownTimer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdownTimer);
+            // Close the current tab/window
+            window.close();
+            // If window.close() doesn't work, redirect to login as fallback
+            setTimeout(() => {
+              router.push('/login');
+            }, 100);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(countdownTimer);
+    }
+  }, [success, router]);
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
     clearErrors(); // Clear any previous server errors
@@ -108,6 +132,14 @@ export function ForgotPasswordForm() {
           We&apos;ve sent you a password reset link. Please check your email and
           click the link to reset your password.
         </p>
+        <div className="mt-4">
+          <div className="flex items-center justify-center space-x-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
+            <span className="text-sm text-gray-500">
+              Closing in {countdown} second{countdown !== 1 ? 's' : ''}...
+            </span>
+          </div>
+        </div>
       </div>
     );
   }

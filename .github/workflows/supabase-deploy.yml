@@ -33,6 +33,9 @@ jobs:
         run: supabase db push
         # Add --include-seed if you want seed.sql to run in production
 
+      - name: Push Supabase configuration
+        run: supabase config push
+
       - name: Deploy all Edge Functions
         run: |
           if [ -d "supabase/functions" ] && [ "$(ls -A supabase/functions)" ]; then

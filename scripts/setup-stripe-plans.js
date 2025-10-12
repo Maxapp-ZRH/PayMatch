@@ -253,11 +253,13 @@ async function main() {
     // Update environment files
     const projectRoot = path.join(__dirname, '..');
     updateEnvFile(path.join(projectRoot, '.env.local'), priceIds);
-    updateEnvFile(path.join(projectRoot, '.env.example'), priceIds);
+    updateEnvFile(path.join(projectRoot, '.env.production'), priceIds);
 
     console.log('\n🎉 Setup complete!');
     console.log('\n📋 Next steps:');
-    console.log('1. Verify the price IDs in your .env.local file');
+    console.log(
+      '1. Verify the price IDs in your .env.local and .env.production files'
+    );
     console.log('2. Test the plan selection in your application');
     console.log('3. Set up webhook endpoints in Stripe dashboard');
     console.log('4. Add webhook secret to your .env.local:');

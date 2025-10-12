@@ -2,7 +2,7 @@
 
 ## Overview
 
-PayMatch implements a modern, GDPR-compliant authentication system using Supabase Auth with deferred account creation, smart auto-send logic, and comprehensive security features. The system handles both regular users and pending registrations seamlessly with intelligent flow routing.
+PayMatch implements a modern, GDPR-compliant authentication system using Supabase Auth native features with magic links, JWT session management, and comprehensive security features. The system provides a seamless user experience with built-in email verification, password reset, and session management.
 
 ## Table of Contents
 
@@ -22,10 +22,11 @@ PayMatch implements a modern, GDPR-compliant authentication system using Supabas
 
 ### ✅ Implemented Features
 
-- **✅ GDPR/FADP Compliant Registration**: No password storage in pending registrations
-- **✅ Deferred Account Creation**: Supabase users created only after email verification
-- **✅ Smart Auto-Send Logic**: Intelligent email sending based on user flow
-- **✅ Hybrid Rate Limiting**: Edge Runtime + Redis-based protection
+- **✅ Supabase Auth Integration**: Native authentication with magic links
+- **✅ JWT Session Management**: Automatic token refresh and session handling
+- **✅ Magic Link Verification**: Secure email verification without custom tokens
+- **✅ Built-in Password Reset**: Supabase native password reset flow
+- **✅ Hybrid Rate Limiting**: Supabase Auth + Redis for app-level protection
 - **✅ Comprehensive Audit Logging**: Full activity tracking for compliance
 - **✅ Consent Management**: Complete consent lifecycle tracking
 - **✅ Security Headers**: Production-ready security headers
@@ -35,16 +36,15 @@ PayMatch implements a modern, GDPR-compliant authentication system using Supabas
 - **✅ Organization-Based Model**: Multi-user organizations with roles
 - **✅ Stripe Integration**: Subscription management
 - **✅ Email System**: Unified email preferences and unsubscribe
-- **✅ Edge Functions**: Automated cleanup and maintenance
 - **✅ Row Level Security**: Comprehensive database security
 
 ### 🎯 Key Innovations
 
-1. **Edge Runtime Compatibility**: In-memory rate limiting for middleware
-2. **Client-Side Information Extraction**: Secure IP/UA extraction without server-side headers
-3. **Smart Flow Routing**: Intelligent user guidance based on account status
-4. **Comprehensive Compliance**: GDPR + Switzerland FADP compliance
-5. **Production-Ready Security**: Security headers, audit logging, rate limiting
+1. **Supabase Auth Native Integration**: Leverages Supabase's built-in authentication features
+2. **Magic Link Security**: Secure email verification without custom token management
+3. **JWT Session Management**: Automatic token refresh and session handling
+4. **Hybrid Rate Limiting**: Supabase Auth for authentication, Redis for app features
+5. **Comprehensive Compliance**: GDPR + Switzerland FADP compliance
 
 ## Architecture
 
@@ -52,20 +52,20 @@ PayMatch implements a modern, GDPR-compliant authentication system using Supabas
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Next.js App   │    │   Redis Cache   │    │  Supabase DB    │
+│   Next.js App   │    │   Redis Cache   │    │  Supabase Auth  │
 │   (Vercel)      │    │   (Vercel)      │    │   (Supabase)    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          │                       │                       │
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│  Auth Components│    │  Token Storage  │    │  User Data      │
-│  - Login        │    │  - Rate Limiting│    │  - Organizations│
-│  - Register     │    │  - Password     │    │  - Profiles     │
-│  - Password     │    │    Reset Tokens │    │  - Pending      │
-│    Reset        │    │  - Session Data │    │    Registrations│
-│  - Verify Email │    │  - Auto-Send    │    │  - Email Prefs  │
-│  - Set Password │    │    State        │    │  - Newsletter   │
+│  Auth Components│    │  App-Level      │    │  Auth Services  │
+│  - Login        │    │  Rate Limiting  │    │  - JWT Tokens   │
+│  - Register     │    │  - API Calls    │    │  - Magic Links  │
+│  - Password     │    │  - File Uploads │    │  - Email Verify │
+│    Reset        │    │  - Email Sending│    │  - Password     │
+│  - Verify Email │    │  - Caching      │    │    Reset        │
+│  - Dashboard    │    │  - Audit Logs   │    │  - Session Mgmt │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -104,43 +104,40 @@ src/features/auth/
 
 ## Authentication Flows
 
-### 1. User Registration Flow (GDPR Compliant)
+### 1. User Registration Flow (Supabase Auth)
 
 ```mermaid
 graph TD
     A[User Submits Registration] --> B{Check for Duplicate}
-    B -->|Duplicate Found| C[Show Warning + Redirect to Verify]
-    B -->|No Duplicate| D[Store Pending Registration<br/>NO PASSWORD STORED]
-    D --> E[Send Verification Email]
-    E --> F[Redirect to Verify Email Page<br/>with showResend=true]
-    F --> G[Auto-Send Verification Email]
-    G --> H[User Clicks Email Link]
-    H --> I[Verify Token]
-    I --> J[User Sets Password]
-    J --> K[Create Supabase User]
-    K --> L[Create Organization]
-    L --> M[Redirect to Login]
+    B -->|Duplicate Found| C[Show Warning + Redirect to Login]
+    B -->|No Duplicate| D[Create Supabase User<br/>email_confirm: false]
+    D --> E[Supabase Sends Verification Email]
+    E --> F[User Clicks Magic Link]
+    F --> G[Supabase Verifies Email]
+    G --> H[User Redirected to Dashboard]
+    H --> I[Create Organization]
+    I --> J[Complete Onboarding]
 ```
 
 **Key Features:**
 
-- **GDPR Compliant**: No password storage in pending registrations
-- **Deferred Account Creation**: No Supabase user until email verification + password setting
-- **Smart Auto-Send**: Only auto-sends when coming from registration flow
-- **Duplicate Prevention**: Prevents multiple registrations with same email
-- **Automatic Cleanup**: Expired registrations cleaned up every 6 hours
-- **Rate Limiting**: Prevents abuse of registration endpoint
+- **Supabase Native**: Uses Supabase Auth's built-in user creation
+- **Magic Link Verification**: Secure email verification via Supabase
+- **Automatic Email**: Supabase handles email sending with Resend SMTP
+- **JWT Sessions**: Automatic session management with token refresh
+- **Rate Limiting**: Supabase handles authentication rate limiting
+- **No Custom Tokens**: No need for custom token management
 
 ### 2. User Login Flow
 
 ```mermaid
 graph TD
-    A[User Submits Login] --> B[Attempt Supabase Login]
+    A[User Submits Login] --> B[Supabase Auth Login]
     B --> C{Login Successful?}
-    C -->|No| D{Check Pending Registration}
-    D -->|Found| E[Redirect to Verify Email<br/>NO AUTO-SEND]
-    D -->|Not Found| F[Show Generic Error]
-    C -->|Yes| G{User Has Organization?}
+    C -->|No| D[Show Error Message]
+    C -->|Yes| E{Email Verified?}
+    E -->|No| F[Redirect to Verify Email]
+    E -->|Yes| G{User Has Organization?}
     G -->|No| H[Redirect to Onboarding]
     G -->|Yes| I{Onboarding Complete?}
     I -->|No| J[Redirect to Onboarding]
@@ -149,73 +146,63 @@ graph TD
 
 **Key Features:**
 
-- **Smart Redirects**: Pending users guided to verification without auto-send
+- **Supabase Auth**: Uses Supabase's built-in login system
+- **JWT Sessions**: Automatic session management with refresh tokens
+- **Email Verification Check**: Ensures user has verified their email
 - **Organization Validation**: Ensures proper account setup
 - **Onboarding Check**: Guides users through setup process
-- **Error Handling**: Graceful fallbacks for all scenarios
 
 ### 3. Password Reset Flow
 
 ```mermaid
 graph TD
-    A[User Requests Password Reset] --> B{Check User Type}
-    B -->|Regular User| C[Send Regular Reset Email]
-    B -->|Pending User| D[Redirect to Verify Email<br/>with pendingPasswordReset=true]
-    B -->|No User| E[Send Generic Success Message]
-    C --> F[User Clicks Reset Link]
-    D --> G[User Clicks Resend Button]
-    F --> H{Token Valid?}
-    G --> I[Resend Verification Email]
-    H -->|No| J[Show Error Message]
-    H -->|Yes| K[Update Supabase Password]
-    I --> L[User Clicks Email Link]
-    K --> M[Redirect to Login]
-    L --> N[User Sets Password]
-    N --> O[Create Supabase User]
-    O --> P[Create Organization]
-    P --> Q[Redirect to Login]
+    A[User Requests Password Reset] --> B[Supabase Generate Magic Link]
+    B --> C[Supabase Sends Reset Email]
+    C --> D[User Clicks Magic Link]
+    D --> E[Supabase Verifies Link]
+    E --> F[User Redirected to Reset Page]
+    F --> G[User Sets New Password]
+    G --> H[Supabase Updates Password]
+    H --> I[User Redirected to Dashboard]
 ```
 
 **Key Features:**
 
-- **Smart Routing**: Pending users redirected to verify-email page
-- **No Auto-Send**: Users control when to resend verification
-- **Token Security**: Redis-based storage with TTL
-- **No User Enumeration**: Same response for all email requests
+- **Supabase Magic Links**: Uses Supabase's built-in password reset
+- **Automatic Email**: Supabase handles email sending with Resend SMTP
+- **Secure Verification**: Magic links are cryptographically secure
+- **JWT Sessions**: User is authenticated after password reset
+- **No Custom Tokens**: No need for custom token management
 
 ### 4. Email Verification Flow
 
 ```mermaid
 graph TD
-    A[User Lands on Verify Email] --> B{Coming from Registration?}
-    B -->|Yes| C[Auto-Send Verification Email]
-    B -->|No| D[Show Manual Resend Button]
-    C --> E[User Clicks Email Link]
-    D --> F[User Clicks Resend Button]
-    E --> G[Verify Token]
-    F --> H[Resend Verification Email]
-    G --> I[User Sets Password]
-    H --> I
-    I --> J[Create Supabase User]
-    J --> K[Create Organization]
-    K --> L[Redirect to Login]
+    A[User Clicks Magic Link] --> B[Supabase Verifies Link]
+    B --> C{Verification Successful?}
+    C -->|No| D[Show Error Message]
+    C -->|Yes| E[User Redirected to Dashboard]
+    E --> F{User Has Organization?}
+    F -->|No| G[Redirect to Onboarding]
+    F -->|Yes| H[Continue to Dashboard]
 ```
 
 **Key Features:**
 
-- **Smart Auto-Send**: Only auto-sends from registration flow
-- **Manual Control**: Users control resend in other flows
-- **Password Collection**: Secure password setting during verification
-- **60-Second Cooldown**: Prevents spam resends
+- **Supabase Magic Links**: Uses Supabase's built-in email verification
+- **Automatic Verification**: No custom token management needed
+- **JWT Sessions**: User is automatically authenticated after verification
+- **Secure Process**: Magic links are cryptographically secure
+- **No Manual Resend**: Supabase handles resend functionality
 
 ## Security Features
 
 ### 1. GDPR Compliance
 
-- **No Password Storage**: Passwords not stored in pending registrations
-- **Data Minimization**: Only essential data stored temporarily
-- **Automatic Cleanup**: Expired data automatically removed
-- **User Control**: Users can control their data
+- **Supabase Auth Compliance**: Supabase handles GDPR compliance for authentication
+- **Data Minimization**: Only essential data stored in user metadata
+- **Automatic Cleanup**: Supabase handles data retention policies
+- **User Control**: Users can control their data through Supabase Auth
 
 ### 2. Password Security
 
@@ -229,24 +216,24 @@ graph TD
 - **Secure Collection**: Passwords collected only during verification
 - **Frontend Validation**: Real-time password strength indicator with requirements display
 
-### 3. Token Management
+### 3. Session Management
 
-- **Redis Storage**: All tokens stored in Redis with automatic TTL
-- **URL-Safe Tokens**: Base64url encoded tokens for better URL compatibility
-- **Unique Tokens**: Cryptographically secure random tokens
-- **Expiration**: Tokens expire after 1 hour (configurable)
-- **Cleanup**: Automatic cleanup of expired tokens
+- **JWT Tokens**: Supabase handles JWT token generation and validation
+- **Automatic Refresh**: Tokens are automatically refreshed before expiry
+- **Secure Storage**: Tokens stored securely in HTTP-only cookies
+- **Session Timeout**: Configurable session timeout in Supabase config
+- **No Custom Tokens**: No need for custom token management
 
 ### 4. Rate Limiting
 
-- **Edge Runtime Compatible**: In-memory rate limiting for middleware (Edge Runtime)
-- **Redis-Based**: Full Redis rate limiting for server actions (Node.js Runtime)
-- **Multiple Endpoints**: Registration, login, password reset all rate limited
-- **IP-Based Limits**:
-  - Login: 10 requests per 15 minutes
-  - Registration: 5 requests per hour
-  - Password Reset: 3 requests per hour
-- **Configurable**: Limits can be adjusted in middleware and server actions
+- **Supabase Auth Rate Limiting**: Built-in rate limiting for authentication operations
+- **Redis-Based App Limits**: Custom rate limiting for app-level features
+- **Hybrid Approach**: Supabase handles auth, Redis handles app features
+- **IP-Based Limits** (Redis):
+  - API Calls: 100 requests per minute
+  - File Uploads: 10 requests per hour
+  - Email Sending: 20 requests per minute
+- **Configurable**: Limits can be adjusted in Supabase config and Redis config
 - **Fail-Open**: System continues working even if Redis is unavailable
 
 ### 5. Input Validation
@@ -276,29 +263,22 @@ graph TD
 
 ### Core Tables
 
-#### `pending_registrations` (GDPR Compliant)
+#### `auth.users` (Supabase Auth)
 
 ```sql
-CREATE TABLE pending_registrations (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email TEXT UNIQUE NOT NULL,
-  first_name TEXT,
-  last_name TEXT,
-  user_metadata JSONB DEFAULT '{}',
-  verification_token TEXT UNIQUE NOT NULL,
-  expires_at TIMESTAMPTZ NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Managed by Supabase Auth
+-- Contains user authentication data
+-- Includes email, password hash, email verification status
+-- User metadata stored in user_metadata JSONB field
 ```
 
 **Key Features:**
 
-- **No Password Storage**: Passwords not stored (GDPR compliant)
-- **Metadata Storage**: Referral source, browser locale in user_metadata
-- **Automatic Cleanup**: Expired records cleaned up every 6 hours via Edge Function
-- **Unique Constraints**: Prevents duplicate registrations
-- **Client Information**: IP address and user agent stored for audit purposes
+- **Supabase Managed**: Fully managed by Supabase Auth
+- **JWT Tokens**: Automatic JWT token generation and validation
+- **Email Verification**: Built-in email verification with magic links
+- **Password Security**: Automatic password hashing and validation
+- **User Metadata**: Custom data stored in user_metadata field
 
 #### `organizations`
 
@@ -471,63 +451,55 @@ CREATE POLICY "Users can view own profile" ON user_profiles
 
 ### Architecture
 
-The system uses a **hybrid approach** for rate limiting:
+The system uses **Supabase Auth for authentication rate limiting** and **Redis for app-level features**:
 
-- **Edge Runtime (Middleware)**: In-memory rate limiting for immediate protection
-- **Node.js Runtime (Server Actions)**: Full Redis-based rate limiting for comprehensive tracking
+- **Supabase Auth**: Handles all authentication rate limiting automatically
+- **Redis**: Used for caching, API rate limiting, and app-level features only
 
 ### Key Patterns
 
-#### Rate Limiting (Redis)
+#### App-Level Rate Limiting (Redis)
 
 ```
-rate_limit:IP_LOGIN_ATTEMPTS:192.168.1.1
-rate_limit:IP_REGISTRATION_ATTEMPTS:192.168.1.1
-rate_limit:IP_PASSWORD_RESET_ATTEMPTS:192.168.1.1
+rl:API_CALLS:user_123
+rl:FILE_UPLOADS:user_123
+rl:EMAIL_SENDING:user_123
+rl:NEWSLETTER_SUBSCRIPTION:user@example.com
+rl:SUPPORT_TICKETS:user_123
+rl:IP_GENERAL:192.168.1.1
 ```
 
-#### Session Management (Redis)
+#### Caching (Redis)
 
 ```
-session:USER_ID:session_data
-session_timeout:USER_ID:last_activity
-```
-
-#### Auto-Send State
-
-```
-paymatch-auto-sent-user@example.com
+user:user_123:profile_data
+org:org_456:organization_data
+dash:user_123:dashboard_data
+cache:api_response:endpoint_params
 ```
 
 ### Configuration
 
 ```typescript
-// Edge Runtime (Middleware) - In-memory
-const edgeRateLimitStore = new Map<
-  string,
-  { count: number; resetTime: number }
->();
-
-const rateLimitConfig = {
-  '/login': { maxRequests: 10, windowMs: 15 * 60 * 1000 },
-  '/register': { maxRequests: 5, windowMs: 60 * 60 * 1000 },
-  '/forgot-password': { maxRequests: 3, windowMs: 60 * 60 * 1000 },
-};
-
-// Node.js Runtime (Server Actions) - Redis
-export const REDIS_CONFIG = {
-  url: process.env.REDIS_URL!,
-  password: process.env.REDIS_PASSWORD,
-  keyPrefixes: {
-    RATE_LIMIT: 'rate_limit',
-    SESSION: 'session',
-    SESSION_TIMEOUT: 'session_timeout',
-    AUTO_SEND: 'paymatch-auto-sent',
+// Optimized Redis configuration
+const REDIS_CONFIG = {
+  RATE_LIMITS: {
+    API_CALLS: { limit: 1000, windowMs: 60000 },
+    FILE_UPLOADS: { limit: 20, windowMs: 3600000 },
+    EMAIL_SENDING: { limit: 50, windowMs: 60000 },
+    // ... other app-level limits
   },
-  rateLimits: {
-    IP_LOGIN_ATTEMPTS: { maxAttempts: 10, windowMs: 15 * 60 * 1000 },
-    IP_REGISTRATION_ATTEMPTS: { maxAttempts: 5, windowMs: 60 * 60 * 1000 },
-    IP_PASSWORD_RESET_ATTEMPTS: { maxAttempts: 3, windowMs: 60 * 60 * 1000 },
+  CACHE: {
+    USER_PROFILE_TTL: 7200, // 2 hours
+    ORGANIZATION_TTL: 3600, // 1 hour
+    API_RESPONSE_TTL: 120, // 2 minutes
+    // ... other cache TTLs
+  },
+  CONNECTION: {
+    maxRetriesPerRequest: 3,
+    lazyConnect: true,
+    keepAlive: 30000,
+    // ... optimized connection settings
   },
 };
 ```
@@ -872,9 +844,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 2. **Deploy Edge Functions**
 
    ```bash
-   supabase functions deploy cleanup-expired-registrations
    supabase functions deploy cleanup-audit-logs
-   supabase functions deploy cleanup-sessions
    ```
 
 3. **Apply Database Migrations**
@@ -886,14 +856,8 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 4. **Verify Deployment**
 
    ```bash
-   # Test cleanup functions
-   curl -X POST "https://your-project.supabase.co/functions/v1/cleanup-expired-registrations" \
-     -H "Authorization: Bearer YOUR_SERVICE_ROLE_KEY"
-
+   # Test cleanup function
    curl -X POST "https://your-project.supabase.co/functions/v1/cleanup-audit-logs" \
-     -H "Authorization: Bearer YOUR_SERVICE_ROLE_KEY"
-
-   curl -X POST "https://your-project.supabase.co/functions/v1/cleanup-sessions" \
      -H "Authorization: Bearer YOUR_SERVICE_ROLE_KEY"
    ```
 
@@ -940,7 +904,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 vercel logs
 
 # Supabase logs
-supabase functions logs cleanup-expired-registrations
+supabase functions logs cleanup-audit-logs
 ```
 
 #### Database Queries

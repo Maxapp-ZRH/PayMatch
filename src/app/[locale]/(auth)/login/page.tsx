@@ -12,6 +12,7 @@ import { redirect } from 'next/navigation';
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
 import { LoginForm } from '@/features/auth/components/LoginForm';
 import { createClient } from '@/lib/supabase/server';
+import { checkAuthPageRedirect } from '@/features/auth/helpers/auth-helpers';
 
 export const metadata: Metadata = {
   title: 'Sign In - PayMatch',
@@ -32,21 +33,13 @@ export default async function Login({ searchParams }: LoginPageProps) {
   const supabase = await createClient();
   const resolvedSearchParams = await searchParams;
 
-  // Check if user is already authenticated (using getUser for security)
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (user && !error) {
-    // Check if user's email is verified
-    if (!user.email_confirmed_at) {
-      redirect('/verify-email');
-    }
-
-    // Redirect to dashboard or intended destination
-    const redirectTo = resolvedSearchParams.redirectTo || '/dashboard';
-    redirect(redirectTo);
+  // Check if user is already authenticated and handle redirects
+  const redirectUrl = await checkAuthPageRedirect(
+    supabase,
+    resolvedSearchParams.redirectTo
+  );
+  if (redirectUrl) {
+    redirect(redirectUrl);
   }
 
   return (

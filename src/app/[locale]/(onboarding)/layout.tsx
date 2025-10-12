@@ -1,16 +1,20 @@
 /**
  * Onboarding Layout
  *
- * Layout for onboarding pages with session timeout management.
- * Provides session timeout warnings and management for all onboarding routes.
+ * Layout for onboarding pages with unified session management.
+ * Provides session context for all onboarding routes.
  */
 
-import { SessionTimeoutProvider } from '@/features/auth/components/SessionTimeoutProvider';
+import { SessionProvider } from '@/features/auth/components/SessionProvider';
 
 type Props = {
   children: React.ReactNode;
 };
 
 export default function OnboardingLayout({ children }: Props) {
-  return <SessionTimeoutProvider>{children}</SessionTimeoutProvider>;
+  return (
+    <SessionProvider requireEmailVerification={true} requireOrganization={true}>
+      {children}
+    </SessionProvider>
+  );
 }

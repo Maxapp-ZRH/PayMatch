@@ -49,3 +49,42 @@ export function getBrowserLocale(): string {
   }
   return 'de-CH';
 }
+
+/**
+ * Get client information for server actions
+ */
+export async function getClientInfo(request?: Request): Promise<{
+  clientIP: string;
+  userAgent: string;
+}> {
+  let clientIP = 'unknown';
+  let userAgent = 'unknown';
+
+  // Try to get IP from request headers first
+  if (request) {
+    const forwarded = request.headers.get('x-forwarded-for');
+    const realIP = request.headers.get('x-real-ip');
+    const userAgentHeader = request.headers.get('user-agent');
+
+    if (forwarded) {
+      clientIP = forwarded.split(',')[0].trim();
+    } else if (realIP) {
+      clientIP = realIP;
+    }
+
+    if (userAgentHeader) {
+      userAgent = userAgentHeader;
+    }
+  }
+
+  // Fallback to client-side detection if no request or no IP found
+  if (clientIP === 'unknown') {
+    clientIP = await getClientIP();
+  }
+
+  if (userAgent === 'unknown') {
+    userAgent = getUserAgent();
+  }
+
+  return { clientIP, userAgent };
+}

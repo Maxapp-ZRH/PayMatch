@@ -6,13 +6,12 @@
  */
 
 import { type Metadata } from 'next';
-import { redirect } from 'next/navigation';
 
-import { createClient } from '@/lib/supabase/server';
+import { requireDashboardSession } from '@/features/auth';
 import { LogoutButton } from '@/components/ui/logout-button';
 import { BillingSection } from '@/features/dashboard/components/BillingSection';
 import { SettingsSection } from '@/features/dashboard/components/SettingsSection';
-import { SessionTimeoutWarning } from '@/features/auth/components/SessionTimeoutWarning';
+import { ClearRememberMeHandler } from '@/components/auth/ClearRememberMeHandler';
 
 export const metadata: Metadata = {
   title: 'Dashboard - PayMatch',
@@ -21,57 +20,16 @@ export const metadata: Metadata = {
 };
 
 export default async function Dashboard() {
-  const supabase = await createClient();
-
-  // Check if user is authenticated
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (!user || error) {
-    redirect('/login');
-  }
-
-  // Check if user's email is verified
-  if (!user.email_confirmed_at) {
-    redirect('/verify-email');
-  }
-
-  // Check if user has completed onboarding and get organization data
-  const { data: orgMembership } = await supabase
-    .from('organization_users')
-    .select(
-      `
-      org_id,
-      organizations!inner(
-        onboarding_completed,
-        plan,
-        stripe_subscription_status,
-        name
-      )
-    `
-    )
-    .eq('user_id', user.id)
-    .eq('status', 'active')
-    .single();
-
-  const org = orgMembership?.organizations as
-    | {
-        onboarding_completed: boolean;
-        plan: string;
-        stripe_subscription_status: string | null;
-        name: string;
-      }
-    | undefined;
-  if (!org?.onboarding_completed) {
-    redirect('/onboarding');
-  }
+  // Get authenticated session with all requirements
+  const { organization, organizationMembership } =
+    await requireDashboardSession();
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Clear remember me flag if redirected from email verification */}
+      <ClearRememberMeHandler />
+
       {/* Session Timeout Warning */}
-      <SessionTimeoutWarning />
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-center justify-between">
@@ -137,17 +95,18 @@ export default async function Dashboard() {
                 <span className="text-sm text-gray-600">Plan</span>
                 <span
                   className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    org?.plan === 'free'
+                    organization?.plan === 'free'
                       ? 'bg-gray-100 text-gray-800'
-                      : org?.stripe_subscription_status === 'active'
+                      : organization?.stripe_subscription_status === 'active'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-yellow-100 text-yellow-800'
                   }`}
                 >
-                  {org?.plan === 'free'
+                  {organization?.plan === 'free'
                     ? 'Free'
-                    : org?.plan
-                      ? org.plan.charAt(0).toUpperCase() + org.plan.slice(1)
+                    : organization?.plan
+                      ? organization.plan.charAt(0).toUpperCase() +
+                        organization.plan.slice(1)
                       : 'Unknown'}
                 </span>
               </div>
@@ -157,7 +116,7 @@ export default async function Dashboard() {
 
         {/* Billing Section */}
         <div className="mt-8">
-          <BillingSection orgId={orgMembership?.org_id || ''} />
+          <BillingSection orgId={organizationMembership?.org_id || ''} />
         </div>
 
         {/* Settings Section */}

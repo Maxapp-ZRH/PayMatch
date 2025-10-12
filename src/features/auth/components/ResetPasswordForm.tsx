@@ -2,16 +2,16 @@
  * Reset Password Form Component
  *
  * Handles password reset with new password and confirmation.
- * Updates user password via Supabase Auth.
+ * Updates user password via Supabase Auth after magic link verification.
  */
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { PasswordField } from '@/components/ui/password-field';
@@ -20,18 +20,16 @@ import {
   resetPasswordSchema,
   type ResetPasswordFormData,
 } from '../schemas/reset-password-schema';
-import {
-  resetPassword,
-  verifyResetToken,
-} from '../server/actions/password-reset';
+import { createClient } from '@/lib/supabase/client';
 
-export function ResetPasswordForm() {
+interface ResetPasswordFormProps {
+  token?: string;
+}
+
+export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [isValidToken, setIsValidToken] = useState<boolean | null>(null);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get('token');
 
   const {
     register,
@@ -44,59 +42,66 @@ export function ResetPasswordForm() {
 
   const passwordValue = watch('password');
 
-  // Check if token is valid
-  useEffect(() => {
-    const checkToken = async () => {
-      if (!token) {
-        showToast.error(
-          'Invalid reset link',
-          'Please request a new password reset link.'
-        );
-        setIsValidToken(false);
-        return;
-      }
-
-      try {
-        const result = await verifyResetToken(token);
-        if (!result.valid) {
-          showToast.error(
-            'Invalid or expired reset link',
-            result.error || 'Please request a new password reset link.'
-          );
-          setIsValidToken(false);
-        } else {
-          setIsValidToken(true);
-        }
-      } catch (error) {
-        console.error('Token verification error:', error);
-        showToast.error(
-          'Invalid reset link',
-          'Please request a new password reset link.'
-        );
-        setIsValidToken(false);
-      }
-    };
-    checkToken();
-  }, [token]);
-
   const onSubmit = async (data: ResetPasswordFormData) => {
-    if (!token) {
-      showToast.error(
-        'Invalid reset link',
-        'Please request a new password reset link.'
-      );
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      const result = await resetPassword(token, data.password);
+      const supabase = createClient();
 
-      if (!result.success) {
-        showToast.error('Password reset failed', result.message);
+      if (!token) {
+        showToast.error(
+          'Invalid reset link',
+          'No reset token found. Please request a new password reset.'
+        );
         return;
       }
+
+      // Check if we already have a session (token was verified in auth callback)
+      console.log('Checking for existing session...');
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+      console.log('Session check result:', {
+        session: !!session,
+        error: sessionError,
+      });
+
+      if (sessionError || !session) {
+        // If no session, try to verify the token
+        console.log('No session found, verifying token...');
+        console.log('Token:', token);
+        const { error: tokenError } = await supabase.auth.verifyOtp({
+          token_hash: token,
+          type: 'recovery',
+        });
+
+        if (tokenError) {
+          console.error('Token verification error:', tokenError);
+          showToast.error(
+            'Invalid reset link',
+            'This password reset link is invalid or has expired.'
+          );
+          return;
+        }
+        console.log('Token verified successfully');
+      } else {
+        console.log('Using existing session for password reset');
+      }
+
+      // Now update the password
+      const { error } = await supabase.auth.updateUser({
+        password: data.password,
+      });
+
+      if (error) {
+        console.error('Password update error:', error);
+        showToast.error('Password update failed', error.message);
+        return;
+      }
+
+      // Sign out the user after password reset to ensure they go to login page
+      await supabase.auth.signOut();
 
       showToast.success(
         'Password updated successfully!',
@@ -118,46 +123,6 @@ export function ResetPasswordForm() {
       setIsLoading(false);
     }
   };
-
-  // Show loading state while validating token
-  if (isValidToken === null) {
-    return (
-      <div className="text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-teal-100">
-          <Loader2 className="h-6 w-6 text-teal-600 animate-spin" />
-        </div>
-        <h3 className="mt-4 text-lg font-medium text-gray-900">
-          Validating reset link...
-        </h3>
-        <p className="mt-2 text-sm text-gray-600">
-          Please wait while we verify your password reset link.
-        </p>
-      </div>
-    );
-  }
-
-  // Show error state if token is invalid
-  if (isValidToken === false) {
-    return (
-      <div className="text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-          <XCircle className="h-6 w-6 text-red-600" />
-        </div>
-        <h3 className="mt-4 text-lg font-medium text-gray-900">
-          Invalid reset link
-        </h3>
-        <p className="mt-2 text-sm text-gray-600">
-          This password reset link is invalid or has expired. Please request a
-          new one.
-        </p>
-        <div className="mt-6">
-          <Button color="swiss" onClick={() => router.push('/forgot-password')}>
-            Request new reset link
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   if (success) {
     return (

@@ -20,6 +20,11 @@ const eslintConfig = [
       'next-env.d.ts',
     ],
   },
+  {
+    rules: {
+      // Add any custom rules here
+    },
+  },
 ];
 
 export default eslintConfig;

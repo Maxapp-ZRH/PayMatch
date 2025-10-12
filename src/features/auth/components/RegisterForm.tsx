@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { Button } from '@/components/marketing_pages/Button';
 import { TextField } from '@/components/ui/text-field';
 import { SelectField } from '@/components/ui/select-field';
+import { PasswordField } from '@/components/ui/password-field';
 import { registerUser } from '../server/actions/registration';
 import { checkUserPendingRegistration } from '../server/actions/login';
 import {
@@ -39,12 +40,14 @@ export function RegisterForm() {
     formState: { errors },
     setError,
     clearErrors,
+    watch,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     mode: 'onBlur', // Validate on blur for better UX
   });
 
-  // Password will be collected during email verification
+  // Watch password field for real-time requirements display
+  const watchedPassword = watch('password', '');
 
   const onSubmit = async (data: RegisterFormData) => {
     // Prevent double submission
@@ -82,6 +85,7 @@ export function RegisterForm() {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
+        password: data.password,
         referralSource: data.referralSource,
         browserLocale,
         clientIP,
@@ -142,7 +146,25 @@ export function RegisterForm() {
           error={errors.email?.message}
         />
 
-        {/* Password will be collected during email verification for GDPR compliance */}
+        <PasswordField
+          className="col-span-full"
+          label="Password"
+          autoComplete="new-password"
+          required
+          showRequirements
+          value={watchedPassword}
+          {...register('password')}
+          error={errors.password?.message}
+        />
+
+        <PasswordField
+          className="col-span-full"
+          label="Confirm Password"
+          autoComplete="new-password"
+          required
+          {...register('confirmPassword')}
+          error={errors.confirmPassword?.message}
+        />
 
         <SelectField
           className="col-span-full"
@@ -164,9 +186,7 @@ export function RegisterForm() {
         className="w-full"
         disabled={isLoading || isSubmitting}
       >
-        {isLoading
-          ? 'Sending verification email...'
-          : 'Get started with PayMatch'}
+        {isLoading ? 'Creating account...' : 'Create Account'}
       </Button>
 
       <p className="text-xs text-gray-500 text-center">

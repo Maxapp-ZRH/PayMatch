@@ -7,11 +7,9 @@
 
 import { type Metadata } from 'next';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
 import { ForgotPasswordForm } from '@/features/auth/components/ForgotPasswordForm';
-import { handleAuthPageLogic } from '@/features/auth/helpers';
 
 export const metadata: Metadata = {
   title: 'Forgot Password - PayMatch',
@@ -19,12 +17,8 @@ export const metadata: Metadata = {
 };
 
 export default async function ForgotPassword() {
-  // Handle auth page logic with common patterns
-  const { redirectUrl, shouldRedirect } = await handleAuthPageLogic();
-
-  if (shouldRedirect) {
-    redirect(redirectUrl);
-  }
+  // Don't redirect authenticated users from forgot password page
+  // They might want to reset their password even if logged in
 
   return (
     <AuthLayout

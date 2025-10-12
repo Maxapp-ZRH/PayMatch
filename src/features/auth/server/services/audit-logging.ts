@@ -6,7 +6,7 @@
  */
 
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { extractClientIP } from './ip-rate-limiting';
+import { extractClientIP } from '../utils/client-ip';
 
 export interface AuditLogEntry {
   userId?: string;
@@ -38,6 +38,12 @@ export interface AuditLogContext {
  */
 export async function logAuditEntry(entry: AuditLogEntry): Promise<void> {
   try {
+    // Check if Supabase admin client is properly configured
+    if (!supabaseAdmin) {
+      console.error('Supabase admin client not configured');
+      return;
+    }
+
     const { error } = await supabaseAdmin.from('audit_logs').insert({
       user_id: entry.userId || null,
       email: entry.email || null,
@@ -53,11 +59,29 @@ export async function logAuditEntry(entry: AuditLogEntry): Promise<void> {
     });
 
     if (error) {
-      console.error('Failed to log audit entry:', error);
+      console.error('Failed to log audit entry:', {
+        error: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        entry: {
+          action: entry.action,
+          email: entry.email,
+          status: entry.status,
+        },
+      });
       // Don't throw error to avoid breaking the main flow
     }
   } catch (error) {
-    console.error('Audit logging error:', error);
+    console.error('Audit logging error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      entry: {
+        action: entry.action,
+        email: entry.email,
+        status: entry.status,
+      },
+    });
     // Don't throw error to avoid breaking the main flow
   }
 }

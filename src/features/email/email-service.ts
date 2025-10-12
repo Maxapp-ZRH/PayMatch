@@ -460,7 +460,9 @@ export class EmailPreferencesService {
 
     const { error } = await supabaseClient
       .from('email_preferences')
-      .upsert(insertData);
+      .upsert(insertData, {
+        onConflict: 'email,email_type',
+      });
 
     if (error) {
       throw new Error(

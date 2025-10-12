@@ -13,17 +13,14 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/marketing_pages/Button';
 import { showToast } from '@/lib/toast';
 import { CheckCircle, Mail, Loader2 } from 'lucide-react';
-import {
-  resendVerificationEmail,
-  resendPendingVerificationEmail,
-} from '@/features/auth/server/actions/registration';
+import { resendVerificationEmail } from '@/features/auth/server/actions/registration';
 
 interface VerifyEmailFormProps {
   userEmail: string;
   isVerified?: boolean;
   showResend?: boolean;
   immediateResend?: boolean;
-  firstName?: string | null;
+  redirectTo?: string;
 }
 
 export function VerifyEmailForm({
@@ -31,8 +28,7 @@ export function VerifyEmailForm({
   isVerified: emailVerified = false,
   showResend = false,
   immediateResend = false,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  firstName = null, // Passed from page component for personalized greeting
+  redirectTo,
 }: VerifyEmailFormProps) {
   const [isResending, setIsResending] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
@@ -86,6 +82,18 @@ export function VerifyEmailForm({
     }
   }, [resendCooldown]);
 
+  // Handle automatic redirect after verification
+  useEffect(() => {
+    if (isVerified && redirectTo === 'onboarding') {
+      // Show success message for 2 seconds, then redirect to onboarding
+      const redirectTimer = setTimeout(() => {
+        router.push('/onboarding');
+      }, 2000);
+
+      return () => clearTimeout(redirectTimer);
+    }
+  }, [isVerified, redirectTo, router]);
+
   // Check verification status periodically and listen for cross-tab communication
   useEffect(() => {
     const checkVerificationStatus = async () => {
@@ -121,7 +129,7 @@ export function VerifyEmailForm({
 
           // Show success message and redirect to login
           showToast.success(
-            'Email verified successfully! Please sign in to continue.'
+            "Email verified successfully! You're now signed in and will be redirected to complete your setup."
           );
           setTimeout(() => {
             router.push('/login');
@@ -137,7 +145,7 @@ export function VerifyEmailForm({
           if (user && user.email === currentEmail && user.email_confirmed_at) {
             setIsVerified(true);
             showToast.success(
-              'Email verified successfully! Please sign in to continue.'
+              "Email verified successfully! You're now signed in and will be redirected to complete your setup."
             );
             setTimeout(() => {
               router.push('/login');
@@ -160,7 +168,7 @@ export function VerifyEmailForm({
             if (pendingRegistrations && pendingRegistrations.verified_at) {
               setIsVerified(true);
               showToast.success(
-                'Email verified successfully! Please sign in to continue.'
+                "Email verified successfully! You're now signed in and will be redirected to complete your setup."
               );
               setTimeout(() => {
                 router.push('/login');
@@ -186,7 +194,7 @@ export function VerifyEmailForm({
             ) {
               setIsVerified(true);
               showToast.success(
-                'Email verified successfully! Please sign in to continue.'
+                "Email verified successfully! You're now signed in and will be redirected to complete your setup."
               );
               setTimeout(() => {
                 router.push('/login');
@@ -222,7 +230,7 @@ export function VerifyEmailForm({
           localStorage.removeItem('email-verification-complete');
           localStorage.removeItem('email-verification-email');
           showToast.success(
-            'Email verified successfully! Please sign in to continue.'
+            "Email verified successfully! You're now signed in and will be redirected to complete your setup."
           );
           setTimeout(() => {
             router.push('/login');
@@ -252,31 +260,18 @@ export function VerifyEmailForm({
     setIsResending(true);
 
     try {
-      // Since we're using deferred account creation, users coming from registration
-      // will always have pending registrations. Try pending registration first.
-      const pendingResult = await resendPendingVerificationEmail(emailToUse);
+      // Use Supabase Auth resend verification
+      const result = await resendVerificationEmail(emailToUse);
 
-      if (pendingResult.success) {
-        showToast.success('Verification email sent!', pendingResult.message);
-        setResendCooldown(60); // 60 second cooldown after successful resend
-        setShowResendOptions(false); // Hide resend button during cooldown
-        return;
-      }
-
-      // If pending registration resend failed, try existing users as fallback
-      // (in case the user was created but not verified)
-      const existingUserResult = await resendVerificationEmail(emailToUse);
-
-      if (existingUserResult.success) {
-        showToast.success(
-          'Verification email sent!',
-          existingUserResult.message
-        );
+      if (result.success) {
+        showToast.success('Verification email sent!', result.message);
         setResendCooldown(60); // 60 second cooldown after successful resend
         setShowResendOptions(false); // Hide resend button during cooldown
       } else {
-        // Show the error from pending registration (more likely scenario)
-        showToast.error(pendingResult.message);
+        showToast.error(
+          'Failed to send verification email',
+          result.message || 'Please try again later.'
+        );
       }
     } catch (error) {
       console.error('Error resending verification:', error);
@@ -296,18 +291,24 @@ export function VerifyEmailForm({
           Email Verified!
         </h3>
         <p className="mt-2 text-sm text-gray-600">
-          Your email has been verified successfully. Redirecting to login...
+          {redirectTo === 'onboarding'
+            ? 'Your email has been verified successfully. Redirecting to account setup...'
+            : 'Your email has been verified successfully. Redirecting to login...'}
         </p>
         <div className="mt-6">
           <Loader2 className="animate-spin h-6 w-6 text-cyan-500 mx-auto" />
         </div>
         <div className="mt-4">
           <Button
-            onClick={() => router.push('/login')}
+            onClick={() =>
+              router.push(
+                redirectTo === 'onboarding' ? '/onboarding' : '/login'
+              )
+            }
             color="swiss"
             className="w-full"
           >
-            Go to Login
+            {redirectTo === 'onboarding' ? 'Continue to Setup' : 'Go to Login'}
           </Button>
         </div>
       </div>

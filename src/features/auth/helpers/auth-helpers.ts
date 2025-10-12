@@ -5,24 +5,12 @@
  * Provides common auth logic used across the application.
  */
 
-import { createClient } from '@/lib/supabase/server';
-import { User, AuthError, Session } from '@supabase/supabase-js';
-import {
-  checkSessionTimeout,
-  updateSessionActivity,
-} from '../server/services/session-timeout';
-import { logSessionActivity } from '../server/services/audit-logging';
+import { User, AuthError } from '@supabase/supabase-js';
 
 export interface AuthUserResult {
   user: User | null;
   error: AuthError | null;
   isUnauthenticated: boolean;
-}
-
-export interface SessionTimeoutResult {
-  isValid: boolean;
-  shouldWarn: boolean;
-  timeUntilExpiry: number;
 }
 
 /**
@@ -36,82 +24,31 @@ export async function getAuthUserSafely(supabase: {
       data: { user: User | null };
       error: AuthError | null;
     }>;
-    getSession: () => Promise<{
-      data: { session: Session | null };
-      error: AuthError | null;
-    }>;
-    refreshSession: () => Promise<{
-      data: { session: Session | null };
-      error: AuthError | null;
-    }>;
     signOut: () => Promise<{ error: AuthError | null }>;
   };
 }): Promise<AuthUserResult> {
   try {
-    // First try to get the current session
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError) {
-      // If session error, try to refresh
-      const {
-        data: { session: refreshedSession },
-        error: refreshError,
-      } = await supabase.auth.refreshSession();
-
-      if (refreshError) {
-        // If refresh fails, handle the error
-        if (
-          refreshError.message?.includes('JWT') ||
-          refreshError.message?.includes('token') ||
-          refreshError.message?.includes('User from sub claim') ||
-          refreshError.message?.includes('does not exist') ||
-          refreshError.message?.includes('Invalid Refresh Token')
-        ) {
-          await supabase.auth.signOut();
-          return { user: null, error: null, isUnauthenticated: true };
-        }
-        return { user: null, error: refreshError, isUnauthenticated: true };
-      }
-
-      if (refreshedSession?.user) {
-        return {
-          user: refreshedSession.user,
-          error: null,
-          isUnauthenticated: false,
-        };
-      }
-    }
-
-    if (session?.user) {
-      return { user: session.user, error: null, isUnauthenticated: false };
-    }
-
-    // Fallback to getUser if no session
+    // First try to get the current user (more secure than getSession)
     const {
       data: { user },
-      error,
+      error: userError,
     } = await supabase.auth.getUser();
 
-    if (error) {
+    if (userError) {
       // Handle JWT errors by clearing the session
-      if (
-        error.message?.includes('JWT') ||
-        error.message?.includes('token') ||
-        error.message?.includes('User from sub claim') ||
-        error.message?.includes('does not exist') ||
-        error.message?.includes('Invalid Refresh Token')
-      ) {
+      if (isJWTError(userError)) {
         await supabase.auth.signOut();
         return { user: null, error: null, isUnauthenticated: true };
       }
 
-      return { user: null, error, isUnauthenticated: true };
+      return { user: null, error: userError, isUnauthenticated: true };
     }
 
-    return { user, error: null, isUnauthenticated: false };
+    if (user) {
+      return { user, error: null, isUnauthenticated: false };
+    }
+
+    return { user: null, error: null, isUnauthenticated: true };
   } catch (err) {
     // Only log non-"Auth session missing!" errors
     if (
@@ -124,111 +61,61 @@ export async function getAuthUserSafely(supabase: {
   }
 }
 
+// Removed handleAuthPageLogic - replaced with simpler checkAuthPageRedirect
+
 /**
- * Handle common auth page logic
- * @param searchParamsPromise - Promise resolving to search params
- * @returns Promise with user, redirect URL, and redirect flag
+ * Check if user is authenticated and handle redirects for auth pages
+ * @param supabase - Supabase client instance
+ * @param redirectTo - Optional redirect destination
+ * @returns Promise with redirect URL or null if no redirect needed
  */
-export async function handleAuthPageLogic(
-  searchParamsPromise?: Promise<{
-    redirectTo?: string;
-    verified?: string;
-    email?: string;
-  }>
-): Promise<{
-  user: User | null;
-  redirectUrl: string;
-  shouldRedirect: boolean;
-}> {
-  const supabase = await createClient();
-  const { user, error } = await getAuthUserSafely(supabase);
-  const resolvedSearchParams = await searchParamsPromise;
-  const redirectTo = resolvedSearchParams?.redirectTo || '/dashboard';
+export async function checkAuthPageRedirect(
+  supabase: {
+    auth: {
+      getUser: () => Promise<{
+        data: { user: User | null };
+        error: AuthError | null;
+      }>;
+    };
+  },
+  redirectTo?: string
+): Promise<string | null> {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
   if (user && !error) {
+    // Check if user's email is verified
     if (!user.email_confirmed_at) {
-      return { user, redirectUrl: '/verify-email', shouldRedirect: true };
+      return '/verify-email';
     }
 
-    // Check if user has completed onboarding
-    const { data: orgMembership } = await supabase
-      .from('organization_users')
-      .select(
-        `
-        org_id,
-        organizations!inner(onboarding_completed)
-      `
-      )
-      .eq('user_id', user.id)
-      .eq('status', 'active')
-      .single();
-
-    const org = orgMembership?.organizations as
-      | { onboarding_completed: boolean }
-      | undefined;
-    if (!org?.onboarding_completed) {
-      return { user, redirectUrl: '/onboarding', shouldRedirect: true };
-    }
-
-    return { user, redirectUrl: redirectTo, shouldRedirect: true };
+    // Redirect to dashboard or intended destination
+    return redirectTo || '/dashboard';
   }
 
-  return { user: null, redirectUrl: '', shouldRedirect: false };
+  return null;
 }
 
 /**
- * Check session timeout for authenticated user
- * @param user - Authenticated user
- * @param sessionId - Session ID
- * @param request - Request object for audit logging
- * @returns Session timeout information
+ * Check if an error is a JWT/token related error that requires sign out
+ * @param error - Error object
+ * @returns boolean indicating if user should be signed out
  */
-export async function checkUserSessionTimeout(
-  user: User,
-  sessionId: string,
-  request?: Request
-): Promise<SessionTimeoutResult> {
-  try {
-    const timeoutInfo = await checkSessionTimeout(sessionId);
+export function isJWTError(error: unknown): boolean {
+  const errorMessage =
+    error && typeof error === 'object' && 'message' in error
+      ? String(error.message)
+      : '';
 
-    if (timeoutInfo.isExpired) {
-      // Log session expiration
-      if (request) {
-        await logSessionActivity('session_expired', {
-          request,
-          user: { id: user.id, email: user.email },
-          sessionId,
-        });
-      }
-
-      return {
-        isValid: false,
-        shouldWarn: false,
-        timeUntilExpiry: 0,
-      };
-    }
-
-    // Update session activity if valid
-    if (timeoutInfo.timeUntilExpiry > 0) {
-      await updateSessionActivity(sessionId, user.id, {
-        request,
-        email: user.email,
-      });
-    }
-
-    return {
-      isValid: true,
-      shouldWarn: timeoutInfo.shouldWarn,
-      timeUntilExpiry: timeoutInfo.timeUntilExpiry,
-    };
-  } catch (error) {
-    console.error('Session timeout check error:', error);
-    return {
-      isValid: false,
-      shouldWarn: false,
-      timeUntilExpiry: 0,
-    };
-  }
+  return (
+    errorMessage.includes('JWT') ||
+    errorMessage.includes('token') ||
+    errorMessage.includes('User from sub claim') ||
+    errorMessage.includes('does not exist') ||
+    errorMessage.includes('Invalid Refresh Token')
+  );
 }
 
 /**
@@ -257,4 +144,30 @@ export function handleAuthError(error: unknown, context: string): string {
 
   console.error(`Auth error in ${context}:`, error);
   return 'An unexpected error occurred. Please try again.';
+}
+
+/**
+ * Clear all client-side authentication data
+ */
+export function clearAuthData(): void {
+  if (typeof window === 'undefined') return;
+
+  // Clear Supabase auth data
+  localStorage.removeItem('supabase.auth.remember');
+  localStorage.removeItem('supabase.auth.token');
+
+  // Clear app-specific data
+  localStorage.removeItem('paymatch.user');
+  localStorage.removeItem('paymatch.organization');
+  localStorage.removeItem('paymatch.preferences');
+
+  // Clear session storage
+  sessionStorage.clear();
+
+  // Clear cookies
+  document.cookie.split(';').forEach((c) => {
+    const eqPos = c.indexOf('=');
+    const name = eqPos > -1 ? c.substr(0, eqPos) : c;
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+  });
 }

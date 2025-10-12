@@ -11,21 +11,19 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Mail, Lock } from 'lucide-react';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { createClient } from '@/lib/supabase/client';
 import { TextField } from '@/components/ui/text-field';
 import { PasswordField } from '@/components/ui/password-field';
 import { loginSchema, type LoginFormData } from '../schemas/login-schema';
-import {
-  userHasOrganizationClient,
-  userHasCompletedOnboardingClient,
-} from '../helpers/client-auth-helpers';
+// Removed client auth helpers - server handles redirects
 import {
   checkUserPendingRegistration,
   checkUserExistsInAuth,
 } from '../server/actions/login';
+import { MagicLinkLoginForm } from './MagicLinkLoginForm';
 
 interface LoginFormProps {
   redirectTo?: string;
@@ -41,6 +39,9 @@ export function LoginForm({
   successMessage,
 }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [loginMethod, setLoginMethod] = useState<'password' | 'magiclink'>(
+    'password'
+  );
   const router = useRouter();
   const supabase = createClient();
 
@@ -154,33 +155,8 @@ export function LoginForm({
 
       // At this point, user is authenticated and email is verified
 
-      // Email is verified, check if user has organization
-      const hasOrg = await userHasOrganizationClient(authData.user.id);
-
-      if (!hasOrg) {
-        // User is verified but doesn't have organization - this shouldn't happen
-        // as organization is created during email verification, but handle gracefully
-        setError('email', {
-          type: 'manual',
-          message:
-            'Account setup incomplete. Please contact support for assistance.',
-        });
-        return;
-      }
-
-      // Check if user has completed onboarding
-      const hasCompletedOnboarding = await userHasCompletedOnboardingClient(
-        authData.user.id
-      );
-
-      if (!hasCompletedOnboarding) {
-        // Redirect to onboarding without error message (this is expected flow)
-        router.push('/onboarding');
-        router.refresh();
-        return;
-      }
-
-      // Everything is set up, redirect to dashboard
+      // Email is verified - redirect to dashboard or intended destination
+      // Server-side auth pages will handle organization and onboarding checks
       const destination = redirectTo || '/dashboard';
       router.push(destination);
       router.refresh();
@@ -207,7 +183,10 @@ export function LoginForm({
                 Email Verified Successfully!
               </h3>
               <div className="mt-2 text-sm text-green-700">
-                <p>Your email has been verified. Please sign in to continue.</p>
+                <p>
+                  Your email has been verified. You&apos;re now signed in and
+                  will be redirected to complete your setup.
+                </p>
               </div>
             </div>
           </div>
@@ -235,49 +214,89 @@ export function LoginForm({
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <TextField
-          label="Email address"
-          type="email"
-          autoComplete="email"
-          required
-          {...register('email')}
-          error={errors.email?.message}
-        />
-
-        <PasswordField
-          label="Password"
-          autoComplete="current-password"
-          required
-          {...register('password')}
-          error={errors.password?.message}
-        />
-
-        {/* Remember Me Checkbox */}
-        <div className="flex items-center">
-          <input
-            id="rememberMe"
-            type="checkbox"
-            {...register('rememberMe')}
-            className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-          />
-          <label
-            htmlFor="rememberMe"
-            className="ml-2 block text-sm text-gray-900"
-          >
-            Remember me
-          </label>
-        </div>
-
-        <Button
-          type="submit"
-          color="swiss"
-          className="w-full"
-          disabled={isLoading}
+      {/* Login Method Selector */}
+      <div className="flex space-x-1 rounded-lg bg-gray-100 p-1">
+        <button
+          type="button"
+          onClick={() => setLoginMethod('password')}
+          className={`flex flex-1 items-center justify-center space-x-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+            loginMethod === 'password'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
         >
-          {isLoading ? 'Signing in...' : 'Sign in to PayMatch'}
-        </Button>
-      </form>
+          <Lock className="h-4 w-4" />
+          <span>Password</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setLoginMethod('magiclink')}
+          className={`flex flex-1 items-center justify-center space-x-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+            loginMethod === 'magiclink'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <Mail className="h-4 w-4" />
+          <span>Magic Link</span>
+        </button>
+      </div>
+
+      {/* Conditional Form Rendering */}
+      {loginMethod === 'password' ? (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <TextField
+            label="Email address"
+            type="email"
+            autoComplete="email"
+            required
+            {...register('email')}
+            error={errors.email?.message}
+          />
+
+          <PasswordField
+            label="Password"
+            autoComplete="current-password"
+            required
+            {...register('password')}
+            error={errors.password?.message}
+          />
+
+          {/* Remember Me Checkbox */}
+          <div className="flex items-center">
+            <input
+              id="rememberMe"
+              type="checkbox"
+              {...register('rememberMe')}
+              className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+            />
+            <label
+              htmlFor="rememberMe"
+              className="ml-2 block text-sm text-gray-900"
+            >
+              Remember me
+            </label>
+          </div>
+
+          <Button
+            type="submit"
+            color="swiss"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Signing in...' : 'Sign in to PayMatch'}
+          </Button>
+        </form>
+      ) : (
+        <MagicLinkLoginForm
+          onSuccess={() => {
+            // Magic link sent successfully
+          }}
+          onError={(error) => {
+            console.error('Magic link error:', error);
+          }}
+        />
+      )}
     </div>
   );
 }

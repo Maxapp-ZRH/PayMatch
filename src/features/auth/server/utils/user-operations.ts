@@ -88,6 +88,7 @@ export async function getUserMetadata(
 
 /**
  * Check if a user has a pending registration (not yet verified)
+ * With Supabase Auth, this means checking if user exists but email is not confirmed
  * @param email - User's email address
  * @returns Object with hasPendingRegistration boolean and optional error
  */
@@ -96,32 +97,30 @@ export async function checkPendingRegistration(email: string): Promise<{
   error?: string;
 }> {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('pending_registrations')
-      .select('id, email, expires_at')
-      .eq('email', email)
-      .single();
+    const { user, error } = await findUserByEmail(email);
 
     if (error) {
-      return { hasPendingRegistration: false };
+      return { hasPendingRegistration: false, error };
     }
 
-    // Check if not expired
-    const isExpired = new Date() > new Date(data.expires_at);
+    // User has pending registration if they exist but email is not confirmed
+    const hasPendingRegistration =
+      user !== null && user.email_confirmed_at === null;
 
-    if (isExpired) {
-      return { hasPendingRegistration: false };
-    }
-    return { hasPendingRegistration: true };
-  } catch {
-    return { hasPendingRegistration: false };
+    return { hasPendingRegistration };
+  } catch (error) {
+    return {
+      hasPendingRegistration: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
   }
 }
 
 /**
  * Get pending registration data for an email
+ * With Supabase Auth, this returns user data if they exist but email is not confirmed
  * @param email - User's email address
- * @returns Pending registration data or null if not found/expired
+ * @returns User data or null if not found/verified
  */
 export async function getPendingRegistration(email: string): Promise<{
   id: string;
@@ -129,29 +128,23 @@ export async function getPendingRegistration(email: string): Promise<{
   first_name: string | null;
   last_name: string | null;
   user_metadata: Record<string, unknown>;
-  expires_at: string;
   created_at: string;
 } | null> {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('pending_registrations')
-      .select(
-        'id, email, first_name, last_name, user_metadata, expires_at, created_at'
-      )
-      .eq('email', email)
-      .single();
+    const { user, error } = await findUserByEmail(email);
 
-    if (error) {
+    if (error || !user || user.email_confirmed_at !== null) {
       return null;
     }
 
-    // Check if not expired
-    const isExpired = new Date() > new Date(data.expires_at);
-
-    if (isExpired) {
-      return null;
-    }
-    return data;
+    return {
+      id: user.id,
+      email: user.email || '',
+      first_name: user.user_metadata?.first_name || null,
+      last_name: user.user_metadata?.last_name || null,
+      user_metadata: user.user_metadata || {},
+      created_at: user.created_at,
+    };
   } catch {
     return null;
   }
@@ -159,30 +152,14 @@ export async function getPendingRegistration(email: string): Promise<{
 
 /**
  * Clean up expired pending registrations
- * @returns Number of cleaned up registrations
+ * With Supabase Auth, this is no longer needed as Supabase handles user lifecycle
+ * @returns Always returns 0 as cleanup is handled by Supabase
  */
 export async function cleanupExpiredPendingRegistrations(): Promise<{
   cleanedCount: number;
   error?: string;
 }> {
-  try {
-    const now = new Date().toISOString();
-
-    const { data, error } = await supabaseAdmin
-      .from('pending_registrations')
-      .delete()
-      .lt('expires_at', now)
-      .select('id');
-
-    if (error) {
-      return { cleanedCount: 0, error: error.message };
-    }
-
-    return { cleanedCount: data?.length || 0 };
-  } catch (error) {
-    return {
-      cleanedCount: 0,
-      error: error instanceof Error ? error.message : 'Unknown error',
-    };
-  }
+  // Supabase Auth handles user lifecycle automatically
+  // No manual cleanup needed
+  return { cleanedCount: 0 };
 }

@@ -10,6 +10,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/features/auth/server/actions/auth';
+import { clearAuthData } from '@/features/auth/helpers/auth-helpers';
 import { showToast } from '@/lib/toast';
 
 interface LogoutButtonProps {
@@ -37,14 +38,19 @@ export function LogoutButton({
       const result = await logout();
 
       if (result.success) {
-        // Clear Remember Me flag on logout
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('supabase.auth.remember');
-        }
+        // Clear all client-side data on logout
+        clearAuthData();
 
-        showToast.success('Logged out successfully');
+        showToast.success('Successfully logged out');
+
+        // Force a hard refresh to clear any cached data
         router.push('/');
         router.refresh();
+
+        // Additional refresh after a short delay to ensure complete cleanup
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 100);
       } else {
         showToast.error(result.message);
       }

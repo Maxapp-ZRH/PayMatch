@@ -9,6 +9,54 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string;
+          created_at: string | null;
+          details: Json | null;
+          email: string | null;
+          error_message: string | null;
+          id: string;
+          ip_address: unknown | null;
+          resource_id: string | null;
+          resource_type: string | null;
+          session_id: string | null;
+          status: string;
+          user_agent: string | null;
+          user_id: string | null;
+        };
+        Insert: {
+          action: string;
+          created_at?: string | null;
+          details?: Json | null;
+          email?: string | null;
+          error_message?: string | null;
+          id?: string;
+          ip_address?: unknown | null;
+          resource_id?: string | null;
+          resource_type?: string | null;
+          session_id?: string | null;
+          status: string;
+          user_agent?: string | null;
+          user_id?: string | null;
+        };
+        Update: {
+          action?: string;
+          created_at?: string | null;
+          details?: Json | null;
+          email?: string | null;
+          error_message?: string | null;
+          id?: string;
+          ip_address?: unknown | null;
+          resource_id?: string | null;
+          resource_type?: string | null;
+          session_id?: string | null;
+          status?: string;
+          user_agent?: string | null;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
       consent_records: {
         Row: {
           consent_age_days: number | null;
@@ -329,42 +377,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      pending_registrations: {
-        Row: {
-          created_at: string | null;
-          email: string;
-          expires_at: string;
-          first_name: string | null;
-          id: string;
-          last_name: string | null;
-          updated_at: string | null;
-          user_metadata: Json | null;
-          verification_token: string;
-        };
-        Insert: {
-          created_at?: string | null;
-          email: string;
-          expires_at: string;
-          first_name?: string | null;
-          id?: string;
-          last_name?: string | null;
-          updated_at?: string | null;
-          user_metadata?: Json | null;
-          verification_token: string;
-        };
-        Update: {
-          created_at?: string | null;
-          email?: string;
-          expires_at?: string;
-          first_name?: string | null;
-          id?: string;
-          last_name?: string | null;
-          updated_at?: string | null;
-          user_metadata?: Json | null;
-          verification_token?: string;
-        };
-        Relationships: [];
-      };
       user_profiles: {
         Row: {
           avatar_url: string | null;
@@ -413,6 +425,24 @@ export type Database = {
           cleaned_emails: string[];
         }[];
       };
+      cleanup_expired_sessions_direct: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          cleaned_count: number;
+          message: string;
+        }[];
+      };
+      cleanup_old_audit_logs: {
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
+      cleanup_old_audit_logs_direct: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          cleaned_count: number;
+          cleaned_date_range: string;
+        }[];
+      };
       complete_onboarding: {
         Args: { org_id: string };
         Returns: boolean;
@@ -448,6 +478,15 @@ export type Database = {
           org_name: string;
           role: string;
           status: string;
+        }[];
+      };
+      run_all_cleanup_operations: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          cleaned_count: number;
+          details: string;
+          operation: string;
+          success: boolean;
         }[];
       };
       update_onboarding_step: {

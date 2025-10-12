@@ -1,53 +1,42 @@
 /**
  * Reset Password Page
  *
- * Handles password reset with new password confirmation.
- * Users arrive here via email link and can set a new password.
+ * Handles password reset with Supabase magic links.
+ * Users arrive here via magic link and can set a new password.
  */
 
 import { type Metadata } from 'next';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { XCircle } from 'lucide-react';
 
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
 import { Button } from '@/components/marketing_pages/Button';
 import { ResetPasswordForm } from '@/features/auth/components/ResetPasswordForm';
-import { handleAuthPageLogic } from '@/features/auth/helpers';
-import { verifyResetToken } from '@/features/auth/server/actions/password-reset';
 
 export const metadata: Metadata = {
   title: 'Reset Password - PayMatch',
   description: 'Set a new password for your PayMatch account.',
 };
 
+interface ResetPasswordPageProps {
+  searchParams: Promise<{
+    token?: string;
+    type?: string;
+  }>;
+}
+
 export default async function ResetPassword({
   searchParams,
-}: {
-  searchParams: Promise<{ token?: string }>;
-}) {
-  // Await searchParams as required by Next.js 15
+}: ResetPasswordPageProps) {
   const resolvedSearchParams = await searchParams;
+  const { token, type } = resolvedSearchParams;
 
-  // Handle auth page logic with common patterns
-  const { redirectUrl, shouldRedirect } = await handleAuthPageLogic();
+  console.log('=== RESET PASSWORD PAGE DEBUG ===');
+  console.log('Token from URL:', token);
+  console.log('Type from URL:', type);
 
-  if (shouldRedirect) {
-    redirect(redirectUrl);
-  }
-
-  // Check if it's a valid password reset token
-  let isValidToken = false;
-
-  if (resolvedSearchParams.token) {
-    try {
-      const result = await verifyResetToken(resolvedSearchParams.token);
-      isValidToken = result.valid;
-    } catch (error) {
-      console.error('Error verifying reset token:', error);
-      isValidToken = false;
-    }
-  }
+  // For password reset, we don't need a session - just the token from URL
+  const hasValidToken = !!token && type === 'recovery';
 
   return (
     <AuthLayout
@@ -62,8 +51,8 @@ export default async function ResetPassword({
         </>
       }
     >
-      {isValidToken ? (
-        <ResetPasswordForm />
+      {hasValidToken ? (
+        <ResetPasswordForm token={token} />
       ) : (
         <div className="text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">

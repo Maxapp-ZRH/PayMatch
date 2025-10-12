@@ -37,6 +37,7 @@ export const routing = defineRouting({
     '/forgot-password': '/forgot-password',
     '/reset-password': '/reset-password',
     '/verify-email': '/verify-email',
+    '/verification-success': '/verification-success',
     // Legal pages
     '/privacy': {
       'en-CH': '/privacy',

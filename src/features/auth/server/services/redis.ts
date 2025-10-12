@@ -6,6 +6,7 @@
  */
 
 import Redis from 'ioredis';
+import { REDIS_CONFIG } from '@/config/redis-config';
 
 // Validate Redis URL
 function getRedisUrl(): string {
@@ -78,15 +79,15 @@ function getRedisClient(): Redis | null {
         console.log('Using Edge Runtime compatible Redis configuration');
       }
 
-      // Create Redis client with additional error handling
+      // Create Redis client with optimized configuration
       redis = new Redis(redisUrl, {
-        maxRetriesPerRequest: 3,
+        ...REDIS_CONFIG.CONNECTION,
+        // Override with URL-specific settings
         lazyConnect: true,
         keepAlive: 30000,
         connectTimeout: 10000,
         commandTimeout: 5000,
         enableReadyCheck: false,
-        // Edge Runtime compatible options
         family: 4, // Force IPv4
       });
 

@@ -2,32 +2,22 @@
  * Registration Server Actions
  *
  * Handles user registration, email verification, and related operations.
- * Uses deferred account creation with pending registrations.
+ * Uses Supabase Auth with magic links for email verification.
  */
 
 'use server';
 
-import { storePendingRegistration } from '../utils/pending-registration';
-import {
-  sendPendingRegistrationEmail,
-  sendVerificationEmail,
-} from '@/features/email';
-import { checkRateLimit } from '../services/rate-limiting';
-import {
-  findUserByEmail,
-  checkPendingRegistration,
-  getPendingRegistration,
-} from '../utils/user-operations';
-import { generateVerificationToken } from '../utils/token-operations';
+// Removed: Legacy auth rate limiting - Supabase handles this automatically
+import { findUserByEmail } from '../utils/user-operations';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { logRegistrationAttempt } from '../services/audit-logging';
-import { checkDualRateLimit } from '../services/ip-rate-limiting';
+import { sendVerificationEmail } from '@/features/email/services/auth-integration';
 
 export interface RegisterUserData {
   firstName: string;
   lastName: string;
   email: string;
-  password?: string; // Optional for GDPR compliance
+  password: string; // Required with Supabase Auth
   referralSource?: string;
   browserLocale?: string;
   clientIP?: string; // Extracted client IP
@@ -42,7 +32,7 @@ export interface RegisterResult {
 }
 
 /**
- * Register a new user with deferred account creation
+ * Register a new user with Supabase Auth
  */
 export async function registerUser(
   data: RegisterUserData
@@ -50,91 +40,74 @@ export async function registerUser(
   const ip = data.clientIP || 'unknown';
 
   try {
-    // Check dual rate limiting (email + IP)
-    if (data.clientIP) {
-      const { emailAllowed, ipAllowed } = await checkDualRateLimit(
-        data.email,
-        ip,
-        'AUTH_OPERATIONS',
-        'IP_REGISTRATION_ATTEMPTS'
-      );
+    // Supabase Auth handles all rate limiting automatically
+    // No need for custom Redis rate limiting
 
-      if (!emailAllowed || !ipAllowed) {
-        await logRegistrationAttempt(
-          data.email,
-          { clientIP: data.clientIP, userAgent: data.userAgent },
-          false,
-          'Rate limit exceeded',
-          { ip, emailAllowed, ipAllowed }
-        );
-
-        return {
-          success: false,
-          message:
-            'Too many registration attempts. Please wait before trying again.',
-        };
-      }
-    }
-
-    // Check if user already has a pending registration
-    const { hasPendingRegistration } = await checkPendingRegistration(
-      data.email
-    );
-
-    if (hasPendingRegistration) {
+    // Check if user already exists
+    const { user: existingUser } = await findUserByEmail(data.email);
+    if (existingUser) {
       await logRegistrationAttempt(
         data.email,
         { clientIP: data.clientIP, userAgent: data.userAgent },
         false,
-        'Duplicate registration attempt',
+        'User already exists',
         { ip }
       );
 
       return {
         success: false,
         message:
-          'You already have a pending registration. Please check your email and verify your account.',
+          'An account with this email already exists. Please sign in instead.',
       };
     }
 
-    // Store pending registration data temporarily (GDPR-compliant, no password stored)
-    const pendingResult = await storePendingRegistration({
-      email: data.email,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      language: 'de', // Default to German for Swiss market
-      referralSource: data.referralSource,
-      browserLocale: data.browserLocale,
-    });
+    // Create user with Supabase Auth (email not confirmed yet)
+    // We'll send our own custom verification email
+    const { data: authData, error: authError } =
+      await supabaseAdmin.auth.admin.createUser({
+        email: data.email,
+        password: data.password,
+        email_confirm: false, // User must verify email
+        user_metadata: {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          referral_source: data.referralSource,
+          browser_locale: data.browserLocale,
+        },
+      });
 
-    if (!pendingResult.success) {
-      return {
-        success: false,
-        message: pendingResult.message,
-      };
-    }
-
-    // Send verification email with the token
-    const emailResult = await sendPendingRegistrationEmail(
-      data.email,
-      pendingResult.verificationToken!,
-      `${data.firstName} ${data.lastName}`
-    );
-
-    if (!emailResult.success) {
+    if (authError || !authData.user) {
       await logRegistrationAttempt(
         data.email,
         { clientIP: data.clientIP, userAgent: data.userAgent },
         false,
-        'Failed to send verification email',
-        { ip, error: emailResult.error }
+        'Failed to create user account',
+        { ip, error: authError?.message }
       );
 
       return {
         success: false,
-        message:
-          'Registration data stored, but failed to send verification email. Please try again.',
+        message: authError?.message || 'Failed to create account',
       };
+    }
+
+    // Send confirmation email via Resend with custom template
+    const emailResult = await sendVerificationEmail(
+      data.email,
+      data.firstName,
+      data.lastName
+    );
+
+    if (!emailResult.success) {
+      console.error('Failed to send confirmation email:', emailResult.error);
+      // Don't fail registration if email fails, just log it
+      await logRegistrationAttempt(
+        data.email,
+        { clientIP: data.clientIP, userAgent: data.userAgent },
+        false,
+        'Failed to send confirmation email',
+        { ip, error: emailResult.error }
+      );
     }
 
     // Log successful registration
@@ -147,13 +120,15 @@ export async function registerUser(
         ip,
         referralSource: data.referralSource,
         browserLocale: data.browserLocale,
+        userId: authData.user.id,
       }
     );
 
     return {
       success: true,
       message:
-        'Registration successful! Please check your email to verify your account. You will be asked to set your password during verification.',
+        'Registration successful! Please check your email to verify your account.',
+      userId: authData.user.id,
     };
   } catch (error) {
     console.error('Registration error:', error);
@@ -182,15 +157,6 @@ export async function resendVerificationEmail(
   email: string
 ): Promise<RegisterResult> {
   try {
-    // Check rate limit using centralized config
-    if (!(await checkRateLimit(email, 'EMAIL_VERIFICATION'))) {
-      return {
-        success: false,
-        message:
-          'Too many verification emails sent. Please wait before trying again.',
-      };
-    }
-
     // Find user by email
     const { user, error: userError } = await findUserByEmail(email);
     if (userError || !user) {
@@ -207,18 +173,15 @@ export async function resendVerificationEmail(
       };
     }
 
-    // Generate new verification token
-    const { token: verificationToken } = generateVerificationToken();
-
-    // Send verification email
-    const result = await sendVerificationEmail(
+    // Send verification email via Resend with custom template
+    const emailResult = await sendVerificationEmail(
       email,
-      verificationToken,
-      (user.user_metadata?.name as string) || email
+      user.user_metadata?.first_name || 'User',
+      user.user_metadata?.last_name || ''
     );
 
-    if (!result.success) {
-      console.error('Failed to send verification email:', result.error);
+    if (!emailResult.success) {
+      console.error('Failed to send verification email:', emailResult.error);
       return {
         success: false,
         message: 'Failed to send verification email. Please try again.',
@@ -234,201 +197,6 @@ export async function resendVerificationEmail(
     return {
       success: false,
       message: 'Failed to resend verification email. Please try again.',
-    };
-  }
-}
-
-/**
- * Set password for pending registration during email verification
- * This is called when user clicks verification link and needs to set their password
- */
-export async function setPendingRegistrationPassword(
-  email: string,
-  password: string
-): Promise<RegisterResult> {
-  try {
-    // Check if there's a pending registration for this email
-    const pendingRegistration = await getPendingRegistration(email);
-    if (!pendingRegistration) {
-      return {
-        success: false,
-        message: 'No pending registration found. Please register first.',
-      };
-    }
-
-    // Create Supabase user with the provided password
-    const { data: userData, error: authError } =
-      await supabaseAdmin.auth.admin.createUser({
-        email: email,
-        password: password, // Supabase will hash this properly
-        email_confirm: true, // Mark as verified since they clicked the link
-        user_metadata: {
-          first_name: pendingRegistration.first_name,
-          last_name: pendingRegistration.last_name,
-          ...pendingRegistration.user_metadata,
-        },
-      });
-
-    if (authError) {
-      console.error('Error creating user during verification:', authError);
-      return {
-        success: false,
-        message: 'Failed to create account. Please try again.',
-      };
-    }
-
-    if (!userData.user) {
-      return {
-        success: false,
-        message: 'Failed to create user account. Please try again.',
-      };
-    }
-
-    // Delete the pending registration since user is now created
-    const { error: deleteError } = await supabaseAdmin
-      .from('pending_registrations')
-      .delete()
-      .eq('email', email);
-
-    if (deleteError) {
-      console.error('Error cleaning up pending registration:', deleteError);
-      // Don't fail the operation, just log the error
-    }
-
-    return {
-      success: true,
-      message: 'Account created successfully! You can now sign in.',
-    };
-  } catch (error) {
-    console.error('Error setting pending registration password:', error);
-    return {
-      success: false,
-      message: 'Failed to create account. Please try again.',
-    };
-  }
-}
-
-/**
- * Resend verification email for pending registrations
- * This handles users who have pending registrations but haven't verified their email yet
- */
-export async function resendPendingVerificationEmail(
-  email: string
-): Promise<RegisterResult> {
-  try {
-    // Check rate limit using centralized config
-    if (!(await checkRateLimit(email, 'EMAIL_VERIFICATION'))) {
-      return {
-        success: false,
-        message:
-          'Too many verification emails sent. Please wait before trying again.',
-      };
-    }
-
-    // Check if there's a pending registration for this email
-    const pendingRegistration = await getPendingRegistration(email);
-    if (!pendingRegistration) {
-      return {
-        success: false,
-        message:
-          'Unable to resend verification email. Please try registering again.',
-      };
-    }
-
-    // Generate new verification token
-    const { token: verificationToken, expiresAt } = generateVerificationToken();
-
-    // Update the pending registration with the new token
-    const { error: updateError } = await supabaseAdmin
-      .from('pending_registrations')
-      .update({
-        verification_token: verificationToken,
-        expires_at: expiresAt.toISOString(),
-      })
-      .eq('email', email);
-
-    if (updateError) {
-      console.error('Error updating verification token:', updateError);
-      return {
-        success: false,
-        message: 'Failed to update verification token. Please try again.',
-      };
-    }
-
-    // Send verification email using the same function as registration
-    // Construct name from first_name and last_name columns
-    const name =
-      pendingRegistration.first_name && pendingRegistration.last_name
-        ? `${pendingRegistration.first_name} ${pendingRegistration.last_name}`
-        : email;
-
-    const result = await sendVerificationEmail(email, verificationToken, name);
-
-    if (!result.success) {
-      console.error(
-        'Failed to send verification email for pending registration:',
-        result.error
-      );
-      return {
-        success: false,
-        message: 'Failed to send verification email. Please try again.',
-      };
-    }
-
-    return {
-      success: true,
-      message: 'Verification email sent successfully!',
-    };
-  } catch (error) {
-    console.error(
-      'Error resending verification email for pending registration:',
-      error
-    );
-    return {
-      success: false,
-      message: 'Failed to resend verification email. Please try again.',
-    };
-  }
-}
-
-/**
- * Get pending user's first name for personalized messages
- */
-export async function getPendingUserName(email: string) {
-  try {
-    if (!email) {
-      return { success: false, firstName: null, error: 'No email provided' };
-    }
-
-    const { data: pendingRegistration, error } = await supabaseAdmin
-      .from('pending_registrations')
-      .select('first_name')
-      .eq('email', email)
-      .maybeSingle();
-
-    if (error) {
-      console.error('Error fetching pending user name:', error);
-      return { success: false, firstName: null, error: error.message };
-    }
-
-    if (!pendingRegistration) {
-      return {
-        success: false,
-        firstName: null,
-        error: 'No pending registration found',
-      };
-    }
-
-    return {
-      success: true,
-      firstName: pendingRegistration.first_name || null,
-    };
-  } catch (error) {
-    console.error('Error in getPendingUserName:', error);
-    return {
-      success: false,
-      firstName: null,
-      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }

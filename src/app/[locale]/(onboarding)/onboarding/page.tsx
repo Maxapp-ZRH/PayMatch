@@ -6,11 +6,9 @@
  */
 
 import { type Metadata } from 'next';
-import { redirect } from 'next/navigation';
 
 import { OnboardingWizard } from '@/features/onboarding/components/OnboardingWizard';
-import { SessionTimeoutWarning } from '@/features/auth/components/SessionTimeoutWarning';
-import { createClient } from '@/lib/supabase/server';
+import { requireOnboardingSession } from '@/features/auth';
 import type { PlanName } from '@/config/plans';
 
 export const metadata: Metadata = {
@@ -20,46 +18,26 @@ export const metadata: Metadata = {
 };
 
 export default async function OnboardingPage() {
-  const supabase = await createClient();
+  // Get authenticated session with onboarding requirements
+  const { organization } = await requireOnboardingSession();
 
-  // Get current user (middleware already verified authentication)
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Get user's organization with onboarding step
-  const { data: orgMembership } = await supabase
-    .from('organization_users')
-    .select(
-      `
-      org_id,
-      organizations!inner(id, name, plan, onboarding_step)
-    `
-    )
-    .eq('user_id', user!.id)
-    .eq('status', 'active')
-    .single();
-
-  const org = orgMembership?.organizations as
-    | { id: string; name: string; plan: string; onboarding_step: number }
-    | undefined;
-
-  if (!org) {
-    // This shouldn't happen due to middleware checks
-    redirect('/login');
+  if (!organization) {
+    throw new Error('Organization not found');
   }
 
   // Use the stored onboarding step, but ensure it's valid (1-4)
-  const currentStep = Math.max(1, Math.min(4, org.onboarding_step || 1));
+  const currentStep = Math.max(
+    1,
+    Math.min(4, organization.onboarding_step || 1)
+  );
 
   return (
     <>
       {/* Session Timeout Warning */}
-      <SessionTimeoutWarning />
 
       <OnboardingWizard
-        orgId={org.id}
-        initialPlan={org.plan as PlanName}
+        orgId={organization.id}
+        initialPlan={organization.plan as PlanName}
         initialStep={currentStep}
       />
     </>

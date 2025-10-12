@@ -9,8 +9,6 @@ import { type Metadata } from 'next';
 
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
 import { VerifyEmailForm } from '@/features/auth/components/VerifyEmailForm';
-import { SetPasswordForm } from '@/features/auth/components/SetPasswordForm';
-import { getPendingUserName } from '@/features/auth/server/actions/registration';
 
 export const metadata: Metadata = {
   title: 'Verify Email - PayMatch',
@@ -25,8 +23,7 @@ export default async function VerifyEmail({
     email?: string;
     showResend?: string;
     immediateResend?: string;
-    setPassword?: string;
-    pendingPasswordReset?: string;
+    redirect?: string;
   }>;
 }) {
   const resolvedSearchParams = await searchParams;
@@ -36,57 +33,18 @@ export default async function VerifyEmail({
     : undefined;
   const showResend = resolvedSearchParams.showResend === 'true';
   const immediateResend = resolvedSearchParams.immediateResend === 'true';
-  const needsPassword = resolvedSearchParams.setPassword === 'true';
-  const isPendingPasswordReset =
-    resolvedSearchParams.pendingPasswordReset === 'true';
+  const redirectTo = resolvedSearchParams.redirect;
 
-  // Fetch user's first name for personalized greeting
-  let firstName = null;
-  if (emailFromUrl) {
-    const nameResult = await getPendingUserName(emailFromUrl);
-    if (nameResult.success) {
-      firstName = nameResult.firstName;
-    }
-  }
-
-  // If user needs to set password (clicked verification link), show password form
-  if (needsPassword && emailFromUrl) {
-    return (
-      <AuthLayout
-        title="Complete your registration"
-        subtitle={
-          <>
-            Your email has been verified! Now set a secure password to complete
-            your PayMatch account setup.
-          </>
-        }
-      >
-        <SetPasswordForm email={emailFromUrl} />
-      </AuthLayout>
-    );
-  }
-
-  // With deferred account creation, users won't have accounts until verification
-  // So we always show the verification page for unauthenticated users
   return (
     <AuthLayout
       title={isVerified ? 'Email verified successfully!' : 'Verify your email'}
       subtitle={
         isVerified ? (
           <>
-            Your email has been verified! You can now sign in to access your
-            PayMatch account.
-          </>
-        ) : isPendingPasswordReset ? (
-          <>
-            You have a pending registration{firstName ? `, ${firstName}` : ''}.
-            Please verify your email first to complete your account setup.
-          </>
-        ) : firstName ? (
-          <>
-            Hi {firstName}! We&apos;ve sent a verification link to your email
-            address. Please check your email and click the link to verify your
-            account.
+            Your email has been verified!{' '}
+            {redirectTo === 'onboarding'
+              ? 'You will be redirected to complete your account setup.'
+              : 'You can now sign in to access your PayMatch account.'}
           </>
         ) : emailFromUrl ? (
           <>
@@ -107,7 +65,7 @@ export default async function VerifyEmail({
         isVerified={isVerified}
         showResend={showResend}
         immediateResend={immediateResend}
-        firstName={firstName}
+        redirectTo={redirectTo}
       />
     </AuthLayout>
   );

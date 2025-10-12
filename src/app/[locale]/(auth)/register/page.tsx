@@ -12,6 +12,7 @@ import { redirect } from 'next/navigation';
 import { AuthLayout } from '@/components/marketing_pages/AuthLayout';
 import { RegisterForm } from '@/features/auth/components/RegisterForm';
 import { createClient } from '@/lib/supabase/server';
+import { checkAuthPageRedirect } from '@/features/auth/helpers/auth-helpers';
 
 export const metadata: Metadata = {
   title: 'Sign Up - PayMatch',
@@ -22,20 +23,10 @@ export const metadata: Metadata = {
 export default async function Register() {
   const supabase = await createClient();
 
-  // Check if user is already authenticated (using getUser for security)
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (user && !error) {
-    // Check if user's email is verified
-    if (!user.email_confirmed_at) {
-      redirect('/verify-email');
-    }
-
-    // Redirect to dashboard if already authenticated and verified
-    redirect('/dashboard');
+  // Check if user is already authenticated and handle redirects
+  const redirectUrl = await checkAuthPageRedirect(supabase);
+  if (redirectUrl) {
+    redirect(redirectUrl);
   }
 
   return (

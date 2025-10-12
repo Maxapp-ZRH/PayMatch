@@ -13,7 +13,6 @@ export { sendEmailWithComponent } from '../email-service';
 export { OnboardingEmailIntegrationService } from './onboarding-integration';
 export { CookieEmailIntegrationService } from './cookie-integration';
 export {
-  sendPendingRegistrationEmail,
   sendVerificationEmail,
   sendPasswordResetEmail,
 } from './auth-integration';

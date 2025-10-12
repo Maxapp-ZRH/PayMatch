@@ -6,4 +6,3 @@
  */
 
 export * from './auth-helpers';
-export * from './client-auth-helpers';
