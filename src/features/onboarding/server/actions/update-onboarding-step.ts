@@ -8,7 +8,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { syncEmailPreferences } from '../../services/email-preferences-integration-server';
+import { syncEmailPreferences } from '@/features/email';
 
 import type {
   UpdateOnboardingStepData,

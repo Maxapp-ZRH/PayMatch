@@ -1,8 +1,8 @@
 // PayMatch Service Worker
 // Version: 1.0.0
 
-// const CACHE_NAME = 'paymatch-v1.0.0';
-// const STATIC_CACHE = 'paymatch-static-v1.0.0';
+const CACHE_NAME = 'paymatch-v1.0.0';
+const STATIC_CACHE = 'paymatch-static-v1.0.0';
 const DYNAMIC_CACHE = 'paymatch-dynamic-v1.0.0';
 
 // Files to cache for offline functionality

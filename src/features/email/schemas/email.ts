@@ -99,7 +99,15 @@ export const newsletterSubscriptionSchema = z.object({
   }),
 });
 
-// Unsubscribe token schema
+// Unsubscribe token data schema (for generating tokens)
+export const unsubscribeTokenDataSchema = z.object({
+  email: z.string().email('email.invalid'),
+  type: emailTypeSchema,
+  userId: z.string().uuid().optional(),
+  expiresAt: z.date().optional(),
+});
+
+// Unsubscribe token schema (for validating tokens)
 export const unsubscribeTokenSchema = z.object({
   token: z.string().min(1, 'token.required'),
 });
@@ -172,7 +180,7 @@ export type EmailSendingData = z.infer<typeof emailSendingSchema>;
 export type NewsletterSubscriptionData = z.infer<
   typeof newsletterSubscriptionSchema
 >;
-export type UnsubscribeTokenData = z.infer<typeof unsubscribeTokenSchema>;
+export type UnsubscribeTokenData = z.infer<typeof unsubscribeTokenDataSchema>;
 export type EmailPreferencesData = z.infer<typeof emailPreferencesSchema>;
 export type UnsubscribeRequestData = z.infer<typeof unsubscribeRequestSchema>;
 export type SupportEmailData = z.infer<typeof supportEmailSchema>;

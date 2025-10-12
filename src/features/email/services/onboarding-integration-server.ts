@@ -185,8 +185,8 @@ export async function getCurrentPreferences(email: string): Promise<{
     ]);
 
     return {
-      emailNotifications: businessPrefs.subscriber.isActive,
-      autoReminders: alertsPrefs.subscriber.isActive,
+      emailNotifications: businessPrefs.subscriber.isActive ?? false,
+      autoReminders: alertsPrefs.subscriber.isActive ?? false,
     };
   } catch (error) {
     console.error('Failed to get current email preferences:', error);

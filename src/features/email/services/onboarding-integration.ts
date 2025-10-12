@@ -7,7 +7,6 @@
 
 'use client';
 
-import { EmailPreferencesService } from '@/features/email/email-service';
 import { ConsentServiceClient } from '@/features/cookies/services/consent-service-client';
 import type { EmailType } from '@/features/cookies/services/consent-service-client';
 
@@ -23,7 +22,7 @@ export interface EmailPreferencesResult {
   error?: string;
 }
 
-export class OnboardingEmailPreferencesService {
+export class OnboardingEmailIntegrationService {
   /**
    * Sync onboarding email settings with email preferences system
    */
@@ -116,8 +115,23 @@ export class OnboardingEmailPreferencesService {
           typeof window !== 'undefined' ? navigator.userAgent : undefined,
       });
 
-      // Enable email preference
-      await EmailPreferencesService.subscribe(email, emailType, userId);
+      // Enable email preference via API
+      const response = await fetch('/api/email/preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          emailType,
+          isActive: true,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to enable ${emailType} emails: ${response.statusText}`
+        );
+      }
 
       return {
         success: true,
@@ -156,8 +170,23 @@ export class OnboardingEmailPreferencesService {
           typeof window !== 'undefined' ? navigator.userAgent : undefined,
       });
 
-      // Disable email preference
-      await EmailPreferencesService.unsubscribe(email, emailType, userId);
+      // Disable email preference via API
+      const response = await fetch('/api/email/preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          emailType,
+          isActive: false,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to disable ${emailType} emails: ${response.statusText}`
+        );
+      }
 
       return {
         success: true,
@@ -176,15 +205,22 @@ export class OnboardingEmailPreferencesService {
   /**
    * Get current email preferences for onboarding settings
    */
-  static async getCurrentPreferences(email: string): Promise<{
+  static async getCurrentPreferences(): Promise<{
     emailNotifications: boolean;
     autoReminders: boolean;
   }> {
     try {
-      const [businessPrefs, alertsPrefs] = await Promise.all([
-        EmailPreferencesService.getPreferences(email, 'business_notifications'),
-        EmailPreferencesService.getPreferences(email, 'overdue_alerts'),
+      const [businessResponse, alertsResponse] = await Promise.all([
+        fetch(`/api/email/preferences?type=business_notifications`),
+        fetch(`/api/email/preferences?type=overdue_alerts`),
       ]);
+
+      const businessPrefs = businessResponse.ok
+        ? await businessResponse.json()
+        : { subscriber: { isActive: false } };
+      const alertsPrefs = alertsResponse.ok
+        ? await alertsResponse.json()
+        : { subscriber: { isActive: false } };
 
       return {
         emailNotifications: businessPrefs.subscriber.isActive,

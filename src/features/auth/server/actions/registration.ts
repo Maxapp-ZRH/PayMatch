@@ -11,7 +11,7 @@ import { storePendingRegistration } from '../utils/pending-registration';
 import {
   sendPendingRegistrationEmail,
   sendVerificationEmail,
-} from '../services/email-service';
+} from '@/features/email';
 import { checkRateLimit } from '../services/rate-limiting';
 import {
   findUserByEmail,

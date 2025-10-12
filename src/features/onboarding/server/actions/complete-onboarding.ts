@@ -8,6 +8,8 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { syncEmailPreferences } from '@/features/email';
+import { ConsentService } from '@/features/cookies/services/consent-service';
 
 export interface CompleteOnboardingData {
   orgId: string;
@@ -55,6 +57,52 @@ export async function completeOnboarding(
         message: 'Failed to complete onboarding',
         error: updateError.message,
       };
+    }
+
+    // Set up default email preferences for the user
+    try {
+      const emailSettings = {
+        emailNotifications: true, // Default to enabled
+        autoReminders: true, // Default to enabled
+      };
+
+      await syncEmailPreferences(user.email!, emailSettings, user.id);
+      console.log('Default email preferences set up successfully');
+    } catch (emailError) {
+      console.error('Failed to set up default email preferences:', emailError);
+      // Don't fail onboarding if email setup fails
+    }
+
+    // Set up default consent records for GDPR compliance
+    try {
+      await ConsentService.recordConsent({
+        email: user.email!,
+        userId: user.id,
+        consentType: 'data_processing',
+        consentGiven: true,
+        consentMethod: 'account_settings',
+        consentSource: 'onboarding_wizard',
+        privacyPolicyVersion: '1.0',
+        consentFormVersion: '1.0',
+        userAgent: undefined, // Not available in server context
+      });
+
+      await ConsentService.recordConsent({
+        email: user.email!,
+        userId: user.id,
+        consentType: 'marketing_emails',
+        consentGiven: false, // Default to false, user can opt-in later
+        consentMethod: 'account_settings',
+        consentSource: 'onboarding_wizard',
+        privacyPolicyVersion: '1.0',
+        consentFormVersion: '1.0',
+        userAgent: undefined,
+      });
+
+      console.log('Default consent records created successfully');
+    } catch (consentError) {
+      console.error('Failed to set up consent records:', consentError);
+      // Don't fail onboarding if consent setup fails
     }
 
     // Note: Only organizations table tracks onboarding completion now

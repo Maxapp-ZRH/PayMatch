@@ -5,7 +5,7 @@ import { X, Cookie, Settings } from 'lucide-react';
 import { Switch } from '@headlessui/react';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import { CookieEmailIntegrationService } from '../services/cookie-email-integration';
+import { CookieEmailIntegrationService } from '@/features/email';
 import { ConsentServiceClient } from '../services/consent-service-client';
 import type { CookiePreferences } from '../types/cookie-types';
 

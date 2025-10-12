@@ -25,7 +25,6 @@ import {
   Settings,
   LogIn,
 } from 'lucide-react';
-import { EmailPreferencesService } from '@/features/email';
 import type { EmailType } from '@/features/email';
 import { createClient } from '@/lib/supabase/client';
 import { Link } from '@/i18n/navigation';
@@ -187,11 +186,17 @@ export default function EmailPreferencesPage() {
               // Mandatory emails are always enabled
               newPreferences[emailType.emailType] = true;
             } else {
-              const result = await EmailPreferencesService.getPreferences(
-                user.email!,
-                emailType.emailType
+              const response = await fetch(
+                `/api/email/preferences?type=${emailType.emailType}`
               );
-              newPreferences[emailType.emailType] = result.subscriber.isActive;
+              if (response.ok) {
+                const data = await response.json();
+                newPreferences[emailType.emailType] = data.subscriber.isActive;
+              } else {
+                throw new Error(
+                  `Failed to fetch preferences: ${response.statusText}`
+                );
+              }
             }
           } catch (error) {
             console.error(
@@ -244,10 +249,19 @@ export default function EmailPreferencesPage() {
     setIsSaving(true);
     setError('');
     try {
-      if (value) {
-        await EmailPreferencesService.subscribe(userEmail, emailType);
-      } else {
-        await EmailPreferencesService.unsubscribe(userEmail, emailType);
+      const response = await fetch('/api/email/preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          emailType,
+          isActive: value,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update preference: ${response.statusText}`);
       }
 
       setPreferences((prev) => ({
@@ -308,33 +322,95 @@ export default function EmailPreferencesPage() {
   // Show login prompt if not authenticated
   if (isAuthenticated === false) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
         <Container>
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-2xl mx-auto">
             <div className="text-center">
-              <div className="bg-white border border-gray-200 rounded-lg p-8">
-                <LogIn className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                  {t('auth.signInRequired.title')}
+              {/* Header with branding */}
+              <div className="mb-8">
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                  Email Preferences
                 </h1>
-                <p className="text-gray-600 mb-6">
-                  {t('auth.signInRequired.description')}
+                <p className="text-xl text-gray-600">
+                  Manage your email communication preferences
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              </div>
+
+              {/* Main card */}
+              <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
+                <div className="mb-6">
+                  <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <LogIn className="w-10 h-10 text-red-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                    Sign in to manage your preferences
+                  </h2>
+                  <p className="text-gray-600 leading-relaxed">
+                    To manage your email preferences, you need to be signed in
+                    to your PayMatch account. This ensures your settings are
+                    secure and personalized to your account.
+                  </p>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
                   <Link href="/login">
-                    <Button color="swiss" className="w-full sm:w-auto">
-                      {t('auth.signInRequired.signIn')}
+                    <Button
+                      color="swiss"
+                      className="w-full sm:w-auto px-8 py-3"
+                    >
+                      Sign In
                     </Button>
                   </Link>
                   <Link href="/register">
                     <Button
                       variant="outline"
-                      color="gray"
-                      className="w-full sm:w-auto"
+                      color="swiss"
+                      className="w-full sm:w-auto px-8 py-3"
                     >
-                      {t('auth.signInRequired.createAccount')}
+                      Create Account
                     </Button>
                   </Link>
+                </div>
+
+                {/* Additional options */}
+                <div className="border-t border-gray-200 pt-6">
+                  <p className="text-sm text-gray-500 mb-4">
+                    Don&apos;t have an account yet?
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Link
+                      href="/"
+                      className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      ← Back to Home
+                    </Link>
+                    <span className="hidden sm:inline text-gray-300">•</span>
+                    <Link
+                      href="/support"
+                      className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      Contact Support
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Info section */}
+              <div className="mt-8 bg-white border border-gray-200 rounded-xl p-6">
+                <div className="flex items-start">
+                  <Info className="w-5 h-5 text-red-600 mr-3 mt-0.5 flex-shrink-0" />
+                  <div className="text-left">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-2">
+                      What are email preferences?
+                    </h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      Email preferences allow you to control which types of
+                      emails you receive from PayMatch. You can choose to
+                      receive business notifications, marketing updates,
+                      security alerts, and more.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -345,19 +421,19 @@ export default function EmailPreferencesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-white py-12 sm:py-20 lg:py-32">
       <Container>
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="max-w-4xl mx-auto space-y-12">
           {/* Header */}
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-gray-900">
               {t('title')}
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-2">
+            <p className="mt-4 sm:mt-6 text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               {t('subtitle')}
             </p>
             {userEmail && (
-              <p className="text-sm text-gray-500">
+              <p className="mt-2 text-sm text-gray-500">
                 {t('managingFor')}{' '}
                 <span className="font-medium text-gray-700">{userEmail}</span>
               </p>
@@ -383,21 +459,21 @@ export default function EmailPreferencesPage() {
           )}
 
           {/* Introduction */}
-          <section className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <section className="bg-gray-50 rounded-2xl p-6 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-medium tracking-tight text-gray-900 mb-4">
               {t('sections.introduction.title')}
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
+            <p className="text-gray-600 leading-relaxed mb-6">
               {t('sections.introduction.content')}
             </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
               <div className="flex">
-                <Info className="w-5 h-5 text-blue-600 mr-3 mt-0.5" />
+                <Info className="w-5 h-5 text-teal-600 mr-3 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h3 className="text-sm font-medium text-blue-800 mb-1">
+                  <h3 className="text-sm font-medium text-teal-800 mb-1">
                     {t('sections.introduction.importantNote.title')}
                   </h3>
-                  <p className="text-sm text-blue-700">
+                  <p className="text-sm text-teal-700">
                     {t('sections.introduction.importantNote.content')}
                   </p>
                 </div>
@@ -406,8 +482,8 @@ export default function EmailPreferencesPage() {
           </section>
 
           {/* Email Categories */}
-          <section className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-900">
+          <section className="space-y-8">
+            <h2 className="text-xl sm:text-2xl font-medium tracking-tight text-gray-900">
               {t('sections.categories.title')}
             </h2>
 
@@ -420,9 +496,9 @@ export default function EmailPreferencesPage() {
               return (
                 <div
                   key={emailType.emailType}
-                  className={`bg-white border rounded-lg p-6 ${
+                  className={`bg-white border rounded-xl p-6 sm:p-8 ${
                     isMandatory
-                      ? 'border-green-200 bg-green-50'
+                      ? 'border-teal-200 bg-teal-50'
                       : 'border-gray-200'
                   }`}
                 >
@@ -439,7 +515,7 @@ export default function EmailPreferencesPage() {
                           {getCategoryName(emailType.category)}
                         </span>
                         {isMandatory && (
-                          <span className="ml-2 px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 border border-green-200">
+                          <span className="ml-2 px-2 py-1 text-xs font-medium rounded-full bg-teal-100 text-teal-800 border border-teal-200">
                             {t('labels.required')}
                           </span>
                         )}
@@ -450,10 +526,10 @@ export default function EmailPreferencesPage() {
                       </p>
 
                       {isMandatory && (
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                        <div className="bg-teal-50 border border-teal-200 rounded-lg p-3">
                           <div className="flex">
-                            <Shield className="w-4 h-4 text-green-600 mr-2 mt-0.5" />
-                            <p className="text-sm text-green-800">
+                            <Shield className="w-4 h-4 text-teal-600 mr-2 mt-0.5" />
+                            <p className="text-sm text-teal-800">
                               <strong>{t('labels.essential')}:</strong>{' '}
                               {t('labels.essentialDescription')}
                             </p>
@@ -484,8 +560,8 @@ export default function EmailPreferencesPage() {
 
                     <div className="ml-6 flex-shrink-0">
                       {isMandatory ? (
-                        <div className="flex items-center justify-center h-6 w-11 bg-green-200 rounded-full">
-                          <Shield className="h-4 w-4 text-green-600" />
+                        <div className="flex items-center justify-center h-6 w-11 bg-teal-200 rounded-full">
+                          <Shield className="h-4 w-4 text-teal-600" />
                         </div>
                       ) : (
                         <Switch
@@ -495,8 +571,8 @@ export default function EmailPreferencesPage() {
                           }
                           disabled={isSaving}
                           className={`${
-                            isActive ? 'bg-blue-600' : 'bg-gray-200'
-                          } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50`}
+                            isActive ? 'bg-teal-600' : 'bg-gray-200'
+                          } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50`}
                         >
                           <span
                             className={`${
@@ -513,17 +589,17 @@ export default function EmailPreferencesPage() {
           </section>
 
           {/* Footer Actions */}
-          <section className="bg-white border border-gray-200 rounded-lg p-6">
-            <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
+          <section className="bg-gray-50 rounded-2xl p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row gap-6 justify-between items-center">
               <div className="text-sm text-gray-600">
                 <p>{t('sections.footer.autoSave')}</p>
                 <p>{t('sections.footer.updateAnytime')}</p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   href="/support"
                   variant="outline"
-                  color="gray"
+                  color="swiss"
                   className="w-full sm:w-auto"
                 >
                   {t('actions.contactSupport')}
@@ -531,7 +607,7 @@ export default function EmailPreferencesPage() {
                 <Button
                   href="/privacy"
                   variant="outline"
-                  color="gray"
+                  color="swiss"
                   className="w-full sm:w-auto"
                 >
                   {t('actions.privacyPolicy')}

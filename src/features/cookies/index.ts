@@ -6,7 +6,7 @@
  */
 
 // Services (client-safe)
-export { CookieEmailIntegrationService } from './services/cookie-email-integration';
+// CookieEmailIntegrationService moved to @/features/email
 
 // Client-side service (for browser components)
 export { ConsentServiceClient } from './services/consent-service-client';

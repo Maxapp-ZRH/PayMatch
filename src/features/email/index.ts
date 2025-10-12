@@ -1,57 +1,18 @@
 /**
- * Email Feature - Public API
+ * Email Feature Index
  *
- * Centralized email functionality including services, utilities, and schemas.
- * This is the main entry point for the email feature.
+ * Main entry point for the email feature.
+ * Exports all email-related functionality for use across the application.
  */
 
-// Services
-export {
-  EmailPreferencesService,
-  sendEmail,
-  sendEmailWithComponent,
-  SupportEmailService,
-  UnsubscribeService,
-} from './email-service';
+// Core services
+export * from './email-service';
+export * from './email-renderer';
+export * from './email-assets';
+export * from './unsubscribe';
 
-// Cookie-related services moved to @/features/cookies
+// Integration services
+export * from './services';
 
-// Utilities
-export {
-  type EmailType,
-  generateOneClickUnsubscribeUrl,
-  generateUnsubscribeToken,
-  generateUnsubscribeUrl,
-  getUnsubscribeHeaders,
-  type UnsubscribeTokenData,
-  verifyUnsubscribeToken,
-} from './unsubscribe';
-
-export { renderEmailComponent, renderEmailToHtml } from './email-renderer';
-
-// Schemas
-export {
-  type EmailPreferencesData,
-  emailPreferencesSchema,
-  emailSchema,
-  type EmailSendingData,
-  emailSendingSchema,
-  type EmailType as SchemaEmailType,
-  emailTypeSchema,
-  type NewsletterSubscriptionData,
-  newsletterSubscriptionSchema,
-  type SupportEmailData,
-  supportEmailSchema,
-  type UnsubscribeRequestData,
-  unsubscribeRequestSchema,
-  type UnsubscribeTokenData as SchemaUnsubscribeTokenData,
-  unsubscribeTokenSchema,
-  validateEmail,
-} from './schemas/email';
-
-export {
-  type UnsubscribePageState,
-  unsubscribePageStateSchema,
-  type UnsubscribeResponse,
-  unsubscribeResponseSchema,
-} from './schemas/unsubscribe';
+// Schemas and types
+export * from './schemas/email';

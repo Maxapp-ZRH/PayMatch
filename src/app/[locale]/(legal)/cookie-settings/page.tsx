@@ -85,7 +85,7 @@ export default function CookieSettingsPage() {
 
       // Sync with email preferences
       const { CookieEmailIntegrationService } = await import(
-        '@/features/cookies'
+        '@/features/email'
       );
       await CookieEmailIntegrationService.handleCookiePreferenceChange(
         preferences
@@ -142,18 +142,18 @@ export default function CookieSettingsPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Success Message */}
         {showSuccess && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
-            <CheckCircle className="w-5 h-5 text-green-600 mr-3" />
-            <p className="text-green-800 font-medium">{t('successMessage')}</p>
+          <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 flex items-center">
+            <CheckCircle className="w-5 h-5 text-teal-600 mr-3" />
+            <p className="text-teal-800 font-medium">{t('successMessage')}</p>
           </div>
         )}
 
         {/* Introduction */}
-        <section className="bg-white border border-gray-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <section className="bg-gray-50 rounded-2xl p-6 sm:p-8">
+          <h2 className="text-xl sm:text-2xl font-medium tracking-tight text-gray-900 mb-4">
             {t('sections.introduction.title')}
           </h2>
-          <p className="text-gray-700 leading-relaxed mb-4">
+          <p className="text-gray-600 leading-relaxed mb-6">
             {t('sections.introduction.content')}
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -168,7 +168,7 @@ export default function CookieSettingsPage() {
             <Button
               href="/cookies"
               variant="outline"
-              color="gray"
+              color="swiss"
               className="w-full sm:w-auto"
             >
               {t('actions.viewPolicy')}
@@ -177,17 +177,17 @@ export default function CookieSettingsPage() {
         </section>
 
         {/* Cookie Categories */}
-        <section className="space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">
+        <section className="space-y-8">
+          <h2 className="text-xl sm:text-2xl font-medium tracking-tight text-gray-900">
             {t('sections.categories.title')}
           </h2>
 
           {/* Necessary Cookies */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 sm:p-8">
             <div className="flex items-center justify-between mb-4">
               <div className="flex-1">
                 <h3 className="text-lg font-medium text-gray-900 flex items-center">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
+                  <CheckCircle className="w-5 h-5 text-teal-600 mr-2" />
                   {t('sections.categories.necessary.title')}
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">
@@ -205,7 +205,7 @@ export default function CookieSettingsPage() {
                 <span className="sr-only">Necessary cookies</span>
                 <div
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.necessary ? 'bg-green-600' : 'bg-gray-200'
+                    preferences.necessary ? 'bg-teal-600' : 'bg-gray-200'
                   }`}
                 >
                   <span
@@ -216,10 +216,10 @@ export default function CookieSettingsPage() {
                 </div>
               </Switch>
             </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
               <div className="flex items-start">
-                <Info className="w-4 h-4 text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
-                <p className="text-sm text-blue-800">
+                <Info className="w-4 h-4 text-red-600 mt-0.5 mr-2 flex-shrink-0" />
+                <p className="text-sm text-red-800">
                   {t('sections.categories.necessary.note')}
                 </p>
               </div>
@@ -227,11 +227,11 @@ export default function CookieSettingsPage() {
           </div>
 
           {/* Analytics Cookies */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 sm:p-8">
             <div className="flex items-center justify-between mb-4">
               <div className="flex-1">
                 <h3 className="text-lg font-medium text-gray-900 flex items-center">
-                  <AlertCircle className="w-5 h-5 text-blue-600 mr-2" />
+                  <AlertCircle className="w-5 h-5 text-teal-600 mr-2" />
                   {t('sections.categories.analytics.title')}
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">
@@ -248,7 +248,7 @@ export default function CookieSettingsPage() {
                 <span className="sr-only">Analytics cookies</span>
                 <div
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.analytics ? 'bg-blue-600' : 'bg-gray-200'
+                    preferences.analytics ? 'bg-teal-600' : 'bg-gray-200'
                   }`}
                 >
                   <span
@@ -272,11 +272,11 @@ export default function CookieSettingsPage() {
           </div>
 
           {/* Marketing Cookies */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 sm:p-8">
             <div className="flex items-center justify-between mb-4">
               <div className="flex-1">
                 <h3 className="text-lg font-medium text-gray-900 flex items-center">
-                  <AlertCircle className="w-5 h-5 text-orange-600 mr-2" />
+                  <AlertCircle className="w-5 h-5 text-teal-600 mr-2" />
                   {t('sections.categories.marketing.title')}
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">
@@ -293,7 +293,7 @@ export default function CookieSettingsPage() {
                 <span className="sr-only">Marketing cookies</span>
                 <div
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    preferences.marketing ? 'bg-orange-600' : 'bg-gray-200'
+                    preferences.marketing ? 'bg-teal-600' : 'bg-gray-200'
                   }`}
                 >
                   <span
@@ -315,10 +315,10 @@ export default function CookieSettingsPage() {
               </ul>
             </div>
             {!preferences.marketing && (
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mt-4">
+              <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 mt-4">
                 <div className="flex items-start">
-                  <AlertCircle className="w-4 h-4 text-orange-600 mt-0.5 mr-2 flex-shrink-0" />
-                  <p className="text-sm text-orange-800">
+                  <AlertCircle className="w-4 h-4 text-teal-600 mt-0.5 mr-2 flex-shrink-0" />
+                  <p className="text-sm text-teal-800">
                     {t('sections.categories.marketing.warning')}
                   </p>
                 </div>
@@ -328,8 +328,8 @@ export default function CookieSettingsPage() {
         </section>
 
         {/* Save Button */}
-        <section className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <section className="bg-gray-50 rounded-2xl p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div>
               <h3 className="text-lg font-medium text-gray-900">
                 {t('sections.save.title')}

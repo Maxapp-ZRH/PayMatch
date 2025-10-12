@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { X, Cookie, Settings, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/marketing_pages/Button';
 import { Link } from '@/i18n/navigation';
-import { CookieEmailIntegrationService } from '../services/cookie-email-integration';
+import { CookieEmailIntegrationService } from '@/features/email';
 import { ConsentServiceClient } from '../services/consent-service-client';
 import type { CookiePreferences } from '../types/cookie-types';
 
@@ -105,7 +105,7 @@ export function CookieConsentModal({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center">
-            <Cookie className="w-6 h-6 text-orange-600 mr-3" />
+            <Cookie className="w-6 h-6 text-teal-600 mr-3" />
             <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
           </div>
           <button
@@ -120,14 +120,14 @@ export function CookieConsentModal({
         <div className="p-6">
           <p className="text-gray-700 mb-6 leading-relaxed">{message}</p>
 
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
+          <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-6">
             <div className="flex items-start">
-              <Cookie className="w-5 h-5 text-orange-600 mt-0.5 mr-3 flex-shrink-0" />
+              <Cookie className="w-5 h-5 text-teal-600 mt-0.5 mr-3 flex-shrink-0" />
               <div>
-                <h4 className="text-sm font-medium text-orange-800 mb-1">
+                <h4 className="text-sm font-medium text-teal-800 mb-1">
                   What are marketing cookies?
                 </h4>
-                <p className="text-sm text-orange-700">
+                <p className="text-sm text-teal-700">
                   Marketing cookies help us deliver relevant content and enable
                   features like newsletter subscriptions. They don&apos;t
                   collect personal information without your consent.

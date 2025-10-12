@@ -5,8 +5,9 @@
  * Ensures GDPR compliance by connecting marketing cookie consent with email subscriptions.
  */
 
-import { EmailPreferencesService } from '@/features/email/email-service';
-import type { CookiePreferences } from '../types/cookie-types';
+'use client';
+
+import type { CookiePreferences } from '@/features/cookies/types/cookie-types';
 
 export class CookieEmailIntegrationService {
   private static readonly COOKIE_CONSENT_KEY = 'paymatch-cookie-consent';
@@ -64,11 +65,24 @@ export class CookieEmailIntegrationService {
       if (!marketingConsent) {
         // If marketing consent is withdrawn, disable marketing emails
         if (userEmail) {
-          // Disable marketing email preferences
-          await EmailPreferencesService.unsubscribe(
-            userEmail,
-            'newsletter_promotional'
-          );
+          // Disable marketing email preferences via API
+          try {
+            await fetch('/api/email/preferences', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                emailType: 'newsletter_promotional',
+                isActive: false,
+              }),
+            });
+          } catch (error) {
+            console.error(
+              'Failed to unsubscribe from marketing emails:',
+              error
+            );
+          }
         }
 
         return {

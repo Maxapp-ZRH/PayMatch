@@ -1,9 +1,11 @@
 /**
- * Email Service
+ * Auth Email Integration Service
  *
  * Handles all email-related operations for authentication.
  * Centralized email sending logic for auth flows.
  */
+
+'use server';
 
 import React from 'react';
 import { sendEmailWithComponent } from '@/features/email/email-service';

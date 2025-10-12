@@ -60,15 +60,6 @@ export default function CookiePolicyPage() {
 
             <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
               <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
-                {t('sections.typesOfCookies.subsections.functional.title')}
-              </h3>
-              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-                {t('sections.typesOfCookies.subsections.functional.content')}
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 lg:p-8">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 pb-2 border-b border-gray-100">
                 {t('sections.typesOfCookies.subsections.marketing.title')}
               </h3>
               <p className="text-sm sm:text-base text-gray-700 leading-relaxed">

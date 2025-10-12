@@ -8,7 +8,7 @@
 'use server';
 
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { sendPasswordResetEmail as sendPasswordResetEmailService } from '../services/email-service';
+import { sendPasswordResetEmail as sendPasswordResetEmailService } from '@/features/email';
 import { checkRateLimit } from '../services/rate-limiting';
 import {
   findUserByEmail,

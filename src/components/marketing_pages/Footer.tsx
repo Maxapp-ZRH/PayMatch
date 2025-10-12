@@ -17,7 +17,8 @@ import {
   newsletterSubscriptionSchema,
   type NewsletterSubscriptionData,
 } from '@/features/email/schemas';
-import { CookieEmailIntegrationService } from '@/features/cookies';
+import { CookieEmailIntegrationService } from '@/features/email';
+import { CookieConsentModal } from '@/features/cookies/components/CookieConsentModal';
 import { CheckCircle, X } from 'lucide-react';
 
 export function Footer() {
@@ -27,6 +28,9 @@ export function Footer() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showCookieModal, setShowCookieModal] = useState(false);
+  const [pendingFormData, setPendingFormData] =
+    useState<NewsletterSubscriptionData | null>(null);
 
   const {
     register,
@@ -89,14 +93,29 @@ export function Footer() {
       const cookieValidation =
         CookieEmailIntegrationService.canSubscribeToNewsletter();
       if (!cookieValidation.canSubscribe) {
-        setErrorMessage(
-          'To subscribe to our newsletter, please first accept marketing cookies. You can manage your cookie preferences in our cookie settings.'
-        );
-        setShowError(true);
+        // Store form data and show cookie consent modal
+        setPendingFormData(data);
+        setShowCookieModal(true);
         setIsSubmitting(false);
         return;
       }
 
+      await submitNewsletterSubscription(data);
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Failed to subscribe to newsletter'
+      );
+      setShowError(true);
+      setIsSubmitting(false);
+    }
+  };
+
+  const submitNewsletterSubscription = async (
+    data: NewsletterSubscriptionData
+  ) => {
+    try {
       const response = await fetch('/api/email/newsletter', {
         method: 'POST',
         headers: {
@@ -137,6 +156,14 @@ export function Footer() {
       setShowError(true);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleCookieConsentGiven = async () => {
+    if (pendingFormData) {
+      // Retry the newsletter subscription after consent is given
+      await submitNewsletterSubscription(pendingFormData);
+      setPendingFormData(null);
     }
   };
 
@@ -349,24 +376,7 @@ export function Footer() {
                   <div className="flex items-center">
                     <X className="w-5 h-5 text-red-600 mr-2" />
                     <div className="text-sm text-red-800 font-medium">
-                      <p className="mb-2">{errorMessage}</p>
-                      {errorMessage.includes('marketing cookies') && (
-                        <div className="flex flex-col sm:flex-row gap-2">
-                          <I18nLink
-                            href="/cookie-settings"
-                            className="inline-flex items-center text-sm text-red-600 hover:text-red-700 underline"
-                          >
-                            {t('links.cookieSettings')}
-                          </I18nLink>
-                          <span className="text-red-500">•</span>
-                          <I18nLink
-                            href="/cookies"
-                            className="inline-flex items-center text-sm text-red-600 hover:text-red-700 underline"
-                          >
-                            View Cookie Policy
-                          </I18nLink>
-                        </div>
-                      )}
+                      <p>{errorMessage}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -542,6 +552,19 @@ export function Footer() {
           </div>
         </motion.div>
       </Container>
+
+      {/* Cookie Consent Modal */}
+      <CookieConsentModal
+        isOpen={showCookieModal}
+        onClose={() => {
+          setShowCookieModal(false);
+          setPendingFormData(null);
+        }}
+        onConsentGiven={handleCookieConsentGiven}
+        title="Enable Marketing Cookies"
+        message="To subscribe to our newsletter, we need your consent for marketing cookies. This allows us to send you relevant updates and promotional content."
+        actionText="Enable & Subscribe"
+      />
     </footer>
   );
 }

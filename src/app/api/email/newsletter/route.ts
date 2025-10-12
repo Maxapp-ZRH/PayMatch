@@ -13,7 +13,7 @@ import {
 import { newsletterSubscriptionSchema } from '@/features/email/schemas';
 import { NewsletterWelcomeEmail } from '@/emails/newsletter-welcome';
 import { generateUnsubscribeUrl } from '@/features/email';
-import { CookieEmailIntegrationService } from '@/features/cookies';
+import { CookieEmailIntegrationService } from '@/features/email';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 

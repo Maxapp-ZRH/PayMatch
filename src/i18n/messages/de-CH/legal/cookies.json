@@ -20,12 +20,8 @@
           "title": "2.2 Analyse-Cookies",
           "content": "Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren, indem sie Informationen anonym sammeln und melden."
         },
-        "functional": {
-          "title": "2.3 Funktions-Cookies",
-          "content": "Diese Cookies ermöglichen es der Website, erweiterte Funktionalität und Personalisierung zu bieten, wie z. B. das Speichern Ihrer Sprachpräferenzen."
-        },
         "marketing": {
-          "title": "2.4 Marketing-Cookies",
+          "title": "2.3 Marketing-Cookies",
           "content": "Diese Cookies werden verwendet, um Besucher über Websites hinweg zu verfolgen, um relevante und ansprechende Werbung anzuzeigen."
         }
       }
