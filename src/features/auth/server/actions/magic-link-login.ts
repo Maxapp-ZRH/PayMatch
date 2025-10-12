@@ -26,7 +26,6 @@ export async function sendMagicLinkLogin(
   request?: Request
 ): Promise<MagicLinkLoginResult> {
   try {
-    const supabase = await createClient();
     const { clientIP, userAgent } = await getClientInfo(request);
 
     // Validate email format
