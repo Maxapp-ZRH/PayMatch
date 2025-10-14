@@ -7,6 +7,10 @@
 import { z } from 'zod';
 
 export const settingsSchema = z.object({
+  organizationName: z
+    .string()
+    .min(1, 'Organization name is required')
+    .max(100, 'Organization name must be less than 100 characters'),
   defaultCurrency: z
     .string()
     .min(1, 'Default currency is required')

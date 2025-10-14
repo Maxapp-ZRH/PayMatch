@@ -7,7 +7,6 @@
 
 'use server';
 
-// Removed: Legacy auth rate limiting - Supabase handles this automatically
 import { findUserByEmail } from '../utils/user-operations';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { logRegistrationAttempt } from '../services/audit-logging';

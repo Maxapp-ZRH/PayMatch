@@ -28,7 +28,7 @@ export function getStandardEmailAttachments() {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function assetExists(_filename: string): boolean {
-  // For client-side compatibility, always return true
+  // Always return true for client-side
   // In production, you might want to check against a CDN or known assets
   return true;
 }
@@ -38,7 +38,7 @@ export function assetExists(_filename: string): boolean {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getAssetSize(_filename: string): number {
-  // For client-side compatibility, return 0
+  // Return 0 for client-side
   // In production, you might want to get this from a CDN or API
   return 0;
 }

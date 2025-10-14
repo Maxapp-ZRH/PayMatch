@@ -8,7 +8,6 @@
 'use server';
 
 import { sendPasswordResetEmail as sendPasswordResetEmailService } from '@/features/email';
-// Removed: Legacy auth rate limiting - Supabase handles this automatically
 import {
   findUserByEmail,
   checkPendingRegistration,

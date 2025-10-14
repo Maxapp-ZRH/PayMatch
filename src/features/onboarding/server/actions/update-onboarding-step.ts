@@ -21,6 +21,7 @@ interface OrganizationUpdateData {
   plan?: string;
   name?: string;
   legal_name?: string;
+  logo_url?: string;
   address_line_1?: string;
   address_line_2?: string;
   city?: string;
@@ -76,6 +77,10 @@ export async function updateOnboardingStep(
 
     // If stepData is provided, update organization fields based on the step
     if (data.stepData && Object.keys(data.stepData).length > 0) {
+      console.log(
+        `Updating onboarding step ${data.step} with data:`,
+        data.stepData
+      );
       // Step 1: Plan Selection
       if (data.step === 1) {
         if ('plan' in data.stepData && data.stepData.plan) {
@@ -93,11 +98,11 @@ export async function updateOnboardingStep(
           updateData.name = data.stepData.companyName as string;
           updateData.legal_name = data.stepData.companyName as string;
         }
-        if ('address_line_1' in data.stepData && data.stepData.address_line_1) {
-          updateData.address_line_1 = data.stepData.address_line_1 as string;
+        if ('address1' in data.stepData && data.stepData.address1) {
+          updateData.address_line_1 = data.stepData.address1 as string;
         }
-        if ('address_line_2' in data.stepData && data.stepData.address_line_2) {
-          updateData.address_line_2 = data.stepData.address_line_2 as string;
+        if ('address2' in data.stepData && data.stepData.address2) {
+          updateData.address_line_2 = data.stepData.address2 as string;
         }
         if ('city' in data.stepData && data.stepData.city) {
           updateData.city = data.stepData.city as string;
@@ -139,6 +144,15 @@ export async function updateOnboardingStep(
 
       // Step 3: Settings
       if (data.step === 3) {
+        if (
+          'organizationName' in data.stepData &&
+          data.stepData.organizationName
+        ) {
+          updateData.name = data.stepData.organizationName as string;
+        }
+        if ('logoUrl' in data.stepData && data.stepData.logoUrl) {
+          updateData.logo_url = data.stepData.logoUrl as string;
+        }
         if (
           'defaultCurrency' in data.stepData &&
           data.stepData.defaultCurrency
@@ -200,6 +214,7 @@ export async function updateOnboardingStep(
     }
 
     // Update organization
+    console.log('Updating organization with data:', updateData);
     const { error: updateError } = await supabase
       .from('organizations')
       .update(updateData)

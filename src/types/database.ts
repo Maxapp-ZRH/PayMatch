@@ -443,6 +443,14 @@ export type Database = {
           cleaned_date_range: string;
         }[];
       };
+      cleanup_organization_logos_on_membership_removal: {
+        Args: { org_id: string; user_id: string };
+        Returns: undefined;
+      };
+      cleanup_user_storage_items: {
+        Args: { user_id: string };
+        Returns: undefined;
+      };
       complete_onboarding: {
         Args: { org_id: string };
         Returns: boolean;

@@ -26,6 +26,11 @@ export async function updateOrganizationPlan(
       stripe_customer_id?: string | null;
       stripe_subscription_id?: string | null;
       stripe_subscription_status?: string | null;
+      stripe_subscription_current_period_end?: string | null;
+      subscription_start_date?: string | null;
+      billing_address?: Record<string, string | undefined> | null;
+      stripe_payment_method_id?: string | null;
+      stripe_payment_method_type?: string | null;
     } = {
       plan: data.planName,
       updated_at: new Date().toISOString(),
@@ -42,11 +47,33 @@ export async function updateOrganizationPlan(
       if (data.stripeSubscriptionStatus) {
         updateData.stripe_subscription_status = data.stripeSubscriptionStatus;
       }
+      if (data.currentPeriodEnd) {
+        updateData.stripe_subscription_current_period_end =
+          data.currentPeriodEnd.toISOString();
+      }
+      if (data.subscriptionStartDate) {
+        updateData.subscription_start_date =
+          data.subscriptionStartDate.toISOString();
+      }
+      if (data.billingAddress) {
+        updateData.billing_address = data.billingAddress;
+      }
+      if (data.paymentMethodId) {
+        updateData.stripe_payment_method_id = data.paymentMethodId;
+      }
+      if (data.paymentMethodType) {
+        updateData.stripe_payment_method_type = data.paymentMethodType;
+      }
     } else {
       // Clear Stripe fields for free plan
       updateData.stripe_customer_id = null;
       updateData.stripe_subscription_id = null;
       updateData.stripe_subscription_status = null;
+      updateData.stripe_subscription_current_period_end = null;
+      updateData.subscription_start_date = null;
+      updateData.billing_address = null;
+      updateData.stripe_payment_method_id = null;
+      updateData.stripe_payment_method_type = null;
     }
 
     const { error: updateError } = await supabase

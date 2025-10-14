@@ -183,7 +183,7 @@ export const CompanyDetailsStep = forwardRef<
   const handleFormSubmit = async (data: CompanyDetailsFormData) => {
     clearErrors();
     try {
-      // Combine address1 and address2 into a single address field for backend compatibility
+      // Combine address1 and address2 into a single address field
       let phone = data.phone;
 
       // Ensure phone has +41 prefix if it's provided

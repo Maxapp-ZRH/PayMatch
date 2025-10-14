@@ -87,6 +87,19 @@ export interface UpdateOrganizationPlanData {
   stripeSubscriptionId?: string;
   stripeSubscriptionStatus?: string;
   billingCycle?: BillingPeriod;
+  // Enhanced Stripe data collection
+  billingAddress?: {
+    line1?: string;
+    line2?: string;
+    city?: string;
+    state?: string;
+    postal_code?: string;
+    country?: string;
+  };
+  subscriptionStartDate?: Date;
+  paymentMethodId?: string;
+  paymentMethodType?: string;
+  currentPeriodEnd?: Date;
 }
 
 export interface UpdateOrganizationPlanResult {

@@ -1,9 +1,10 @@
 /**
- * Shared Components Index
+ * Shared Components
  *
- * Centralized exports for all shared components.
- * Provides a clean API for importing shared components across the application.
+ * Reusable components that can be used across different features.
  */
 
+export { ImageUpload } from './ImageUpload';
+export { OrganizationLogoUpload } from './OrganizationLogoUpload';
+export { AvatarUpload } from './AvatarUpload';
 export { ProgressIndicator } from './ProgressIndicator';
-export * from './pricing';

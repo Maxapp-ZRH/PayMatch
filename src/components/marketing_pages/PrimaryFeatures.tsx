@@ -126,7 +126,7 @@ const headerAnimation: Variants = {
 
 const maxZIndex = 2147483647;
 
-const bodyVariantBackwards: Variant = {
+const bodyVariant: Variant = {
   opacity: 0.4,
   scale: 0.8,
   zIndex: 0,
@@ -146,9 +146,7 @@ const bodyAnimation: MotionProps = {
   exit: 'exit',
   variants: {
     initial: (custom: CustomAnimationProps, ...props) =>
-      custom.isForwards
-        ? bodyVariantForwards(custom, ...props)
-        : bodyVariantBackwards,
+      custom.isForwards ? bodyVariantForwards(custom, ...props) : bodyVariant,
     animate: (custom: CustomAnimationProps) => ({
       y: '0%',
       opacity: 1,
@@ -158,9 +156,7 @@ const bodyAnimation: MotionProps = {
       transition: { duration: 0.4 },
     }),
     exit: (custom: CustomAnimationProps, ...props) =>
-      custom.isForwards
-        ? bodyVariantBackwards
-        : bodyVariantForwards(custom, ...props),
+      custom.isForwards ? bodyVariant : bodyVariantForwards(custom, ...props),
   },
 };
 

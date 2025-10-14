@@ -208,13 +208,63 @@ export async function handleStripeWebhook(
             `Processing subscription creation for org ${org_id}, plan ${plan_name}`
           );
 
-          // Update organization with subscription details
+          // Get customer details for billing address
+          let billingAddress;
+          try {
+            const customer = await stripe.customers.retrieve(
+              subscription.customer as string
+            );
+            if (customer && !customer.deleted && customer.address) {
+              billingAddress = {
+                line1: customer.address.line1 || undefined,
+                line2: customer.address.line2 || undefined,
+                city: customer.address.city || undefined,
+                state: customer.address.state || undefined,
+                postal_code: customer.address.postal_code || undefined,
+                country: customer.address.country || undefined,
+              };
+            }
+          } catch (error) {
+            console.warn(
+              'Failed to retrieve customer for billing address:',
+              error
+            );
+          }
+
+          // Get payment method details if available
+          let paymentMethodId: string | undefined;
+          let paymentMethodType: string | undefined;
+
+          if (subscription.default_payment_method) {
+            try {
+              const paymentMethod = await stripe.paymentMethods.retrieve(
+                subscription.default_payment_method as string
+              );
+              paymentMethodId = paymentMethod.id;
+              paymentMethodType = paymentMethod.type;
+            } catch (error) {
+              console.warn('Failed to retrieve payment method:', error);
+            }
+          }
+
+          // Update organization with enhanced subscription details
           const result = await updateOrganizationPlan({
             orgId: org_id,
             planName: plan_name as PlanName,
             stripeCustomerId: subscription.customer as string,
             stripeSubscriptionId: subscription.id,
             stripeSubscriptionStatus: subscription.status,
+            billingAddress,
+            subscriptionStartDate: new Date(subscription.created * 1000),
+            paymentMethodId,
+            paymentMethodType,
+            currentPeriodEnd: new Date(
+              (
+                subscription as Stripe.Subscription & {
+                  current_period_end: number;
+                }
+              ).current_period_end * 1000
+            ),
           });
 
           if (!result.success) {
@@ -246,21 +296,47 @@ export async function handleStripeWebhook(
             `Processing subscription update for org ${org_id}, status: ${subscription.status}`
           );
 
-          // Update subscription status
+          // Get updated payment method details if available
+          let paymentMethodId: string | undefined;
+          let paymentMethodType: string | undefined;
+
+          if (subscription.default_payment_method) {
+            try {
+              const paymentMethod = await stripe.paymentMethods.retrieve(
+                subscription.default_payment_method as string
+              );
+              paymentMethodId = paymentMethod.id;
+              paymentMethodType = paymentMethod.type;
+            } catch (error) {
+              console.warn('Failed to retrieve payment method:', error);
+            }
+          }
+
+          // Update subscription status and payment method
           const supabase = supabaseAdmin;
+          const updateData: Record<string, string | Date> = {
+            stripe_subscription_status: subscription.status,
+            stripe_subscription_current_period_end: new Date(
+              (
+                subscription as Stripe.Subscription & {
+                  current_period_end: number;
+                }
+              ).current_period_end * 1000
+            ).toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+
+          // Add payment method data if available
+          if (paymentMethodId) {
+            updateData.stripe_payment_method_id = paymentMethodId;
+          }
+          if (paymentMethodType) {
+            updateData.stripe_payment_method_type = paymentMethodType;
+          }
+
           const { error } = await supabase
             .from('organizations')
-            .update({
-              stripe_subscription_status: subscription.status,
-              stripe_subscription_current_period_end: new Date(
-                (
-                  subscription as Stripe.Subscription & {
-                    current_period_end: number;
-                  }
-                ).current_period_end * 1000
-              ).toISOString(),
-              updated_at: new Date().toISOString(),
-            })
+            .update(updateData)
             .eq('id', org_id);
 
           if (error) {

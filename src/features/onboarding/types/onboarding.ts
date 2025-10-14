@@ -64,6 +64,8 @@ export interface OnboardingData {
   legalEntityType?: string;
 
   // Settings fields (for form handling)
+  organizationName?: string;
+  logoUrl?: string;
   defaultCurrency?: string;
   language?: string;
   timezone?: string;

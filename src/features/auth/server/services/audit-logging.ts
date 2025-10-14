@@ -23,7 +23,7 @@ export interface AuditLogEntry {
 }
 
 export interface AuditLogContext {
-  request?: Request; // Keep for backward compatibility
+  request?: Request;
   clientIP?: string; // Extracted client IP
   userAgent?: string; // Extracted user agent
   user?: {

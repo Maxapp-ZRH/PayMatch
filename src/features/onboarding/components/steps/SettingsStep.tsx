@@ -12,12 +12,14 @@ import React, {
   useCallback,
   useImperativeHandle,
   forwardRef,
+  useState,
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Info, Mail, Clock } from 'lucide-react';
 import { SelectField } from '@/components/ui/select-field';
 import { TextField } from '@/components/ui/text-field';
+import { OrganizationLogoUpload } from '@/components/shared';
 import {
   settingsSchema,
   type SettingsFormData,
@@ -34,6 +36,11 @@ export const SettingsStep = forwardRef<
     orgId: formData.orgId!,
   });
 
+  // Logo state (separate from form since it's handled by file upload)
+  const [logoUrl, setLogoUrl] = useState<string | null>(
+    formData.logoUrl || null
+  );
+
   const {
     register,
     handleSubmit,
@@ -45,6 +52,7 @@ export const SettingsStep = forwardRef<
     resolver: zodResolver(settingsSchema),
     mode: 'onBlur', // Validate on blur for better UX
     defaultValues: {
+      organizationName: formData.organizationName || '',
       defaultCurrency: formData.defaultCurrency || 'CHF',
       language: formData.language || 'en',
       timezone: formData.timezone || 'Europe/Zurich',
@@ -82,7 +90,12 @@ export const SettingsStep = forwardRef<
   const handleFormSubmit = async (data: SettingsFormData) => {
     clearErrors();
     try {
-      onNext(data);
+      // Include logo URL in the data
+      const dataWithLogo = {
+        ...data,
+        logoUrl: logoUrl || undefined,
+      };
+      onNext(dataWithLogo);
     } catch (error) {
       console.error('Form submission error:', error);
     }
@@ -92,10 +105,11 @@ export const SettingsStep = forwardRef<
   useImperativeHandle(ref, () => ({
     submitForm: async () => {
       const formData = getValues();
-      // Ensure defaultVatRates is always an array
+      // Ensure defaultVatRates is always an array and include logo
       const dataWithDefaults = {
         ...formData,
         defaultVatRates: formData.defaultVatRates || [],
+        logoUrl: logoUrl || undefined,
       };
       await handleFormSubmit(dataWithDefaults);
     },
@@ -114,6 +128,30 @@ export const SettingsStep = forwardRef<
       </div>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
+        {/* Organization Settings */}
+        <div className="space-y-6">
+          <h2 className="text-lg font-medium text-gray-900">Organization</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Organization Name */}
+            <TextField
+              label="Organization Name"
+              required
+              {...register('organizationName')}
+              onBlur={handleBlur}
+              error={errors.organizationName?.message}
+              placeholder="Enter your organization name"
+            />
+
+            {/* Logo Upload */}
+            <OrganizationLogoUpload
+              orgId={formData.orgId!}
+              onImageChange={setLogoUrl}
+              currentImageUrl={logoUrl || undefined}
+              disabled={false}
+            />
+          </div>
+        </div>
+
         {/* General Settings */}
         <div className="space-y-6">
           <h2 className="text-lg font-medium text-gray-900">General</h2>

@@ -12,13 +12,96 @@ import { useEffect, useState } from 'react';
 import { CheckCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { CirclesBackground } from '@/components/marketing_pages/CirclesBackground';
 import { Button } from '@/components/marketing_pages/Button';
 import { ClearRememberMeHandler } from '@/features/auth/components/ClearRememberMeHandler';
+import { createClient } from '@/lib/supabase/client';
 
 export default function VerificationSuccess() {
   const [countdown, setCountdown] = useState(2);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAuthenticationAndRedirect = async (retryCount = 0) => {
+      try {
+        const supabase = createClient();
+
+        // Check if user is authenticated
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+
+        if (error) {
+          console.error('Error checking session:', error);
+          setIsCheckingAuth(false);
+          return;
+        }
+
+        if (session?.user) {
+          console.log('User is authenticated:', session.user.email);
+          setIsAuthenticated(true);
+
+          // Check if user has completed onboarding
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('onboarding_completed')
+            .eq('id', session.user.id)
+            .single();
+
+          const hasCompletedOnboarding = profile?.onboarding_completed;
+          const redirectPath = hasCompletedOnboarding
+            ? '/dashboard'
+            : '/onboarding';
+
+          console.log('Redirecting to:', redirectPath);
+
+          // Redirect after a short delay to show success message
+          setTimeout(() => {
+            router.push(redirectPath);
+          }, 2000);
+        } else {
+          // If no session found and we haven't retried too many times, wait and retry
+          if (retryCount < 3) {
+            console.log(
+              `No session found, retrying in 1 second... (attempt ${retryCount + 1}/3)`
+            );
+            setTimeout(() => {
+              checkAuthenticationAndRedirect(retryCount + 1);
+            }, 1000);
+            return;
+          }
+
+          console.log(
+            'User is not authenticated after retries, redirecting to login'
+          );
+          setIsAuthenticated(false);
+          setTimeout(() => {
+            router.push('/login');
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Authentication check failed:', error);
+        setIsAuthenticated(false);
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      } finally {
+        if (retryCount >= 3 || isAuthenticated) {
+          setIsCheckingAuth(false);
+        }
+      }
+    };
+
+    // Add a small delay before checking authentication to allow session to sync
+    setTimeout(() => {
+      checkAuthenticationAndRedirect();
+    }, 500);
+  }, [router]);
 
   useEffect(() => {
     // Countdown timer
@@ -32,31 +115,7 @@ export default function VerificationSuccess() {
       });
     }, 1000);
 
-    // Auto-close tab after 2 seconds
-    const closeTimer = setTimeout(() => {
-      // Try to close the current tab/window
-      window.close();
-
-      // If window.close() doesn't work (some browsers block it),
-      // redirect to onboarding as fallback
-      setTimeout(() => {
-        window.location.href = '/onboarding';
-      }, 100);
-    }, 2000);
-
-    // Also try to redirect the parent window to onboarding
-    // This works if the verification was opened in a popup or new tab
-    try {
-      if (window.opener) {
-        window.opener.location.href = '/onboarding';
-      }
-    } catch (error) {
-      // Ignore cross-origin errors
-      console.log('Could not redirect parent window:', error);
-    }
-
     return () => {
-      clearTimeout(closeTimer);
       clearInterval(countdownTimer);
     };
   }, []);
@@ -93,8 +152,11 @@ export default function VerificationSuccess() {
             Email Verified Successfully!
           </h1>
           <p className="mt-3 text-center text-lg text-gray-600">
-            Your email has been verified. This window will close automatically
-            and redirect you to the onboarding process.
+            {isCheckingAuth
+              ? 'Verifying your account...'
+              : isAuthenticated
+                ? 'Your email has been verified and you are now signed in. Redirecting...'
+                : 'Your email has been verified. Redirecting to login...'}
           </p>
         </div>
 
@@ -106,31 +168,58 @@ export default function VerificationSuccess() {
             </div>
 
             {/* Countdown Timer */}
-            <div className="mt-8">
-              <div className="flex items-center justify-center space-x-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
-                <span className="text-sm text-gray-500">
-                  Redirecting in {countdown} second{countdown !== 1 ? 's' : ''}
-                  ...
-                </span>
+            {!isCheckingAuth && (
+              <div className="mt-8">
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
+                  <span className="text-sm text-gray-500">
+                    Redirecting in {countdown} second
+                    {countdown !== 1 ? 's' : ''}
+                    ...
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Manual redirect button as fallback */}
-            <div className="mt-8">
-              <Button
-                onClick={() => {
-                  window.close();
-                  setTimeout(() => {
-                    window.location.href = '/onboarding';
-                  }, 100);
-                }}
-                color="swiss"
-                className="w-full"
-              >
-                Continue to Onboarding
-              </Button>
-            </div>
+            {!isCheckingAuth && (
+              <div className="mt-8">
+                <Button
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      // Check onboarding status and redirect accordingly
+                      const supabase = createClient();
+                      supabase.auth
+                        .getSession()
+                        .then(({ data: { session } }) => {
+                          if (session?.user) {
+                            supabase
+                              .from('profiles')
+                              .select('onboarding_completed')
+                              .eq('id', session.user.id)
+                              .single()
+                              .then(({ data: profile }) => {
+                                const redirectPath =
+                                  profile?.onboarding_completed
+                                    ? '/dashboard'
+                                    : '/onboarding';
+                                router.push(redirectPath);
+                              });
+                          } else {
+                            router.push('/login');
+                          }
+                        });
+                    } else {
+                      router.push('/login');
+                    }
+                  }}
+                  color="swiss"
+                  className="w-full"
+                >
+                  {isAuthenticated ? 'Continue to Dashboard' : 'Go to Login'}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
