@@ -6,7 +6,6 @@
  */
 
 import { createClient } from './client';
-import { supabaseAdmin } from './admin';
 
 export interface UploadResult {
   success: boolean;
@@ -142,7 +141,7 @@ export async function deleteOrganizationLogo(
 
     const path = pathParts.slice(bucketIndex + 1).join('/');
     return deleteFile('logos', path);
-  } catch (error) {
+  } catch {
     return {
       success: false,
       error: 'Invalid logo URL',

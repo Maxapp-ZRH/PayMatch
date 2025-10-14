@@ -101,7 +101,7 @@ export default function VerificationSuccess() {
     setTimeout(() => {
       checkAuthenticationAndRedirect();
     }, 500);
-  }, [router]);
+  }, [router, isAuthenticated]);
 
   useEffect(() => {
     // Countdown timer

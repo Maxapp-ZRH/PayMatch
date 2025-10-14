@@ -10,6 +10,7 @@
 import React, { useCallback, useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface FileUploadProps {
   onFileSelect: (file: File | null) => void;
@@ -200,10 +201,11 @@ export function FileUpload({
           <div className="space-y-4">
             {/* Image Preview */}
             <div className="relative mx-auto w-32 h-32">
-              <img
+              <Image
                 src={state.preview}
                 alt="Preview"
-                className="w-full h-full object-cover rounded-lg border border-gray-200"
+                fill
+                className="object-cover rounded-lg border border-gray-200"
               />
               {!state.isUploading && (
                 <button
