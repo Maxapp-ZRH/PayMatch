@@ -2,7 +2,7 @@
 
 ## Overview
 
-PayMatch implements a modern, GDPR-compliant authentication system using Supabase Auth native features with magic links, JWT session management, and comprehensive security features. The system provides a seamless user experience with built-in email verification, password reset, and session management.
+PayMatch implements a modern, GDPR-compliant authentication system using Supabase Auth with a unified session management architecture. The system provides multiple authentication methods including password-based login, magic link authentication, and comprehensive session management with automatic refresh and error handling. Built with Next.js 15 App Router, it offers a seamless user experience with built-in email verification, password reset, and organization-based access control.
 
 ## Table of Contents
 
@@ -22,29 +22,34 @@ PayMatch implements a modern, GDPR-compliant authentication system using Supabas
 
 ### ✅ Implemented Features
 
-- **✅ Supabase Auth Integration**: Native authentication with magic links
-- **✅ JWT Session Management**: Automatic token refresh and session handling
-- **✅ Magic Link Verification**: Secure email verification without custom tokens
-- **✅ Built-in Password Reset**: Supabase native password reset flow
+- **✅ Supabase Auth Integration**: Native authentication with multiple login methods
+- **✅ Unified Session Management**: Client and server-side session handling with automatic refresh
+- **✅ Magic Link Authentication**: Passwordless login with secure email verification
+- **✅ Password-Based Login**: Traditional email/password authentication with Remember Me
+- **✅ Built-in Password Reset**: Supabase native password reset flow with custom email templates
 - **✅ Hybrid Rate Limiting**: Supabase Auth + Redis for app-level protection
-- **✅ Comprehensive Audit Logging**: Full activity tracking for compliance
-- **✅ Consent Management**: Complete consent lifecycle tracking
-- **✅ Security Headers**: Production-ready security headers
-- **✅ Password Policy**: 8+ chars with complexity requirements
+- **✅ Comprehensive Audit Logging**: Full activity tracking for compliance and security
+- **✅ Session Provider Pattern**: React Context-based session management
+- **✅ Security Headers**: Production-ready security headers and middleware
+- **✅ Password Policy**: 8+ chars with complexity requirements and real-time validation
 - **✅ Internationalization**: Multi-language support (en-CH, de-CH)
 - **✅ Client Information Extraction**: IP, User Agent, Browser Locale tracking
-- **✅ Organization-Based Model**: Multi-user organizations with roles
-- **✅ Stripe Integration**: Subscription management
-- **✅ Email System**: Unified email preferences and unsubscribe
-- **✅ Row Level Security**: Comprehensive database security
+- **✅ Organization-Based Model**: Multi-user organizations with role-based access control
+- **✅ Stripe Integration**: Subscription management and billing
+- **✅ Email System**: Unified email preferences and unsubscribe with Resend integration
+- **✅ Row Level Security**: Comprehensive database security with optimized RLS policies
+- **✅ Type Safety**: Full TypeScript coverage with generated database types
+- **✅ Form Validation**: Zod schemas for client and server-side validation
 
 ### 🎯 Key Innovations
 
-1. **Supabase Auth Native Integration**: Leverages Supabase's built-in authentication features
-2. **Magic Link Security**: Secure email verification without custom token management
-3. **JWT Session Management**: Automatic token refresh and session handling
-4. **Hybrid Rate Limiting**: Supabase Auth for authentication, Redis for app features
-5. **Comprehensive Compliance**: GDPR + Switzerland FADP compliance
+1. **Unified Session Management**: Client and server-side session handling with consistent APIs
+2. **Multiple Authentication Methods**: Password-based and magic link authentication in one system
+3. **React Context Integration**: Seamless session state management across components
+4. **Type-Safe Architecture**: Full TypeScript coverage with generated database types
+5. **Hybrid Rate Limiting**: Supabase Auth for authentication, Redis for app features
+6. **Comprehensive Compliance**: GDPR + Switzerland FADP compliance with audit logging
+7. **Server Actions Pattern**: Modern Next.js 15 server actions instead of traditional API routes
 
 ## Architecture
 
@@ -74,32 +79,46 @@ PayMatch implements a modern, GDPR-compliant authentication system using Supabas
 ```
 src/features/auth/
 ├── components/           # UI Components
-│   ├── LoginForm.tsx
-│   ├── RegisterForm.tsx
-│   ├── ForgotPasswordForm.tsx
-│   ├── ResetPasswordForm.tsx
-│   ├── VerifyEmailForm.tsx
-│   └── SetPasswordForm.tsx
+│   ├── LoginForm.tsx              # Password-based login with Remember Me
+│   ├── MagicLinkLoginForm.tsx     # Passwordless magic link login
+│   ├── RegisterForm.tsx           # User registration with validation
+│   ├── ForgotPasswordForm.tsx     # Password reset request
+│   ├── ResetPasswordForm.tsx      # Password reset form
+│   ├── VerifyEmailForm.tsx        # Email verification
+│   ├── SessionProvider.tsx        # React Context session provider
+│   └── index.ts                   # Component exports
+├── hooks/               # Custom Hooks
+│   └── use-session.ts             # Unified session management hook
 ├── server/
-│   ├── actions/         # Server Actions
-│   │   ├── registration.ts
-│   │   ├── login.ts
-│   │   ├── password-reset.ts
-│   │   └── user-operations.ts
+│   ├── actions/         # Server Actions (Next.js 15)
+│   │   ├── auth.ts               # Core auth operations (logout)
+│   │   ├── login.ts              # Login utilities and checks
+│   │   ├── magic-link-login.ts   # Magic link authentication
+│   │   ├── password-reset.ts     # Password reset flow
+│   │   ├── registration.ts       # User registration
+│   │   └── index.ts              # Action exports
+│   ├── helpers/         # Server Helpers
+│   │   ├── session.ts            # Server session management
+│   │   └── index.ts              # Helper exports
 │   ├── services/        # External Services
-│   │   ├── redis.ts
-│   │   ├── rate-limiting.ts
-│   │   └── email-service.ts
-│   └── utils/           # Utilities
-│       ├── user-operations.ts
-│       ├── token-operations.ts
-│       └── pending-registration.ts
-├── schemas/             # Validation Schemas
-│   ├── login-schema.ts
-│   ├── register-schema.ts
-│   └── reset-password-schema.ts
-└── helpers/             # Client Helpers
-    └── client-auth-helpers.ts
+│   │   ├── audit-logging.ts      # Comprehensive audit logging
+│   │   ├── cache.ts              # Redis caching service
+│   │   ├── redis.ts              # Redis client and operations
+│   │   ├── app-rate-limiting.ts  # App-level rate limiting
+│   │   └── index.ts              # Service exports
+│   └── utils/           # Server Utilities
+│       ├── client-ip.ts          # Client IP extraction
+│       └── user-operations.ts   # User data operations
+├── schemas/             # Validation Schemas (Zod)
+│   ├── login-schema.ts           # Login form validation
+│   ├── register-schema.ts        # Registration form validation
+│   ├── reset-password-schema.ts  # Password reset validation
+│   └── index.ts                  # Schema exports
+├── types/               # Type Definitions
+│   └── session.ts                # Session and user types
+├── helpers/             # Client Helpers
+│   └── auth-helpers.ts           # Client-side auth utilities
+└── index.ts             # Feature exports
 ```
 
 ## Authentication Flows
@@ -128,25 +147,40 @@ graph TD
 - **Rate Limiting**: Supabase handles authentication rate limiting
 - **No Custom Tokens**: No need for custom token management
 
-### 2. User Login Flow
+### 2. User Login Flow (Multiple Methods)
 
 ```mermaid
 graph TD
-    A[User Submits Login] --> B[Supabase Auth Login]
-    B --> C{Login Successful?}
-    C -->|No| D[Show Error Message]
-    C -->|Yes| E{Email Verified?}
-    E -->|No| F[Redirect to Verify Email]
-    E -->|Yes| G{User Has Organization?}
-    G -->|No| H[Redirect to Onboarding]
-    G -->|Yes| I{Onboarding Complete?}
-    I -->|No| J[Redirect to Onboarding]
-    I -->|Yes| K[Redirect to Dashboard]
+    A[User Chooses Login Method] --> B{Login Type}
+    B -->|Password| C[Password Login Form]
+    B -->|Magic Link| D[Magic Link Form]
+
+    C --> E[Supabase Auth Login]
+    E --> F{Login Successful?}
+    F -->|No| G[Show Error Message]
+    F -->|Yes| H[Check Email Verification]
+
+    D --> I[Send Magic Link Email]
+    I --> J[User Clicks Magic Link]
+    J --> K[Verify Magic Link Token]
+    K --> L{Verification Successful?}
+    L -->|No| M[Show Error Message]
+    L -->|Yes| H
+
+    H --> N{Email Verified?}
+    N -->|No| O[Redirect to Verify Email]
+    N -->|Yes| P{User Has Organization?}
+    P -->|No| Q[Redirect to Onboarding]
+    P -->|Yes| R{Onboarding Complete?}
+    R -->|No| S[Redirect to Onboarding]
+    R -->|Yes| T[Redirect to Dashboard]
 ```
 
 **Key Features:**
 
-- **Supabase Auth**: Uses Supabase's built-in login system
+- **Multiple Login Methods**: Password-based and magic link authentication
+- **Unified Session Management**: Consistent session handling across methods
+- **Remember Me**: Persistent sessions for password-based login
 - **JWT Sessions**: Automatic session management with refresh tokens
 - **Email Verification Check**: Ensures user has verified their email
 - **Organization Validation**: Ensures proper account setup
@@ -194,6 +228,41 @@ graph TD
 - **JWT Sessions**: User is automatically authenticated after verification
 - **Secure Process**: Magic links are cryptographically secure
 - **No Manual Resend**: Supabase handles resend functionality
+
+### 5. Unified Session Management
+
+```mermaid
+graph TD
+    A[Session Initialization] --> B{Client or Server?}
+    B -->|Client| C[useSession Hook]
+    B -->|Server| D[getServerSession Helper]
+
+    C --> E[React Context Provider]
+    E --> F[Session State Management]
+    F --> G[Automatic Refresh]
+    G --> H[Auth State Changes]
+
+    D --> I[Server Session Validation]
+    I --> J[Extended User Data]
+    J --> K[Organization Check]
+    K --> L[Onboarding Check]
+
+    H --> M[Session Update]
+    M --> N[Component Re-render]
+
+    L --> O[Redirect Logic]
+    O --> P[Page Navigation]
+```
+
+**Key Features:**
+
+- **Unified API**: Consistent session management across client and server
+- **React Context**: Seamless state management across components
+- **Automatic Refresh**: Session tokens refreshed automatically
+- **Extended User Data**: Profile and organization data included
+- **Validation Options**: Configurable session requirements
+- **Error Handling**: Comprehensive error states and recovery
+- **Type Safety**: Full TypeScript coverage with generated types
 
 ## Security Features
 
@@ -552,15 +621,72 @@ const shouldAutoSend =
 
 ## API Endpoints
 
-### Authentication Endpoints
+### Server Actions (Next.js 15 App Router)
 
-#### Server Actions (Next.js App Router)
+The system uses **Server Actions** instead of traditional API endpoints for better security, performance, and type safety.
 
-The system uses **Server Actions** instead of traditional API endpoints for better security and performance.
+#### Core Authentication Actions
 
-#### `registerUser` Server Action
+##### `logout()` Server Action
 
-Register a new user with deferred account creation.
+Logout the current user and clear all sessions.
+
+**Response:**
+
+```typescript
+{
+  success: boolean;
+  message: string;
+}
+```
+
+##### `checkUserPendingRegistration(email: string)` Server Action
+
+Check if user has pending registration.
+
+**Request:**
+
+```typescript
+{
+  email: 'john@example.com';
+}
+```
+
+**Response:**
+
+```typescript
+{
+  hasPendingRegistration: boolean;
+  error?: string;
+}
+```
+
+##### `checkUserExistsInAuth(email: string)` Server Action
+
+Check if user exists in Supabase Auth.
+
+**Request:**
+
+```typescript
+{
+  email: 'john@example.com';
+}
+```
+
+**Response:**
+
+```typescript
+{
+  exists: boolean;
+  error?: string;
+}
+```
+
+#### Registration Actions
+
+##### `registerUser(data: RegisterUserData)` Server Action
+
+Register a new user with Supabase Auth.
 
 **Request:**
 
@@ -569,6 +695,7 @@ Register a new user with deferred account creation.
   firstName: "John",
   lastName: "Doe",
   email: "john@example.com",
+  password: "SecurePass123!",
   referralSource: "google",
   browserLocale: "en-CH",
   clientIP: "192.168.1.1",
@@ -580,22 +707,24 @@ Register a new user with deferred account creation.
 
 ```typescript
 {
-  success: true,
-  message: "Registration successful! Please check your email to verify your account and set your password."
+  success: boolean;
+  message: string;
+  error?: string;
+  userId?: string;
 }
 ```
 
-#### `loginUser` Server Action
+#### Magic Link Authentication
 
-Authenticate an existing user.
+##### `sendMagicLinkLogin(email: string, request?: Request)` Server Action
+
+Send magic link for passwordless login.
 
 **Request:**
 
 ```typescript
 {
-  email: "john@example.com",
-  password: "SecurePass123!",
-  rememberMe: true
+  email: 'john@example.com';
 }
 ```
 
@@ -603,15 +732,40 @@ Authenticate an existing user.
 
 ```typescript
 {
-  success: true,
-  user: { id: "uuid", email: "john@example.com" },
-  redirect: "/dashboard"
+  success: boolean;
+  message: string;
+  error?: string;
 }
 ```
 
-#### `sendPasswordResetEmail` Server Action
+##### `verifyMagicLink(token_hash: string, type: string, request?: Request)` Server Action
 
-Request password reset for any user type.
+Verify magic link and create session.
+
+**Request:**
+
+```typescript
+{
+  token_hash: "magic_link_token_hash",
+  type: "magiclink"
+}
+```
+
+**Response:**
+
+```typescript
+{
+  success: boolean;
+  message: string;
+  error?: string;
+}
+```
+
+#### Password Reset Actions
+
+##### `sendPasswordResetEmail(email: string, request?: Request, clientIP?: string, userAgent?: string)` Server Action
+
+Send password reset email using Supabase magic links.
 
 **Request:**
 
@@ -627,10 +781,53 @@ Request password reset for any user type.
 
 ```typescript
 {
-  success: true,
-  message: "If an account with that email exists, we've sent a password reset link."
+  success: boolean;
+  message: string;
+  error?: string;
+  userId?: string;
 }
 ```
+
+#### Session Management
+
+##### `getServerSession(options?: SessionValidationOptions)` Server Helper
+
+Get server session with extended user data.
+
+**Options:**
+
+```typescript
+{
+  requireEmailVerification?: boolean;
+  requireOnboarding?: boolean;
+  requireOrganization?: boolean;
+  redirectTo?: string;
+}
+```
+
+**Response:**
+
+```typescript
+{
+  user: ExtendedUser | null;
+  session: Session | null;
+  error: string | null;
+  isAuthenticated: boolean;
+  isEmailVerified: boolean;
+  hasCompletedOnboarding: boolean;
+  hasOrganization: boolean;
+  organization?: Organization | null;
+  organizationMembership?: OrganizationUser | null;
+}
+```
+
+##### `requireServerSession(options?: SessionValidationOptions)` Server Helper
+
+Require authenticated session with automatic redirects.
+
+**Options:** Same as `getServerSession`
+
+**Response:** Same as `getServerSession` (never returns null due to redirects)
 
 ### Page Routes
 
@@ -710,65 +907,185 @@ Password reset form for existing users only.
 #### Registration Flow
 
 ```bash
-# Test normal registration
-curl -X POST "http://localhost:3000/api/auth/register" \
-  -H "Content-Type: application/json" \
-  -d '{"email": "test@example.com", "firstName": "Test", "lastName": "User"}'
+# Test normal registration (Server Action)
+# Note: Server Actions are called directly from components, not via HTTP
 
 # Test duplicate registration
-curl -X POST "http://localhost:3000/api/auth/register" \
-  -H "Content-Type: application/json" \
-  -d '{"email": "test@example.com", "firstName": "Test", "lastName": "User"}'
+# This will be handled by the registerUser server action
 ```
 
 #### Login Flow
 
 ```bash
-# Test login with pending registration
-curl -X POST "http://localhost:3000/api/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{"email": "test@example.com", "password": "Test123!"}'
+# Test password-based login
+# This is handled by the LoginForm component using Supabase client
+
+# Test magic link login
+# This is handled by the MagicLinkLoginForm component
 ```
 
 #### Password Reset Flow
 
 ```bash
 # Test password reset
-curl -X POST "http://localhost:3000/api/auth/forgot-password" \
-  -H "Content-Type: application/json" \
-  -d '{"email": "test@example.com"}'
+# This is handled by the ForgotPasswordForm component
+```
+
+#### Session Management Testing
+
+```typescript
+// Test client-side session management
+import { useSession } from '@/features/auth/hooks/use-session';
+
+function TestComponent() {
+  const { user, isAuthenticated, loading, error } = useSession({
+    requireEmailVerification: true,
+    requireOnboarding: true,
+    requireOrganization: true,
+  });
+
+  // Test session state
+  console.log('User:', user);
+  console.log('Authenticated:', isAuthenticated);
+  console.log('Loading:', loading);
+  console.log('Error:', error);
+}
+```
+
+```typescript
+// Test server-side session management
+import { getServerSession } from '@/features/auth/server/helpers/session';
+
+export async function TestPage() {
+  const session = await getServerSession({
+    requireEmailVerification: true,
+    requireOnboarding: true,
+    requireOrganization: true,
+  });
+
+  // Test session state
+  console.log('User:', session.user);
+  console.log('Authenticated:', session.isAuthenticated);
+  console.log('Error:', session.error);
+}
 ```
 
 ### Automated Testing
 
-#### Test Script
+#### Component Testing
 
-```bash
-#!/bin/bash
-# test-auth.sh
+```typescript
+// Test LoginForm component
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { LoginForm } from '@/features/auth/components/LoginForm';
 
-BASE_URL="http://localhost:3000"
-EMAIL="test@example.com"
+test('LoginForm renders and handles submission', async () => {
+  render(<LoginForm />);
 
-echo "Testing Registration..."
-curl -X POST "$BASE_URL/api/auth/register" \
-  -H "Content-Type: application/json" \
-  -d "{\"email\": \"$EMAIL\", \"firstName\": \"Test\", \"lastName\": \"User\"}"
+  // Test form elements
+  expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
 
-echo -e "\n\nTesting Duplicate Registration..."
-curl -X POST "$BASE_URL/api/auth/register" \
-  -H "Content-Type: application/json" \
-  -d "{\"email\": \"$EMAIL\", \"firstName\": \"Test\", \"lastName\": \"User\"}"
+  // Test form submission
+  fireEvent.change(screen.getByLabelText(/email/i), {
+    target: { value: 'test@example.com' }
+  });
+  fireEvent.change(screen.getByLabelText(/password/i), {
+    target: { value: 'Test123!' }
+  });
 
-echo -e "\n\nTesting Login with Pending Registration..."
-curl -X POST "$BASE_URL/api/auth/login" \
-  -H "Content-Type: application/json" \
-  -d "{\"email\": \"$EMAIL\", \"password\": \"Test123!\"}"
+  fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
-echo -e "\n\nTesting Password Reset..."
-curl -X POST "$BASE_URL/api/auth/forgot-password" \
-  -H "Content-Type: application/json" \
-  -d "{\"email\": \"$EMAIL\"}"
+  await waitFor(() => {
+    // Assert expected behavior
+  });
+});
+```
+
+```typescript
+// Test MagicLinkLoginForm component
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MagicLinkLoginForm } from '@/features/auth/components/MagicLinkLoginForm';
+
+test('MagicLinkLoginForm renders and handles submission', async () => {
+  render(<MagicLinkLoginForm />);
+
+  // Test form elements
+  expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /send magic link/i })).toBeInTheDocument();
+
+  // Test form submission
+  fireEvent.change(screen.getByLabelText(/email/i), {
+    target: { value: 'test@example.com' }
+  });
+
+  fireEvent.click(screen.getByRole('button', { name: /send magic link/i }));
+
+  await waitFor(() => {
+    // Assert expected behavior
+  });
+});
+```
+
+#### Server Action Testing
+
+```typescript
+// Test server actions
+import { registerUser } from '@/features/auth/server/actions/registration';
+import { sendMagicLinkLogin } from '@/features/auth/server/actions/magic-link-login';
+
+test('registerUser creates user successfully', async () => {
+  const result = await registerUser({
+    firstName: 'Test',
+    lastName: 'User',
+    email: 'test@example.com',
+    password: 'Test123!',
+    referralSource: 'test',
+    browserLocale: 'en-CH',
+    clientIP: '127.0.0.1',
+    userAgent: 'test-agent',
+  });
+
+  expect(result.success).toBe(true);
+  expect(result.message).toContain('successful');
+});
+
+test('sendMagicLinkLogin sends email successfully', async () => {
+  const result = await sendMagicLinkLogin('test@example.com');
+
+  expect(result.success).toBe(true);
+  expect(result.message).toContain('magic link');
+});
+```
+
+#### Session Management Testing
+
+```typescript
+// Test useSession hook
+import { renderHook, act } from '@testing-library/react';
+import { useSession } from '@/features/auth/hooks/use-session';
+
+test('useSession manages session state correctly', async () => {
+  const { result } = renderHook(() =>
+    useSession({
+      requireEmailVerification: true,
+      requireOnboarding: true,
+      requireOrganization: true,
+    })
+  );
+
+  // Test initial state
+  expect(result.current.loading).toBe(true);
+  expect(result.current.isAuthenticated).toBe(false);
+
+  // Test session update
+  await act(async () => {
+    // Simulate session change
+  });
+
+  // Assert expected state changes
+});
 ```
 
 ### Edge Case Testing
@@ -990,6 +1307,357 @@ FROM pending_registrations;
 - **Audit Logging**: Comprehensive activity tracking for compliance
 - **Consent Management**: Full consent lifecycle tracking with withdrawal capabilities
 
+## Usage Examples
+
+### Client-Side Session Management
+
+#### Basic Session Usage
+
+```typescript
+import { useSession } from '@/features/auth/hooks/use-session';
+
+function Dashboard() {
+  const { user, isAuthenticated, loading, error } = useSession();
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!isAuthenticated) return <div>Please log in</div>;
+
+  return (
+    <div>
+      <h1>Welcome, {user?.email}!</h1>
+      <p>Organization: {user?.organization?.name}</p>
+    </div>
+  );
+}
+```
+
+#### Session with Requirements
+
+```typescript
+import { useSession } from '@/features/auth/hooks/use-session';
+
+function ProtectedPage() {
+  const {
+    user,
+    isAuthenticated,
+    isEmailVerified,
+    hasCompletedOnboarding,
+    hasOrganization,
+    loading,
+    error
+  } = useSession({
+    requireEmailVerification: true,
+    requireOnboarding: true,
+    requireOrganization: true
+  });
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!isAuthenticated) return <div>Please log in</div>;
+  if (!isEmailVerified) return <div>Please verify your email</div>;
+  if (!hasCompletedOnboarding) return <div>Please complete onboarding</div>;
+  if (!hasOrganization) return <div>Please join an organization</div>;
+
+  return <div>Protected content</div>;
+}
+```
+
+#### Session Provider Pattern
+
+```typescript
+import { SessionProvider } from '@/features/auth/components/SessionProvider';
+
+function App() {
+  return (
+    <SessionProvider
+      requireEmailVerification={true}
+      requireOnboarding={true}
+      requireOrganization={true}
+    >
+      <Dashboard />
+    </SessionProvider>
+  );
+}
+```
+
+### Server-Side Session Management
+
+#### Page Component with Session
+
+```typescript
+import { getServerSession } from '@/features/auth/server/helpers/session';
+import { redirect } from 'next/navigation';
+
+export default async function DashboardPage() {
+  const session = await getServerSession({
+    requireEmailVerification: true,
+    requireOnboarding: true,
+    requireOrganization: true
+  });
+
+  if (!session.isAuthenticated) {
+    redirect('/login');
+  }
+
+  if (!session.isEmailVerified) {
+    redirect('/verify-email');
+  }
+
+  if (!session.hasCompletedOnboarding) {
+    redirect('/onboarding');
+  }
+
+  if (!session.hasOrganization) {
+    redirect('/onboarding');
+  }
+
+  return (
+    <div>
+      <h1>Welcome, {session.user?.email}!</h1>
+      <p>Organization: {session.organization?.name}</p>
+    </div>
+  );
+}
+```
+
+#### API Route with Session
+
+```typescript
+import { getServerSession } from '@/features/auth/server/helpers/session';
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  const session = await getServerSession({
+    requireEmailVerification: true,
+    requireOrganization: true,
+  });
+
+  if (!session.isAuthenticated) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  if (!session.isEmailVerified) {
+    return NextResponse.json(
+      { error: 'Email verification required' },
+      { status: 403 }
+    );
+  }
+
+  if (!session.hasOrganization) {
+    return NextResponse.json(
+      { error: 'Organization required' },
+      { status: 403 }
+    );
+  }
+
+  return NextResponse.json({
+    user: session.user,
+    organization: session.organization,
+  });
+}
+```
+
+### Authentication Forms
+
+#### Login Form Usage
+
+```typescript
+import { LoginForm } from '@/features/auth/components/LoginForm';
+
+function LoginPage() {
+  return (
+    <div>
+      <h1>Sign In</h1>
+      <LoginForm
+        redirectTo="/dashboard"
+        showVerifiedMessage={true}
+        initialEmail="user@example.com"
+        successMessage="Welcome back!"
+      />
+    </div>
+  );
+}
+```
+
+#### Magic Link Login
+
+```typescript
+import { MagicLinkLoginForm } from '@/features/auth/components/MagicLinkLoginForm';
+
+function MagicLinkPage() {
+  return (
+    <div>
+      <h1>Sign In with Magic Link</h1>
+      <MagicLinkLoginForm
+        redirectTo="/dashboard"
+        initialEmail="user@example.com"
+      />
+    </div>
+  );
+}
+```
+
+#### Registration Form
+
+```typescript
+import { RegisterForm } from '@/features/auth/components/RegisterForm';
+
+function RegisterPage() {
+  return (
+    <div>
+      <h1>Create Account</h1>
+      <RegisterForm
+        redirectTo="/verify-email"
+        showVerifiedMessage={false}
+      />
+    </div>
+  );
+}
+```
+
+### Server Actions Usage
+
+#### Registration
+
+```typescript
+import { registerUser } from '@/features/auth/server/actions/registration';
+
+export async function handleRegistration(formData: FormData) {
+  const result = await registerUser({
+    firstName: formData.get('firstName') as string,
+    lastName: formData.get('lastName') as string,
+    email: formData.get('email') as string,
+    password: formData.get('password') as string,
+    referralSource: formData.get('referralSource') as string,
+    browserLocale: 'en-CH',
+    clientIP: '127.0.0.1',
+    userAgent: 'Mozilla/5.0...',
+  });
+
+  if (result.success) {
+    redirect('/verify-email');
+  } else {
+    // Handle error
+    console.error(result.error);
+  }
+}
+```
+
+#### Magic Link Login
+
+```typescript
+import { sendMagicLinkLogin } from '@/features/auth/server/actions/magic-link-login';
+
+export async function handleMagicLinkLogin(formData: FormData) {
+  const email = formData.get('email') as string;
+
+  const result = await sendMagicLinkLogin(email);
+
+  if (result.success) {
+    // Show success message
+    console.log('Magic link sent!');
+  } else {
+    // Handle error
+    console.error(result.error);
+  }
+}
+```
+
+#### Password Reset
+
+```typescript
+import { sendPasswordResetEmail } from '@/features/auth/server/actions/password-reset';
+
+export async function handlePasswordReset(formData: FormData) {
+  const email = formData.get('email') as string;
+
+  const result = await sendPasswordResetEmail(
+    email,
+    undefined, // request
+    '127.0.0.1', // clientIP
+    'Mozilla/5.0...' // userAgent
+  );
+
+  if (result.success) {
+    // Show success message
+    console.log('Password reset email sent!');
+  } else {
+    // Handle error
+    console.error(result.error);
+  }
+}
+```
+
+### Form Validation
+
+#### Client-Side Validation
+
+```typescript
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema, type LoginFormData } from '@/features/auth/schemas/login-schema';
+
+function LoginForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    mode: 'onBlur',
+  });
+
+  const onSubmit = (data: LoginFormData) => {
+    // Handle form submission
+    console.log(data);
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input
+        {...register('email')}
+        type="email"
+        placeholder="Email"
+      />
+      {errors.email && <span>{errors.email.message}</span>}
+
+      <input
+        {...register('password')}
+        type="password"
+        placeholder="Password"
+      />
+      {errors.password && <span>{errors.password.message}</span>}
+
+      <button type="submit">Sign In</button>
+    </form>
+  );
+}
+```
+
+#### Server-Side Validation
+
+```typescript
+import { z } from 'zod';
+
+const serverLoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+  userExists: z.boolean().optional(),
+  hasPendingRegistration: z.boolean().optional(),
+  isEmailConfirmed: z.boolean().optional(),
+});
+
+export async function validateLoginData(data: unknown) {
+  try {
+    const validatedData = serverLoginSchema.parse(data);
+    return { success: true, data: validatedData };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+```
+
 ## Future Enhancements
 
 ### Planned Features
@@ -1022,5 +1690,39 @@ For technical support or questions about the authentication system:
 
 ---
 
+## Summary
+
+The PayMatch authentication system has been completely refactored to provide a modern, unified, and type-safe authentication experience. The new architecture offers:
+
+### Key Improvements
+
+1. **Unified Session Management**: Consistent APIs for client and server-side session handling
+2. **Multiple Authentication Methods**: Password-based and magic link authentication in one system
+3. **Type Safety**: Full TypeScript coverage with generated database types
+4. **Modern Architecture**: Next.js 15 App Router with Server Actions instead of API routes
+5. **React Context Integration**: Seamless session state management across components
+6. **Comprehensive Validation**: Zod schemas for both client and server-side validation
+7. **Enhanced Security**: Optimized RLS policies and comprehensive audit logging
+
+### Architecture Highlights
+
+- **Feature-First Organization**: Clean separation of concerns with modular components
+- **Server Actions Pattern**: Modern Next.js 15 approach for better security and performance
+- **Unified Session API**: Consistent session management across client and server
+- **Type-Safe Database Integration**: Generated types from Supabase schema
+- **Comprehensive Error Handling**: User-friendly error messages and recovery
+
+### Developer Experience
+
+- **Intuitive APIs**: Easy-to-use hooks and server helpers
+- **Comprehensive Documentation**: Detailed examples and usage patterns
+- **Type Safety**: Full TypeScript coverage with IntelliSense support
+- **Testing Support**: Built-in testing utilities and examples
+- **Modern Patterns**: React Context, Server Actions, and Zod validation
+
+The authentication system is now production-ready with enterprise-grade security, comprehensive compliance features, and an excellent developer experience.
+
+---
+
 _Last updated: October 2025_
-_Version: 3.0.0_
+_Version: 4.0.0 - Unified Auth System_

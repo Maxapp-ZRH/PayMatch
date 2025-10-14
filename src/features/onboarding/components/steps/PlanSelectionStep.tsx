@@ -15,7 +15,7 @@ import { useAllPlansData, useAllPlansPricing } from '@/hooks/pricing';
 import type { PlanData } from '@/lib/pricing/plan-types';
 import { createCheckoutSession } from '@/features/stripe/server/actions/create-checkout-session';
 import { updateOrganizationPlan } from '@/features/stripe/server/actions/update-organization-plan';
-import { showToast } from '@/lib/toast';
+import { OnboardingToast } from '@/lib/toast';
 import type { StepProps } from '../../types';
 
 export function PlanSelectionStep({ onNext, formData }: StepProps) {
@@ -55,11 +55,11 @@ export function PlanSelectionStep({ onNext, formData }: StepProps) {
       if (result.success && result.url) {
         window.location.href = result.url;
       } else {
-        showToast.error('Failed to create checkout session');
+        OnboardingToast.plan.selectionFailed();
       }
     } catch (error) {
       console.error('Error processing plan selection:', error);
-      showToast.error('An error occurred. Please try again.');
+      OnboardingToast.plan.selectionFailed();
     } finally {
       setIsProcessing(false);
     }
@@ -75,14 +75,14 @@ export function PlanSelectionStep({ onNext, formData }: StepProps) {
       });
 
       if (result.success) {
-        showToast.success('Free plan selected successfully!');
+        OnboardingToast.plan.selected();
         onNext({ plan: 'free' });
       } else {
-        showToast.error(result.message || 'Failed to select free plan');
+        OnboardingToast.plan.selectionFailed();
       }
     } catch (error) {
       console.error('Error processing free plan selection:', error);
-      showToast.error('An error occurred. Please try again.');
+      OnboardingToast.plan.selectionFailed();
     } finally {
       setIsProcessing(false);
     }

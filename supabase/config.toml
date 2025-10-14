@@ -187,14 +187,14 @@ otp_length = 6
 otp_expiry = 3600
 
 # Use Resend as SMTP provider for branded emails
-[auth.email.smtp]
-enabled = true
-host = "smtp.resend.com"
-port = 465
-user = "resend"
-pass = "env(RESEND_API_KEY)"
-admin_email = "env(RESEND_FROM_EMAIL)"
-sender_name = "PayMatch"
+# [auth.email.smtp]
+# enabled = true
+# host = "smtp.resend.com"
+# port = 465
+# user = "resend"
+# pass = "env(RESEND_API_KEY)"
+# admin_email = "env(RESEND_FROM_EMAIL)"
+# sender_name = "PayMatch"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]

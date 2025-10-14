@@ -258,6 +258,8 @@ export async function sendEmail(
     'transactional',
     'support',
     'legal',
+    'business_notifications',
+    'overdue_alerts',
   ];
 
   if (!mandatoryEmailTypes.includes(emailType)) {
@@ -369,6 +371,8 @@ export async function sendEmailWithComponent(
     'transactional',
     'support',
     'legal',
+    'business_notifications',
+    'overdue_alerts',
   ];
 
   if (!mandatoryEmailTypes.includes(emailType)) {

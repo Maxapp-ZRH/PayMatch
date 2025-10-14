@@ -92,6 +92,8 @@ export async function unsubscribeFromEmailType(
       'transactional',
       'support',
       'legal',
+      'business_notifications',
+      'overdue_alerts',
     ];
 
     if (mandatoryEmailTypes.includes(type)) {

@@ -92,6 +92,28 @@ export async function getServerSession(
       organizationMembership: extendedUser.organizationMembership || null,
     };
   } catch (error) {
+    // Handle specific auth errors gracefully
+    if (error && typeof error === 'object' && 'code' in error) {
+      const authError = error as { code: string; message: string };
+      if (
+        authError.code === 'refresh_token_not_found' ||
+        authError.code === 'invalid_grant' ||
+        authError.message?.includes('Invalid Refresh Token')
+      ) {
+        // Don't log refresh token errors as they're expected when tokens are invalid
+        return {
+          user: null,
+          session: null,
+          error: null, // Don't expose internal auth errors
+          isAuthenticated: false,
+          isEmailVerified: false,
+          hasCompletedOnboarding: false,
+          hasOrganization: false,
+        };
+      }
+    }
+
+    // Log other errors
     console.error('Server session error:', error);
     return {
       user: null,
@@ -230,29 +252,6 @@ export async function requireOnboardingSession(): Promise<ServerSessionResult> {
     requireEmailVerification: true,
     requireOrganization: true,
   });
-}
-
-/**
- * Get session for public pages (with optional redirect)
- * @param redirectIfAuthenticated - Redirect to dashboard if authenticated
- * @returns Server session result
- */
-export async function getPublicSession(
-  redirectIfAuthenticated: boolean = true
-): Promise<ServerSessionResult> {
-  const result = await getServerSession();
-
-  if (redirectIfAuthenticated && result.isAuthenticated) {
-    if (!result.isEmailVerified) {
-      redirect('/verify-email');
-    } else if (!result.hasCompletedOnboarding) {
-      redirect('/onboarding');
-    } else {
-      redirect('/dashboard');
-    }
-  }
-
-  return result;
 }
 
 /**

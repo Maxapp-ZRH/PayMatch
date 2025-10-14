@@ -32,7 +32,6 @@ export {
   requireServerSession,
   requireDashboardSession,
   requireOnboardingSession,
-  getPublicSession,
   validateSessionRequirements,
   handleSessionError,
 } from './server/helpers/session';

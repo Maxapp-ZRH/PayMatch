@@ -185,22 +185,14 @@ export async function GET(request: NextRequest) {
           }
         } else if (type === 'magiclink') {
           console.log('Processing magic link login');
-          // For magic link login, always go to dashboard (successful login)
-          if (!profile?.onboarding_completed) {
-            console.log(
-              'Redirecting to onboarding (new user magic link login)'
-            );
-            const onboardingUrl = new URL('/onboarding', requestUrl.origin);
-            onboardingUrl.searchParams.set('clearRememberMe', 'true');
-            return NextResponse.redirect(onboardingUrl);
-          } else {
-            console.log(
-              'Redirecting to dashboard (existing user magic link login)'
-            );
-            const dashboardUrl = new URL('/dashboard', requestUrl.origin);
-            dashboardUrl.searchParams.set('clearRememberMe', 'true');
-            return NextResponse.redirect(dashboardUrl);
-          }
+          // For magic link login, redirect to success page which will handle cross-device communication
+          const magicLinkSuccessUrl = new URL(
+            '/magic-link-success',
+            requestUrl.origin
+          );
+          magicLinkSuccessUrl.searchParams.set('email', user.email || '');
+          magicLinkSuccessUrl.searchParams.set('clearRememberMe', 'true');
+          return NextResponse.redirect(magicLinkSuccessUrl);
         } else if (type === 'recovery') {
           console.log('Redirecting to reset password page');
           const resetPasswordUrl = new URL(

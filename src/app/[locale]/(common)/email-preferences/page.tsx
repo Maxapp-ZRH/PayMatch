@@ -181,6 +181,8 @@ export default function EmailPreferencesPage() {
               'transactional',
               'support',
               'legal',
+              'business_notifications',
+              'overdue_alerts',
             ];
             if (mandatoryEmailTypes.includes(emailType.emailType)) {
               // Mandatory emails are always enabled
@@ -209,6 +211,8 @@ export default function EmailPreferencesPage() {
               'transactional',
               'support',
               'legal',
+              'business_notifications',
+              'overdue_alerts',
             ];
             newPreferences[emailType.emailType] = mandatoryEmailTypes.includes(
               emailType.emailType
@@ -240,6 +244,8 @@ export default function EmailPreferencesPage() {
       'transactional',
       'support',
       'legal',
+      'business_notifications',
+      'overdue_alerts',
     ];
     if (mandatoryEmailTypes.includes(emailType)) {
       setError(t('mandatoryErrorMessage'));

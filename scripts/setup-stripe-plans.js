@@ -253,7 +253,6 @@ async function main() {
     // Update environment files
     const projectRoot = path.join(__dirname, '..');
     updateEnvFile(path.join(projectRoot, '.env.local'), priceIds);
-    updateEnvFile(path.join(projectRoot, '.env.production'), priceIds);
 
     console.log('\n🎉 Setup complete!');
     console.log('\n📋 Next steps:');

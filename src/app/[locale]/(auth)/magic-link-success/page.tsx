@@ -1,8 +1,8 @@
 /**
- * Email Verification Success Page
+ * Magic Link Success Page
  *
- * Shows a success message after email verification and automatically
- * closes the tab after 2 seconds, then redirects the parent window to onboarding.
+ * Shows a success message after magic link login and automatically
+ * closes the tab after 2 seconds, then redirects the parent window to dashboard.
  * Uses the same design language as marketing pages.
  */
 
@@ -17,10 +17,36 @@ import { CirclesBackground } from '@/components/marketing_pages/CirclesBackgroun
 import { Button } from '@/components/marketing_pages/Button';
 import { ClearRememberMeHandler } from '@/features/auth/components/ClearRememberMeHandler';
 
-export default function VerificationSuccess() {
+export default function MagicLinkSuccess() {
   const [countdown, setCountdown] = useState(2);
 
   useEffect(() => {
+    // Notify other tabs that magic link login is completed
+    try {
+      // Get user email from URL params or localStorage
+      const urlParams = new URLSearchParams(window.location.search);
+      const email =
+        urlParams.get('email') || localStorage.getItem('magic-link-email');
+
+      if (email) {
+        localStorage.setItem('magic-link-completed', 'true');
+        localStorage.setItem('magic-link-email', email);
+
+        // Trigger storage event for same-origin tabs
+        window.dispatchEvent(
+          new StorageEvent('storage', {
+            key: 'magic-link-completed',
+            newValue: 'true',
+            oldValue: null,
+            storageArea: localStorage,
+            url: window.location.href,
+          })
+        );
+      }
+    } catch (error) {
+      console.log('Could not notify other tabs:', error);
+    }
+
     // Countdown timer
     const countdownTimer = setInterval(() => {
       setCountdown((prev) => {
@@ -38,17 +64,17 @@ export default function VerificationSuccess() {
       window.close();
 
       // If window.close() doesn't work (some browsers block it),
-      // redirect to onboarding as fallback
+      // redirect to dashboard as fallback
       setTimeout(() => {
-        window.location.href = '/onboarding';
+        window.location.href = '/dashboard';
       }, 100);
     }, 2000);
 
-    // Also try to redirect the parent window to onboarding
-    // This works if the verification was opened in a popup or new tab
+    // Also try to redirect the parent window to dashboard
+    // This works if the magic link was opened in a popup or new tab
     try {
       if (window.opener) {
-        window.opener.location.href = '/onboarding';
+        window.opener.location.href = '/dashboard';
       }
     } catch (error) {
       // Ignore cross-origin errors
@@ -90,11 +116,11 @@ export default function VerificationSuccess() {
             className="absolute -top-7 left-1/2 -z-10 h-[788px] -translate-x-1/2 mask-[linear-gradient(to_bottom,white_20%,transparent_75%)] stroke-gray-300/30 sm:-top-9 sm:h-auto"
           />
           <h1 className="text-center text-2xl font-medium tracking-tight text-gray-900">
-            Email Verified Successfully!
+            Successfully Logged In!
           </h1>
           <p className="mt-3 text-center text-lg text-gray-600">
-            Your email has been verified. This window will close automatically
-            and redirect you to the onboarding process.
+            You have been successfully logged in with your magic link. This
+            window will close automatically and redirect you to your dashboard.
           </p>
         </div>
 
@@ -110,8 +136,7 @@ export default function VerificationSuccess() {
               <div className="flex items-center justify-center space-x-2">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
                 <span className="text-sm text-gray-500">
-                  Redirecting in {countdown} second{countdown !== 1 ? 's' : ''}
-                  ...
+                  Closing in {countdown} second{countdown !== 1 ? 's' : ''}...
                 </span>
               </div>
             </div>
@@ -122,13 +147,13 @@ export default function VerificationSuccess() {
                 onClick={() => {
                   window.close();
                   setTimeout(() => {
-                    window.location.href = '/onboarding';
+                    window.location.href = '/dashboard';
                   }, 100);
                 }}
                 color="swiss"
                 className="w-full"
               >
-                Continue to Onboarding
+                Continue to Dashboard
               </Button>
             </div>
           </div>

@@ -23,7 +23,7 @@ import { formatSwissCurrencyFromCents } from '@/utils/formatting';
 import { createCheckoutSession } from '../server/actions/create-checkout-session';
 import { createPortalSession } from '../server/actions/create-portal-session';
 import { updateOrganizationPlan } from '../server/actions/update-organization-plan';
-import { showToast } from '@/lib/toast';
+import { StripeToast } from '@/lib/toast';
 import { Button } from '@/components/marketing_pages/Button';
 import { createClient } from '@/lib/supabase/client';
 
@@ -78,10 +78,10 @@ export function PlanSelection({
         });
 
         if (result.success) {
-          showToast.success('Free plan activated!');
+          StripeToast.subscription.success();
           onPlanSelected?.(planName);
         } else {
-          showToast.error(result.message);
+          StripeToast.subscription.failed();
         }
       } else {
         // Check if customer already has a Stripe customer ID
@@ -102,7 +102,7 @@ export function PlanSelection({
           if (result.success && result.url) {
             window.location.href = result.url;
           } else {
-            showToast.error('Failed to open billing portal. Please try again.');
+            StripeToast.customerPortal.failed();
           }
         } else {
           // Create new checkout session
@@ -119,15 +119,13 @@ export function PlanSelection({
             // Redirect to Stripe checkout
             window.location.href = result.url;
           } else {
-            showToast.error(
-              result.error || 'Failed to create checkout session'
-            );
+            StripeToast.subscription.failed();
           }
         }
       }
     } catch (error) {
       console.error('Error selecting plan:', error);
-      showToast.error('An error occurred while selecting the plan');
+      StripeToast.subscription.failed();
     } finally {
       setIsLoading(false);
     }

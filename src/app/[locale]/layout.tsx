@@ -15,6 +15,8 @@ import { GeistSans } from 'geist/font/sans';
 import clsx from 'clsx';
 import { ConditionalAnalytics } from '@/components/analytics/ConditionalAnalytics';
 import { Toaster } from 'sonner';
+import { ErrorBoundary } from '@/components/shared/error-boundary';
+import { AuthErrorHandler } from '@/features/auth/components/AuthErrorHandler';
 
 import '@/styles/tailwind.css';
 import { ScrollToTop } from '@/components/common/ScrollToTop';
@@ -164,17 +166,21 @@ export default async function LocaleLayout({ children, params }: Props) {
       className={clsx('bg-gray-50 antialiased', geistSans.className)}
     >
       <body>
-        <NextIntlClientProvider messages={messages}>
-          <PageTransitionWrapper>{children}</PageTransitionWrapper>
-          <BannerManager />
-          <ScrollToTop />
-          <Toaster
-            position="top-right"
-            expand={true}
-            richColors={true}
-            closeButton={true}
-          />
-        </NextIntlClientProvider>
+        <ErrorBoundary>
+          <AuthErrorHandler>
+            <NextIntlClientProvider messages={messages}>
+              <PageTransitionWrapper>{children}</PageTransitionWrapper>
+              <BannerManager />
+              <ScrollToTop />
+              <Toaster
+                position="top-right"
+                expand={true}
+                richColors={true}
+                closeButton={true}
+              />
+            </NextIntlClientProvider>
+          </AuthErrorHandler>
+        </ErrorBoundary>
         <ConditionalAnalytics />
       </body>
     </html>

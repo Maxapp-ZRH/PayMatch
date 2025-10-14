@@ -15,7 +15,7 @@ import { CheckCircle } from 'lucide-react';
 
 import { Button } from '@/components/marketing_pages/Button';
 import { PasswordField } from '@/components/ui/password-field';
-import { showToast } from '@/lib/toast';
+import { AuthToast } from '@/lib/toast';
 import {
   resetPasswordSchema,
   type ResetPasswordFormData,
@@ -49,10 +49,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       const supabase = createClient();
 
       if (!token) {
-        showToast.error(
-          'Invalid reset link',
-          'No reset token found. Please request a new password reset.'
-        );
+        AuthToast.passwordReset.noToken();
         return;
       }
 
@@ -78,10 +75,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
         if (tokenError) {
           console.error('Token verification error:', tokenError);
-          showToast.error(
-            'Invalid reset link',
-            'This password reset link is invalid or has expired.'
-          );
+          AuthToast.passwordReset.invalidToken();
           return;
         }
         console.log('Token verified successfully');
@@ -96,29 +90,48 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
       if (error) {
         console.error('Password update error:', error);
-        showToast.error('Password update failed', error.message);
+        AuthToast.passwordReset.resetFailed();
         return;
       }
 
       // Sign out the user after password reset to ensure they go to login page
       await supabase.auth.signOut();
 
-      showToast.success(
-        'Password updated successfully!',
-        'You can now sign in with your new password.'
-      );
+      // Notify other tabs that password reset is completed
+      try {
+        localStorage.setItem('password-reset-completed', 'true');
+        // Trigger storage event for same-origin tabs
+        window.dispatchEvent(
+          new StorageEvent('storage', {
+            key: 'password-reset-completed',
+            newValue: 'true',
+            oldValue: null,
+            storageArea: localStorage,
+            url: window.location.href,
+          })
+        );
+      } catch (error) {
+        console.log('Could not notify other tabs:', error);
+      }
+
+      AuthToast.passwordReset.resetSuccess();
       setSuccess(true);
 
       // Redirect to login after successful password reset
+      // Use a more reliable redirect method for cross-browser compatibility
       setTimeout(() => {
-        router.push('/login');
+        // Try programmatic navigation first
+        try {
+          router.push('/login');
+        } catch (error) {
+          console.log('Router push failed, using window.location:', error);
+          // Fallback to direct navigation
+          window.location.href = '/login';
+        }
       }, 2000);
     } catch (error) {
       console.error('Password reset error:', error);
-      showToast.error(
-        'Password reset failed',
-        'An unexpected error occurred. Please try again.'
-      );
+      AuthToast.passwordReset.resetFailed();
     } finally {
       setIsLoading(false);
     }

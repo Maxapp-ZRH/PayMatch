@@ -13,14 +13,12 @@ import { Pricing } from '@/components/marketing_pages/Pricing';
 import { PrimaryFeatures } from '@/components/marketing_pages/PrimaryFeatures';
 import { Reviews } from '@/components/marketing_pages/Reviews';
 import { SecondaryFeatures } from '@/components/marketing_pages/SecondaryFeatures';
-import { getPublicSession } from '@/features/auth';
+import { ClientAuthRedirect } from '@/features/auth/components/ClientAuthRedirect';
 
-export default async function Home() {
-  // Check authentication and redirect if authenticated
-  await getPublicSession(true);
-
+export default function Home() {
   return (
     <>
+      <ClientAuthRedirect />
       <Hero />
       <PrimaryFeatures />
       <SecondaryFeatures />

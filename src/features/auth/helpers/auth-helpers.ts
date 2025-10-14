@@ -142,8 +142,121 @@ export function handleAuthError(error: unknown, context: string): string {
     return 'Too many attempts. Please wait a moment before trying again.';
   }
 
+  if (errorMessage.includes('JWT') || errorMessage.includes('token')) {
+    return 'Your session has expired. Please sign in again.';
+  }
+
+  if (errorMessage.includes('fetch') || errorMessage.includes('network')) {
+    return 'Network error. Please check your connection and try again.';
+  }
+
   console.error(`Auth error in ${context}:`, error);
   return 'An unexpected error occurred. Please try again.';
+}
+
+/**
+ * Enhanced error handling with recovery suggestions
+ * @param error - Error object
+ * @param context - Context where error occurred
+ * @returns Enhanced error details with recovery options
+ */
+export function handleAuthErrorEnhanced(
+  error: unknown,
+  context: string
+): {
+  message: string;
+  code: string;
+  recoverable: boolean;
+  retryable: boolean;
+  suggestions: string[];
+} {
+  const errorMessage =
+    error && typeof error === 'object' && 'message' in error
+      ? String(error.message)
+      : '';
+
+  if (errorMessage.includes('Invalid login credentials')) {
+    return {
+      message: 'Invalid email or password. Please try again.',
+      code: 'AUTH_INVALID_CREDENTIALS',
+      recoverable: true,
+      retryable: true,
+      suggestions: [
+        'Check your email and password',
+        'Try resetting your password',
+        'Make sure Caps Lock is off',
+      ],
+    };
+  }
+
+  if (errorMessage.includes('Email not confirmed')) {
+    return {
+      message: 'Please verify your email address before signing in.',
+      code: 'AUTH_EMAIL_NOT_CONFIRMED',
+      recoverable: true,
+      retryable: false,
+      suggestions: [
+        'Check your email for verification link',
+        'Request a new verification email',
+        'Check your spam folder',
+      ],
+    };
+  }
+
+  if (errorMessage.includes('Too many requests')) {
+    return {
+      message: 'Too many attempts. Please wait a moment before trying again.',
+      code: 'AUTH_RATE_LIMITED',
+      recoverable: true,
+      retryable: true,
+      suggestions: [
+        'Wait 5-10 minutes before trying again',
+        'Check if you have multiple tabs open',
+        'Try again later',
+      ],
+    };
+  }
+
+  if (errorMessage.includes('JWT') || errorMessage.includes('token')) {
+    return {
+      message: 'Your session has expired. Please sign in again.',
+      code: 'AUTH_TOKEN_INVALID',
+      recoverable: true,
+      retryable: false,
+      suggestions: [
+        'Sign in again to continue',
+        'Clear your browser cache',
+        'Try a different browser',
+      ],
+    };
+  }
+
+  if (errorMessage.includes('fetch') || errorMessage.includes('network')) {
+    return {
+      message: 'Network error. Please check your connection and try again.',
+      code: 'NETWORK_ERROR',
+      recoverable: true,
+      retryable: true,
+      suggestions: [
+        'Check your internet connection',
+        'Try refreshing the page',
+        'Check if your firewall is blocking the connection',
+      ],
+    };
+  }
+
+  console.error(`Auth error in ${context}:`, error);
+  return {
+    message: 'An unexpected error occurred. Please try again.',
+    code: 'UNKNOWN_ERROR',
+    recoverable: false,
+    retryable: true,
+    suggestions: [
+      'Try refreshing the page',
+      'Clear your browser cache',
+      'Contact support if the problem persists',
+    ],
+  };
 }
 
 /**

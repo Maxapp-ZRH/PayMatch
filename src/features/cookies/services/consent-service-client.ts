@@ -248,6 +248,8 @@ export class ConsentServiceClient {
         'transactional',
         'security',
         'legal',
+        'business_notifications',
+        'overdue_alerts',
       ];
 
       if (marketingEmailTypes.includes(emailType)) {

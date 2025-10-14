@@ -11,7 +11,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/marketing_pages/Button';
-import { showToast } from '@/lib/toast';
+import { AuthToast } from '@/lib/toast';
 import { CheckCircle, Mail, Loader2 } from 'lucide-react';
 import { resendVerificationEmail } from '@/features/auth/server/actions/registration';
 
@@ -49,6 +49,43 @@ export function VerifyEmailForm({
       setShowResendOptions(true);
     }
   }, [showResend, immediateResend, isVerified, currentEmail]);
+
+  // Real-time verification detection using Supabase Auth state changes
+  useEffect(() => {
+    if (!currentEmail || isVerified) return;
+
+    console.log(
+      'Setting up real-time verification detection for:',
+      currentEmail
+    );
+
+    // Listen for auth state changes in real-time
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state change:', {
+        event,
+        hasSession: !!session,
+        userEmail: session?.user?.email,
+      });
+
+      if (event === 'SIGNED_IN' && session?.user?.email === currentEmail) {
+        console.log('User verified on another device!');
+        setIsVerified(true);
+        AuthToast.emailVerification.success();
+
+        // Redirect directly to onboarding (not login)
+        setTimeout(() => {
+          router.push('/onboarding');
+        }, 2000);
+      }
+    });
+
+    return () => {
+      console.log('Cleaning up auth state listener');
+      subscription.unsubscribe();
+    };
+  }, [currentEmail, isVerified, supabase, router]);
 
   // Show resend options after 60 seconds (for manual resend) or immediately (for user-initiated flows)
   useEffect(() => {
@@ -102,9 +139,9 @@ export function VerifyEmailForm({
         // If we have a verified param in the URL, mark as verified
         if (emailVerified) {
           setIsVerified(true);
-          // Redirect to login after a short delay
+          // Redirect to onboarding after a short delay
           setTimeout(() => {
-            router.push('/login');
+            router.push('/onboarding');
           }, 2000);
           return;
         }
@@ -127,12 +164,10 @@ export function VerifyEmailForm({
           localStorage.removeItem('email-verification-complete');
           localStorage.removeItem('email-verification-email');
 
-          // Show success message and redirect to login
-          showToast.success(
-            "Email verified successfully! You're now signed in and will be redirected to complete your setup."
-          );
+          // Show success message and redirect to onboarding
+          AuthToast.emailVerification.success();
           setTimeout(() => {
-            router.push('/login');
+            router.push('/onboarding');
           }, 2000);
           return;
         }
@@ -144,11 +179,9 @@ export function VerifyEmailForm({
           } = await supabase.auth.getUser();
           if (user && user.email === currentEmail && user.email_confirmed_at) {
             setIsVerified(true);
-            showToast.success(
-              "Email verified successfully! You're now signed in and will be redirected to complete your setup."
-            );
+            AuthToast.emailVerification.success();
             setTimeout(() => {
-              router.push('/login');
+              router.push('/onboarding');
             }, 2000);
             return;
           }
@@ -167,11 +200,9 @@ export function VerifyEmailForm({
 
             if (pendingRegistrations && pendingRegistrations.verified_at) {
               setIsVerified(true);
-              showToast.success(
-                "Email verified successfully! You're now signed in and will be redirected to complete your setup."
-              );
+              AuthToast.emailVerification.success();
               setTimeout(() => {
-                router.push('/login');
+                router.push('/onboarding');
               }, 2000);
               return;
             }
@@ -193,11 +224,9 @@ export function VerifyEmailForm({
               user.email_confirmed_at
             ) {
               setIsVerified(true);
-              showToast.success(
-                "Email verified successfully! You're now signed in and will be redirected to complete your setup."
-              );
+              AuthToast.emailVerification.success();
               setTimeout(() => {
-                router.push('/login');
+                router.push('/onboarding');
               }, 2000);
               return;
             }
@@ -216,8 +245,8 @@ export function VerifyEmailForm({
     // Check immediately
     checkVerificationStatus();
 
-    // Check every 5 seconds for faster response
-    const interval = setInterval(checkVerificationStatus, 5000);
+    // Check every 10 seconds as fallback (real-time detection handles most cases)
+    const interval = setInterval(checkVerificationStatus, 10000);
 
     // Listen for storage events (cross-tab communication)
     const handleStorageChange = (e: StorageEvent) => {
@@ -229,9 +258,7 @@ export function VerifyEmailForm({
           setIsVerified(true);
           localStorage.removeItem('email-verification-complete');
           localStorage.removeItem('email-verification-email');
-          showToast.success(
-            "Email verified successfully! You're now signed in and will be redirected to complete your setup."
-          );
+          AuthToast.emailVerification.successWithRedirect();
           setTimeout(() => {
             router.push('/login');
           }, 2000);
@@ -251,9 +278,7 @@ export function VerifyEmailForm({
     const emailToUse = currentEmail || emailInput;
 
     if (!emailToUse) {
-      showToast.error(
-        'Please enter your email address to resend verification.'
-      );
+      AuthToast.emailVerification.emailRequired();
       return;
     }
 
@@ -264,18 +289,15 @@ export function VerifyEmailForm({
       const result = await resendVerificationEmail(emailToUse);
 
       if (result.success) {
-        showToast.success('Verification email sent!', result.message);
+        AuthToast.emailVerification.resendSuccess();
         setResendCooldown(60); // 60 second cooldown after successful resend
         setShowResendOptions(false); // Hide resend button during cooldown
       } else {
-        showToast.error(
-          'Failed to send verification email',
-          result.message || 'Please try again later.'
-        );
+        AuthToast.emailVerification.resendFailed();
       }
     } catch (error) {
       console.error('Error resending verification:', error);
-      showToast.error('Failed to resend verification email. Please try again.');
+      AuthToast.emailVerification.unexpectedError();
     } finally {
       setIsResending(false);
     }

@@ -11,7 +11,7 @@ import { requireDashboardSession } from '@/features/auth';
 import { LogoutButton } from '@/components/ui/logout-button';
 import { BillingSection } from '@/features/dashboard/components/BillingSection';
 import { SettingsSection } from '@/features/dashboard/components/SettingsSection';
-import { ClearRememberMeHandler } from '@/components/auth/ClearRememberMeHandler';
+import { ClearRememberMeHandler } from '@/features/auth/components/ClearRememberMeHandler';
 
 export const metadata: Metadata = {
   title: 'Dashboard - PayMatch',

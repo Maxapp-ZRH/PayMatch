@@ -18,6 +18,7 @@ import type {
 interface OrganizationUpdateData {
   onboarding_step: number;
   updated_at: string;
+  plan?: string;
   name?: string;
   legal_name?: string;
   address_line_1?: string;
@@ -75,6 +76,17 @@ export async function updateOnboardingStep(
 
     // If stepData is provided, update organization fields based on the step
     if (data.stepData && Object.keys(data.stepData).length > 0) {
+      // Step 1: Plan Selection
+      if (data.step === 1) {
+        if ('plan' in data.stepData && data.stepData.plan) {
+          updateData.plan = data.stepData.plan as string;
+        }
+        if ('billingCycle' in data.stepData && data.stepData.billingCycle) {
+          // Store billing cycle in a custom field or handle via Stripe
+          // For now, we'll handle this through Stripe subscription data
+        }
+      }
+
       // Step 2: Company Details
       if (data.step === 2) {
         if ('companyName' in data.stepData && data.stepData.companyName) {

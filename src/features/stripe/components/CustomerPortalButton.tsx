@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { CreditCard, Loader2 } from 'lucide-react';
 import { Button } from '@/components/marketing_pages/Button';
 import { createPortalSession } from '../server/actions/create-portal-session';
-import { showToast } from '@/lib/toast';
+import { StripeToast } from '@/lib/toast';
 
 interface CustomerPortalButtonProps {
   orgId: string;
@@ -44,13 +44,11 @@ export function CustomerPortalButton({
         // Redirect to Stripe Customer Portal
         window.location.href = result.url;
       } else {
-        showToast.error(
-          result.error || 'Failed to open billing portal. Please try again.'
-        );
+        StripeToast.customerPortal.failed();
       }
     } catch (error) {
       console.error('Error opening customer portal:', error);
-      showToast.error('An error occurred. Please try again.');
+      StripeToast.customerPortal.failed();
     } finally {
       setIsLoading(false);
     }

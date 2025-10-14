@@ -24,12 +24,16 @@ import {
   forgotPasswordSchema,
   type ForgotPasswordFormData,
 } from '../schemas/forgot-password-schema';
+import { createClient } from '@/lib/supabase/client';
+import { AuthToast } from '@/lib/toast';
 
 export function ForgotPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [countdown, setCountdown] = useState(5);
+  const [passwordResetCompleted, setPasswordResetCompleted] = useState(false);
   const router = useRouter();
+  const supabase = createClient();
 
   const {
     register,
@@ -42,19 +46,73 @@ export function ForgotPasswordForm() {
     mode: 'onBlur', // Validate on blur for better UX
   });
 
-  // Auto-close after 5 seconds when success is shown
+  // Cross-tab communication for password reset completion
   useEffect(() => {
-    if (success) {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'password-reset-completed' && e.newValue === 'true') {
+        setPasswordResetCompleted(true);
+        AuthToast.passwordReset.completed();
+
+        // Clear the flag
+        localStorage.removeItem('password-reset-completed');
+
+        // Redirect to login
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      }
+    };
+
+    // Listen for storage events (cross-tab communication)
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [router]);
+
+  // Real-time auth state detection for password reset completion
+  useEffect(() => {
+    if (!success) return;
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event) => {
+      // If user signs out (which happens after password reset),
+      // it means password was changed in another tab
+      if (event === 'SIGNED_OUT' && success) {
+        setPasswordResetCompleted(true);
+        AuthToast.passwordReset.completed();
+
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [success, supabase, router]);
+
+  // Auto-close after 5 seconds when success is shown (only if password not reset in another tab)
+  useEffect(() => {
+    if (success && !passwordResetCompleted) {
       const countdownTimer = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
             clearInterval(countdownTimer);
-            // Close the current tab/window
-            window.close();
-            // If window.close() doesn't work, redirect to login as fallback
+
+            // Try to close the current tab/window (works in some browsers)
+            try {
+              window.close();
+            } catch (error) {
+              console.log('Could not close window:', error);
+            }
+
+            // Always redirect as fallback (works in all browsers)
             setTimeout(() => {
               router.push('/login');
             }, 100);
+
             return 0;
           }
           return prev - 1;
@@ -63,7 +121,7 @@ export function ForgotPasswordForm() {
 
       return () => clearInterval(countdownTimer);
     }
-  }, [success, router]);
+  }, [success, passwordResetCompleted, router]);
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
     clearErrors(); // Clear any previous server errors
